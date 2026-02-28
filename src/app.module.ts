@@ -19,23 +19,23 @@ import { InMemoryTeachersRepo } from './infrastructure/in-memory/in-memory-teach
 import { InMemoryUploadsRepo } from './infrastructure/in-memory/in-memory-upload.repo';
 import { InMemoryUsersRepo } from './infrastructure/in-memory/in-memory-user.repo';
 import { MockSeedBootstrapService } from './seeding/mock-seed.bootstrap.service';
-// import { AuthModule } from './auth/auth.module';
-// import { UsersModule } from './users/users.module';
-// import { StudentsModule } from './students/students.module';
-// import { BaselineModule } from './baseline/baseline.module';
-// import { PlansModule } from './plans/plans.module';
-// import { StatisticsModule } from './statistics/statistics.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { StudentsModule } from './students/students.module';
+import { BaselineModule } from './baseline/baseline.module';
+import { PlansModule } from './plans/plans.module';
+import { StatisticsModule } from './statistics/statistics.module';
 // import { JwtModule } from '@nestjs/jwt';
 // import { ConfigModule } from '@nestjs/config';
 
 @Module({
  imports: [
-  //   AuthModule,
-  //   UsersModule,
-  //   StudentsModule,
-  //   BaselineModule,
-  //   PlansModule,
-  //   StatisticsModule,
+    AuthModule,
+    UsersModule,
+    StudentsModule,
+    BaselineModule,
+    PlansModule,
+    StatisticsModule,
   //   JwtModule.register({
   //     global: true,
   //     secret: process.env.JWT_SECRET,
