@@ -18,7 +18,7 @@ import { InMemorySubjectOfferingsRepo } from './infrastructure/in-memory/in-memo
 import { InMemoryTeachersRepo } from './infrastructure/in-memory/in-memory-teacher.repo';
 import { InMemoryUploadsRepo } from './infrastructure/in-memory/in-memory-upload.repo';
 import { InMemoryUsersRepo } from './infrastructure/in-memory/in-memory-user.repo';
-// import { MockSeedBootstrapService } from './seeding/mock-seed.bootstrap.service';
+import { MockSeedBootstrapService } from './seeding/mock-seed.bootstrap.service';
 // import { AuthModule } from './auth/auth.module';
 // import { UsersModule } from './users/users.module';
 // import { StudentsModule } from './students/students.module';
@@ -62,7 +62,7 @@ import { InMemoryUsersRepo } from './infrastructure/in-memory/in-memory-user.rep
     InMemoryTeachersRepo,
     InMemoryUploadsRepo,
     InMemoryUsersRepo,
-    // MockSeedBootstrapService,
+    MockSeedBootstrapService,
     // AuthModule,
   ],
 })
