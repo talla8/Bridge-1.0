@@ -1,0 +1,23 @@
+[
+  {
+    "SkillId": 1,
+    "SubjectId": 1,
+    "GradeId": 1,
+    "Code": "MATH-NUM-01",
+    "Title": "Number Sense"
+  },
+  {
+    "SkillId": 2,
+    "SubjectId": 1,
+    "GradeId": 1,
+    "Code": "MATH-ALG-01",
+    "Title": "Basic Algebra"
+  },
+  {
+    "SkillId": 3,
+    "SubjectId": 2,
+    "GradeId": 2,
+    "Code": "AR-READ-01",
+    "Title": "Reading Comprehension"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "SubjectId": 1,
+    "SchoolYear": "2025-2026",
+    "SubjectName": "Mathematics"
+  },
+  {
+    "SubjectId": 2,
+    "SchoolYear": "2025-2026",
+    "SubjectName": "Arabic"
+  },
+  {
+    "SubjectId": 3,
+    "SchoolYear": "2025-2026",
+    "SubjectName": "English"
+  }
+]

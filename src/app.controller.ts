@@ -5,16 +5,16 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    // private readonly test: InMemoryUsersRepo,
+    private readonly test: InMemoryUsersRepo,
   ) {}
 
-  // @Get()
-  // async checkeverything() {
-  //   return this.test.findByEmail('tala@example.com');
-  // }
+  @Get()
+  async checkeverything() {
+    return this.test.findByEmail('tala@example.com');
+  }
 
-  // @Get('/s')
-  // async testingRoutes(){
-  //   return true;
-  // }
+  @Get('/s')
+  async testingRoutes(){
+    return true;
+  }
 }

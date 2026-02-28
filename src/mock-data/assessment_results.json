@@ -1,0 +1,26 @@
+[
+  {
+    "ResultId": 1,
+    "UploadId": 1,
+    "StudentId": 1,
+    "SkillId": 1,
+    "ScorePct": 72,
+    "Level": "Intermediate"
+  },
+  {
+    "ResultId": 2,
+    "UploadId": 1,
+    "StudentId": 2,
+    "SkillId": 2,
+    "ScorePct": 48,
+    "Level": "Needs Support"
+  },
+  {
+    "ResultId": 3,
+    "UploadId": 2,
+    "StudentId": 3,
+    "SkillId": 3,
+    "ScorePct": 81,
+    "Level": "Advanced"
+  }
+]

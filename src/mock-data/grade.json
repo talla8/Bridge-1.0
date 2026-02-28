@@ -1,0 +1,16 @@
+[
+  {
+    "GradeId": 1,
+    "GradeName": "Grade 4",
+    "GradeSection": "A",
+    "SchoolId": 1,
+    "TeacherId": 1
+  },
+  {
+    "GradeId": 2,
+    "GradeName": "Grade 4",
+    "GradeSection": "B",
+    "SchoolId": 1,
+    "TeacherId": 2
+  }
+]

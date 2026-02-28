@@ -1,0 +1,29 @@
+[
+  {
+    "SessionId": 1,
+    "PlanId": 1,
+    "SkillId": 1,
+    "Date": "2026-02-16",
+    "ActivityType": "Practice",
+    "Status": "Completed",
+    "ExerciseId": 1
+  },
+  {
+    "SessionId": 2,
+    "PlanId": 1,
+    "SkillId": 2,
+    "Date": "2026-02-18",
+    "ActivityType": "Quiz",
+    "Status": "Pending",
+    "ExerciseId": 2
+  },
+  {
+    "SessionId": 3,
+    "PlanId": 2,
+    "SkillId": 3,
+    "Date": "2026-02-17",
+    "ActivityType": "Practice",
+    "Status": "Completed",
+    "ExerciseId": 3
+  }
+]

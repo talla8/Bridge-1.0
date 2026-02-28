@@ -1,0 +1,23 @@
+[
+  {
+    "ExerciseId": 1,
+    "GradeId": 1,
+    "SubjectId": 1,
+    "Title": "Fractions Warm-up",
+    "Difficulty": 2
+  },
+  {
+    "ExerciseId": 2,
+    "GradeId": 1,
+    "SubjectId": 1,
+    "Title": "Patterns and Rules",
+    "Difficulty": 3
+  },
+  {
+    "ExerciseId": 3,
+    "GradeId": 2,
+    "SubjectId": 2,
+    "Title": "Short Story Questions",
+    "Difficulty": 2
+  }
+]

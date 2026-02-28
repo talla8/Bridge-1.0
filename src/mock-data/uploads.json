@@ -1,0 +1,18 @@
+[
+  {
+    "UploadId": 1,
+    "TeacherId": 1,
+    "SubjectId": 1,
+    "FilePath": "baseline-samples/grade4A_math_baseline.xlsx",
+    "Status": "Processed",
+    "CreatedAt": "2026-02-10T09:30:00Z"
+  },
+  {
+    "UploadId": 2,
+    "TeacherId": 2,
+    "SubjectId": 2,
+    "FilePath": "baseline-samples/grade4B_arabic_baseline.xlsx",
+    "Status": "Processed",
+    "CreatedAt": "2026-02-11T10:15:00Z"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "StudentId": 1,
+    "fullName": "Lina Saad",
+    "parentId": 1,
+    "GradeId": 1,
+    "SchoolId": 1,
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": 2,
+    "fullName": "Yousef Saad",
+    "parentId": 1,
+    "GradeId": 1,
+    "SchoolId": 1,
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": 3,
+    "fullName": "Rana Mona",
+    "parentId": 2,
+    "GradeId": 2,
+    "SchoolId": 1,
+    "ParentRelation": "Mother",
+    "IsActive": true
+  }
+]

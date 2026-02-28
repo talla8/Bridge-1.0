@@ -1,0 +1,23 @@
+[
+  {
+    "AttendanceId": 1,
+    "GradeId": 1,
+    "StudentId": 1,
+    "AttDate": "2026-02-16",
+    "Status": "Present"
+  },
+  {
+    "AttendanceId": 2,
+    "GradeId": 1,
+    "StudentId": 2,
+    "AttDate": "2026-02-16",
+    "Status": "Absent"
+  },
+  {
+    "AttendanceId": 3,
+    "GradeId": 2,
+    "StudentId": 3,
+    "AttDate": "2026-02-16",
+    "Status": "Present"
+  }
+]

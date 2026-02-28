@@ -1,0 +1,17 @@
+[
+  {
+    "SkillId": 1,
+    "ExerciseId": 1,
+    "Weight": 0.60
+  },
+  {
+    "SkillId": 2,
+    "ExerciseId": 2,
+    "Weight": 0.40
+  },
+  {
+    "SkillId": 3,
+    "ExerciseId": 3,
+    "Weight": 1.00
+  }
+]
