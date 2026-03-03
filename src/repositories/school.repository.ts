@@ -1,7 +1,9 @@
+import { School } from 'src/domain/school';
+
 export interface SchoolRepository {
-  create(school: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(school: School): Promise<School>;
+  findById(id: string): Promise<School | null>;
+  findAll(): Promise<School[]>;
+  update(id: string, patch: Partial<School>): Promise<School | null>;
   delete(id: string): Promise<boolean>;
 }

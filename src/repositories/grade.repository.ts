@@ -1,7 +1,11 @@
+import { Grade } from 'src/domain/grade';
+import { UserId } from 'src/domain/ids';
+
 export interface GradeRepository {
-  create(grade: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(grade: Grade): Promise<Grade>;
+  findById(id: string): Promise<Grade | null>;
+  findByTeacherId(teacherId: UserId): Promise<Grade | null>;
+  findAll(): Promise<Grade[]>;
+  update(id: string, patch: Partial<Grade>): Promise<Grade | null>;
   delete(id: string): Promise<boolean>;
 }

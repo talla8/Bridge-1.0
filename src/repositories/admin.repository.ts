@@ -1,7 +1,9 @@
+import { User } from 'src/domain/user';
+
 export interface AdminRepository {
-  create(admin: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(admin: User): Promise<User>;
+  findById(id: string): Promise<User | null>;
+  findAll(): Promise<User[]>;
+  update(id: string, patch: Partial<User>): Promise<User | null>;
   delete(id: string): Promise<boolean>;
 }

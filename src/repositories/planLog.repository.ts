@@ -1,7 +1,9 @@
+import { PlanLog } from 'src/domain/planLog';
+
 export interface PlanLogRepository {
-  create(planLog: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(planLog: PlanLog): Promise<PlanLog>;
+  findById(id: string): Promise<PlanLog | null>;
+  findAll(): Promise<PlanLog[]>;
+  update(id: string, patch: Partial<PlanLog>): Promise<PlanLog | null>;
   delete(id: string): Promise<boolean>;
 }

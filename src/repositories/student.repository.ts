@@ -1,9 +1,12 @@
+import { Student } from 'src/domain/student';
+
 export interface StudentRepository {
-  create(student: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  findByParentId(parentId: string): Promise <any | null>;
-  findByGradeId(gradeId: string): Promise <any | null>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(student: Student): Promise<Student>;
+  createMany(students: Student[]): Promise<Student[]>;
+  findById(id: string): Promise<Student | null>;
+  findAll(): Promise<Student[]>;
+  findByParentId(parentId: string): Promise<Student[]>;
+  findByGradeId(gradeId: string): Promise<Student[]>;
+  update(id: string, patch: Partial<Student>): Promise<Student | null>;
   delete(id: string): Promise<boolean>;
 }

@@ -10,16 +10,16 @@ export interface UserRepository {
     role?: string;
     isActive?: boolean | string;
     search?: string;
-  }): Promise<any[]>;
+  }): Promise<User[]>;
 
   findByEmail(email: string): Promise<User | null>;
 
-  existsByEmail(email: string): Promise<User | null>;
+  existsByEmail(email: string): Promise<boolean>;
 
   update(
     id: string,
-    patch: Partial<Omit<any, 'id' | 'CreatedAt'>>,
+    patch: Partial<Omit<User, 'id' | 'CreatedAt'>>,
   ): Promise<User | null>;
 
-  exists(id: string): Promise<User | null>;
+  exists(id: string): Promise<boolean>;
 }

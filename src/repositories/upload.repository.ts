@@ -1,7 +1,9 @@
+import { Upload } from 'src/domain/upload';
+
 export interface UploadRepository {
-  create(upload: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(upload: Upload): Promise<Upload>;
+  findById(id: string): Promise<Upload | null>;
+  findAll(): Promise<Upload[]>;
+  update(id: string, patch: Partial<Upload>): Promise<Upload | null>;
   delete(id: string): Promise<boolean>;
 }

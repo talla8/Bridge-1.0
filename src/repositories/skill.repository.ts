@@ -1,7 +1,9 @@
+import { Skill } from 'src/domain/skill';
+
 export interface SkillRepository {
-  create(skill: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(skill: Skill): Promise<Skill>;
+  findById(id: string): Promise<Skill | null>;
+  findAll(): Promise<Skill[]>;
+  update(id: string, patch: Partial<Skill>): Promise<Skill | null>;
   delete(id: string): Promise<boolean>;
 }

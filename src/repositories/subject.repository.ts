@@ -1,7 +1,9 @@
+import { Subject } from 'src/domain/subject';
+
 export interface SubjectRepository {
-  create(subject: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(subject: Subject): Promise<Subject>;
+  findById(id: string): Promise<Subject | null>;
+  findAll(): Promise<Subject[]>;
+  update(id: string, patch: Partial<Subject>): Promise<Subject | null>;
   delete(id: string): Promise<boolean>;
 }

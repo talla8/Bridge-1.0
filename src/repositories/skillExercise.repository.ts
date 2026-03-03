@@ -1,7 +1,12 @@
+import { SkillExercise } from 'src/domain/skillExercise';
+
 export interface SkillExerciseRepository {
-  create(skillExercise: any): Promise<any>; 
-  findById(id: string): Promise<any | null>;
-  findAll(): Promise<any[]>;
-  update(id: string, patch: Partial<any>): Promise<any | null>;
+  create(skillExercise: SkillExercise): Promise<SkillExercise>;
+  findById(id: string): Promise<SkillExercise | null>;
+  findAll(): Promise<SkillExercise[]>;
+  update(
+    id: string,
+    patch: Partial<SkillExercise>,
+  ): Promise<SkillExercise | null>;
   delete(id: string): Promise<boolean>;
 }
