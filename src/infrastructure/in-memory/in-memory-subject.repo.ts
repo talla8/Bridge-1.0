@@ -1,37 +1,35 @@
-import { SubjectRepository } from 'src/repositories/subject.repository';
 import { Injectable } from '@nestjs/common';
+import { Subject } from 'src/domain/subject';
+import { SubjectRepository } from 'src/repositories/subject.repository';
 
 @Injectable()
 export class InMemorySubjectsRepo implements SubjectRepository {
-  private subjects: any[] = [];
+  private subjects: Subject[] = [];
 
-  async create(subject: any): Promise<any> {
+  async create(subject: Subject): Promise<Subject> {
     this.subjects.push(subject);
     return subject;
   }
 
-  async findById(id: string): Promise<any | null> {
-    return this.subjects.find(function (subject: any): boolean {
-      return subject.id === id;
-    });
+  async findById(id: string): Promise<Subject | null> {
+    return this.subjects.find((subject: Subject): boolean => subject.subjectId === id) ?? null;
   }
 
-  async findAll(): Promise<any[]> {
+  async findAll(): Promise<Subject[]> {
     return this.subjects;
   }
 
-  async update(id: string, patch: Partial<any>): Promise<any | null> {
-    const index = this.subjects.findIndex((item: any): boolean => item.id === id);
+  async update(id: string, patch: Partial<Subject>): Promise<Subject | null> {
+    const index = this.subjects.findIndex((item: Subject): boolean => item.subjectId === id);
     if (index === -1) return null;
 
-    const current = this.subjects[index];
-    const updated = { ...current, ...patch };
+    const updated: Subject = { ...this.subjects[index], ...patch };
     this.subjects[index] = updated;
     return updated;
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.subjects.findIndex((item: any): boolean => item.id === id);
+    const index = this.subjects.findIndex((item: Subject): boolean => item.subjectId === id);
     if (index === -1) return false;
 
     this.subjects.splice(index, 1);

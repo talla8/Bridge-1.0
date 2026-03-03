@@ -1,49 +1,52 @@
-import { StudentRepository } from 'src/repositories/student.repository';
 import { Injectable } from '@nestjs/common';
+import { Student } from 'src/domain/student';
+import { StudentRepository } from 'src/repositories/student.repository';
 
 @Injectable()
 export class InMemoryStudentsRepo implements StudentRepository {
-  private students: any[] = [];
+  private students: Student[] = [];
 
-  async create(student: any): Promise<any> {
+  async create(student: Student): Promise<Student> {
     this.students.push(student);
     return student;
   }
 
-  async findById(id: string): Promise<any | null> {
-    return this.students.find(function (student: any): boolean {
-      return student.id === id;
-    });
+  async createMany(students: Student[]): Promise<Student[]> {
+    this.students.push(...students);
+    return students;
   }
 
-    async findByParentId(parentid: string): Promise<any | null> {
-    return this.students.find(function (student: any): boolean {
-      return student.parentId === parentid;
-    });
-  } 
+  async findById(id: string): Promise<Student | null> {
+    return this.students.find((student: Student): boolean => student.studentId === id) ?? null;
+  }
 
-      async findByGradeId(gradeId: string): Promise<any | null> {
-    return this.students.find(function (student: any): boolean {
-      return student.gradeId === gradeId;
-    });
-  } 
+  async findByParentId(parentId: string): Promise<Student[]> {
+    return this.students.filter(
+      (student: Student): boolean => student.parentId === parentId,
+    );
+  }
 
-  async findAll(): Promise<any[]> {
+  async findByGradeId(gradeId: string): Promise<Student[]> {
+    return this.students.filter(
+      (student: Student): boolean => student.gradeId === gradeId,
+    );
+  }
+
+  async findAll(): Promise<Student[]> {
     return this.students;
   }
 
-  async update(id: string, patch: Partial<any>): Promise<any | null> {
-    const index = this.students.findIndex((item: any): boolean => item.id === id);
+  async update(id: string, patch: Partial<Student>): Promise<Student | null> {
+    const index = this.students.findIndex((item: Student): boolean => item.studentId === id);
     if (index === -1) return null;
 
-    const current = this.students[index];
-    const updated = { ...current, ...patch };
+    const updated: Student = { ...this.students[index], ...patch };
     this.students[index] = updated;
     return updated;
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.students.findIndex((item: any): boolean => item.id === id);
+    const index = this.students.findIndex((item: Student): boolean => item.studentId === id);
     if (index === -1) return false;
 
     this.students.splice(index, 1);

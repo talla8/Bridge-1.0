@@ -1,51 +1,51 @@
-import { TeacherRepository } from 'src/repositories/teacher.repository';
 import { Injectable } from '@nestjs/common';
+import { User } from 'src/domain/user';
+import { TeacherRepository } from 'src/repositories/teacher.repository';
 
 @Injectable()
 export class InMemoryTeachersRepo implements TeacherRepository {
-  private teachers: any[] = [];
+  private teachers: User[] = [];
 
-  async create(teacher: any): Promise<any> {
+  async create(teacher: User): Promise<User> {
     this.teachers.push(teacher);
     return teacher;
   }
 
-  async findById(id: string): Promise<any | null> {
-    return this.teachers.find(function (teacher: any): boolean {
-      return teacher.id === id;
-    });
+  async findById(id: string): Promise<User> {
+    const teacher = this.teachers.find((item: User): boolean => item.userId === id);
+    if (!teacher) {
+      throw new Error('Teacher not found');
+    }
+    return teacher;
   }
 
-  async findAll(): Promise<any[]> {
+  async findByEmail(email: string): Promise<User> {
+    const teacher = this.teachers.find((item: User): boolean => item.email === email);
+    if (!teacher) {
+      throw new Error('Teacher not found');
+    }
+    return teacher;
+  }
+
+  async existsByEmail(email: string): Promise<boolean> {
+    return this.teachers.some((teacher: User): boolean => teacher.email === email);
+  }
+
+  async findAll(): Promise<User[]> {
     return this.teachers;
   }
 
-  async update(id: string, patch: Partial<any>): Promise<any | null> {
-    const index = this.teachers.findIndex((item: any): boolean => item.id === id);
+  async update(id: string, patch: Partial<User>): Promise<User | null> {
+    const index = this.teachers.findIndex((item: User): boolean => item.userId === id);
     if (index === -1) return null;
 
-    const current = this.teachers[index];
-    const updated = { ...current, ...patch };
+    const updated: User = { ...this.teachers[index], ...patch };
     this.teachers[index] = updated;
     return updated;
   }
 
-  async findByEmail(email: string): Promise<any | null> {
-    return this.teachers.find(function (teacher: any): boolean {
-      return teacher.email === email;
-    });
-  }
-
-    async existsByEmail(email: string): Promise <any|null>{
-        const result: boolean = this.teachers.find(function (teacher: any): boolean {
-      return teacher.email === email;
-    });
-    if (result)
-      return true; 
-  } //need rewriting : logic is working right 
-
   async delete(id: string): Promise<boolean> {
-    const index = this.teachers.findIndex((item: any): boolean => item.id === id);
+    const index = this.teachers.findIndex((item: User): boolean => item.userId === id);
     if (index === -1) return false;
 
     this.teachers.splice(index, 1);

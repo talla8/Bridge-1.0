@@ -1,52 +1,47 @@
-import { ParentRepository } from 'src/repositories/parent.repository';
 import { Injectable } from '@nestjs/common';
+import { User } from 'src/domain/user';
+import { ParentRepository } from 'src/repositories/parent.repository';
 
 @Injectable()
 export class InMemoryParentsRepo implements ParentRepository {
-  private parents: any[] = [];
+  private parents: User[] = [];
 
-  async create(parent: any): Promise<any> {
+  async create(parent: User): Promise<User> {
     this.parents.push(parent);
     return parent;
   }
 
-  async findById(id: string): Promise<any | null> {
-    return this.parents.find(function (parent: any): boolean {
-      return parent.id === id;
-    });
+  async findById(id: string): Promise<User | null> {
+    return this.parents.find((parent: User): boolean => parent.userId === id) ?? null;
   }
 
-  async findAll(): Promise<any[]> {
+  async findByEmail(email: string): Promise<User> {
+    const parent = this.parents.find((item: User): boolean => item.email === email);
+    if (!parent) {
+      throw new Error('Parent not found');
+    }
+    return parent;
+  }
+
+  async existsByEmail(email: string): Promise<boolean> {
+    return this.parents.some((user: User): boolean => user.email === email);
+  }
+
+  async findAll(): Promise<User[]> {
     return this.parents;
   }
 
-  async update(id: string, patch: Partial<any>): Promise<any | null> {
-    const index = this.parents.findIndex((item: any): boolean => item.id === id);
+  async update(id: string, patch: Partial<User>): Promise<User | null> {
+    const index = this.parents.findIndex((item: User): boolean => item.userId === id);
     if (index === -1) return null;
 
-    const current = this.parents[index];
-    const updated = { ...current, ...patch };
+    const updated: User = { ...this.parents[index], ...patch };
     this.parents[index] = updated;
     return updated;
   }
 
-  async findByEmail(email: string): Promise<any | null> {
-    return this.parents.find(function (parent: any): boolean {
-      return parent.email === email;
-    });
-  }
-
-  async existsByEmail(email: string): Promise <any|null>{
-        const result: any = this.parents.find(function (user: any): boolean {
-      return user.email === email;
-    });
-    if (result)
-      return true; 
-    return false;
-  } //need rewriting : logic is working right 
-
   async delete(id: string): Promise<boolean> {
-    const index = this.parents.findIndex((item: any): boolean => item.id === id);
+    const index = this.parents.findIndex((item: User): boolean => item.userId === id);
     if (index === -1) return false;
 
     this.parents.splice(index, 1);

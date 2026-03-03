@@ -1,41 +1,29 @@
-import { UserRepository } from 'src/repositories/user.repository';
 import { Injectable } from '@nestjs/common';
+import { User } from 'src/domain/user';
+import { UserRepository } from 'src/repositories/user.repository';
 
 @Injectable()
 export class InMemoryUsersRepo implements UserRepository {
-  private users: any[] = [];
+  private users: User[] = [];
 
-  async create(user: any): Promise<any> {
-    const normalized = {
-      userId: user.userId ?? user.UserId,
-      fullName: user.fullName ?? user.FullName,
-      email: user.email ?? user.Email,
-      passwordHash: user.passwordHash ?? user.PasswordHash,
-      role: user.role ?? user.RoleId,
-      isActive: user.isActive ?? user.IsActive ?? true,
-    };
-    this.users.push(normalized);
-    return normalized;
+  async create(user: User): Promise<User> {
+    this.users.push(user);
+    return user;
   }
 
-  async findByEmail(email: string): Promise<any | null> {
-    return this.users.find(function (user: any): boolean {
-      return user.email === email;
-    });
+  async findByEmail(email: string): Promise<User | null> {
+    return this.users.find((user: User): boolean => user.email === email) ?? null;
   }
 
-  async existsByEmail(email: string): Promise<any | null> {
-    const result = this.users.find(function (user: any): boolean {
-      return user.email === email;
-    });
-    return !!result;
+  async existsByEmail(email: string): Promise<boolean> {
+    return this.users.some((user: User): boolean => user.email === email);
   }
 
   async findAll(filters?: {
     role?: string;
     isActive?: boolean | string;
     search?: string;
-  }): Promise<any[]> {
+  }): Promise<User[]> {
     if (!filters) return this.users;
 
     const role = filters.role?.toLowerCase();
@@ -45,31 +33,25 @@ export class InMemoryUsersRepo implements UserRepository {
         ? filters.isActive.toLowerCase() === 'true'
         : filters.isActive;
 
-    return this.users.filter((user: any): boolean => {
-      const roleOk = role
-        ? String(user.role ?? '').toLowerCase() === role
-        : true;
+    return this.users.filter((user: User): boolean => {
+      const roleOk = role ? String(user.roleId ?? '').toLowerCase() === role : true;
       const activeOk =
-        isActive !== undefined
-          ? String(user.isActive ?? '').toLowerCase() === String(isActive)
-          : true;
+        isActive !== undefined ? Boolean(user.isActive) === Boolean(isActive) : true;
       const searchOk = search
-        ? String(user.fullName ?? '').toLowerCase().includes(search) ||
-          String(user.email ?? '').toLowerCase().includes(search)
+        ? user.fullName.toLowerCase().includes(search) ||
+          user.email.toLowerCase().includes(search)
         : true;
 
       return roleOk && activeOk && searchOk;
     });
   }
 
-  async findById(id: string): Promise<any | null> {
-    return this.users.find(function (user: any): boolean {
-      return user.userId === id;
-    });
+  async findById(id: string): Promise<User | null> {
+    return this.users.find((user: User): boolean => user.userId === id) ?? null;
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.users.findIndex((user: any): boolean => user.userId === id);
+    const index = this.users.findIndex((user: User): boolean => user.userId === id);
     if (index === -1) return false;
 
     this.users[index] = {
@@ -81,33 +63,18 @@ export class InMemoryUsersRepo implements UserRepository {
 
   async update(
     id: string,
-    patch: Partial<Omit<any, 'id' | 'createdAt'>>,
-  ): Promise<any | null> {
-    //1 fins the right user :
-
-    let index: number = this.users.findIndex(function (user: any): any {
-      if (user.userId === id) return user;  
-    });
+    patch: Partial<Omit<User, 'userId'>>,
+  ): Promise<User | null> {
+    const index = this.users.findIndex((user: User): boolean => user.userId === id);
     if (index === -1) return null;
-    const current: any  = this.users[index];
 
-    //2: merge :
-    let updated: any={...current,...patch};
-    this.users[index] = updated; 
-    
+    const updated: User = { ...this.users[index], ...patch };
+    this.users[index] = updated;
+
     return updated;
   }
 
-  async exists(id: string) : Promise<any | null> {
-
-    let target: number = this.users.find(function (user: any): any {
-      if (user.userId === id) return user.userId;  
-    });
-
-    if(target) return true;
-    else return false;
-
+  async exists(id: string): Promise<boolean> {
+    return this.users.some((user: User): boolean => user.userId === id);
   }
-
-  
 }

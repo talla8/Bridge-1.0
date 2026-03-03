@@ -1,37 +1,40 @@
-import { GradeRepository } from 'src/repositories/grade.repository';
 import { Injectable } from '@nestjs/common';
+import { Grade } from 'src/domain/grade';
+import { UserId } from 'src/domain/ids';
+import { GradeRepository } from 'src/repositories/grade.repository';
 
 @Injectable()
 export class InMemoryGradesRepo implements GradeRepository {
-  private grades: any[] = [];
+  private grades: Grade[] = [];
 
-  async create(grade: any): Promise<any> {
+  async create(grade: Grade): Promise<Grade> {
     this.grades.push(grade);
     return grade;
   }
 
-  async findById(id: string): Promise<any | null> {
-    return this.grades.find(function (grade: any): boolean {
-      return grade.id === id;
-    });
+  async findById(id: string): Promise<Grade | null> {
+    return this.grades.find((grade: Grade): boolean => grade.gradeId === id) ?? null;
   }
 
-  async findAll(): Promise<any[]> {
+  async findByTeacherId(teacherId: UserId): Promise<Grade | null> {
+    return this.grades.find((grade: Grade): boolean => grade.teacherId === teacherId) ?? null;
+  }
+
+  async findAll(): Promise<Grade[]> {
     return this.grades;
   }
 
-  async update(id: string, patch: Partial<any>): Promise<any | null> {
-    const index = this.grades.findIndex((item: any): boolean => item.id === id);
+  async update(id: string, patch: Partial<Grade>): Promise<Grade | null> {
+    const index = this.grades.findIndex((item: Grade): boolean => item.gradeId === id);
     if (index === -1) return null;
 
-    const current = this.grades[index];
-    const updated = { ...current, ...patch };
+    const updated: Grade = { ...this.grades[index], ...patch };
     this.grades[index] = updated;
     return updated;
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.grades.findIndex((item: any): boolean => item.id === id);
+    const index = this.grades.findIndex((item: Grade): boolean => item.gradeId === id);
     if (index === -1) return false;
 
     this.grades.splice(index, 1);

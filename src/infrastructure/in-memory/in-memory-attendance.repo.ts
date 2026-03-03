@@ -1,49 +1,59 @@
-import { AttendanceRepository } from 'src/repositories/attendance.repository';
 import { Injectable } from '@nestjs/common';
+import { Attendance } from 'src/domain/attendance';
+import { AttendanceRepository } from 'src/repositories/attendance.repository';
 
 @Injectable()
 export class InMemoryAttendancesRepo implements AttendanceRepository {
-  private attendances: any[] = [];
+  private attendances: Attendance[] = [];
 
-  async upsert(attendance: any): Promise<any> {
-    this.attendances.push(attendance);
+  async upsert(attendance: Attendance): Promise<Attendance> {
+    const index = this.attendances.findIndex(
+      (item: Attendance): boolean => item.attendanceId === attendance.attendanceId,
+    );
+
+    if (index === -1) {
+      this.attendances.push(attendance);
+      return attendance;
+    }
+
+    this.attendances[index] = attendance;
     return attendance;
-  }  // retake a look at this when you decide how exactly are you going to define this 
-
-  async findById(id: string): Promise<any | null> {
-    return this.attendances.find(function (attendance: any): boolean {
-      return attendance.id === id;
-    });
   }
 
-    async findByStudentId(id: string): Promise<any | null> {
-    return this.attendances.find(function (attendance: any): boolean {
-      return attendance.studentId === id;
-    });
+  async findById(id: string): Promise<Attendance | null> {
+    return (
+      this.attendances.find((attendance: Attendance): boolean => attendance.attendanceId === id) ??
+      null
+    );
   }
 
-      async findByClassId(id: string): Promise<any | null> {
-    return this.attendances.find(function (attendance: any): boolean {
-      return attendance.classId === id;
-    });
+  async findByStudentId(id: string): Promise<Attendance | null> {
+    return this.attendances.find((attendance: Attendance): boolean => attendance.studentId === id) ?? null;
   }
 
-  async findAll(): Promise<any[]> {
+  async findByClassId(id: string): Promise<Attendance | null> {
+    return this.attendances.find((attendance: Attendance): boolean => attendance.gradeId === id) ?? null;
+  }
+
+  async findAll(): Promise<Attendance[]> {
     return this.attendances;
   }
 
-  async update(id: string, patch: Partial<any>): Promise<any | null> {
-    const index = this.attendances.findIndex((item: any): boolean => item.id === id);
+  async update(id: string, patch: Partial<Attendance>): Promise<Attendance | null> {
+    const index = this.attendances.findIndex(
+      (item: Attendance): boolean => item.attendanceId === id,
+    );
     if (index === -1) return null;
 
-    const current = this.attendances[index];
-    const updated = { ...current, ...patch };
+    const updated: Attendance = { ...this.attendances[index], ...patch };
     this.attendances[index] = updated;
     return updated;
-  }  // retake a look at this when you decide how exactly are you going to define this  // should this and upsert be in one method? 
+  }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.attendances.findIndex((item: any): boolean => item.id === id);
+    const index = this.attendances.findIndex(
+      (item: Attendance): boolean => item.attendanceId === id,
+    );
     if (index === -1) return false;
 
     this.attendances.splice(index, 1);

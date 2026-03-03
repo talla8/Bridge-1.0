@@ -1,37 +1,41 @@
-import { AdminRepository } from 'src/repositories/admin.repository';
 import { Injectable } from '@nestjs/common';
+import { User } from 'src/domain/user';
+import { AdminRepository } from 'src/repositories/admin.repository';
 
 @Injectable()
 export class InMemoryAdminsRepo implements AdminRepository {
-  private admins: any[] = [];
+  private admins: User[] = [];
 
-  async create(admin: any): Promise<any> {
+  async create(admin: User): Promise<User> {
     this.admins.push(admin);
     return admin;
   }
 
-  async findById(id: string): Promise<any | null> {
-    return this.admins.find(function (admin: any): boolean {
-      return admin.id === id;
-    });
+  async findById(id: string): Promise<User | null> {
+    return (
+      this.admins.find((admin: User): boolean => admin.userId === id) ?? null
+    );
   }
 
-  async findAll(): Promise<any[]> {
+  async findAll(): Promise<User[]> {
     return this.admins;
   }
 
-  async update(id: string, patch: Partial<any>): Promise<any | null> {
-    const index = this.admins.findIndex((item: any): boolean => item.id === id);
+  async update(id: string, patch: Partial<User>): Promise<User | null> {
+    const index = this.admins.findIndex(
+      (item: User): boolean => item.userId === id,
+    );
     if (index === -1) return null;
 
-    const current = this.admins[index];
-    const updated = { ...current, ...patch };
+    const updated: User = { ...this.admins[index], ...patch };
     this.admins[index] = updated;
     return updated;
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.admins.findIndex((item: any): boolean => item.id === id);
+    const index = this.admins.findIndex(
+      (item: User): boolean => item.userId === id,
+    );
     if (index === -1) return false;
 
     this.admins.splice(index, 1);

@@ -1,48 +1,66 @@
-import { AssesmentResultRepository } from 'src/repositories/assesmentResult.repository';
 import { Injectable } from '@nestjs/common';
+import { AssesmentResult } from 'src/domain/assesmentResult';
+import { AssesmentResultRepository } from 'src/repositories/assesmentResult.repository';
 
 @Injectable()
 export class InMemoryAssesmentResultsRepo implements AssesmentResultRepository {
-  private assesmentResults: any[] = [];
+  private assesmentResults: AssesmentResult[] = [];
 
-  async create(assesmentResult: any): Promise<any> {
+  async create(assesmentResult: AssesmentResult): Promise<AssesmentResult> {
     this.assesmentResults.push(assesmentResult);
     return assesmentResult;
   }
 
-  async createMany(assesmentResults: any[]): Promise<any[]> {
+  async createAssesmentResult(
+    assesmentResults: AssesmentResult[],
+  ): Promise<AssesmentResult[]> {
     this.assesmentResults.push(...assesmentResults);
     return assesmentResults;
   }
 
-  async findById(id: string): Promise<any | null> {
-    return this.assesmentResults.find(function (assesmentResult: any): boolean {
-      return assesmentResult.id === id;
-    });
+  async findById(id: string): Promise<AssesmentResult | null> {
+    return (
+      this.assesmentResults.find(
+        (assesmentResult: AssesmentResult): boolean =>
+          assesmentResult.resultId === id,
+      ) ?? null
+    );
   }
 
-    async findByUploadId(id: string): Promise<any | null> {
-    return this.assesmentResults.find(function (assesmentResult: any): boolean {
-      return assesmentResult.uploadId === id;
-    });
+  async findByUploadId(id: string): Promise<AssesmentResult | null> {
+    return (
+      this.assesmentResults.find(
+        (assesmentResult: AssesmentResult): boolean =>
+          assesmentResult.uploadId === id,
+      ) ?? null
+    );
   }
 
-  async findAll(): Promise<any[]> {
+  async findAll(): Promise<AssesmentResult[]> {
     return this.assesmentResults;
   }
 
-  async update(id: string, patch: Partial<any>): Promise<any | null> {
-    const index = this.assesmentResults.findIndex((item: any): boolean => item.id === id);
+  async update(
+    id: string,
+    patch: Partial<AssesmentResult>,
+  ): Promise<AssesmentResult | null> {
+    const index = this.assesmentResults.findIndex(
+      (item: AssesmentResult): boolean => item.resultId === id,
+    );
     if (index === -1) return null;
 
-    const current = this.assesmentResults[index];
-    const updated = { ...current, ...patch };
+    const updated: AssesmentResult = {
+      ...this.assesmentResults[index],
+      ...patch,
+    };
     this.assesmentResults[index] = updated;
     return updated;
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.assesmentResults.findIndex((item: any): boolean => item.id === id);
+    const index = this.assesmentResults.findIndex(
+      (item: AssesmentResult): boolean => item.resultId === id,
+    );
     if (index === -1) return false;
 
     this.assesmentResults.splice(index, 1);
