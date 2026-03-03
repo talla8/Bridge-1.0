@@ -1,11 +1,17 @@
 import { GradeId, SchoolId, UserId, StudentId } from './ids';
 
-export class Exercise {
+export enum ParentRelation {
+  FATHER = 'Father',
+  MOTHER = 'Mother',
+  GUARDIAN = 'Guardian',
+}
+
+export class Student {
   studentId: StudentId;
   fullName: string;
   parentId: UserId;
   gradeId: GradeId;
   schoolId: SchoolId;
-  parentRelation: string; //union 
+  parentRelation: ParentRelation;
   isActive: boolean;
 }

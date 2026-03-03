@@ -1,6 +1,6 @@
 import { SchoolId } from './ids';
 
-export class Exercise {
+export class School {
   schoolId: SchoolId;
   schoolName: string;
 }

@@ -1,9 +1,13 @@
 import { GradeId, SchoolId, UserId } from './ids';
 
-export class Exercise {
+export enum GradeName {
+  First = 'First Grade',
+  Second = 'Second Grade',
+  Third = 'Third Grade',
+}
+export class Grade {
   gradeId: GradeId;
-  gradeName: string; //union type would be mre suitable
-  gradeSection: string;
+  gradeName: GradeName;
   schoolId: SchoolId;
   teacherId: UserId;
 }

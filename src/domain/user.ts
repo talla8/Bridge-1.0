@@ -7,7 +7,7 @@ export enum RoleId {
 
 export class User {
   userId: UserId;
-  fulllName: string;
+  fullName: string;
   email: string;
   passwordHash: string;
   roleId: RoleId;

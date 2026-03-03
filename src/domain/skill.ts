@@ -1,7 +1,7 @@
-import { GradeId, SchoolId, SkillId, SubjectId } from './ids';
+import { GradeId, SkillId, SubjectId } from './ids';
 
-export class Exercise {
-  skillId: SkillId[];
+export class Skill {
+  skillId: SkillId;
   subjectId: SubjectId;
   gradeId: GradeId;
   code: string; //unioin

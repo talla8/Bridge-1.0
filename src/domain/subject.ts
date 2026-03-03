@@ -1,6 +1,11 @@
-import { ExerciseId, GradeId, SchoolId, SkillId, StudentId, SubjectId } from './ids';
+import { SubjectId } from './ids';
 
-export class Exercise {
+export enum SubjectName {
+  MATH = 'Math',
+  ARABIC = 'Arabic',
+}
+
+export class Subject {
   subjectId: SubjectId;
   subjectName: string; //union
   schoolYear: string;
