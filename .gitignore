@@ -54,3 +54,23 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# macOS
+.DS_Store
+
+# Backend
+BackEnd/node_modules/
+BackEnd/dist/
+BackEnd/build/
+
+# Frontend / Visual Studio
+.vs/
+**/.vs/
+**/bin/
+**/obj/
+*.user
+
+# General
+node_modules/
+dist/
+build/

@@ -1,0 +1,315 @@
+﻿@{
+    ViewData["Title"] = "Teacher";
+}
+
+<div class="container py-4">
+
+    <div class="row g-4 align-items-stretch">
+
+        <div class="col-12 col-lg-6">
+            <div class="p-4 rounded-4 bg-info bg-opacity-25 h-100 d-flex align-items-center gap-4">
+
+                <img src="profile.jpg"
+                     class="rounded-circle img-fluid"
+                     style="width:110px;height:110px;object-fit:cover"
+                     alt="Profile">
+
+                <div>
+                    <h6 class="fw-bold mb-1 text-uppercase">
+                        Welcome, Mr Mohammad!
+                    </h6>
+
+                    <p class="mb-3 text-secondary">
+                        Everything you need to support your students is right here.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-3 text-secondary">
+                        <span>
+                            <i class="bi bi-book me-1"></i> Grade 3
+                        </span>
+                        <span>
+                            <i class="bi bi-diagram-3 me-1"></i> Section “B”
+                        </span>
+                        <span>
+                            <i class="bi bi-people me-1"></i> Total of 33 Students
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+            <div class="row g-4">
+
+                <div class="col-6">
+                    <div class="p-3 border rounded-4 h-100">
+                        <i class="bi bi-people fs-4"></i>
+                        <h5 class="fw-bold mt-2 mb-1">--</h5>
+                        <p class="text-secondary mb-0">attendance</p>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="p-3 border rounded-4 h-100">
+                        <i class="bi bi-mortarboard fs-4"></i>
+                        <h5 class="fw-bold mt-2 mb-1">0%</h5>
+                        <p class="text-secondary mb-0">overall progress</p>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="p-3 border rounded-4 h-100">
+                        <i class="bi bi-journal-check fs-4"></i>
+                        <h5 class="fw-bold mt-2 mb-1">100</h5>
+                        <p class="text-secondary mb-0">classes remaining</p>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="p-3 border rounded-4 h-100">
+                        <i class="bi bi-exclamation-triangle fs-4"></i>
+                        <h5 class="fw-bold mt-2 mb-1">4</h5>
+                        <p class="text-secondary mb-0">at risk students</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+
+            <h4 class="text-center fw-semibold mb-4">Upload</h4>
+
+            <div id="dropArea"
+                 class="border border-2 border-primary border-opacity-25 rounded-4 p-5 text-center bg-primary bg-opacity-10">
+
+                <i class="bi bi-cloud-arrow-up fs-1 text-primary mb-3 d-block"></i>
+
+                <div class="fw-semibold mb-1">
+                    Drag &amp; drop files or
+                    <label for="fileInput" class="text-primary text-decoration-underline ms-1" role="button">
+                        Browse
+                    </label>
+                </div>
+
+                <div class="small text-secondary mb-3">
+                    Supported formats: JPEG, PNG, GIF, MP4, PDF, PSD, AI, Word, PPT
+                </div>
+
+                <input id="fileInput" type="file" class="d-none" multiple>
+
+                <ul id="fileList" class="list-group list-group-flush text-start d-none"></ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const dropArea = document.getElementById("dropArea");
+    const fileInput = document.getElementById("fileInput");
+    const fileList = document.getElementById("fileList");
+
+    ["dragenter","dragover","dragleave","drop"].forEach(eventName => {
+      dropArea.addEventListener(eventName, e => e.preventDefault());
+    });
+
+    
+    dropArea.addEventListener("drop", e => {
+      handleFiles(e.dataTransfer.files);
+    });
+
+   
+    fileInput.addEventListener("change", e => {
+      handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+      fileList.innerHTML = "";
+      fileList.classList.remove("d-none");
+
+      Array.from(files).forEach(file => {
+        const li = document.createElement("li");
+        li.className = "list-group-item d-flex justify-content-between align-items-center";
+        li.innerHTML = `
+          <span>${file.name}</span>
+          <span class="badge bg-secondary">${(file.size / 1024).toFixed(1)} KB</span>
+        `;
+        fileList.appendChild(li);
+      });
+    }
+</script>
+<!-- Generate Button -->
+<div class="text-center mt-4">
+    <button class="btn btn-info rounded-pill px-5 fw-semibold">
+        <a class="nav-link fw-semibold" asp-controller="Home" asp-action="analysis">Generate</a>
+
+        
+    </button>
+</div>
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-primary text-opacity-75 mb-0">Skills list</h4>
+
+        <div class="d-flex gap-3">
+            <div class="dropdown">
+                <button class="btn btn-light border dropdown-toggle fw-semibold"
+                        data-bs-toggle="dropdown">
+                    Subject
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">English</a></li>
+                    <li><a class="dropdown-item" href="#">Math</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-light border dropdown-toggle fw-semibold"
+                        data-bs-toggle="dropdown">
+                    Filter by
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Highest</a></li>
+                    <li><a class="dropdown-item" href="#">Lowest</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="fw-semibold mb-2">Reading Fluency</div>
+        <div class="progress rounded-pill" style="height:16px">
+            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:92%"></div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="fw-semibold mb-2">Comprehension</div>
+        <div class="progress rounded-pill" style="height:16px">
+            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:88%"></div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <div class="fw-semibold mb-2">Vocabulary</div>
+        <div class="progress rounded-pill" style="height:16px">
+            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:90%"></div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <div class="fw-semibold mb-2">Listening</div>
+        <div class="progress rounded-pill" style="height:16px">
+            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:86%"></div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between text-primary text-opacity-75 small mt-3">
+        <span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span>
+        <span>50%</span><span>60%</span><span>70%</span><span>80%</span><span>90%</span><span>100%</span>
+    </div>
+
+</div>
+<div class="container py-5">
+
+  <h5 class="fw-bold text-warning mb-3">TO DO list:</h5>
+
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead class="table-warning">
+        <tr class="text-secondary fw-semibold">
+          <th scope="col" class="text-uppercase small">NO</th>
+          <th scope="col" class="text-uppercase small">Task</th>
+          <th scope="col" class="text-uppercase small">Lesson</th>
+          <th scope="col" class="text-uppercase small">Due Date</th>
+          <th scope="col" class="text-uppercase small">Status</th>
+          <th scope="col" class="text-uppercase small text-center">Action</th>
+        </tr>
+      </thead>
+
+      <tbody class="text-secondary">
+        <tr>
+          <td class="small">01</td>
+          <td class="small">
+            Exercise 12<br>
+            Page 22
+          </td>
+          <td class="small">Unit 1</td>
+          <td class="small">January 2, 2024</td>
+          <td class="small">
+            <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark px-3 py-2">
+              In Progress
+            </span>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-link text-dark p-1" title="Edit">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-link text-dark p-1" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="small">02</td>
+          <td class="small">Revision</td>
+          <td class="small">Unit 1</td>
+          <td class="small">January 2, 2024</td>
+          <td class="small">
+            <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark px-3 py-2">
+              In Progress
+            </span>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-link text-dark p-1" title="Edit">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-link text-dark p-1" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="small">03</td>
+          <td class="small">
+            Exercise 3<br>
+            Page 28
+          </td>
+          <td class="small">Unit 2</td>
+          <td class="small">January 3, 2024</td>
+          <td class="small">
+            <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark px-3 py-2">
+              In Progress
+            </span>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-link text-dark p-1" title="Edit">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-link text-dark p-1" title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <button class="btn btn-outline-secondary btn-sm px-4">Previous</button>
+    <div class="small text-secondary">Page 1 of 12</div>
+    <button class="btn btn-outline-secondary btn-sm px-4">Next</button>
+  </div>
+
+</div>
+

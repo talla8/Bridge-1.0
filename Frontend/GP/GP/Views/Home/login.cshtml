@@ -1,0 +1,130 @@
+﻿@{
+    ViewData["Title"] = "login";
+}
+
+
+
+
+
+<!-- CONTENT -->
+<div class="container py-5">
+    <div class="row align-items-center">
+
+        <!-- LEFT -->
+        <div class="col-lg-6">
+
+            <h1 class="fw-bold mb-1" id="formTitle">Welcome Back !</h1>
+            <p class="text-secondary mb-4" id="formSubtitle">
+                Please login to your account.
+            </p>
+
+            <!-- ERROR -->
+            @* <div id="errorBox"
+                 class="mb-3 p-3 rounded"
+                 style="background:#ffeaea;border:1px solid #ff6b6b;display:none">
+                <span class="fw-semibold text-danger">
+                    User Does Not Exist. Please Create a New Account.
+                </span>
+            </div> *@
+
+            <!-- FORM -->
+            <form>
+
+                <!-- FULL NAME (Sign Up only) -->
+                <div class="mb-3" id="fullNameBox" style="display:none">
+                    <input type="text"
+                           class="form-control p-3"
+                           placeholder="Full Name">
+                </div>
+
+                <div class="mb-3">
+                    <input type="email"
+                           class="form-control p-3"
+                           placeholder="Email Address">
+                </div>
+
+                <div class="mb-3">
+                    <input type="password"
+                           class="form-control p-3"
+                           placeholder="Password">
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox">
+                        <label class="form-check-label small">Remember Me</label>
+                    </div>
+                    <a href="#" class="small text-secondary">Forgot Password?</a>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="d-flex gap-3 mb-4">
+                    <button type="button"
+                            class="btn px-4 text-white"
+                            id="primaryBtn"
+                            style="background:#c9c6ff">
+                        Log in
+                    </button>
+
+                    <button type="button"
+                            class="btn px-4"
+                            id="switchBtn"
+                            style="border:1px solid #c9c6ff;color:#c9c6ff">
+                        Sign Up
+                    </button>
+                </div>
+
+                <div class="small text-secondary mb-2">Or login with</div>
+                <div class="d-flex gap-4 small">
+                    <a href="#" style="color:#c9c6ff">Facebook</a>
+                    <a href="#" style="color:#c9c6ff">LinkedIn</a>
+                    <a href="#" style="color:#c9c6ff">Google</a>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-lg-6 text-center">
+            <img src="illustration.png" class="img-fluid" style="max-height:420px">
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let isLogin = true;
+
+    const title = document.getElementById("formTitle");
+    const subtitle = document.getElementById("formSubtitle");
+    const primaryBtn = document.getElementById("primaryBtn");
+    const switchBtn = document.getElementById("switchBtn");
+    const fullNameBox = document.getElementById("fullNameBox");
+    const errorBox = document.getElementById("errorBox");
+
+    switchBtn.onclick = () => {
+      isLogin = !isLogin;
+
+      if(isLogin){
+        title.innerText = "Welcome Back !";
+        subtitle.innerText = "Please login to your account.";
+        primaryBtn.innerText = "Log in";
+        switchBtn.innerText = "Sign Up";
+        fullNameBox.style.display = "none";
+      }else{
+        title.innerText = "Welcome !";
+        subtitle.innerText = "Create your account.";
+        primaryBtn.innerText = "Sign Up";
+        switchBtn.innerText = "Login";
+        fullNameBox.style.display = "block";
+        errorBox.style.display = "none";
+      }
+    };
+
+    // DEMO ERROR
+    setTimeout(() => {
+      errorBox.style.display = "block";
+    }, 1000);
+</script>
+
+
