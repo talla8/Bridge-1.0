@@ -41,14 +41,11 @@ export class StudentsService {
     //we should find the user from users
     //or we should find all students with the same gradeId or parent id
     //we should determine the role or the user first:
-      console.log('userId =', userId);
     const user = await this.inMemoryUsersRepo.findById(userId);
-      console.log('found user =', user);
     if (user?.roleId === RoleId.Parent) {
       return this.inMemoryStudentsRepo.findByParentId(userId);
     } else if (user?.roleId === RoleId.Teacher) {
       const grade = await this.inMemoryGradeRepo.findByTeacherId(userId);
-          console.log('found grade =', grade);
       if (!grade) return [];
       return this.inMemoryStudentsRepo.findByGradeId(grade?.gradeId);
     } else {
