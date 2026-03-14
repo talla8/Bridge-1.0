@@ -1,11 +1,6 @@
 ﻿@{
     ViewData["Title"] = "login";
 }
-
-
-
-
-
 <!-- CONTENT -->
 <div class="container py-5">
     <div class="row align-items-center">
@@ -59,34 +54,36 @@
 
                 <!-- BUTTONS -->
                 <div class="d-flex gap-3 mb-4">
-                    <button type="button"
-                            class="btn px-4 text-white"
-                            id="primaryBtn"
-                            style="background:#c9c6ff">
+
+                    <a  asp-action="Index" asp-controller="Home" type="button"
+                       class="btn px-4 text-white"
+                       id="primaryBtn" style="background:#c9c6ff">
                         Log in
-                    </button>
+                    </a>
+                    
 
                     <button type="button"
                             class="btn px-4"
                             id="switchBtn"
                             style="border:1px solid #c9c6ff;color:#c9c6ff">
                         Sign Up
+
                     </button>
                 </div>
 
-                <div class="small text-secondary mb-2">Or login with</div>
-                <div class="d-flex gap-4 small">
+                @* <div class="small text-secondary mb-2">Or login with</div> *@
+                @* <div class="d-flex gap-4 small">
                     <a href="#" style="color:#c9c6ff">Facebook</a>
                     <a href="#" style="color:#c9c6ff">LinkedIn</a>
                     <a href="#" style="color:#c9c6ff">Google</a>
-                </div>
+                </div> *@
 
             </form>
         </div>
 
         <!-- RIGHT -->
         <div class="col-lg-6 text-center">
-            <img src="illustration.png" class="img-fluid" style="max-height:420px">
+            <img src="~/img/illustration.png" class="img-fluid" style="max-height:420px">
         </div>
 
     </div>

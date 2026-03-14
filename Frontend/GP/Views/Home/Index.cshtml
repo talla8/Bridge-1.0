@@ -8,6 +8,7 @@
             <div class="row align-items-center g-5">
 
                 <div class="col-12 col-lg-6">
+
                     <h1 class="fw-bold lh-sm mb-3">
                         Supporting Teachers,<br>
                         Because Every Student<br>
@@ -33,13 +34,12 @@
                         </div>
                     </div>
 
-                    <a href="#" class="btn btn-info rounded-pill px-4 py-2 fw-semibold">
+                    <a class="btn btn-info rounded-pill px-4 py-2 fw-semibold" asp-controller="Home" asp-action="login">
                         Get Started →
                     </a>
                 </div>
-
                 <div class="col-12 col-lg-6 text-center text-lg-end">
-                    <img src="~/img/Screenshot 2025-12-21 210830.png"
+                    <img src="~/img/illustration.png"
                          class="img-fluid"
                          alt="Teaching Illustration">
                 </div>
@@ -53,13 +53,12 @@
         <div class="container py-3">
 
             <div class="row g-4 justify-content-center">
-                <!-- Card 1 -->
+               
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 h-100">
                         <div class="card-body p-4 text-center">
                             <div class="d-flex justify-content-center mb-3">
-                                <!-- بدّل الصورة هاي بصورتك -->
-                                <img src="card1.png" alt="Understand Student Needs" class="img-fluid" style="max-height:70px;">
+                                <img src="~/img/student.png" alt="Understand Student Needs" class="img-fluid" style="max-height:70px;">
                             </div>
                             <h5 class="fw-bold mb-3">Understand Student<br>Needs</h5>
                             <p class="text-secondary mb-0">
@@ -68,13 +67,12 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Card 2 -->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 h-100">
                         <div class="card-body p-4 text-center">
                             <div class="d-flex justify-content-center mb-3">
-                                <img src="card2.png" alt="Class Learning Plans" class="img-fluid" style="max-height:70px;">
+                                <img src="~/img/class1.png" alt="Class Learning Plans" class="img-fluid" style="max-height:70px;">
                             </div>
                             <h5 class="fw-bold mb-3">Class<br>Learning<br>Plans</h5>
                             <p class="text-secondary mb-0">
@@ -84,13 +82,12 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Card 3 -->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 h-100">
                         <div class="card-body p-4 text-center">
                             <div class="d-flex justify-content-center mb-3">
-                                <img src="card3.png" alt="Extra Support" class="img-fluid" style="max-height:70px;">
+                                <img src="~/img/class2.png" alt="Extra Support" class="img-fluid" style="max-height:70px;">
                             </div>
                             <h5 class="fw-bold mb-3">Extra Support<br>for Struggling<br>Students</h5>
                             <p class="text-secondary mb-0">
@@ -104,7 +101,7 @@
 
             <!-- Button -->
             <div class="d-flex justify-content-center mt-4">
-                <a href="#" class="btn btn-info rounded-pill px-4 py-2 shadow-sm fw-semibold">
+                <a asp-controller="Home" asp-action="Teacher" class="btn btn-info rounded-pill px-4 py-2 shadow-sm fw-semibold">
                     Generate Plan Now <i class="bi bi-arrow-right ms-2"></i>
                 </a>
             </div>
@@ -135,14 +132,13 @@
                 </div>
 
                 <div class="col-12 col-lg-6 text-center text-lg-end">
-                    <img src="wf1.png" class="img-fluid" alt="Step 1">
+                    <img src="~/img/wf1.png" class="img-fluid" alt="Step 1">
                 </div>
             </div>
-
             <!-- STEP 2 -->
             <div class="row align-items-center g-4 mb-5 mt-4">
                 <div class="col-12 col-lg-6 order-2 order-lg-1 text-center text-lg-start">
-                    <img src="wf2.png" class="img-fluid" alt="Step 2">
+                    <img src="~/img/wf2.png" class="img-fluid" alt="Step 2">
                 </div>
 
                 <div class="col-12 col-lg-6 order-1 order-lg-2">
@@ -179,9 +175,8 @@
                         students’ progress over time.
                     </p>
                 </div>
-
                 <div class="col-12 col-lg-6 text-center text-lg-end">
-                    <img src="wf3.png" class="img-fluid" alt="Step 3">
+                    <img src="~/img/wf3.png" class="img-fluid" alt="Step 3">
                 </div>
             </div>
 
