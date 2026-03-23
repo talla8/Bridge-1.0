@@ -17,8 +17,18 @@ export class InMemoryStudentsRepo implements StudentRepository {
   }
 
   async findById(id: string): Promise<Student | null> {
-    return this.students.find((student: Student): boolean => student.studentId === id) ?? null;
+    return (
+      this.students.find(
+        (student: Student): boolean => student.studentId === id,
+      ) ?? null
+    );
   }
+
+  async findByArabicName(name: string): Promise<Student[]> {
+    return this.students.filter(
+      (student: Student): boolean => student.fullArabicName === name,
+    );
+  } //needs to be more flixable //fix
 
   async findByParentId(parentId: string): Promise<Student[]> {
     return this.students.filter(
@@ -37,8 +47,12 @@ export class InMemoryStudentsRepo implements StudentRepository {
   }
 
   async update(id: string, patch: Partial<Student>): Promise<Student | null> {
-    const index = this.students.findIndex((item: Student): boolean => item.studentId === id);
-    if (index === -1) return null;
+    const index = this.students.findIndex(
+      (item: Student): boolean => item.studentId === id,
+    );
+    if (index === -1) {
+      return null;
+    }
 
     const updated: Student = { ...this.students[index], ...patch };
     this.students[index] = updated;
@@ -46,7 +60,9 @@ export class InMemoryStudentsRepo implements StudentRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.students.findIndex((item: Student): boolean => item.studentId === id);
+    const index = this.students.findIndex(
+      (item: Student): boolean => item.studentId === id,
+    );
     if (index === -1) return false;
 
     this.students.splice(index, 1);

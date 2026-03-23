@@ -1,4 +1,4 @@
 export class CreateStudentDTO {
-  fullName: string;
+  fullEnglishName: string;
   grade: string;
 }

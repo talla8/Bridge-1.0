@@ -24,11 +24,12 @@ export class StudentsService {
     const mappedStudents: Student[] = students.map(
       (student: CreateStudentDTO, index: number): Student => ({
         studentId: `stu_${createdAt}_${index + 1}`, //check this if working apply it to other places
-        fullName: student.fullName,
+        fullEnglishName: student.fullEnglishName,
+        fullArabicName: student.fullEnglishName, //fix this
         // Temporary defaults for MVP while DTO is minimal.
         parentId: '', //also when creating a student
         gradeId: student.grade,
-        schoolId: '', //must be associated with the teacher
+        schoolName: '', //must be associated with the teacher
         parentRelation: ParentRelation.GUARDIAN, //Default //see a way to chnge it while creating a parents account
         isActive: true,
       }),
@@ -42,9 +43,9 @@ export class StudentsService {
     //or we should find all students with the same gradeId or parent id
     //we should determine the role or the user first:
     const user = await this.inMemoryUsersRepo.findById(userId);
-    if (user?.roleId === RoleId.Parent) {
+    if (user?.roleId === RoleId.PARENT) {
       return this.inMemoryStudentsRepo.findByParentId(userId);
-    } else if (user?.roleId === RoleId.Teacher) {
+    } else if (user?.roleId === RoleId.TEACHER) {
       const grade = await this.inMemoryGradeRepo.findByTeacherId(userId);
       if (!grade) return [];
       return this.inMemoryStudentsRepo.findByGradeId(grade?.gradeId);
@@ -66,5 +67,13 @@ export class StudentsService {
     const student = await this.inMemoryStudentsRepo.findById(studentId);
     if (!student) throw new NotFoundException('Student not found');
     return student;
+  }
+
+  async findByArabicName(name: string): Promise<Student[]> {
+    return this.inMemoryStudentsRepo.findByArabicName(name);
+  }
+
+  async findAll(): Promise<Student[]> {
+    return this.inMemoryStudentsRepo.findAll();
   }
 }

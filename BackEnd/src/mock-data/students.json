@@ -1,28 +1,251 @@
 [
   {
-    "StudentId": 1,
-    "fullName": "Lina Saad",
-    "parentId": 1,
-    "GradeId": 1,
-    "SchoolId": 1,
+    "StudentId": "1",
+    "fullEnglishName": "Student 1",
+    "fullArabicName": "آدم أحمد",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
     "ParentRelation": "Mother",
     "IsActive": true
   },
   {
-    "StudentId": 2,
-    "fullName": "Yousef Saad",
-    "parentId": 1,
-    "GradeId": 1,
-    "SchoolId": 1,
+    "StudentId": "2",
+    "fullEnglishName": "Student 2",
+    "fullArabicName": "ليان محمد",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
     "ParentRelation": "Father",
     "IsActive": true
   },
   {
-    "StudentId": 3,
-    "fullName": "Rana Mona",
-    "parentId": 2,
-    "GradeId": 2,
-    "SchoolId": 1,
+    "StudentId": "3",
+    "fullEnglishName": "Student 3",
+    "fullArabicName": "نور علي",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "4",
+    "fullEnglishName": "Student 4",
+    "fullArabicName": "سليم حسن",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "5",
+    "fullEnglishName": "Student 5",
+    "fullArabicName": "تالا يوسف",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "6",
+    "fullEnglishName": "Student 6",
+    "fullArabicName": "ريم خالد",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "7",
+    "fullEnglishName": "Student 7",
+    "fullArabicName": "عمر سامي",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "8",
+    "fullEnglishName": "Student 8",
+    "fullArabicName": "جود مازن",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "9",
+    "fullEnglishName": "Student 9",
+    "fullArabicName": "زينب فادي",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "10",
+    "fullEnglishName": "Student 10",
+    "fullArabicName": "ريان طارق",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "11",
+    "fullEnglishName": "Student 11",
+    "fullArabicName": "ميرا أيمن",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "12",
+    "fullEnglishName": "Student 12",
+    "fullArabicName": "كريم ناصر",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "13",
+    "fullEnglishName": "Student 13",
+    "fullArabicName": "لينا رائد",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "14",
+    "fullEnglishName": "Student 14",
+    "fullArabicName": "حمزة يزن",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "15",
+    "fullEnglishName": "Student 15",
+    "fullArabicName": "سارة وليد",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "16",
+    "fullEnglishName": "Student 16",
+    "fullArabicName": "ياسمين عمر",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "17",
+    "fullEnglishName": "Student 17",
+    "fullArabicName": "أنس محمود",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "18",
+    "fullEnglishName": "Student 18",
+    "fullArabicName": "هيا إياد",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "19",
+    "fullEnglishName": "Student 19",
+    "fullArabicName": "مالك بشار",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "20",
+    "fullEnglishName": "Student 20",
+    "fullArabicName": "دانيا شادي",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "21",
+    "fullEnglishName": "Student 21",
+    "fullArabicName": "أحمد لؤي",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "22",
+    "fullEnglishName": "Student 22",
+    "fullArabicName": "رنا هشام",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "23",
+    "fullEnglishName": "Student 23",
+    "fullArabicName": "يوسف نبيل",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Mother",
+    "IsActive": true
+  },
+  {
+    "StudentId": "24",
+    "fullEnglishName": "Student 24",
+    "fullArabicName": "لارا معتصم",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
+    "ParentRelation": "Father",
+    "IsActive": true
+  },
+  {
+    "StudentId": "25",
+    "fullEnglishName": "Student 25",
+    "fullArabicName": "إيلاف زكريا",
+    "parentId": "1",
+    "GradeId": "1",
+    "SchoolId": "1",
     "ParentRelation": "Mother",
     "IsActive": true
   }

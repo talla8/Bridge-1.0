@@ -1,4 +1,4 @@
-import { GradeId, SchoolId, UserId, StudentId } from './ids';
+import { GradeId, UserId, StudentId } from './ids';
 
 export enum ParentRelation {
   FATHER = 'Father',
@@ -8,10 +8,11 @@ export enum ParentRelation {
 
 export class Student {
   studentId: StudentId;
-  fullName: string;
-  parentId: UserId;
+  fullEnglishName: string;
+  fullArabicName: string;
+  parentId?: UserId;
   gradeId: GradeId;
-  schoolId: SchoolId;
-  parentRelation: ParentRelation;
+  schoolName?: string;
+  parentRelation?: ParentRelation;
   isActive: boolean;
 }
