@@ -9,13 +9,14 @@ import { BaselineModule } from './baseline/baseline.module';
 import { PlansModule } from './plans/plans.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { ConfigModule } from '@nestjs/config';
-import { UploadService } from './baseline/upload.service';
-import { BaselineParserService } from './baseline/baselineParser.service';
-import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.module';
+import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.module'; 
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env', 'BackEnd/.env'],
+    }),
     AuthModule,
     UsersModule,
     StudentsModule,
@@ -28,9 +29,6 @@ import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.
   providers: [
     AppService,
     MockSeedBootstrapService,
-    UploadService,
-    AuthModule,
-    BaselineParserService,
   ],
 })
 export class AppModule {}

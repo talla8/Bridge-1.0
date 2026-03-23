@@ -1,9 +1,9 @@
 import { UserId } from './ids';
 export enum RoleId {
-  Admin = '1',
-  Teacher = 'Teacher',
-  Parent = '3',
-} //fix this
+  ADMIN = 'Admin',
+  TEACHER = 'Teacher',
+  PARENT = 'Parent',
+}
 
 export class User {
   userId: UserId;

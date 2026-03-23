@@ -16,6 +16,7 @@ import { InMemorySubjectOfferingsRepo } from './in-memory-subjectOffering.repo';
 import { InMemoryTeachersRepo } from './in-memory-teacher.repo';
 import { InMemoryUploadsRepo } from './in-memory-upload.repo';
 import { InMemoryUsersRepo } from './in-memory-user.repo';
+import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.repo';
 
 @Module({
   providers: [
@@ -36,6 +37,7 @@ import { InMemoryUsersRepo } from './in-memory-user.repo';
     InMemoryTeachersRepo,
     InMemoryUploadsRepo,
     InMemoryUsersRepo,
+    InMemoryVerificationTokensRepo,
   ],
   exports: [
     InMemoryAdminsRepo,
@@ -55,6 +57,7 @@ import { InMemoryUsersRepo } from './in-memory-user.repo';
     InMemoryTeachersRepo,
     InMemoryUploadsRepo,
     InMemoryUsersRepo,
+    InMemoryVerificationTokensRepo,
   ],
 })
 export class InMemoryReposModule {}

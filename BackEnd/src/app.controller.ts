@@ -9,13 +9,13 @@ export class AppController {
     private readonly test: InMemoryUsersRepo,
   ) {}
 
-  @Get()
-  async checkeverything() {
-    return this.test.findByEmail('tala@example.com');
-  }
+  // @Get()
+  // async checkeverything() {
+  //   return this.test.findByEmail('tala@example.com');
+  // }
 
-  @Get('/s')
-  async testingRoutes(){
-    return true;
-  }
+  // @Get('/s')
+  // async testingRoutes(){
+  //   return true;
+  // }
 }
