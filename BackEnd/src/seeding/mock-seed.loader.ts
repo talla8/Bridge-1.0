@@ -8,7 +8,11 @@ export class MockSeedLoader {
   async seed(bindings: SeedBinding[]): Promise<void> {
     for (const binding of bindings) {
       const rows = await this.readRows(binding.fileName);
-      await this.persistRows(binding.repository, rows);
+      const transformedRows = binding.transformRows
+        ? await binding.transformRows(rows)
+        : rows;
+
+      await this.persistRows(binding.repository, transformedRows);
     }
   }
 

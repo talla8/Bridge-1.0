@@ -1,9 +1,9 @@
 [
   {
-    "UserId": 1,
+    "UserId": "1",
     "FullName": "Tala Mohammad",
     "Email": "tala@example.com",
-    "PasswordHash": "hash_tala",
+    "Password": "hash_tala",
     "RoleId": "Teacher",
     "IsActive": true
   },
@@ -11,7 +11,7 @@
     "UserId": 2,
     "FullName": "Aseel Mohammad",
     "Email": "aseel@example.com",
-    "PasswordHash": "hash_aseel",
+    "Password": "hash_aseel",
     "RoleId": "Teacher",
     "IsActive": true
   },
@@ -19,7 +19,7 @@
     "UserId": 3,
     "FullName": "Saad Mohammad",
     "Email": "saad@example.com",
-    "PasswordHash": "hash_saad",
+    "Password": "hash_saad",
     "RoleId": "Parent",
     "IsActive": true
   },
@@ -27,7 +27,7 @@
     "UserId": 4,
     "FullName": "Mona Khaled",
     "Email": "mona@example.com",
-    "PasswordHash": "hash_mona",
+    "Password": "hash_mona",
     "RoleId": "Parent",
     "IsActive": true
   },
@@ -35,7 +35,7 @@
     "UserId": 5,
     "FullName": "Nour Admin",
     "Email": "admin@example.com",
-    "PasswordHash": "hash_admin",
+    "Password": "hash_admin",
     "RoleId": "Admin",
     "IsActive": true
   }

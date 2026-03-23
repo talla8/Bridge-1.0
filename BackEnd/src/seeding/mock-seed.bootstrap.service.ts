@@ -16,6 +16,7 @@ import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-me
 import { InMemoryTeachersRepo } from 'src/infrastructure/in-memory/in-memory-teacher.repo';
 import { InMemoryUploadsRepo } from 'src/infrastructure/in-memory/in-memory-upload.repo';
 import { InMemoryUsersRepo } from 'src/infrastructure/in-memory/in-memory-user.repo';
+import { hashPassword, isBcryptHash } from 'src/auth/passwordHash';
 import { seedFromMockData } from './seed-from-mock-data';
 
 @Injectable()
@@ -43,7 +44,29 @@ export class MockSeedBootstrapService implements OnModuleInit {
   async onModuleInit(): Promise<void> {
     await seedFromMockData({
       admins: this.adminsRepo,
-      users: this.usersRepo,
+      users: {
+        repository: this.usersRepo,
+        transformRows: async (rows) =>
+          Promise.all(
+            rows.map(async (row) => {
+              const { password, ...seededUser } = row;
+              const seededPassword = String(password ?? row.passwordHash ?? '');
+
+              if (!seededPassword) {
+                throw new Error(
+                  `Seeded user "${String(row.email ?? row.userId ?? 'unknown')}" is missing a password.`,
+                );
+              }
+
+              return {
+                ...seededUser,
+                passwordHash: isBcryptHash(seededPassword)
+                  ? seededPassword
+                  : await hashPassword(seededPassword),
+              };
+            }),
+          ),
+      },
       parents: this.parentsRepo,
       teachers: this.teachersRepo,
       schools: this.schoolsRepo,

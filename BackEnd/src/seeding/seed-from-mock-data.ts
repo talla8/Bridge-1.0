@@ -1,25 +1,37 @@
 import { MockSeedLoader } from './mock-seed.loader';
 import { mockSeedManifest } from './mock-seed.manifest';
-import { SeedBinding, SeedWritableRepository } from './mock-seed.types';
+import {
+  SeedBinding,
+  SeedRow,
+  SeedRowTransformer,
+  SeedWritableRepository,
+} from './mock-seed.types';
+
+export interface SeedRepositoryConfig<T = SeedRow> {
+  repository: SeedWritableRepository<T>;
+  transformRows?: SeedRowTransformer<T>;
+}
+
+type SeedRepositoryEntry = unknown;
 
 export interface SeedRepositories {
-  admins?: unknown;
-  users?: unknown;
-  parents?: unknown;
-  teachers?: unknown;
-  schools?: unknown;
-  grades?: unknown;
-  subjects?: unknown;
-  subjectOfferings?: unknown;
-  students?: unknown;
-  uploads?: unknown;
-  skills?: unknown;
-  exercises?: unknown;
-  plans?: unknown;
-  attendance?: unknown;
-  assessmentResults?: unknown;
-  skillExercises?: unknown;
-  planLogs?: unknown;
+  admins?: SeedRepositoryEntry;
+  users?: SeedRepositoryEntry;
+  parents?: SeedRepositoryEntry;
+  teachers?: SeedRepositoryEntry;
+  schools?: SeedRepositoryEntry;
+  grades?: SeedRepositoryEntry;
+  subjects?: SeedRepositoryEntry;
+  subjectOfferings?: SeedRepositoryEntry;
+  students?: SeedRepositoryEntry;
+  uploads?: SeedRepositoryEntry;
+  skills?: SeedRepositoryEntry;
+  exercises?: SeedRepositoryEntry;
+  plans?: SeedRepositoryEntry;
+  attendance?: SeedRepositoryEntry;
+  assessmentResults?: SeedRepositoryEntry;
+  skillExercises?: SeedRepositoryEntry;
+  planLogs?: SeedRepositoryEntry;
 }
 
 export async function seedFromMockData(
@@ -41,9 +53,28 @@ export async function seedFromMockData(
 
     bindings.push({
       fileName,
-      repository: repository as SeedWritableRepository,
+      ...resolveSeedRepository(repository),
     });
   }
 
   await loader.seed(bindings);
+}
+
+function resolveSeedRepository(repository: SeedRepositoryEntry): {
+  repository: SeedWritableRepository;
+  transformRows?: SeedRowTransformer;
+} {
+  if (
+    repository &&
+    typeof repository === 'object' &&
+    'repository' in repository
+  ) {
+    const config = repository as SeedRepositoryConfig;
+    return {
+      repository: config.repository,
+      transformRows: config.transformRows,
+    };
+  }
+
+  return { repository: repository as SeedWritableRepository };
 }
