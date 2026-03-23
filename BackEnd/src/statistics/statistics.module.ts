@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
 import { StatisticsController } from './statistics.controller';
+import { StatisticsService } from './statistics.service';
+import { BaselineModule } from 'src/baseline/baseline.module';
+import { StudentsModule } from 'src/students/students.module';
 
 @Module({
-  controllers: [StatisticsController]
+  imports: [BaselineModule, StudentsModule],
+  controllers: [StatisticsController],
+  providers: [StatisticsService],
 })
 export class StatisticsModule {}
