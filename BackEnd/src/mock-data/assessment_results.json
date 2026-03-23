@@ -1,26 +1,50 @@
 [
-  {
-    "ResultId": 1,
-    "UploadId": 1,
-    "StudentId": 1,
-    "SkillId": 1,
-    "ScorePct": 72,
-    "Level": "Intermediate"
-  },
-  {
-    "ResultId": 2,
-    "UploadId": 1,
-    "StudentId": 2,
-    "SkillId": 2,
-    "ScorePct": 48,
-    "Level": "Needs Support"
-  },
-  {
-    "ResultId": 3,
-    "UploadId": 2,
-    "StudentId": 3,
-    "SkillId": 3,
-    "ScorePct": 81,
-    "Level": "Advanced"
-  }
+    {
+        "resultId": "result_1_1_skill_vocal",
+        "uploadId": "1",
+        "studentId": "1",
+        "skillId": "skill_vocal",
+        "totalScore": 4,
+        "level": "Intermediate"
+    },
+    {
+        "resultId": "result_1_1_skill_sounds_of_letters",
+        "uploadId": "1",
+        "studentId": "1",
+        "skillId": "skill_sounds_of_letters",
+        "totalScore": 6,
+        "level": "Intermediate"
+    },
+    {
+        "resultId": "result_1_1_skill_writing",
+        "uploadId": "1",
+        "studentId": "1",
+        "skillId": "skill_writing",
+        "totalScore": 3,
+        "level": "Intermediate"
+    },
+    {
+        "resultId": "result_1_2_skill_vocal",
+        "uploadId": "1",
+        "studentId": "2",
+        "skillId": "skill_vocal",
+        "totalScore": 5,
+        "level": "Advanced"
+    },
+    {
+        "resultId": "result_1_2_skill_sounds_of_letters",
+        "uploadId": "1",
+        "studentId": "2",
+        "skillId": "skill_sounds_of_letters",
+        "totalScore": 7,
+        "level": "Advanced"
+    },
+    {
+        "resultId": "result_1_2_skill_writing",
+        "uploadId": "1",
+        "studentId": "2",
+        "skillId": "skill_writing",
+        "totalScore": 4,
+        "level": "Advanced"
+    }
 ]

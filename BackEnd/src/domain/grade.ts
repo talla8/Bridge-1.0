@@ -7,7 +7,7 @@ export enum GradeName {
 }
 export class Grade {
   gradeId: GradeId;
-  gradeName: GradeName;
-  schoolId: SchoolId;
+  gradeName: GradeName; //chnge this
+  schoolName?: string | null;
   teacherId: UserId;
 }

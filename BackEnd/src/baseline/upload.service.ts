@@ -26,4 +26,12 @@ export class UploadService {
   async parseBaseline(file: Express.Multer.File): Promise<Record<string, unknown>[]> {
     return this.baselineParserService.parseBuffer(file.buffer);
   }
+
+  async validateHeaders(buffer: Buffer): Promise<unknown> {
+    return this.baselineParserService.validateHeaders(buffer);
+  }
+
+  async normalizeRows(buffer: Buffer): Promise<unknown> {
+    return this.baselineParserService.normalizeRows(buffer);
+  }
 }

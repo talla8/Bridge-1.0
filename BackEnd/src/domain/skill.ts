@@ -6,4 +6,5 @@ export class Skill {
   gradeId: GradeId;
   code: string; //unioin
   title: string;
+  maxScore: number;
 }

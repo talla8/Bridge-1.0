@@ -26,6 +26,14 @@ export class InMemoryAssesmentResultsRepo implements AssesmentResultRepository {
       ) ?? null
     );
   }
+  async findByStudentId(id: string): Promise<AssesmentResult[]> {
+        console.log("id:");
+    console.log(id);
+    return this.assesmentResults.filter(
+      (assesmentResult: AssesmentResult): boolean =>
+        assesmentResult.studentId === id,
+    );
+  }
 
   async findByUploadId(id: string): Promise<AssesmentResult | null> {
     return (

@@ -7,6 +7,7 @@ export interface AssesmentResultRepository {
   ): Promise<AssesmentResult[]>;
   findById(id: string): Promise<AssesmentResult | null>;
   findByUploadId(id: string): Promise<AssesmentResult | null>;
+  findByStudentId(id: string): Promise<AssesmentResult[]>;
   findAll(): Promise<AssesmentResult[]>;
   update(
     id: string,
