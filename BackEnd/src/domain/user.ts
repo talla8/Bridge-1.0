@@ -12,4 +12,5 @@ export class User {
   passwordHash: string;
   roleId: RoleId;
   isActive: boolean;
+  isVerified: boolean;
 }

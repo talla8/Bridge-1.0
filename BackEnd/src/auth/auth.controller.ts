@@ -6,6 +6,7 @@ import { Public } from './public.decorator';
 import type { UserId } from 'src/domain/ids';
 import { ForgotPasswordDTO } from './DTO/forgot-password.dto';
 import { ResetPasswordDTO } from './DTO/reset-password.dto';
+import { VerifyEmailDTO } from './DTO/verify-email.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +34,12 @@ export class AuthController {
   @Post('reset-password')
   resetPassword(@Body() resetPasswordDto: ResetPasswordDTO) {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @Public()
+  @Post('verify-email')
+  verifyEmail(@Body() verifyEmailDto: VerifyEmailDTO) {
+    return this.authService.verifyEmail(verifyEmailDto);
   }
 
   @Get('profile')

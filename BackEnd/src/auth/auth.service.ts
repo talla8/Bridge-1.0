@@ -22,6 +22,7 @@ import { InMemoryStudentsRepo } from 'src/infrastructure/in-memory/in-memory-stu
 import { ForgotPasswordDTO } from './DTO/forgot-password.dto';
 import { ResetPasswordDTO } from './DTO/reset-password.dto';
 import { VerificationTokenType } from 'src/domain/verificationToken';
+import { VerifyEmailDTO } from './DTO/verify-email.dto';
 
 // we use @UseGuards(RolesGuard) on top of the controller so we can use a specific guard
 //on top of any method or route we use @Roles() to determine the roles allowd to use this specific routes so both are used for
@@ -68,7 +69,7 @@ export class AuthService {
     );
     if (existingUser) {
       throw new ConflictException('Email already exists');
-    }
+    } // we already have this check in the original method
 
     const userId = `user_${randomUUID()}`;
     const saltOrRounds = 10;
@@ -81,6 +82,7 @@ export class AuthService {
       userId,
       fullName: baseSignUpDto.userFullName,
       isActive: true,
+      isVerified: false,
     });
 
     if (!user) {
@@ -212,6 +214,37 @@ export class AuthService {
     });
 
     return { message: 'Password has been reset successfully.' };
+  }
+
+  async verifyEmail(verifyEmailDto: VerifyEmailDTO): Promise<{ message: string }> {
+    const userId = await this.verificationService.findTokenOwner(
+      verifyEmailDto.token,
+      VerificationTokenType.EMAIL_VERIFICATION,
+    );
+
+    if (!userId) {
+      throw new UnauthorizedException('Invalid or expired verification token');
+    }
+
+    const isTokenValid = await this.verificationService.consumeToken(
+      userId,
+      verifyEmailDto.token,
+      VerificationTokenType.EMAIL_VERIFICATION,
+    );
+
+    if (!isTokenValid) {
+      throw new UnauthorizedException('Invalid or expired verification token');
+    }
+
+    const user = await this.usersService.update(userId, {
+      isVerified: true,
+    });
+
+    if (!user) {
+      throw new NotFoundException('User does not exist');
+    }
+
+    return { message: 'Email has been verified successfully.' };
   }
 }
 
