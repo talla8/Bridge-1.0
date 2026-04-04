@@ -8,5 +8,6 @@ import { StudentsModule } from 'src/students/students.module';
   imports: [BaselineModule, StudentsModule],
   controllers: [StatisticsController],
   providers: [StatisticsService],
+  exports: [StatisticsService],
 })
 export class StatisticsModule {}

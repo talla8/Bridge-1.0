@@ -10,6 +10,12 @@ export enum Priority {
   HIGH = 'HIGH',
 }
 
+interface SkillPriorityRow {
+  skillId: string;
+  avg: number;
+  priority: Priority;
+}
+
 @Injectable()
 export class StatisticsService {
   constructor(
@@ -150,7 +156,29 @@ export class StatisticsService {
     return ['skill_vocal', 'skill_sounds_of_letters', 'skill_writing'];
   }
 
-  async sortWeakestSkills() {}
+  async sortWeakestSkills(): Promise<SkillPriorityRow[]> {
+    const skillsAndAverages = await this.calculateAvgForEachSkill();
+
+    return skillsAndAverages
+      .map((item: { skillId: string; avg: number }): SkillPriorityRow => ({
+        skillId: item.skillId,
+        avg: item.avg,
+        priority: this.getPriorityFromAverage(item.avg),
+      }))
+      .sort((a, b) => a.avg - b.avg);
+  }
+
+  private getPriorityFromAverage(avg: number): Priority {
+    if (avg < 40) {
+      return Priority.HIGH;
+    }
+
+    if (avg > 70) {
+      return Priority.LOW;
+    }
+
+    return Priority.MID;
+  }
 
   async buildSkillRows(assesmentResult: AssesmentResult[]): Promise<any> {
     //     - [ ] First we initiate the variables: name, below avg, class avg, priority
