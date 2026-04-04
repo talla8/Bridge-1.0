@@ -26,11 +26,11 @@ export interface SeedRepositories {
   students?: SeedRepositoryEntry;
   uploads?: SeedRepositoryEntry;
   skills?: SeedRepositoryEntry;
-  exercises?: SeedRepositoryEntry;
+  curriculumItems?: SeedRepositoryEntry;
   plans?: SeedRepositoryEntry;
   attendance?: SeedRepositoryEntry;
   assessmentResults?: SeedRepositoryEntry;
-  skillExercises?: SeedRepositoryEntry;
+  skillCurriculumItems?: SeedRepositoryEntry;
   planLogs?: SeedRepositoryEntry;
 }
 

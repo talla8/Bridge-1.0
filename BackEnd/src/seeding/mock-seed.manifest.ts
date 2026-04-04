@@ -10,11 +10,11 @@ export const mockSeedManifest = {
   students: 'students.json',
   uploads: 'uploads.json',
   skills: 'skills.json',
-  exercises: 'exercises.json',
+  curriculumItems: 'exercises.json',
   plans: 'plans.json',
   attendance: 'attendance.json',
   assessmentResults: 'assessment_results.json',
-  skillExercises: 'skill_exercises.json',
+  skillCurriculumItems: 'skill_exercises.json',
   planLogs: 'plan_log.json',
 } as const;
 

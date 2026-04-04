@@ -1,23 +1,26 @@
 [
   {
-    "SkillId": 1,
-    "SubjectId": 1,
-    "GradeId": 1,
-    "Code": "MATH-NUM-01",
-    "Title": "Number Sense"
-  },
-  {
-    "SkillId": 2,
-    "SubjectId": 1,
-    "GradeId": 1,
-    "Code": "MATH-ALG-01",
-    "Title": "Basic Algebra"
-  },
-  {
-    "SkillId": 3,
+    "SkillId": "skill_vocal",
     "SubjectId": 2,
-    "GradeId": 2,
-    "Code": "AR-READ-01",
-    "Title": "Reading Comprehension"
+    "GradeId": "Third Grade",
+    "Code": "AR-VOCAL-01",
+    "Title": "Vocal Awareness",
+    "MaxScore": 6
+  },
+  {
+    "SkillId": "skill_sounds_of_letters",
+    "SubjectId": 2,
+    "GradeId": "Third Grade",
+    "Code": "AR-SOUNDS-01",
+    "Title": "Sounds of Letters",
+    "MaxScore": 8
+  },
+  {
+    "SkillId": "skill_writing",
+    "SubjectId": 2,
+    "GradeId": "Third Grade",
+    "Code": "AR-WRITE-01",
+    "Title": "Writing",
+    "MaxScore": 4
   }
 ]

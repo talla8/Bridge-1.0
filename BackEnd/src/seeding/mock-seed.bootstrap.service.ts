@@ -2,14 +2,14 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InMemoryAdminsRepo } from 'src/infrastructure/in-memory/in-memory-admin.repo';
 import { InMemoryAssesmentResultsRepo } from 'src/infrastructure/in-memory/in-memory-assesmentResult.repo';
 import { InMemoryAttendancesRepo } from 'src/infrastructure/in-memory/in-memory-attendance.repo';
-import { InMemoryExercisesRepo } from 'src/infrastructure/in-memory/in-memory-exercise.repo';
+import { InMemoryCurriculumItemsRepo } from 'src/infrastructure/in-memory/in-memory-curriculum-item.repo';
 import { InMemoryGradesRepo } from 'src/infrastructure/in-memory/in-memory-grade.repo';
 import { InMemoryParentsRepo } from 'src/infrastructure/in-memory/in-memory-parent.repo';
 import { InMemoryPlansRepo } from 'src/infrastructure/in-memory/in-memory-plan.repo';
 import { InMemoryPlanLogsRepo } from 'src/infrastructure/in-memory/in-memory-planLog.repo';
 import { InMemorySchoolsRepo } from 'src/infrastructure/in-memory/in-memory-school.repo';
 import { InMemorySkillsRepo } from 'src/infrastructure/in-memory/in-memory-skill.repo';
-import { InMemorySkillExercisesRepo } from 'src/infrastructure/in-memory/in-memory-skillExercise.repo';
+import { InMemorySkillCurriculumItemsRepo } from 'src/infrastructure/in-memory/in-memory-skill-curriculum-item.repo';
 import { InMemoryStudentsRepo } from 'src/infrastructure/in-memory/in-memory-student.repo';
 import { InMemorySubjectsRepo } from 'src/infrastructure/in-memory/in-memory-subject.repo';
 import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
@@ -31,11 +31,11 @@ export class MockSeedBootstrapService implements OnModuleInit {
     private readonly studentsRepo: InMemoryStudentsRepo,
     private readonly uploadsRepo: InMemoryUploadsRepo,
     private readonly skillsRepo: InMemorySkillsRepo,
-    private readonly exercisesRepo: InMemoryExercisesRepo,
+    private readonly curriculumItemsRepo: InMemoryCurriculumItemsRepo,
     private readonly plansRepo: InMemoryPlansRepo,
     private readonly attendanceRepo: InMemoryAttendancesRepo,
     private readonly assessmentResultsRepo: InMemoryAssesmentResultsRepo,
-    private readonly skillExercisesRepo: InMemorySkillExercisesRepo,
+    private readonly skillCurriculumItemsRepo: InMemorySkillCurriculumItemsRepo,
     private readonly planLogsRepo: InMemoryPlanLogsRepo,
     private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
     private readonly adminsRepo: InMemoryAdminsRepo,
@@ -76,11 +76,11 @@ export class MockSeedBootstrapService implements OnModuleInit {
       students: this.studentsRepo,
       uploads: this.uploadsRepo,
       skills: this.skillsRepo,
-      exercises: this.exercisesRepo,
+      curriculumItems: this.curriculumItemsRepo,
       plans: this.plansRepo,
       attendance: this.attendanceRepo,
       assessmentResults: this.assessmentResultsRepo,
-      skillExercises: this.skillExercisesRepo,
+      skillCurriculumItems: this.skillCurriculumItemsRepo,
       planLogs: this.planLogsRepo,
     });
   }
