@@ -8,7 +8,7 @@ export type ResultId = string;
 export type UploadId = string;
 export type AttendanceId = string;
 
-export type ExerciseId = string;
+export type CurriculumItemId = string;
 export type SubjectId = string;
 
 export type SchoolId = string;

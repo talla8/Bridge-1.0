@@ -2,6 +2,8 @@ import { Controller, Body, Post, Get, Request, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDTO } from './DTO/sign-in.dto';
 import { BaseSignUpDTO } from './DTO/base-sign-up.dto';
+import { TeacherSignUpDTO } from './DTO/teacher-sign-up.dto';
+import { ParentSignUpDTO } from './DTO/parent-sign-up.dto';
 import { Public } from './public.decorator';
 import type { UserId } from 'src/domain/ids';
 import { ForgotPasswordDTO } from './DTO/forgot-password.dto';
@@ -18,10 +20,22 @@ export class AuthController {
     return this.authService.signIn(signinDto);
   }
 
+  // @Public()
+  // @Post('signup')
+  // signUp(@Body() baseSignUpDto: BaseSignUpDTO) {
+  //   return this.authService.signup(baseSignUpDto);
+  // }
+
   @Public()
-  @Post('signup')
-  signUp(@Body() baseSignUpDto: BaseSignUpDTO) {
-    return this.authService.signup(baseSignUpDto);
+  @Post('signup/teacher')
+  teacherSignUp(@Body() teacherSignUpDto: TeacherSignUpDTO) {
+    return this.authService.teacherSignUp(teacherSignUpDto);
+  }
+
+  @Public()
+  @Post('signup/parent')
+  parentSignUp(@Body() parentSignUpDto: ParentSignUpDTO) {
+    return this.authService.parentSignUp(parentSignUpDto);
   }
 
   @Public()

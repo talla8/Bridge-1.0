@@ -15,8 +15,8 @@ type HeaderMapping = [string, keyof NormalizedBaselineRow];
 @Injectable()
 export class BaselineParserService {
   async parseBuffer(buffer: Buffer): Promise<Record<string, unknown>[]> {
-    const workbook = XLSX.read(buffer, { type: 'buffer' });
-    const firstSheetName = workbook.SheetNames[0];
+    const workbook = XLSX.read(buffer, { type: 'buffer' }); //that means the whole files 
+    const firstSheetName = workbook.SheetNames[0]; //that means the first sheet like the first obj of the wholebook 
 
     if (!firstSheetName) {
       throw new BadRequestException('Excel file has no sheets');

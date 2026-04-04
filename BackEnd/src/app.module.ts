@@ -10,6 +10,7 @@ import { PlansModule } from './plans/plans.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { ConfigModule } from '@nestjs/config';
 import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.module'; 
+import { StudentUploadService } from './students/student-upload.service';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.
   providers: [
     AppService,
     MockSeedBootstrapService,
+    StudentUploadService,
   ],
 })
 export class AppModule {}

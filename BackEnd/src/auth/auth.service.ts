@@ -13,8 +13,7 @@ import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { TeacherSignUpDTO } from './DTO/teacher-sign-up.dto';
 import { InMemoryGradesRepo } from 'src/infrastructure/in-memory/in-memory-grade.repo';
-import { User } from 'src/domain/user';
-import { InMemorySchoolsRepo } from 'src/infrastructure/in-memory/in-memory-school.repo';
+import { RoleId, User } from 'src/domain/user';
 import { ParentSignUpDTO } from './DTO/parent-sign-up.dto';
 import { UserId } from 'src/domain/ids';
 import { VerificationService } from './verification.service';
@@ -63,7 +62,10 @@ export class AuthService {
     // const {password , ...result} = user; //restructuring
   }
 
-  async createBaseUser(baseSignUpDto: BaseSignUpDTO): Promise<User> {
+  async createBaseUser(
+    baseSignUpDto: BaseSignUpDTO,
+    role: RoleId,
+  ): Promise<User> {
     const existingUser = await this.usersService.findbyEmail(
       baseSignUpDto.email,
     );
@@ -77,7 +79,7 @@ export class AuthService {
     const user = await this.usersService.create({
       ...baseSignUpDto,
       email: baseSignUpDto.email,
-      roleId: baseSignUpDto.role,
+      roleId: role,
       passwordHash: await bcrypt.hash(password, saltOrRounds),
       userId,
       fullName: baseSignUpDto.userFullName,
@@ -95,14 +97,11 @@ export class AuthService {
   async signup(
     baseSignUpDto: BaseSignUpDTO,
   ): Promise<{ access_token: string }> {
-    const existingUser = await this.usersService.findbyEmail(
-      baseSignUpDto.email,
-    );
-    if (existingUser) {
-      throw new ConflictException('Email already exists');
+    if (!baseSignUpDto.role) {
+      throw new ConflictException('Role is required');
     }
 
-    const user = await this.createBaseUser(baseSignUpDto);
+    const user = await this.createBaseUser(baseSignUpDto, baseSignUpDto.role);
     await this.verificationService.sendEmail(user.userId, user.email);
 
     const payload = {
@@ -119,11 +118,19 @@ export class AuthService {
   async teacherSignUp(
     teacherSignUpDTO: TeacherSignUpDTO,
   ): Promise<{ access_token: string }> {
-    const user = await this.createBaseUser(teacherSignUpDTO.baseSignUpDto);
+    const user = await this.createBaseUser(
+      {
+        userFullName: teacherSignUpDTO.userFullName,
+        email: teacherSignUpDTO.email,
+        phoneNumber: teacherSignUpDTO.phoneNumber,
+        password: teacherSignUpDTO.password,
+      },
+      RoleId.TEACHER,
+    );
     await this.verificationService.sendEmail(user.userId, user.email);
 
     await this.gradesRepo.create({
-      gradeId: `grade_${randomUUID()}`,
+      gradeId: teacherSignUpDTO.grade,
       gradeName: teacherSignUpDTO.grade,
       schoolName: teacherSignUpDTO.school, //check this
       teacherId: user.userId,
@@ -144,7 +151,15 @@ export class AuthService {
     //students should be created first
     parentSignUpDto: ParentSignUpDTO,
   ): Promise<{ access_token: any }> {
-    const user = await this.createBaseUser(parentSignUpDto.baseSignUpDto);
+    const user = await this.createBaseUser(
+      {
+        userFullName: parentSignUpDto.userFullName,
+        email: parentSignUpDto.email,
+        phoneNumber: parentSignUpDto.phoneNumber,
+        password: parentSignUpDto.password,
+      },
+      RoleId.PARENT,
+    );
     await this.verificationService.sendEmail(user.userId, user.email);
     const child = await this.studentsRepo.findById(
       parentSignUpDto.studentNationalId,
@@ -166,6 +181,7 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
   async sendEmailVerification(userId: UserId): Promise<any> {
     const user = await this.usersService.findById(userId);
 
@@ -177,19 +193,26 @@ export class AuthService {
     return this.verificationService.sendEmail(user.userId, email);
   }
 
-  async forgotPassword(forgotPasswordDto: ForgotPasswordDTO): Promise<{ message: string }> {
+  async forgotPassword(
+    forgotPasswordDto: ForgotPasswordDTO,
+  ): Promise<{ message: string }> {
     const user = await this.usersService.findbyEmail(forgotPasswordDto.email);
 
     if (!user) {
       throw new NotFoundException('User does not exist');
     }
 
-    await this.verificationService.sendPasswordResetEmail(user.userId, user.email);
+    await this.verificationService.sendPasswordResetEmail(
+      user.userId,
+      user.email,
+    );
 
     return { message: 'Password reset email sent successfully.' };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDTO): Promise<{ message: string }> {
+  async resetPassword(
+    resetPasswordDto: ResetPasswordDTO,
+  ): Promise<{ message: string }> {
     const userId = await this.verificationService.findTokenOwner(
       resetPasswordDto.token,
       VerificationTokenType.PASSWORD_RESET,
@@ -216,7 +239,9 @@ export class AuthService {
     return { message: 'Password has been reset successfully.' };
   }
 
-  async verifyEmail(verifyEmailDto: VerifyEmailDTO): Promise<{ message: string }> {
+  async verifyEmail(
+    verifyEmailDto: VerifyEmailDTO,
+  ): Promise<{ message: string }> {
     const userId = await this.verificationService.findTokenOwner(
       verifyEmailDto.token,
       VerificationTokenType.EMAIL_VERIFICATION,

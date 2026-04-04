@@ -1,14 +1,13 @@
-import { RoleId } from 'src/domain/user';
-import { TeacherSignUpDTO } from './teacher-sign-up.dto';
-import { ParentSignUpDTO } from './parent-sign-up.dto';
 import {
   IsString,
   IsEmail,
-  isString,
   MinLength,
   MaxLength,
   Matches,
+  IsOptional,
+  IsEnum,
 } from 'class-validator';
+import { RoleId } from 'src/domain/user';
 
 export class BaseSignUpDTO {
   @IsString()
@@ -16,15 +15,20 @@ export class BaseSignUpDTO {
 
   @IsEmail()
   email: string;
-  role: RoleId;
+
+  @IsOptional()
+  @IsString()
   phoneNumber?: string;
-  
+
+  @IsOptional()
+  @IsEnum(RoleId)
+  role?: RoleId;
+
+  @IsString()
   @MinLength(8)
   @MaxLength(16)
   @Matches(/[A-Z]/, { message: '...' })
   @Matches(/[a-z]/, { message: '...' })
-  @Matches(/[0-9]/, { message: '...' })
+  @Matches(/[0-9]/, { message: 'Password must contain numbers' }) //change those
   password: string;
-
-  extrafields?: TeacherSignUpDTO | ParentSignUpDTO;
 }

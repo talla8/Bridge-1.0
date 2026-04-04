@@ -1,4 +1,4 @@
-import { ExerciseId, PlanId, SessionId, SkillId } from './ids';
+import { CurriculumItemId, PlanId, SessionId, SkillId } from './ids';
 
 export enum Status {
   NOTSTARTED = 'Not Started',
@@ -15,5 +15,5 @@ export class PlanLog {
   date: Date;
   status: Status;
   postponedTo?: Date;
-  exerciseId: ExerciseId;
+  curriculumItemId: CurriculumItemId;
 }

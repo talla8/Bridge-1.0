@@ -6,7 +6,7 @@
     "Date": "2026-02-16",
     "ActivityType": "Practice",
     "Status": "Completed",
-    "ExerciseId": 1
+    "CurriculumItemId": 1
   },
   {
     "SessionId": 2,
@@ -15,7 +15,7 @@
     "Date": "2026-02-18",
     "ActivityType": "Quiz",
     "Status": "Pending",
-    "ExerciseId": 2
+    "CurriculumItemId": 2
   },
   {
     "SessionId": 3,
@@ -24,6 +24,6 @@
     "Date": "2026-02-17",
     "ActivityType": "Practice",
     "Status": "Completed",
-    "ExerciseId": 3
+    "CurriculumItemId": 3
   }
 ]
