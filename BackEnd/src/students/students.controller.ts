@@ -1,14 +1,63 @@
-import { Body, Controller, Get, Patch, Post, Req, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Req,
+  Param,
+  Res,
+  ParseFilePipeBuilder,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { join } from 'path';
+import type { Response } from 'express';
 import { Student } from 'src/domain/student';
 import { StudentsService } from './students.service';
 import { CreateStudentDTO } from './DTO/create.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { RoleId } from 'src/domain/user';
 import type { StudentId } from 'src/domain/ids'; //try and fix this
+import { FileInterceptor } from '@nestjs/platform-express';
+import { StudentUploadService } from './student-upload.service';
 
 @Controller('students')
 export class StudentsController {
-  constructor(private readonly studentsService: StudentsService) {}
+  constructor(
+    private readonly studentsService: StudentsService,
+    private readonly studentUploadService: StudentUploadService,
+  ) {}
+
+  @Get('download-template')
+  downloadStudentsNamesTemplate(@Res() res: Response): void {
+    const templatePath = join(
+      process.cwd(),
+      'src',
+      'assets',
+      'student_upload_template.xlsx',
+    ); //يعني جيب من هاد الباث
+    res.download(templatePath, 'student_upload_template.xlsx');
+  }
+
+  @Roles([RoleId.ADMIN, RoleId.TEACHER])
+  @Post('import-template')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadStudentsInfo(
+    @Req() req,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({
+          fileType:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+        .build(),
+    )
+    file: Express.Multer.File,
+  ): Promise<Student[]> {
+    return this.studentUploadService.importStudents(file, req.user.sub);
+  }
+
   @Roles([RoleId.ADMIN, RoleId.TEACHER])
   @Post('createMany')
   async createMany(@Body() students: CreateStudentDTO[]): Promise<Student[]> {
@@ -24,7 +73,7 @@ export class StudentsController {
   //add:
   //get students by id
   @Get('findOne/:studentId')
-  async getById(@Param('studntId') studentId: StudentId): Promise<Student> {
+  async getById(@Param('studentId') studentId: StudentId): Promise<Student> {
     return this.studentsService.getById(studentId);
   }
 
@@ -33,6 +82,7 @@ export class StudentsController {
   async updateStudent(
     @Param('studentId')
     studentId: StudentId,
+    @Body()
     patch: Partial<Student>,
   ): Promise<Student> {
     return this.studentsService.updateStudent(studentId, patch);

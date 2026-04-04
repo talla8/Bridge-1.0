@@ -25,7 +25,7 @@ export class StudentsService {
       (student: CreateStudentDTO, index: number): Student => ({
         studentId: `stu_${createdAt}_${index + 1}`, //check this if working apply it to other places
         fullEnglishName: student.fullEnglishName,
-        fullArabicName: student.fullEnglishName, //fix this
+        fullArabicName: student.fullArabicName,
         // Temporary defaults for MVP while DTO is minimal.
         parentId: '', //also when creating a student
         gradeId: student.grade,
