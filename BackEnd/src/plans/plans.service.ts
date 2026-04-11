@@ -9,16 +9,14 @@ import { SubjectId, UserId } from 'src/domain/ids';
 import { Plan } from 'src/domain/plan';
 import { Session } from 'src/domain/session';
 import { SubjectOffering } from 'src/domain/subjectOffering';
-import {
-  PlanLogActivityType,
-  Status as PlanLogStatus,
-} from 'src/domain/planLog';
+import { PlanLog, PlanLogActionType } from 'src/domain/planLog';
 import { InMemoryCurriculumItemsRepo } from 'src/infrastructure/in-memory/in-memory-curriculum-item.repo';
 import { InMemoryPlansRepo } from 'src/infrastructure/in-memory/in-memory-plan.repo';
 import { InMemoryPlanLogsRepo } from 'src/infrastructure/in-memory/in-memory-planLog.repo';
 import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
 import type { WeekDay, WeeklySlotDTO } from './DTO/save-weekly-slots.dto';
 import { PlanInputService } from './plan-input.service';
+import { PlanProgressSummary } from './types/plan-progress-summary';
 import { Priority } from 'src/statistics/statistics.service';
 import { StatisticsService } from 'src/statistics/statistics.service';
 import { PlanItem, PlanItemStatus } from 'src/domain/plan-item';
@@ -35,6 +33,12 @@ const priorityToPoints: Record<Priority, number> = {
 export const semesterTotalWeeks: Record<number, number> = {
   1: 16,
   2: 12,
+};
+
+export type UpdatePlanItemStatusResponse = {
+  item: PlanItem;
+  session: Session;
+  progress: PlanProgressSummary;
 };
 
 const DEFAULT_SESSION_DURATION_MINUTES = 40;
@@ -127,6 +131,7 @@ export class PlansService {
 
     await this.plansRepo.create(plan);
     await this.saveGeneratedSessions(sessions);
+    await this.logPlanGenerated(plan);
     return plan;
   }
 
@@ -155,8 +160,9 @@ export class PlansService {
 
     const plan = await this.verifyTeacherOwnsPlan(planId, teacherId);
     const planSession = this.findSessionInPlan(plan, sessionId);
+    const item = this.findItemInSession(planSession, planItemId);
     const updatedItem: PlanItem = {
-      ...this.findItemInSession(planSession, planItemId),
+      ...item,
       estimatedTime: estimatedMinutes,
     };
 
@@ -181,7 +187,14 @@ export class PlansService {
     });
     if (!savedItem) throw new NotFoundException();
 
-    await this.logPlanItemUpdate(savedItem, PlanLogActivityType.TIME_EDITED);
+    await this.logPlanItemUpdate(
+      savedItem,
+      PlanLogActionType.ITEM_TIME_UPDATED,
+      {
+        oldEstimatedTime: item.estimatedTime,
+        newEstimatedTime: estimatedMinutes,
+      },
+    );
     return session;
   }
 
@@ -191,7 +204,7 @@ export class PlansService {
     planItemId: string,
     newStatus: PlanItemStatus,
     sessionId: string,
-  ): Promise<Session> {
+  ): Promise<UpdatePlanItemStatusResponse> {
     const planItem = await this.planItemRepo.findById(planItemId);
     if (!planItem) throw new NotFoundException();
     if (planItem.planId !== planId) {
@@ -236,9 +249,34 @@ export class PlansService {
 
     await this.logPlanItemUpdate(
       savedItem,
-      this.getPlanLogActivityForStatus(newStatus),
+      this.getPlanLogActionForStatus(newStatus),
+      {
+        oldStatus: item.status,
+        newStatus,
+        targetSessionId: session.sessionId,
+        targetSessionDate: session.sessionDate,
+      },
     );
-    return session;
+    return {
+      item: savedItem,
+      session,
+      progress: this.calculatePlanProgress(plan),
+    };
+  }
+
+  async getPlanProgress(
+    teacherId: UserId,
+    planId: string,
+  ): Promise<PlanProgressSummary> {
+    const plan = await this.verifyTeacherOwnsPlan(planId, teacherId);
+    return this.calculatePlanProgress(plan);
+  }
+
+  async getPlanHistory(teacherId: UserId, planId: string): Promise<PlanLog[]> {
+    await this.verifyTeacherOwnsPlan(planId, teacherId);
+    const logs = await this.planLogsRepo.findByPlanId(planId);
+
+    return logs.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
   private canUpdatePlanItemStatus(
@@ -275,44 +313,77 @@ export class PlansService {
 
   private async logPlanItemUpdate(
     item: PlanItem,
-    activityType: PlanLogActivityType,
+    actionType: PlanLogActionType,
+    metadata: Record<string, unknown> = {},
   ): Promise<void> {
     await this.planLogsRepo.create({
+      planLogId: `plan_log_${randomUUID()}`,
       planId: item.planId,
       sessionId: item.sessionId,
       planItemId: item.planItemId,
       curriculumItemId: item.curriculumItemId,
-      activityType,
-      date: new Date(),
-      status: this.toPlanLogStatus(item.status),
+      actionType,
+      description: this.buildPlanItemLogDescription(actionType, item, metadata),
+      createdAt: new Date(),
+      metadata: {
+        ...metadata,
+        status: item.status,
+        estimatedTime: item.estimatedTime,
+      },
     });
   }
 
-  private getPlanLogActivityForStatus(
-    status: PlanItemStatus,
-  ): PlanLogActivityType {
+  private async logPlanGenerated(plan: Plan): Promise<void> {
+    await this.planLogsRepo.create({
+      planLogId: `plan_log_${randomUUID()}`,
+      planId: plan.planId,
+      actionType: PlanLogActionType.PLAN_GENERATED,
+      description: `Generated ${plan.planName}.`,
+      createdAt: new Date(),
+      metadata: {
+        planName: plan.planName,
+        subjectId: plan.subjectId,
+        totalWeeks: plan.totalWeeks,
+        sessionCount: plan.sessions.length,
+        itemCount: plan.sessions.reduce(
+          (total, session) => total + session.items.length,
+          0,
+        ),
+      },
+    });
+  }
+
+  private getPlanLogActionForStatus(status: PlanItemStatus): PlanLogActionType {
     switch (status) {
       case PlanItemStatus.COMPLETED:
-        return PlanLogActivityType.COMPLETED;
+        return PlanLogActionType.ITEM_COMPLETED;
       case PlanItemStatus.POSTPONED:
-        return PlanLogActivityType.POSTPONED;
+        return PlanLogActionType.ITEM_POSTPONED;
       case PlanItemStatus.CANCELLED:
-        return PlanLogActivityType.CANCELLED;
+        return PlanLogActionType.ITEM_CANCELLED;
       default:
-        return PlanLogActivityType.STATUS_CHANGED;
+        return PlanLogActionType.ITEM_REINSERTED;
     }
   }
 
-  private toPlanLogStatus(status: PlanItemStatus): PlanLogStatus {
-    switch (status) {
-      case PlanItemStatus.COMPLETED:
-        return PlanLogStatus.DONE;
-      case PlanItemStatus.POSTPONED:
-        return PlanLogStatus.POSTPONED;
-      case PlanItemStatus.CANCELLED:
-        return PlanLogStatus.CANCLED;
+  private buildPlanItemLogDescription(
+    actionType: PlanLogActionType,
+    item: PlanItem,
+    metadata: Record<string, unknown>,
+  ): string {
+    switch (actionType) {
+      case PlanLogActionType.ITEM_TIME_UPDATED:
+        return `Updated "${item.title}" duration from ${metadata.oldEstimatedTime} min to ${metadata.newEstimatedTime} min.`;
+      case PlanLogActionType.ITEM_COMPLETED:
+        return `Marked "${item.title}" as completed.`;
+      case PlanLogActionType.ITEM_POSTPONED:
+        return `Postponed "${item.title}".`;
+      case PlanLogActionType.ITEM_CANCELLED:
+        return `Cancelled "${item.title}".`;
+      case PlanLogActionType.ITEM_REINSERTED:
+        return `Reinserted "${item.title}" into the plan.`;
       default:
-        return PlanLogStatus.NOTSTARTED;
+        return `Updated "${item.title}".`;
     }
   }
 
@@ -346,6 +417,32 @@ export class PlansService {
           item.status !== PlanItemStatus.POSTPONED,
       )
       .reduce((total, item) => total + Number(item.estimatedTime ?? 0), 0);
+  }
+
+  private calculatePlanProgress(plan: Plan): PlanProgressSummary {
+    const items = plan.sessions.flatMap((session) => session.items);
+    const cancelledItems = items.filter(
+      (item) => item.status === PlanItemStatus.CANCELLED,
+    ).length;
+    const activeItems = items.filter(
+      (item) => item.status !== PlanItemStatus.CANCELLED,
+    );
+    const completedItems = activeItems.filter(
+      (item) => item.status === PlanItemStatus.COMPLETED,
+    ).length;
+    const totalItems = activeItems.length;
+    const remainingItems = totalItems - completedItems;
+    const progressPercentage =
+      totalItems === 0 ? 0 : Math.round((completedItems / totalItems) * 100);
+
+    return {
+      planId: plan.planId,
+      totalItems,
+      completedItems,
+      remainingItems,
+      cancelledItems,
+      progressPercentage,
+    };
   }
 
   private sortCurriculumItems(

@@ -47,6 +47,16 @@ export class PlansController {
     );
   }
 
+  @Get(':planId/progress')
+  getPlanProgress(@Param('planId') planId: string, @Req() req) {
+    return this.plansService.getPlanProgress(req.user.sub, planId);
+  }
+
+  @Get(':planId/history')
+  getPlanHistory(@Param('planId') planId: string, @Req() req) {
+    return this.plansService.getPlanHistory(req.user.sub, planId);
+  }
+
   //   Add teacher endpoints like:
   // - `PATCH /plans/:planId/items/time`
   // - `PATCH /plans/:planId/items/status`

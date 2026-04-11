@@ -1,28 +1,29 @@
-import { CurriculumItemId, PlanId, PlanItemId, SessionId } from './ids';
+import {
+  CurriculumItemId,
+  PlanId,
+  PlanItemId,
+  PlanLogId,
+  SessionId,
+} from './ids';
 
-export enum Status {
-  NOTSTARTED = 'Not Started',
-  INPROGRESS = 'In Progress',
-  DONE = 'Done',
-  CANCLED = 'Canceled',
-  POSTPONED = `Postponed`,
-}
-
-export enum PlanLogActivityType {
-  TIME_EDITED = 'Time Edited',
-  STATUS_CHANGED = 'Status Changed',
-  COMPLETED = 'Completed',
-  POSTPONED = 'Postponed',
-  CANCELLED = 'Cancelled',
+export enum PlanLogActionType {
+  PLAN_GENERATED = 'PLAN_GENERATED',
+  ITEM_COMPLETED = 'ITEM_COMPLETED',
+  ITEM_POSTPONED = 'ITEM_POSTPONED',
+  ITEM_CANCELLED = 'ITEM_CANCELLED',
+  ITEM_TIME_UPDATED = 'ITEM_TIME_UPDATED',
+  ITEM_REINSERTED = 'ITEM_REINSERTED',
+  PLAN_REGENERATED = 'PLAN_REGENERATED',
 }
 
 export class PlanLog {
+  planLogId: PlanLogId;
   planId: PlanId;
-  sessionId: SessionId;
-  planItemId: PlanItemId;
-  activityType: PlanLogActivityType;
-  date: Date;
-  status: Status;
-  postponedTo?: Date;
-  curriculumItemId: CurriculumItemId;
+  sessionId?: SessionId;
+  planItemId?: PlanItemId;
+  curriculumItemId?: CurriculumItemId;
+  actionType: PlanLogActionType;
+  description: string;
+  createdAt: Date;
+  metadata?: Record<string, unknown>;
 }

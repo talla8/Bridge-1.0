@@ -14,7 +14,7 @@ export class InMemoryPlanLogsRepo implements PlanLogRepository {
   async findById(id: string): Promise<PlanLog | null> {
     return (
       this.planLogs.find(
-        (planLog: PlanLog): boolean => planLog.sessionId === id,
+        (planLog: PlanLog): boolean => planLog.planLogId === id,
       ) ?? null
     );
   }
@@ -23,9 +23,15 @@ export class InMemoryPlanLogsRepo implements PlanLogRepository {
     return this.planLogs;
   }
 
+  async findByPlanId(planId: string): Promise<PlanLog[]> {
+    return this.planLogs.filter(
+      (planLog: PlanLog): boolean => planLog.planId === planId,
+    );
+  }
+
   async update(id: string, patch: Partial<PlanLog>): Promise<PlanLog | null> {
     const index = this.planLogs.findIndex(
-      (item: PlanLog): boolean => item.sessionId === id,
+      (item: PlanLog): boolean => item.planLogId === id,
     );
     if (index === -1) return null;
 
@@ -36,7 +42,7 @@ export class InMemoryPlanLogsRepo implements PlanLogRepository {
 
   async delete(id: string): Promise<boolean> {
     const index = this.planLogs.findIndex(
-      (item: PlanLog): boolean => item.sessionId === id,
+      (item: PlanLog): boolean => item.planLogId === id,
     );
     if (index === -1) return false;
 
