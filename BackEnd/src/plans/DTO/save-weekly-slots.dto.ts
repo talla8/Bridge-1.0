@@ -9,7 +9,7 @@ export type WeekDay =
 
 export class WeeklySlotDTO {
   day: WeekDay;
-  slotNumber: number;
+  slotNumber: number; //what does this reperesnt
 }
 
 export class SaveWeeklySlotsDTO {

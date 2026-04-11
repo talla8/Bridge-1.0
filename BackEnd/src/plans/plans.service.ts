@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,13 +9,22 @@ import { SubjectId, UserId } from 'src/domain/ids';
 import { Plan } from 'src/domain/plan';
 import { Session } from 'src/domain/session';
 import { SubjectOffering } from 'src/domain/subjectOffering';
+import {
+  PlanLogActivityType,
+  Status as PlanLogStatus,
+} from 'src/domain/planLog';
 import { InMemoryCurriculumItemsRepo } from 'src/infrastructure/in-memory/in-memory-curriculum-item.repo';
 import { InMemoryPlansRepo } from 'src/infrastructure/in-memory/in-memory-plan.repo';
+import { InMemoryPlanLogsRepo } from 'src/infrastructure/in-memory/in-memory-planLog.repo';
 import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
 import type { WeekDay, WeeklySlotDTO } from './DTO/save-weekly-slots.dto';
 import { PlanInputService } from './plan-input.service';
 import { Priority } from 'src/statistics/statistics.service';
 import { StatisticsService } from 'src/statistics/statistics.service';
+import { PlanItem, PlanItemStatus } from 'src/domain/plan-item';
+import { randomUUID } from 'crypto';
+import { InMemoryPlanItemsRepo } from 'src/infrastructure/in-memory/in-memory-plan-item.repo';
+import { InMemorySessionsRepo } from 'src/infrastructure/in-memory/in-memory-session.repo';
 
 const priorityToPoints: Record<Priority, number> = {
   [Priority.HIGH]: 10,
@@ -45,7 +55,10 @@ export class PlansService {
     private readonly curriculumItemsRepo: InMemoryCurriculumItemsRepo,
     private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
     private readonly plansRepo: InMemoryPlansRepo,
+    private readonly planLogsRepo: InMemoryPlanLogsRepo,
     private readonly planInputService: PlanInputService,
+    private readonly planItemRepo: InMemoryPlanItemsRepo,
+    private readonly sessionRepo: InMemorySessionsRepo,
   ) {}
 
   async generatePlan(
@@ -53,6 +66,8 @@ export class PlansService {
     subjectId: SubjectId,
     semester: 1 | 2,
   ): Promise<Plan> {
+    const planId = `plan_${teacherId}_${subjectId}_${semester}_${Date.now()}`;
+
     const savedWeeklySlots = this.planInputService.getWeeklySlots(
       teacherId,
       subjectId,
@@ -85,11 +100,12 @@ export class PlansService {
       this.sortWeeklySlots(savedWeeklySlots.slots),
       timedItems,
       semesterTotalWeeks[semester],
+      planId,
     );
 
     const planStartDate = sessions[0]?.sessionDate ?? new Date();
     const plan: Plan = {
-      planId: `plan_${teacherId}_${subjectId}_${semester}_${Date.now()}`,
+      planId,
       planName: `Auto Plan ${subjectId} S${semester}`,
       subjectId,
       startDate: planStartDate,
@@ -110,10 +126,227 @@ export class PlansService {
     };
 
     await this.plansRepo.create(plan);
+    await this.saveGeneratedSessions(sessions);
     return plan;
   }
 
-  //helper method for sortng the items:
+  private async saveGeneratedSessions(sessions: Session[]): Promise<void> {
+    for (const session of sessions) {
+      await this.sessionRepo.create(session);
+
+      for (const item of session.items) {
+        await this.planItemRepo.create(item);
+      }
+    }
+  }
+
+  async updateItemEstimatedTime(
+    teacherId: UserId,
+    planId: string,
+    planItemId: string,
+    estimatedMinutes: number,
+    sessionId: string,
+  ): Promise<Session> {
+    const planItem = await this.planItemRepo.findById(planItemId);
+    if (!planItem) throw new NotFoundException();
+    if (planItem.planId !== planId) {
+      throw new BadRequestException('Plan item does not belong to plan.');
+    }
+
+    const plan = await this.verifyTeacherOwnsPlan(planId, teacherId);
+    const planSession = this.findSessionInPlan(plan, sessionId);
+    const updatedItem: PlanItem = {
+      ...this.findItemInSession(planSession, planItemId),
+      estimatedTime: estimatedMinutes,
+    };
+
+    const session = await this.sessionRepo.findById(sessionId);
+    if (!session) throw new NotFoundException();
+
+    this.replaceItemInSession(planSession, updatedItem);
+    planSession.usedDuration = this.calculateSessionUsedDuration(planSession);
+
+    this.replaceItemInSession(session, updatedItem);
+    session.usedDuration = planSession.usedDuration;
+
+    // TODO: Repack sessions if this update pushes the session over its limit.
+    await this.plansRepo.update(plan.planId, { sessions: plan.sessions });
+    await this.sessionRepo.update(sessionId, {
+      items: session.items,
+      usedDuration: session.usedDuration,
+    });
+
+    const savedItem = await this.planItemRepo.update(planItemId, {
+      estimatedTime: estimatedMinutes,
+    });
+    if (!savedItem) throw new NotFoundException();
+
+    await this.logPlanItemUpdate(savedItem, PlanLogActivityType.TIME_EDITED);
+    return session;
+  }
+
+  async updateItemStatus(
+    teacherId: UserId,
+    planId: string,
+    planItemId: string,
+    newStatus: PlanItemStatus,
+    sessionId: string,
+  ): Promise<Session> {
+    const planItem = await this.planItemRepo.findById(planItemId);
+    if (!planItem) throw new NotFoundException();
+    if (planItem.planId !== planId) {
+      throw new BadRequestException('Plan item does not belong to plan.');
+    }
+
+    const plan = await this.verifyTeacherOwnsPlan(planId, teacherId);
+    const planSession = this.findSessionInPlan(plan, sessionId);
+    const item = this.findItemInSession(planSession, planItemId);
+
+    const session = await this.sessionRepo.findById(sessionId);
+    if (!session) throw new NotFoundException();
+
+    if (newStatus === item.status) {
+      throw new BadRequestException('Plan item already has this status.');
+    }
+
+    if (!this.canUpdatePlanItemStatus(item.status, newStatus)) {
+      throw new BadRequestException('Invalid plan item status transition.');
+    }
+
+    const updatedItem: PlanItem = {
+      ...item,
+      status: newStatus,
+    };
+
+    this.replaceItemInSession(planSession, updatedItem);
+    this.replaceItemInSession(session, updatedItem);
+    planSession.usedDuration = this.calculateSessionUsedDuration(planSession);
+    session.usedDuration = planSession.usedDuration;
+
+    await this.plansRepo.update(plan.planId, { sessions: plan.sessions });
+    await this.sessionRepo.update(sessionId, {
+      items: session.items,
+      usedDuration: session.usedDuration,
+    });
+
+    const savedItem = await this.planItemRepo.update(planItemId, {
+      status: newStatus,
+    });
+    if (!savedItem) throw new NotFoundException();
+
+    await this.logPlanItemUpdate(
+      savedItem,
+      this.getPlanLogActivityForStatus(newStatus),
+    );
+    return session;
+  }
+
+  private canUpdatePlanItemStatus(
+    currentStatus: PlanItemStatus,
+    newStatus: PlanItemStatus,
+  ): boolean {
+    const allowedTransitions: Record<PlanItemStatus, PlanItemStatus[]> = {
+      [PlanItemStatus.PLANNED]: [
+        PlanItemStatus.COMPLETED,
+        PlanItemStatus.POSTPONED,
+        PlanItemStatus.CANCELLED,
+      ],
+      [PlanItemStatus.POSTPONED]: [PlanItemStatus.PLANNED],
+      [PlanItemStatus.COMPLETED]: [],
+      [PlanItemStatus.CANCELLED]: [],
+    };
+
+    return allowedTransitions[currentStatus].includes(newStatus);
+  }
+
+  private async verifyTeacherOwnsPlan(
+    planId: string,
+    teacherId: UserId,
+  ): Promise<Plan> {
+    const plan = await this.plansRepo.findById(planId);
+    if (!plan) throw new NotFoundException();
+
+    if (String(plan.teacherId) !== String(teacherId)) {
+      throw new ForbiddenException('Teacher does not own this plan.');
+    }
+
+    return plan;
+  }
+
+  private async logPlanItemUpdate(
+    item: PlanItem,
+    activityType: PlanLogActivityType,
+  ): Promise<void> {
+    await this.planLogsRepo.create({
+      planId: item.planId,
+      sessionId: item.sessionId,
+      planItemId: item.planItemId,
+      curriculumItemId: item.curriculumItemId,
+      activityType,
+      date: new Date(),
+      status: this.toPlanLogStatus(item.status),
+    });
+  }
+
+  private getPlanLogActivityForStatus(
+    status: PlanItemStatus,
+  ): PlanLogActivityType {
+    switch (status) {
+      case PlanItemStatus.COMPLETED:
+        return PlanLogActivityType.COMPLETED;
+      case PlanItemStatus.POSTPONED:
+        return PlanLogActivityType.POSTPONED;
+      case PlanItemStatus.CANCELLED:
+        return PlanLogActivityType.CANCELLED;
+      default:
+        return PlanLogActivityType.STATUS_CHANGED;
+    }
+  }
+
+  private toPlanLogStatus(status: PlanItemStatus): PlanLogStatus {
+    switch (status) {
+      case PlanItemStatus.COMPLETED:
+        return PlanLogStatus.DONE;
+      case PlanItemStatus.POSTPONED:
+        return PlanLogStatus.POSTPONED;
+      case PlanItemStatus.CANCELLED:
+        return PlanLogStatus.CANCLED;
+      default:
+        return PlanLogStatus.NOTSTARTED;
+    }
+  }
+
+  private findSessionInPlan(plan: Plan, sessionId: string): Session {
+    const session = plan.sessions.find(
+      (session) => session.sessionId === sessionId,
+    );
+    if (!session) throw new NotFoundException();
+
+    return session;
+  }
+
+  private findItemInSession(session: Session, planItemId: string): PlanItem {
+    const item = session.items.find((item) => item.planItemId === planItemId);
+    if (!item) throw new NotFoundException();
+
+    return item;
+  }
+
+  private replaceItemInSession(session: Session, updatedItem: PlanItem): void {
+    session.items = session.items.map((item) =>
+      item.planItemId === updatedItem.planItemId ? updatedItem : item,
+    );
+  }
+
+  private calculateSessionUsedDuration(session: Session): number {
+    return session.items
+      .filter(
+        (item) =>
+          item.status !== PlanItemStatus.CANCELLED &&
+          item.status !== PlanItemStatus.POSTPONED,
+      )
+      .reduce((total, item) => total + Number(item.estimatedTime ?? 0), 0);
+  }
 
   private sortCurriculumItems(
     curriculumItems: CurriculumItem[],
@@ -136,8 +369,8 @@ export class PlansService {
   ): Promise<number> {
     const priorityRows = await this.statService.sortWeakestSkills();
 
-    const matchedSkill = priorityRows.find((row) =>
-      curriculumItem.skillsSupported.includes(row.skillId),
+    const matchedSkill = priorityRows.find(
+      (row) => curriculumItem.skillsSupported.includes(row.skillId), //need this to be fixed
     );
 
     const priorityPoints = matchedSkill
@@ -212,6 +445,7 @@ export class PlansService {
     weeklySlots: WeeklySlotDTO[],
     timedItems: CurriculumItem[],
     totalWeeks: number,
+    planId: string,
   ): Session[] {
     if (weeklySlots.length === 0 || timedItems.length === 0) {
       return [];
@@ -221,12 +455,12 @@ export class PlansService {
     let itemIndex = 0;
 
     for (let weekIndex = 0; weekIndex < totalWeeks; weekIndex++) {
-      const weekNo = weekIndex + 1;
       for (const slot of weeklySlots) {
         if (itemIndex >= timedItems.length) {
           return sessions;
         }
 
+        const sessionId = `session_${teacherId}_${subjectId}_${weekIndex + 1}_${slot.day}_${slot.slotNumber}`;
         const sessionNumber = sessions.length + 1;
         const reviewBufferMinutes =
           sessionNumber % REVIEW_BUFFER_INTERVAL === 0
@@ -234,12 +468,20 @@ export class PlansService {
             : 0;
         const availableMinutes =
           DEFAULT_SESSION_DURATION_MINUTES - reviewBufferMinutes;
-        const itemsForSession: CurriculumItem[] = [];
+        const itemsForSession: PlanItem[] = [];
         let usedDuration = 0;
 
         while (itemIndex < timedItems.length) {
           const currentItem = timedItems[itemIndex];
-          const itemMinutes = Number(currentItem.estimatedTime ?? 0);
+          const planItem: PlanItem = {
+            ...currentItem,
+            planId,
+            sessionId,
+            planItemId: `plan_item_${randomUUID()}`,
+            title: currentItem.name,
+            status: PlanItemStatus.PLANNED,
+          };
+          const itemMinutes = Number(planItem.estimatedTime ?? 0);
 
           if (
             itemsForSession.length > 0 &&
@@ -249,19 +491,19 @@ export class PlansService {
           }
 
           if (itemsForSession.length === 0 && itemMinutes > availableMinutes) {
-            itemsForSession.push(currentItem);
+            itemsForSession.push(planItem);
             usedDuration += itemMinutes;
             itemIndex++;
             break;
           }
 
-          itemsForSession.push(currentItem);
+          itemsForSession.push(planItem);
           usedDuration += itemMinutes;
           itemIndex++;
         }
 
         sessions.push({
-          sessionId: `session_${teacherId}_${subjectId}_${weekIndex + 1}_${slot.day}_${slot.slotNumber}`,
+          sessionId,
           teacherId: String(teacherId),
           subjectId: String(subjectId),
           day: slot.day,
@@ -271,6 +513,7 @@ export class PlansService {
           reviewBufferMinutes,
           slotNumber: slot.slotNumber,
           sessionDate: this.buildSessionDate(slot.day, weekIndex),
+          sessionWeekNo: weekIndex + 1,
         });
       }
     }

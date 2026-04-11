@@ -2,7 +2,7 @@
   {
     "SubjectOfferingId": 1,
     "SubjectId": 1,
-    "GradeId": 1,
+    "GradeId": "First Grade",
     "TeacherId": 1,
     "SchoolId": 1,
     "SchoolYear": "2025-2026"
@@ -10,7 +10,7 @@
   {
     "SubjectOfferingId": 2,
     "SubjectId": 2,
-    "GradeId": 2,
+    "GradeId": "Third Grade",
     "TeacherId": 2,
     "SchoolId": 1,
     "SchoolYear": "2025-2026"

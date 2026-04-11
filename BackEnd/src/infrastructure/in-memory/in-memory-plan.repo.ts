@@ -20,7 +20,9 @@ export class InMemoryPlansRepo implements PlanRepository {
   }
 
   async update(id: string, patch: Partial<Plan>): Promise<Plan | null> {
-    const index = this.plans.findIndex((item: Plan): boolean => item.planId === id);
+    const index = this.plans.findIndex(
+      (item: Plan): boolean => item.planId === id,
+    );
     if (index === -1) return null;
 
     const updated: Plan = { ...this.plans[index], ...patch };
@@ -29,7 +31,9 @@ export class InMemoryPlansRepo implements PlanRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.plans.findIndex((item: Plan): boolean => item.planId === id);
+    const index = this.plans.findIndex(
+      (item: Plan): boolean => item.planId === id,
+    );
     if (index === -1) return false;
 
     this.plans.splice(index, 1);

@@ -14,6 +14,9 @@ export type NormalizedStudentInfoRow = {
 
 type HeaderMapping = [string, keyof NormalizedStudentInfoRow];
 
+const HEADER_ROW_INDEX = 6;
+const DATA_START_ROW_INDEX = 7;
+
 @Injectable()
 export class StudentUploadService {
   constructor(
@@ -36,9 +39,9 @@ export class StudentUploadService {
 
   async validateHeaders(buffer: Buffer): Promise<HeaderMapping[]> {
     const headersTemplate: string[] = [
-      'Full Arabic Name (Legal - 4 parts)\nالاسم العربي الكامل (قانوني - رباعي)',
-      'Full English Name (Legal - 4 parts)\nالاسم الإنجليزي الكامل (قانوني - رباعي)',
-      'National ID\nالرقم الوطني',
+      'Full Arabic Name (Legal - 4 parts) الاسم العربي الكامل (قانوني - رباعي)',
+      'Full English Name (Legal - 4 parts) الاسم الإنجليزي الكامل (قانوني - رباعي)',
+      'National ID الرقم الوطني',
     ];
     const mapping: (keyof NormalizedStudentInfoRow)[] = [
       'fullArabicName',
@@ -61,21 +64,28 @@ export class StudentUploadService {
         defval: null,
       },
     );
-    const headers = data[6];
+    const headers = data[HEADER_ROW_INDEX];
 
     if (!headers) {
       throw new BadRequestException('Excel file contains no header row');
     }
 
     for (let i = 0; i < headersTemplate.length; i++) {
-      if (headers[i] !== headersTemplate[i]) {
+      const actualHeader = this.normalizeHeaderValue(headers[i]);
+      const expectedHeader = this.normalizeHeaderValue(headersTemplate[i]);
+
+      if (actualHeader !== expectedHeader) {
         throw new BadRequestException(`Invalid header at column ${i + 1}`);
       }
     }
 
-    const mappedHeaders = headersTemplate.map(
-      (header, index): HeaderMapping => [header, mapping[index]],
-    );
+    const mappedHeaders = headers.map((header, index): HeaderMapping => {
+      if (typeof header !== 'string') {
+        throw new BadRequestException(`Invalid header at column ${index + 1}`);
+      }
+
+      return [header, mapping[index]];
+    });
 
     console.log('mappedHeaders:', mappedHeaders);
     return mappedHeaders;
@@ -123,14 +133,14 @@ export class StudentUploadService {
         defval: null,
       },
     );
-    const headers = data[7];
+    const headers = data[HEADER_ROW_INDEX];
 
     if (!headers) {
       throw new BadRequestException('Excel file contains no header row');
     }
 
     const rows = data
-      .slice(9)
+      .slice(DATA_START_ROW_INDEX)
       .filter((row) => row.some((cell) => cell !== null && cell !== ''))
       .map((row) => {
         const parsedRow: Record<string, unknown> = {};
@@ -181,6 +191,14 @@ export class StudentUploadService {
 
     const normalizedValue = String(value).trim();
     return normalizedValue || null;
+  }
+
+  private normalizeHeaderValue(
+    value: string | number | null | undefined,
+  ): string {
+    return String(value ?? '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   private async createStudents(

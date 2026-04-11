@@ -1,4 +1,4 @@
-import { CurriculumItemId, PlanId, SessionId, SkillId } from './ids';
+import { CurriculumItemId, PlanId, PlanItemId, SessionId } from './ids';
 
 export enum Status {
   NOTSTARTED = 'Not Started',
@@ -7,11 +7,20 @@ export enum Status {
   CANCLED = 'Canceled',
   POSTPONED = `Postponed`,
 }
+
+export enum PlanLogActivityType {
+  TIME_EDITED = 'Time Edited',
+  STATUS_CHANGED = 'Status Changed',
+  COMPLETED = 'Completed',
+  POSTPONED = 'Postponed',
+  CANCELLED = 'Cancelled',
+}
+
 export class PlanLog {
   planId: PlanId;
   sessionId: SessionId;
-  skillId: SkillId;
-  activityType: string; //union (later)
+  planItemId: PlanItemId;
+  activityType: PlanLogActivityType;
   date: Date;
   status: Status;
   postponedTo?: Date;

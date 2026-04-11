@@ -12,7 +12,11 @@ export class InMemoryPlanLogsRepo implements PlanLogRepository {
   }
 
   async findById(id: string): Promise<PlanLog | null> {
-    return this.planLogs.find((planLog: PlanLog): boolean => planLog.sessionId === id) ?? null;
+    return (
+      this.planLogs.find(
+        (planLog: PlanLog): boolean => planLog.sessionId === id,
+      ) ?? null
+    );
   }
 
   async findAll(): Promise<PlanLog[]> {
