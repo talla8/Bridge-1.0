@@ -66,15 +66,14 @@ export class StudentsController {
 
   @Get('myStudents')
   async getStudents(@Req() req): Promise<Student[]> {
-    console.log('req.user =', req.user);
     return this.studentsService.getStudents(req.user.sub);
   }
 
   //add:
   //get students by id
   @Get('findOne/:studentId')
-  async getById(@Param('studentId') studentId: StudentId): Promise<Student> {
-    return this.studentsService.getById(studentId);
+  async getById(@Req() req, @Param('studentId') studentId: StudentId) {
+    return this.studentsService.getProfile(req.user.sub, studentId);
   }
 
   @Roles([RoleId.ADMIN, RoleId.TEACHER])

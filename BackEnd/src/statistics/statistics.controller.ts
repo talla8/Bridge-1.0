@@ -26,4 +26,9 @@ export class StatisticsController {
   calculateAvgForEachSkill() {
     return this.statisticsService.calculateAvgForEachSkill();
   }
+
+  @Get('class/skills')
+  getClassSkillAverages() {
+    return this.statisticsService.calculateAvgForEachSkill();
+  }
 }

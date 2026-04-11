@@ -54,6 +54,20 @@ export class StudentsService {
     }
   } //might have a problem when we dont return an array
 
+  async getProfile(userId: UserId, studentId: StudentId): Promise<Student> {
+    const student = await this.getById(studentId);
+    const accessibleStudents = await this.getStudents(userId);
+    const canAccessStudent = accessibleStudents.some(
+      (item) => item.studentId === student.studentId,
+    );
+
+    if (!canAccessStudent) {
+      throw new UnauthorizedException();
+    }
+
+    return student;
+  }
+
   async updateStudent(
     studentId: StudentId,
     patch: Partial<Student>,

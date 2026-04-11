@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import type { SubjectId } from 'src/domain/ids';
 import { Plan } from 'src/domain/plan';
 import { PlanInputService } from './plan-input.service';
@@ -44,6 +53,14 @@ export class PlansController {
       req.user.sub,
       generatePlanDto.subjectId,
       generatePlanDto.semester,
+    );
+  }
+
+  @Get('todo/today')
+  getTeacherTodoList(@Req() req, @Query('date') date?: string) {
+    return this.plansService.getTeacherTodoList(
+      req.user.sub,
+      date ? new Date(date) : new Date(),
     );
   }
 

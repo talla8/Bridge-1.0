@@ -16,7 +16,7 @@ import { InMemoryPlanLogsRepo } from 'src/infrastructure/in-memory/in-memory-pla
 import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
 import type { WeekDay, WeeklySlotDTO } from './DTO/save-weekly-slots.dto';
 import { PlanInputService } from './plan-input.service';
-import { PlanProgressSummary } from './types/plan-progress-summary';
+import { TeacherTodoItem } from './types/teacher-todo-item';
 import { Priority } from 'src/statistics/statistics.service';
 import { StatisticsService } from 'src/statistics/statistics.service';
 import { PlanItem, PlanItemStatus } from 'src/domain/plan-item';
@@ -39,6 +39,15 @@ export type UpdatePlanItemStatusResponse = {
   item: PlanItem;
   session: Session;
   progress: PlanProgressSummary;
+};
+
+export type PlanProgressSummary = {
+  planId: string;
+  totalItems: number;
+  completedItems: number;
+  remainingItems: number;
+  cancelledItems: number;
+  progressPercentage: number;
 };
 
 const DEFAULT_SESSION_DURATION_MINUTES = 40;
@@ -279,6 +288,40 @@ export class PlansService {
     return logs.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
+  async getTeacherTodoList(
+    teacherId: UserId,
+    date: Date = new Date(),
+  ): Promise<TeacherTodoItem[]> {
+    const plans = await this.plansRepo.findAll();
+    const todoItems = plans
+      .filter((plan) => String(plan.teacherId) === String(teacherId))
+      .flatMap((plan) =>
+        plan.sessions
+          .filter((session) => this.isSameDate(session.sessionDate, date))
+          .flatMap((session) =>
+            session.items
+              .filter((item) => item.status === PlanItemStatus.PLANNED)
+              .map((item) => ({
+                planId: plan.planId,
+                planName: plan.planName,
+                subjectId: plan.subjectId,
+                sessionId: session.sessionId,
+                sessionDate: session.sessionDate,
+                sessionWeekNo: session.sessionWeekNo,
+                day: session.day,
+                slotNumber: session.slotNumber,
+                item,
+              })),
+          ),
+      );
+
+    return todoItems.sort(
+      (a, b) =>
+        this.getDateTime(a.sessionDate) - this.getDateTime(b.sessionDate) ||
+        a.slotNumber - b.slotNumber,
+    );
+  }
+
   private canUpdatePlanItemStatus(
     currentStatus: PlanItemStatus,
     newStatus: PlanItemStatus,
@@ -443,6 +486,21 @@ export class PlansService {
       cancelledItems,
       progressPercentage,
     };
+  }
+
+  private isSameDate(left: Date, right: Date): boolean {
+    const leftDate = new Date(left);
+    const rightDate = new Date(right);
+
+    return (
+      leftDate.getFullYear() === rightDate.getFullYear() &&
+      leftDate.getMonth() === rightDate.getMonth() &&
+      leftDate.getDate() === rightDate.getDate()
+    );
+  }
+
+  private getDateTime(date: Date): number {
+    return new Date(date).getTime();
   }
 
   private sortCurriculumItems(
