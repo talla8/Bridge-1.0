@@ -8,6 +8,8 @@ import { InMemoryParentsRepo } from './in-memory-parent.repo';
 import { InMemoryPlanItemsRepo } from './in-memory-plan-item.repo';
 import { InMemoryPlansRepo } from './in-memory-plan.repo';
 import { InMemoryPlanLogsRepo } from './in-memory-planLog.repo';
+import { InMemoryQuizzesRepo } from './in-memory-quiz.repo';
+import { InMemoryQuizResultsRepo } from './in-memory-quiz-result.repo';
 import { InMemorySchoolsRepo } from './in-memory-school.repo';
 import { InMemorySessionsRepo } from './in-memory-session.repo';
 import { InMemorySkillsRepo } from './in-memory-skill.repo';
@@ -32,6 +34,8 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
     InMemoryPlanItemsRepo,
     InMemoryPlansRepo,
     InMemoryPlanLogsRepo,
+    InMemoryQuizzesRepo,
+    InMemoryQuizResultsRepo,
     InMemorySchoolsRepo,
     InMemorySessionsRepo,
     InMemorySkillsRepo,
@@ -55,6 +59,8 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
     InMemoryPlanItemsRepo,
     InMemoryPlansRepo,
     InMemoryPlanLogsRepo,
+    InMemoryQuizzesRepo,
+    InMemoryQuizResultsRepo,
     InMemorySchoolsRepo,
     InMemorySessionsRepo,
     InMemorySkillsRepo,

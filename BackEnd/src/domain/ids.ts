@@ -13,6 +13,10 @@ export type SubjectId = string;
 export type SupportProgramId = string;
 export type SupportProgramMilestoneId = string;
 export type SupportItemId = string;
+export type QuizResultId = string;
+export type QuizId = string;
+export type QuizQuestionId = string;
+export type QuizOptionId = string;
 
 export type SchoolId = string;
 export type PlanId = string;

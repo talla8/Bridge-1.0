@@ -9,8 +9,9 @@ import { BaselineModule } from './baseline/baseline.module';
 import { PlansModule } from './plans/plans.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { ConfigModule } from '@nestjs/config';
-import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.module'; 
+import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.module';
 import { StudentUploadService } from './students/student-upload.service';
+import { SupportProgramsModule } from './support-programs/support-programs.module';
 
 @Module({
   imports: [
@@ -24,13 +25,10 @@ import { StudentUploadService } from './students/student-upload.service';
     BaselineModule,
     PlansModule,
     StatisticsModule,
+    SupportProgramsModule,
     InMemoryReposModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    MockSeedBootstrapService,
-    StudentUploadService,
-  ],
+  providers: [AppService, MockSeedBootstrapService, StudentUploadService],
 })
 export class AppModule {}

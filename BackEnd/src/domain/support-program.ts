@@ -22,6 +22,8 @@ export class SupportProgramMilestone {
   milestoneNo: number;
   name: string;
   goal: string;
+  requiredQuizCount?: number;
+  requiredAverageScore?: number;
   items: SupportProgramItem[];
 }
 
