@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Req } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { AssesmentResult } from 'src/domain/assesmentResult';
 import type { StudentId } from 'src/domain/ids';
@@ -20,6 +20,11 @@ export class StatisticsController {
   @Get('needHelp')
   NeedHelpSTDS() {
     return this.statisticsService.needHelpStudents();
+  }
+
+  @Get('weak-students')
+  getWeakStudents(@Req() req) {
+    return this.statisticsService.getWeakStudentsForTeacher(req.user.sub);
   }
 
   @Get('avgskill')

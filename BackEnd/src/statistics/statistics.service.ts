@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { BaselineProcessingServiceService } from 'src/baseline/baseline-processing-service.service';
 import { AssesmentResult } from 'src/domain/assesmentResult';
+import { SkillId, StudentId, UserId } from 'src/domain/ids';
 import { Student } from 'src/domain/student';
+import { InMemorySkillsRepo } from 'src/infrastructure/in-memory/in-memory-skill.repo';
 import { StudentsService } from 'src/students/students.service';
 
 export enum Priority {
@@ -16,11 +18,31 @@ interface SkillPriorityRow {
   priority: Priority;
 }
 
+export type WeakStudentSummary = {
+  studentId: StudentId;
+  fullArabicName: string;
+  fullEnglishName: string;
+  overallAverage: number;
+  weakSkills: {
+    skillId: SkillId;
+    skillName: string;
+    studentScore: number;
+    classAverage: number;
+    gap: number;
+  }[];
+  initialScores: {
+    skillId: SkillId;
+    skillName: string;
+    score: number;
+  }[];
+};
+
 @Injectable()
 export class StatisticsService {
   constructor(
     private readonly baselineProcessingService: BaselineProcessingServiceService,
     private readonly studentsService: StudentsService,
+    private readonly skillsRepo: InMemorySkillsRepo,
   ) {}
 
   async classAverage(): Promise<number> {
@@ -111,23 +133,91 @@ export class StatisticsService {
     return needHelpStudents;
   }
 
+  async getWeakStudentsForTeacher(
+    teacherId: UserId,
+  ): Promise<WeakStudentSummary[]> {
+    const students = await this.studentsService.getStudents(teacherId);
+    const studentIds = new Set(students.map((student) => student.studentId));
+    const results = (
+      await this.baselineProcessingService.getAllResults()
+    ).filter((result) => studentIds.has(result.studentId));
+    const classSkillAverages = this.calculateSkillAveragesFromResults(results);
+    const skillAverageMap = new Map(
+      classSkillAverages.map((item) => [item.skillId, item.avg]),
+    );
+    const skills = await this.skillsRepo.findAll();
+    const skillNameMap = new Map(
+      skills.map((skill) => [skill.skillId, skill.title]),
+    );
+
+    return students.flatMap((student) => {
+      const studentResults = results.filter(
+        (result) => result.studentId === student.studentId,
+      );
+      const initialScores = this.getRequiredSkillIds().flatMap((skillId) => {
+        const result = studentResults.find((item) => item.skillId === skillId);
+        if (!result) return [];
+
+        return {
+          skillId,
+          skillName: this.getSkillName(skillId, skillNameMap),
+          score: this.scoreToPercent(result),
+        };
+      });
+      const weakSkills = this.getRequiredSkillIds().flatMap((skillId) => {
+        const result = studentResults.find((item) => item.skillId === skillId);
+        if (!result) return [];
+
+        const studentScore = this.scoreToPercent(result);
+        const classAverage = skillAverageMap.get(skillId) ?? 0;
+        if (studentScore >= classAverage) return [];
+
+        return {
+          skillId,
+          skillName: this.getSkillName(skillId, skillNameMap),
+          studentScore,
+          classAverage,
+          gap: classAverage - studentScore,
+        };
+      });
+
+      if (weakSkills.length !== this.getRequiredSkillIds().length) {
+        return [];
+      }
+
+      return {
+        studentId: student.studentId,
+        fullArabicName: student.fullArabicName,
+        fullEnglishName: student.fullEnglishName,
+        overallAverage: this.calculateSkillsAvgPerStudent(studentResults),
+        weakSkills,
+        initialScores,
+      };
+    });
+  }
+
   async calculateAvgForEachSkill(): Promise<any> {
     const results = await this.baselineProcessingService.getAllResults();
-    const skillIds = this.getRequiredSkillIds();
-    let skillsAndAverages: any[] = [];
+    return this.calculateSkillAveragesFromResults(results);
+  }
 
-    for (const skillId of skillIds) {
-      const skillResults = results.filter((result) => result.skillId === skillId);
+  private calculateSkillAveragesFromResults(
+    results: AssesmentResult[],
+  ): { avg: number; skillId: SkillId }[] {
+    return this.getRequiredSkillIds().map((skillId) => {
+      const skillResults = results.filter(
+        (result) => result.skillId === skillId,
+      );
       const avg =
         skillResults.length === 0
           ? 0
-          : skillResults.reduce((sum, result) => sum + this.scoreToPercent(result), 0) /
-            skillResults.length;
+          : skillResults.reduce(
+              (sum, result) => sum + this.scoreToPercent(result),
+              0,
+            ) / skillResults.length;
 
-      skillsAndAverages.push({ avg, skillId });
-    }
-
-    return skillsAndAverages;
+      return { avg, skillId };
+    });
   }
 
   private scoreToPercent(result: AssesmentResult): number {
@@ -152,19 +242,28 @@ export class StatisticsService {
     }
   }
 
-  private getRequiredSkillIds(): string[] {
+  private getRequiredSkillIds(): SkillId[] {
     return ['skill_vocal', 'skill_sounds_of_letters', 'skill_writing'];
+  }
+
+  private getSkillName(
+    skillId: SkillId,
+    skillNameMap: Map<SkillId, string>,
+  ): string {
+    return skillNameMap.get(skillId) ?? skillId;
   }
 
   async sortWeakestSkills(): Promise<SkillPriorityRow[]> {
     const skillsAndAverages = await this.calculateAvgForEachSkill();
 
     return skillsAndAverages
-      .map((item: { skillId: string; avg: number }): SkillPriorityRow => ({
-        skillId: item.skillId,
-        avg: item.avg,
-        priority: this.getPriorityFromAverage(item.avg),
-      }))
+      .map(
+        (item: { skillId: string; avg: number }): SkillPriorityRow => ({
+          skillId: item.skillId,
+          avg: item.avg,
+          priority: this.getPriorityFromAverage(item.avg),
+        }),
+      )
       .sort((a, b) => a.avg - b.avg);
   }
 
@@ -178,83 +277,5 @@ export class StatisticsService {
     }
 
     return Priority.MID;
-  }
-
-  async buildSkillRows(assesmentResult: AssesmentResult[]): Promise<any> {
-    //     - [ ] First we initiate the variables: name, below avg, class avg, priority
-    const students = this.studentsService.findAll();
-    const results = await this.baselineProcessingService.getAllResults();
-    let name: string[] = [];
-    let classAvgForEchSkill;
-    let priority: Priority;
-
-    // - [ ] \we initaiante an array of objects called Skillrows
-    let skillRows = [];
-
-    // - [ ] We initiate an array odyssey belowAvgStds
-    let belowAvgStds: Student[] = [];
-
-    // - [ ] we loop around the skills id
-    // - [ ]  We loop around the results and extract the name
-    // - [ ] We put the name into the first element  of skillrows
-    const skillIds = [
-      'skill_vocal',
-      'skill_sounds_of_letters',
-      'skill_writing',
-    ];
-    for (const skillId of skillIds) {
-      for (let i = 0; i < results.length; i++) {
-        if (results[i].skillId === skillId) {
-          name.push(results[0].skillId);
-        }
-      }
-    }
-
-    // - [ ] We extract the skill avg from the previous method
-    const avgForEachSkill = this.calculateAvgForEachSkill();
-    for (const skillId of skillIds) {
-      for (let i = 0; i < results.length; i++) {
-        if (results[i].skillId === skillId) {
-          // - [ ] We extract the total score from each result
-          // - [ ] We turn it into a percentage
-          const totalScore = results[0].totalScore;
-          const percentage = (totalScore * 100) / 100;
-
-          // - [ ] We compare with the skill avg from the previous method
-          // - [ ] If below it, we push the student to the belowAvgStds array
-          if (percentage < avgForEachSkill['avg']) {
-            belowAvgStds.push(students[i]);
-          }
-        }
-      }
-    }
-
-    // - [ ] When finished we assign the length of students to below avg
-    const belowAvgSkillsCount: number = belowAvgStds.length;
-
-    // - [ ] We extract class avg from the one of the previous methods
-    classAvgForEchSkill = this.calculateAvgForEachSkill();
-    // - [ ] We sort skills by the count of below avg students
-    // - [ ] We devde the student count by three
-    // - [ ] For the first third which is the min the priority is high, and for the others..
-    // - [ ] Find the min skill of all
-  }
-
-  async InsightString(assesmentResult: AssesmentResult): Promise<string> {
-    const results = await this.baselineProcessingService.getAllResults();
-    const objects = await this.calculateAvgForEachSkill();
-    let avgs: number[] = [];
-
-    const avg = objects.find(
-      (item) => item.skillId === assesmentResult.skillId,
-    )?.avg;
-
-    if (avg !== undefined) {
-      avgs.push(avg);
-    }
-
-    const min = avg.min;
-
-    return `skskkkew ${min}`;
   }
 }

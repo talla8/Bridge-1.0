@@ -41,6 +41,18 @@ export type UpdatePlanItemStatusResponse = {
   progress: PlanProgressSummary;
 };
 
+export type ReplanPaceSummary = {
+  behindPace: boolean;
+  carriedForwardItemsByDay: Record<string, number>;
+};
+
+export type ReplanPlanResponse = {
+  plan: Plan;
+  pace: ReplanPaceSummary;
+  planOverCapacity: boolean;
+  unplacedItems: PlanItem[];
+};
+
 export type PlanProgressSummary = {
   planId: string;
   totalItems: number;
@@ -322,6 +334,199 @@ export class PlansService {
     );
   }
 
+  async replanFromSession(
+    teacherId: UserId,
+    planId: string,
+    fromSessionId: string,
+  ): Promise<ReplanPlanResponse> {
+    if (!fromSessionId) {
+      throw new BadRequestException('fromSessionId is required.');
+    }
+
+    const plan = await this.verifyTeacherOwnsPlan(planId, teacherId);
+    const anchorIndex = plan.sessions.findIndex(
+      (session) => session.sessionId === fromSessionId,
+    );
+
+    if (anchorIndex === -1) {
+      throw new NotFoundException('Session not found');
+    }
+
+    const frozenSessions = plan.sessions.slice(0, anchorIndex);
+    const futureSessions = plan.sessions.slice(anchorIndex);
+    const itemsToReplan = this.sortItemsForReplanning(
+      this.collectReplannableItems(futureSessions, anchorIndex),
+    );
+    const {
+      sessions: replannedSessions,
+      pace,
+      unplacedItems,
+    } = this.repackFutureSessions(futureSessions, itemsToReplan, anchorIndex);
+
+    const updatedPlan: Plan = {
+      ...plan,
+      sessions: [...frozenSessions, ...replannedSessions],
+    };
+
+    await this.plansRepo.update(plan.planId, {
+      sessions: updatedPlan.sessions,
+    });
+    await this.saveReplannedSessions(replannedSessions);
+    await this.logPlanReplanned(
+      updatedPlan,
+      fromSessionId,
+      pace,
+      unplacedItems,
+    );
+
+    return {
+      plan: updatedPlan,
+      pace,
+      planOverCapacity: unplacedItems.length > 0,
+      unplacedItems,
+    };
+  }
+
+  private collectReplannableItems(
+    sessions: Session[],
+    anchorIndex: number,
+  ): PlanItem[] {
+    return sessions.flatMap((session, index) =>
+      session.items
+        .filter((item) => item.status === PlanItemStatus.PLANNED)
+        .map((item) => ({
+          ...item,
+          originalSessionOrder:
+            item.originalSessionOrder ?? anchorIndex + index,
+        })),
+    );
+  }
+
+  private sortItemsForReplanning(items: PlanItem[]): PlanItem[] {
+    return [...items].sort((a, b) => {
+      const originalSessionDiff =
+        (a.originalSessionOrder ?? 0) - (b.originalSessionOrder ?? 0);
+      if (originalSessionDiff !== 0) return originalSessionDiff;
+
+      if (a.unitNo !== b.unitNo) return a.unitNo - b.unitNo;
+      if (a.lessonNo !== b.lessonNo) return a.lessonNo - b.lessonNo;
+      return a.orderInLesson - b.orderInLesson;
+    });
+  }
+
+  private repackFutureSessions(
+    sessions: Session[],
+    items: PlanItem[],
+    anchorIndex: number,
+  ): {
+    sessions: Session[];
+    pace: ReplanPaceSummary;
+    unplacedItems: PlanItem[];
+  } {
+    const carriedForwardItemsByDay: Record<string, number> = {};
+    let itemIndex = 0;
+
+    const replannedSessions = sessions.map((session, sessionIndex) => {
+      const fixedItems = session.items.filter(
+        (item) => item.status !== PlanItemStatus.PLANNED,
+      );
+      const nextSession: Session = {
+        ...session,
+        items: [...fixedItems],
+      };
+      let usedDuration = this.calculateSessionUsedDuration(nextSession);
+      const normalAvailableMinutes =
+        nextSession.maxDuration - nextSession.reviewBufferMinutes;
+      const maxAvailableMinutes =
+        normalAvailableMinutes + nextSession.reviewBufferMinutes;
+
+      while (itemIndex < items.length) {
+        const item = items[itemIndex];
+        const itemMinutes = Number(item.estimatedTime ?? 0);
+        const fitsInSession = usedDuration + itemMinutes <= maxAvailableMinutes;
+
+        if (!fitsInSession) {
+          break;
+        }
+
+        const updatedItem = this.applyCarryForwardMetadata(
+          item,
+          session,
+          anchorIndex + sessionIndex,
+          carriedForwardItemsByDay,
+        );
+
+        nextSession.items.push(updatedItem);
+        usedDuration += itemMinutes;
+        itemIndex++;
+      }
+
+      nextSession.usedDuration = this.calculateSessionUsedDuration(nextSession);
+      return nextSession;
+    });
+
+    const unplacedItems = items.slice(itemIndex);
+
+    return {
+      sessions: replannedSessions,
+      pace: {
+        carriedForwardItemsByDay,
+        behindPace: Object.values(carriedForwardItemsByDay).some(
+          (count) => count > 1,
+        ),
+      },
+      unplacedItems,
+    };
+  }
+
+  private applyCarryForwardMetadata(
+    item: PlanItem,
+    targetSession: Session,
+    targetSessionIndex: number,
+    carriedForwardItemsByDay: Record<string, number>,
+  ): PlanItem {
+    const originalSessionOrder =
+      item.originalSessionOrder ?? targetSessionIndex;
+    const wasCarriedForward = originalSessionOrder < targetSessionIndex;
+
+    if (!wasCarriedForward) {
+      return {
+        ...item,
+        sessionId: targetSession.sessionId,
+        originalSessionOrder,
+      };
+    }
+
+    const dayKey = this.toDateKey(targetSession.sessionDate);
+    carriedForwardItemsByDay[dayKey] =
+      (carriedForwardItemsByDay[dayKey] ?? 0) + 1;
+
+    return {
+      ...item,
+      sessionId: targetSession.sessionId,
+      originalSessionId: item.originalSessionId ?? item.sessionId,
+      originalSessionOrder,
+      carriedForwardCount: (item.carriedForwardCount ?? 0) + 1,
+    };
+  }
+
+  private async saveReplannedSessions(sessions: Session[]): Promise<void> {
+    for (const session of sessions) {
+      await this.sessionRepo.update(session.sessionId, {
+        items: session.items,
+        usedDuration: session.usedDuration,
+      });
+
+      for (const item of session.items) {
+        await this.planItemRepo.update(item.planItemId, item);
+      }
+    }
+  }
+
+  private toDateKey(date: Date): string {
+    return new Date(date).toISOString().slice(0, 10);
+  }
+
   private canUpdatePlanItemStatus(
     currentStatus: PlanItemStatus,
     newStatus: PlanItemStatus,
@@ -392,6 +597,35 @@ export class PlansService {
           (total, session) => total + session.items.length,
           0,
         ),
+      },
+    });
+  }
+
+  private async logPlanReplanned(
+    plan: Plan,
+    fromSessionId: string,
+    pace: ReplanPaceSummary,
+    unplacedItems: PlanItem[],
+  ): Promise<void> {
+    const movedItemsCount = Object.values(pace.carriedForwardItemsByDay).reduce(
+      (total, count) => total + count,
+      0,
+    );
+
+    await this.planLogsRepo.create({
+      planLogId: `plan_log_${randomUUID()}`,
+      planId: plan.planId,
+      sessionId: fromSessionId,
+      actionType: PlanLogActionType.PLAN_REGENERATED,
+      description: `Replanned ${plan.planName} from session ${fromSessionId}. Moved ${movedItemsCount} item(s).`,
+      createdAt: new Date(),
+      metadata: {
+        fromSessionId,
+        movedItemsCount,
+        behindPace: pace.behindPace,
+        carriedForwardItemsByDay: pace.carriedForwardItemsByDay,
+        planOverCapacity: unplacedItems.length > 0,
+        unplacedItemIds: unplacedItems.map((item) => item.planItemId),
       },
     });
   }

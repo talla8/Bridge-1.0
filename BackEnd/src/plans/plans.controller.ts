@@ -74,6 +74,19 @@ export class PlansController {
     return this.plansService.getPlanHistory(req.user.sub, planId);
   }
 
+  @Post(':planId/replan')
+  replanFromSession(
+    @Param('planId') planId: string,
+    @Req() req,
+    @Body('fromSessionId') fromSessionId: string,
+  ) {
+    return this.plansService.replanFromSession(
+      req.user.sub,
+      planId,
+      fromSessionId,
+    );
+  }
+
   //   Add teacher endpoints like:
   // - `PATCH /plans/:planId/items/time`
   // - `PATCH /plans/:planId/items/status`

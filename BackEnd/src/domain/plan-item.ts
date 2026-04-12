@@ -20,7 +20,13 @@ export class PlanItem {
   curriculumItemId: CurriculumItemId;
   subjectId: SubjectId;
   title: string;
+  unitNo: number;
+  lessonNo: number;
+  orderInLesson: number;
   estimatedTime: number;
   status: PlanItemStatus;
+  originalSessionId?: string;
+  originalSessionOrder?: number;
+  carriedForwardCount?: number;
   notes?: string;
 }
