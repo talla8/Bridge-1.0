@@ -10,6 +10,9 @@ export type AttendanceId = string;
 
 export type CurriculumItemId = string;
 export type SubjectId = string;
+export type SupportProgramId = string;
+export type SupportProgramMilestoneId = string;
+export type SupportItemId = string;
 
 export type SchoolId = string;
 export type PlanId = string;

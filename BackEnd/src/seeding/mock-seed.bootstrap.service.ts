@@ -13,6 +13,7 @@ import { InMemorySkillCurriculumItemsRepo } from 'src/infrastructure/in-memory/i
 import { InMemoryStudentsRepo } from 'src/infrastructure/in-memory/in-memory-student.repo';
 import { InMemorySubjectsRepo } from 'src/infrastructure/in-memory/in-memory-subject.repo';
 import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
+import { InMemorySupportProgramsRepo } from 'src/infrastructure/in-memory/in-memory-support-program.repo';
 import { InMemoryTeachersRepo } from 'src/infrastructure/in-memory/in-memory-teacher.repo';
 import { InMemoryUploadsRepo } from 'src/infrastructure/in-memory/in-memory-upload.repo';
 import { InMemoryUsersRepo } from 'src/infrastructure/in-memory/in-memory-user.repo';
@@ -38,6 +39,7 @@ export class MockSeedBootstrapService implements OnModuleInit {
     private readonly skillCurriculumItemsRepo: InMemorySkillCurriculumItemsRepo,
     private readonly planLogsRepo: InMemoryPlanLogsRepo,
     private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
+    private readonly supportProgramsRepo: InMemorySupportProgramsRepo,
     private readonly adminsRepo: InMemoryAdminsRepo,
   ) {}
 
@@ -81,6 +83,7 @@ export class MockSeedBootstrapService implements OnModuleInit {
       attendance: this.attendanceRepo,
       assessmentResults: this.assessmentResultsRepo,
       skillCurriculumItems: this.skillCurriculumItemsRepo,
+      supportPrograms: this.supportProgramsRepo,
       planLogs: this.planLogsRepo,
     });
   }

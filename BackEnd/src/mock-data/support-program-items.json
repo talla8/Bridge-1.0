@@ -1,0 +1,350 @@
+[
+  {
+    "SupportProgramId": "sp_skill_vocal_u1",
+    "ProgramName": "برنامج دعم الوعي الصوتي - الوحدة الأولى",
+    "GradeId": "Third Grade",
+    "SubjectId": "2",
+    "TargetSkill": "skill_vocal",
+    "SourceUnitNo": 1,
+    "SourceLessonNo": 1,
+    "Milestones": [
+      {
+        "MilestoneId": "sp_skill_vocal_u1_m1",
+        "MilestoneNo": 1,
+        "Name": "تمييز المعنى وفهم المسموع",
+        "Goal": "مساعدة الطالب على فهم المعنى العام للنص والتمييز بين الإجابات الصحيحة.",
+        "Items": [
+          {
+            "SupportItemId": "spv_1",
+            "OrderInMilestone": 1,
+            "Name": "الاستماع إلى القصة ثم اختيار المعنى الصحيح للكلمات",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 10,
+            "Difficulty": 1
+          },
+          {
+            "SupportItemId": "spv_2",
+            "OrderInMilestone": 2,
+            "Name": "الاستماع إلى القصة والإجابة عن سؤالين شفهيين مباشرين",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 8,
+            "Difficulty": 1
+          },
+          {
+            "SupportItemId": "spv_3",
+            "OrderInMilestone": 3,
+            "Name": "مطابقة الجملة بالصورة المناسبة بعد الاستماع",
+            "Type": "activity",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 7,
+            "Difficulty": 1
+          }
+        ]
+      },
+      {
+        "MilestoneId": "sp_skill_vocal_u1_m2",
+        "MilestoneNo": 2,
+        "Name": "فهم التسلسل والأحداث",
+        "Goal": "مساعدة الطالب على تتبع أحداث القصة وربط السبب بالنتيجة.",
+        "Items": [
+          {
+            "SupportItemId": "spv_4",
+            "OrderInMilestone": 1,
+            "Name": "ترتيب 3 أحداث رئيسية من القصة باستخدام بطاقات",
+            "Type": "activity",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 10,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "spv_5",
+            "OrderInMilestone": 2,
+            "Name": "اختيار الإجابة الصحيحة عن سبب حدوث حدث في القصة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "spv_6",
+            "OrderInMilestone": 3,
+            "Name": "إكمال تسلسل القصة: بداية - وسط - نهاية",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 10,
+            "Difficulty": 2
+          }
+        ]
+      },
+      {
+        "MilestoneId": "sp_skill_vocal_u1_m3",
+        "MilestoneNo": 3,
+        "Name": "التعبير والفهم الأعمق",
+        "Goal": "مساعدة الطالب على إبداء رأيه وفهم الفكرة العامة للنص.",
+        "Items": [
+          {
+            "SupportItemId": "spv_7",
+            "OrderInMilestone": 1,
+            "Name": "اختيار جملة أعجبتني من النص وذكر السبب شفهياً",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "spv_8",
+            "OrderInMilestone": 2,
+            "Name": "تحديد الزمان والمكان في النص من بين خيارات",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 7,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "spv_9",
+            "OrderInMilestone": 3,
+            "Name": "إبداء الرأي في موقف من القصة بجملة بسيطة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_vocal"],
+            "EstimatedTime": 10,
+            "Difficulty": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "SupportProgramId": "sp_skill_sounds_u1",
+    "ProgramName": "برنامج دعم قراءة أصوات الحروف - الوحدة الأولى",
+    "GradeId": "Third Grade",
+    "SubjectId": "2",
+    "TargetSkill": "skill_sounds_of_letters",
+    "SourceUnitNo": 1,
+    "SourceLessonNo": 1,
+    "Milestones": [
+      {
+        "MilestoneId": "sp_skill_sounds_u1_m1",
+        "MilestoneNo": 1,
+        "Name": "تمييز الأصوات والحركات",
+        "Goal": "مساعدة الطالب على ملاحظة الحركات والسكون والشدة وتمييز الصوت داخل الكلمة.",
+        "Items": [
+          {
+            "SupportItemId": "sps_1",
+            "OrderInMilestone": 1,
+            "Name": "تمييز الحركة المناسبة على الحرف داخل الكلمة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 8,
+            "Difficulty": 1
+          },
+          {
+            "SupportItemId": "sps_2",
+            "OrderInMilestone": 2,
+            "Name": "التمييز بين السكون والشدة في كلمات قصيرة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 10,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "sps_3",
+            "OrderInMilestone": 3,
+            "Name": "تحديد الصوت الناقص داخل الكلمة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          }
+        ]
+      },
+      {
+        "MilestoneId": "sp_skill_sounds_u1_m2",
+        "MilestoneNo": 2,
+        "Name": "ربط الصوت بالحرف",
+        "Goal": "مساعدة الطالب على ربط شكل الحرف بصوته داخل الكلمة.",
+        "Items": [
+          {
+            "SupportItemId": "sps_4",
+            "OrderInMilestone": 1,
+            "Name": "مطابقة الصوت بالحرف المناسب",
+            "Type": "activity",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 7,
+            "Difficulty": 1
+          },
+          {
+            "SupportItemId": "sps_5",
+            "OrderInMilestone": 2,
+            "Name": "اختيار الحرف الذي يمثل الصوت المسموع",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "sps_6",
+            "OrderInMilestone": 3,
+            "Name": "تمييز الأصوات داخل الكلمات المألوفة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 10,
+            "Difficulty": 2
+          }
+        ]
+      },
+      {
+        "MilestoneId": "sp_skill_sounds_u1_m3",
+        "MilestoneNo": 3,
+        "Name": "القراءة المضبوطة",
+        "Goal": "مساعدة الطالب على قراءة كلمات وجمل قصيرة بالتشكيل الصحيح.",
+        "Items": [
+          {
+            "SupportItemId": "sps_7",
+            "OrderInMilestone": 1,
+            "Name": "قراءة كلمات مضبوطة بالشكل",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "sps_8",
+            "OrderInMilestone": 2,
+            "Name": "قراءة كلمات مشكولة ثم إعادة نطقها ببطء",
+            "Type": "activity",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "sps_9",
+            "OrderInMilestone": 3,
+            "Name": "إعادة كتابة كلمات مضبوطة بالشكل بشكل صحيح",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_sounds_of_letters"],
+            "EstimatedTime": 10,
+            "Difficulty": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "SupportProgramId": "sp_skill_writing_u1",
+    "ProgramName": "برنامج دعم الكتابة - الوحدة الأولى",
+    "GradeId": "Third Grade",
+    "SubjectId": "2",
+    "TargetSkill": "skill_writing",
+    "SourceUnitNo": 1,
+    "SourceLessonNo": 1,
+    "Milestones": [
+      {
+        "MilestoneId": "sp_skill_writing_u1_m1",
+        "MilestoneNo": 1,
+        "Name": "إكمال الكلمة والجملة",
+        "Goal": "مساعدة الطالب على كتابة الكلمات البسيطة وإكمال الناقص منها.",
+        "Items": [
+          {
+            "SupportItemId": "spw_1",
+            "OrderInMilestone": 1,
+            "Name": "إكمال كلمات ناقصة من حروف معطاة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 8,
+            "Difficulty": 1
+          },
+          {
+            "SupportItemId": "spw_2",
+            "OrderInMilestone": 2,
+            "Name": "إكمال جمل قصيرة بكلمات مناسبة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 10,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "spw_3",
+            "OrderInMilestone": 3,
+            "Name": "نسخ كلمات شائعة كتابةً بشكل واضح",
+            "Type": "activity",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 7,
+            "Difficulty": 1
+          }
+        ]
+      },
+      {
+        "MilestoneId": "sp_skill_writing_u1_m2",
+        "MilestoneNo": 2,
+        "Name": "النسخ والضبط",
+        "Goal": "مساعدة الطالب على كتابة الكلمات والجمل كتابة صحيحة ومنظمة.",
+        "Items": [
+          {
+            "SupportItemId": "spw_4",
+            "OrderInMilestone": 1,
+            "Name": "إعادة كتابة كلمات بشكل صحيح مع الضبط",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "spw_5",
+            "OrderInMilestone": 2,
+            "Name": "إعادة كتابة الجمل بخط النسخ",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 10,
+            "Difficulty": 1
+          },
+          {
+            "SupportItemId": "spw_6",
+            "OrderInMilestone": 3,
+            "Name": "كتابة كلمات تحتوي ال الشمسية والقمرية",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          }
+        ]
+      },
+      {
+        "MilestoneId": "sp_skill_writing_u1_m3",
+        "MilestoneNo": 3,
+        "Name": "التعبير الكتابي البسيط",
+        "Goal": "مساعدة الطالب على إنتاج كتابة قصيرة وواضحة.",
+        "Items": [
+          {
+            "SupportItemId": "spw_7",
+            "OrderInMilestone": 1,
+            "Name": "كتابة جملة باستخدام كلمة معطاة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 8,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "spw_8",
+            "OrderInMilestone": 2,
+            "Name": "كتابة جمل من صور",
+            "Type": "activity",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 10,
+            "Difficulty": 2
+          },
+          {
+            "SupportItemId": "spw_9",
+            "OrderInMilestone": 3,
+            "Name": "كتابة فقرة إملائية قصيرة",
+            "Type": "exercise",
+            "SkillsSupported": ["skill_writing"],
+            "EstimatedTime": 10,
+            "Difficulty": 2
+          }
+        ]
+      }
+    ]
+  }
+]

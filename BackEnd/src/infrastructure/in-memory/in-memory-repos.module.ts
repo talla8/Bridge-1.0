@@ -15,6 +15,7 @@ import { InMemorySkillCurriculumItemsRepo } from './in-memory-skill-curriculum-i
 import { InMemoryStudentsRepo } from './in-memory-student.repo';
 import { InMemorySubjectsRepo } from './in-memory-subject.repo';
 import { InMemorySubjectOfferingsRepo } from './in-memory-subjectOffering.repo';
+import { InMemorySupportProgramsRepo } from './in-memory-support-program.repo';
 import { InMemoryTeachersRepo } from './in-memory-teacher.repo';
 import { InMemoryUploadsRepo } from './in-memory-upload.repo';
 import { InMemoryUsersRepo } from './in-memory-user.repo';
@@ -38,6 +39,7 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
     InMemoryStudentsRepo,
     InMemorySubjectsRepo,
     InMemorySubjectOfferingsRepo,
+    InMemorySupportProgramsRepo,
     InMemoryTeachersRepo,
     InMemoryUploadsRepo,
     InMemoryUsersRepo,
@@ -60,6 +62,7 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
     InMemoryStudentsRepo,
     InMemorySubjectsRepo,
     InMemorySubjectOfferingsRepo,
+    InMemorySupportProgramsRepo,
     InMemoryTeachersRepo,
     InMemoryUploadsRepo,
     InMemoryUsersRepo,

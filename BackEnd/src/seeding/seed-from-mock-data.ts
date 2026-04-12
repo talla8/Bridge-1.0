@@ -31,6 +31,7 @@ export interface SeedRepositories {
   attendance?: SeedRepositoryEntry;
   assessmentResults?: SeedRepositoryEntry;
   skillCurriculumItems?: SeedRepositoryEntry;
+  supportPrograms?: SeedRepositoryEntry;
   planLogs?: SeedRepositoryEntry;
 }
 
@@ -48,7 +49,9 @@ export async function seedFromMockData(
       mockSeedManifest[entity as keyof typeof mockSeedManifest] ?? undefined;
 
     if (!fileName) {
-      throw new Error(`No mock-data file mapping found for entity "${entity}".`);
+      throw new Error(
+        `No mock-data file mapping found for entity "${entity}".`,
+      );
     }
 
     bindings.push({
