@@ -9,6 +9,7 @@ import { BaselineModule } from './baseline/baseline.module';
 import { PlansModule } from './plans/plans.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { ConfigModule } from '@nestjs/config';
+import { AssignmentsModule } from './assignments/assignments.module';
 import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.module';
 import { StudentUploadService } from './students/student-upload.service';
 import { SupportProgramsModule } from './support-programs/support-programs.module';
@@ -26,6 +27,7 @@ import { SupportProgramsModule } from './support-programs/support-programs.modul
     PlansModule,
     StatisticsModule,
     SupportProgramsModule,
+    AssignmentsModule,
     InMemoryReposModule,
   ],
   controllers: [AppController],

@@ -7,6 +7,7 @@ export type GradeId = string;
 export type ResultId = string;
 export type UploadId = string;
 export type AttendanceId = string;
+export type AssignmentId = string;
 
 export type CurriculumItemId = string;
 export type SubjectId = string;

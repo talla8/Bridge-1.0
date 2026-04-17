@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { InMemoryAdminsRepo } from './in-memory-admin.repo';
 import { InMemoryAssesmentResultsRepo } from './in-memory-assesmentResult.repo';
+import { InMemoryAssignmentsRepo } from './in-memory-assignment.repo';
 import { InMemoryAttendancesRepo } from './in-memory-attendance.repo';
 import { InMemoryCurriculumItemsRepo } from './in-memory-curriculum-item.repo';
 import { InMemoryGradesRepo } from './in-memory-grade.repo';
@@ -27,6 +28,7 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
   providers: [
     InMemoryAdminsRepo,
     InMemoryAssesmentResultsRepo,
+    InMemoryAssignmentsRepo,
     InMemoryAttendancesRepo,
     InMemoryCurriculumItemsRepo,
     InMemoryGradesRepo,
@@ -52,6 +54,7 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
   exports: [
     InMemoryAdminsRepo,
     InMemoryAssesmentResultsRepo,
+    InMemoryAssignmentsRepo,
     InMemoryAttendancesRepo,
     InMemoryCurriculumItemsRepo,
     InMemoryGradesRepo,
