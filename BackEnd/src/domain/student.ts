@@ -10,7 +10,9 @@ export class Student {
   studentId: StudentId;
   fullEnglishName: string;
   fullArabicName: string;
+  nationalId: string;
   parentId?: UserId;
+  parentLinkCode: string;
   gradeId: GradeId;
   schoolName?: string;
   parentRelation?: ParentRelation;

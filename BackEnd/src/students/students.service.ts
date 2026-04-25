@@ -3,6 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { ParentRelation, Student } from 'src/domain/student';
 import { InMemoryStudentsRepo } from 'src/infrastructure/in-memory/in-memory-student.repo';
 import { CreateStudentDTO } from './DTO/create.dto';
@@ -26,8 +27,10 @@ export class StudentsService {
         studentId: `stu_${createdAt}_${index + 1}`, //check this if working apply it to other places
         fullEnglishName: student.fullEnglishName,
         fullArabicName: student.fullArabicName,
+        nationalId: student.nationalId,
         // Temporary defaults for MVP while DTO is minimal.
-        parentId: '', //also when creating a student
+        parentId: undefined,
+        parentLinkCode: this.generateParentLinkCode(),
         gradeId: student.grade,
         schoolName: '', //must be associated with the teacher
         parentRelation: ParentRelation.GUARDIAN, //Default //see a way to chnge it while creating a parents account
@@ -89,5 +92,9 @@ export class StudentsService {
 
   async findAll(): Promise<Student[]> {
     return this.inMemoryStudentsRepo.findAll();
+  }
+
+  private generateParentLinkCode(): string {
+    return `PARENT-${randomUUID().slice(0, 8).toUpperCase()}`;
   }
 }

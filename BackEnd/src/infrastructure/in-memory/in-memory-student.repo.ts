@@ -24,6 +24,15 @@ export class InMemoryStudentsRepo implements StudentRepository {
     );
   }
 
+  async findByParentLinkCode(parentLinkCode: string): Promise<Student | null> {
+    return (
+      this.students.find(
+        (student: Student): boolean =>
+          student.parentLinkCode === parentLinkCode,
+      ) ?? null
+    );
+  }
+
   async findByArabicName(name: string): Promise<Student[]> {
     return this.students.filter(
       (student: Student): boolean => student.fullArabicName === name,

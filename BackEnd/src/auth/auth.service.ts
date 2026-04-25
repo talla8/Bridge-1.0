@@ -151,6 +151,16 @@ export class AuthService {
     //students should be created first
     parentSignUpDto: ParentSignUpDTO,
   ): Promise<{ access_token: any }> {
+    const child = await this.studentsRepo.findByParentLinkCode(
+      parentSignUpDto.parentStudentCode,
+    );
+    if (!child) {
+      throw new NotFoundException('Parent student code is invalid');
+    }
+    if (child.parentId) {
+      throw new ConflictException('This student is already linked to a parent');
+    }
+
     const user = await this.createBaseUser(
       {
         userFullName: parentSignUpDto.userFullName,
@@ -161,14 +171,8 @@ export class AuthService {
       RoleId.PARENT,
     );
     await this.verificationService.sendEmail(user.userId, user.email);
-    const child = await this.studentsRepo.findById(
-      parentSignUpDto.studentNationalId,
-    ); //change the method here
-    if (!child) {
-      throw new NotFoundException('Student is not Found');
-    }
     await this.studentsRepo.update(child.studentId, {
-      parentId: `parent-${randomUUID()}`,
+      parentId: user.userId,
       parentRelation: parentSignUpDto.parentType,
     });
     const payload = {
@@ -179,6 +183,27 @@ export class AuthService {
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async getProfile(userId: UserId) {
+    const user = await this.usersService.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+
+    const grade = await this.gradesRepo.findByTeacherId(userId);
+
+    return {
+      userId: user.userId,
+      fullName: user.fullName,
+      email: user.email,
+      roleId: user.roleId,
+      isActive: user.isActive,
+      isVerified: user.isVerified,
+      grade: grade?.gradeName ?? null,
+      school: grade?.schoolName ?? null,
     };
   }
 

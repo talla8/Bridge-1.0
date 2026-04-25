@@ -56,6 +56,16 @@ export class PlansController {
     );
   }
 
+  @Get('mine')
+  getTeacherPlans(@Req() req): Promise<Plan[]> {
+    return this.plansService.getTeacherPlans(req.user.sub);
+  }
+
+  @Get('mine/latest')
+  getLatestTeacherPlan(@Req() req): Promise<Plan | null> {
+    return this.plansService.getLatestTeacherPlan(req.user.sub);
+  }
+
   @Get('todo/today')
   getTeacherTodoList(@Req() req, @Query('date') date?: string) {
     return this.plansService.getTeacherTodoList(

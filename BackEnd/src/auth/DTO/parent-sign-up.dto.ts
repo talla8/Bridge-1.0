@@ -7,5 +7,5 @@ export class ParentSignUpDTO extends BaseSignUpDTO {
   parentType: ParentRelation;
 
   @IsString()
-  studentNationalId: string;
+  parentStudentCode: string;
 }

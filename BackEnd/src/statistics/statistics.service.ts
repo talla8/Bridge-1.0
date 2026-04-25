@@ -12,7 +12,7 @@ export enum Priority {
   HIGH = 'HIGH',
 }
 
-interface SkillPriorityRow {
+export interface SkillPriorityRow {
   skillId: string;
   avg: number;
   priority: Priority;

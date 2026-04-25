@@ -34,6 +34,6 @@ export class StatisticsController {
 
   @Get('class/skills')
   getClassSkillAverages() {
-    return this.statisticsService.calculateAvgForEachSkill();
+    return this.statisticsService.sortWeakestSkills();
   }
 }

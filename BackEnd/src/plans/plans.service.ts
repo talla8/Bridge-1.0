@@ -300,6 +300,22 @@ export class PlansService {
     return logs.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
+  async getTeacherPlans(teacherId: UserId): Promise<Plan[]> {
+    const plans = await this.plansRepo.findAll();
+
+    return plans
+      .filter((plan) => String(plan.teacherId) === String(teacherId))
+      .sort(
+        (a, b) =>
+          this.getPlanCreatedTimestamp(b) - this.getPlanCreatedTimestamp(a),
+      );
+  }
+
+  async getLatestTeacherPlan(teacherId: UserId): Promise<Plan | null> {
+    const plans = await this.getTeacherPlans(teacherId);
+    return plans[0] ?? null;
+  }
+
   async getTeacherTodoList(
     teacherId: UserId,
     date: Date = new Date(),
@@ -920,5 +936,16 @@ export class PlansService {
     const sessionDate = new Date(startOfWeek);
     sessionDate.setDate(startOfWeek.getDate() + weekIndex * 7 + dayOffset);
     return sessionDate;
+  }
+
+  private getPlanCreatedTimestamp(plan: Plan): number {
+    const planIdParts = String(plan.planId).split('_');
+    const rawTimestamp = Number(planIdParts[planIdParts.length - 1]);
+
+    if (!Number.isNaN(rawTimestamp) && rawTimestamp > 0) {
+      return rawTimestamp;
+    }
+
+    return new Date(plan.startDate).getTime();
   }
 }

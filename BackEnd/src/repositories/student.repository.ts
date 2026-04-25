@@ -4,6 +4,7 @@ export interface StudentRepository {
   create(student: Student): Promise<Student>;
   createMany(students: Student[]): Promise<Student[]>;
   findById(id: string): Promise<Student | null>;
+  findByParentLinkCode(parentLinkCode: string): Promise<Student | null>;
   findByArabicName(name: string): Promise<Student[]>;
   findAll(): Promise<Student[]>;
   findByParentId(parentId: string): Promise<Student[]>;
