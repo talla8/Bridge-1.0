@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { QuizQuestionType } from 'src/domain/quiz';
 import { SupportProgramsService } from './support-programs.service';
 
 @Controller('support-programs')
@@ -21,6 +22,7 @@ export class SupportProgramsController {
       title: string;
       questions: {
         prompt: string;
+        type?: QuizQuestionType;
         options: {
           text: string;
           isCorrect: boolean;
@@ -43,7 +45,8 @@ export class SupportProgramsController {
       studentId: string;
       answers: {
         questionId: string;
-        selectedOptionId: string;
+        selectedOptionId?: string;
+        essayAnswer?: string;
       }[];
     },
   ) {
@@ -62,7 +65,8 @@ export class SupportProgramsController {
       studentId: string;
       answers: {
         questionId: string;
-        selectedOptionId: string;
+        selectedOptionId?: string;
+        essayAnswer?: string;
       }[];
     },
   ) {
@@ -85,6 +89,52 @@ export class SupportProgramsController {
       body.studentId,
       body.quizId,
       Number(body.score),
+    );
+  }
+
+  @Post(':supportProgramId/milestones/:milestoneId/exercise-results')
+  recordMilestoneExerciseResult(
+    @Param('supportProgramId') supportProgramId: string,
+    @Param('milestoneId') milestoneId: string,
+    @Body()
+    body: {
+      studentId: string;
+      supportItemId: string;
+      passed?: boolean;
+      answer?: string;
+    },
+  ) {
+    return this.supportProgramsService.recordMilestoneExerciseResult(
+      supportProgramId,
+      milestoneId,
+      body.studentId,
+      body.supportItemId,
+      body.passed,
+      body.answer,
+    );
+  }
+
+  @Post('quiz-results/:quizResultId/review')
+  reviewQuizResult(
+    @Param('quizResultId') quizResultId: string,
+    @Body() body: { score: number; feedback?: string },
+  ) {
+    return this.supportProgramsService.reviewQuizResult(
+      quizResultId,
+      Number(body.score),
+      body.feedback,
+    );
+  }
+
+  @Post('exercise-results/:exerciseResultId/review')
+  reviewExerciseResult(
+    @Param('exerciseResultId') exerciseResultId: string,
+    @Body() body: { passed: boolean; feedback?: string },
+  ) {
+    return this.supportProgramsService.reviewExerciseResult(
+      exerciseResultId,
+      Boolean(body.passed),
+      body.feedback,
     );
   }
 

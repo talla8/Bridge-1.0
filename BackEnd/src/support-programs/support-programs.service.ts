@@ -5,19 +5,20 @@ import {
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { StudentId } from 'src/domain/ids';
-import { Quiz } from 'src/domain/quiz';
-import { QuizResult } from 'src/domain/quiz-result';
+import { ExerciseResult } from 'src/domain/exercise-result';
+import { Quiz, QuizQuestionType } from 'src/domain/quiz';
+import { QuizResult, SubmissionStatus } from 'src/domain/quiz-result';
 import {
   SupportProgram,
   SupportProgramMilestone,
 } from 'src/domain/support-program';
 import { InMemoryQuizzesRepo } from 'src/infrastructure/in-memory/in-memory-quiz.repo';
 import { InMemoryQuizResultsRepo } from 'src/infrastructure/in-memory/in-memory-quiz-result.repo';
+import { InMemoryExerciseResultsRepo } from 'src/infrastructure/in-memory/in-memory-exercise-result.repo';
 import { InMemorySupportProgramsRepo } from 'src/infrastructure/in-memory/in-memory-support-program.repo';
 import { MilestoneProgressSummary } from './types/milestone-progress-summary';
 
-const DEFAULT_REQUIRED_QUIZ_COUNT = 10;
-const DEFAULT_REQUIRED_AVERAGE_SCORE = 80;
+const DEFAULT_REQUIRED_QUIZ_SCORE = 80;
 
 type StudentSupportProgramState = {
   studentId: StudentId;
@@ -31,7 +32,8 @@ type CreateQuizInput = {
   title: string;
   questions: {
     prompt: string;
-    options: {
+    type?: QuizQuestionType;
+    options?: {
       text: string;
       isCorrect: boolean;
     }[];
@@ -40,7 +42,8 @@ type CreateQuizInput = {
 
 type QuizSubmissionAnswerInput = {
   questionId: string;
-  selectedOptionId: string;
+  selectedOptionId?: string;
+  essayAnswer?: string;
 };
 
 export type StudentSupportProgramProgress = {
@@ -67,6 +70,7 @@ export class SupportProgramsService {
     private readonly supportProgramsRepo: InMemorySupportProgramsRepo,
     private readonly quizzesRepo: InMemoryQuizzesRepo,
     private readonly quizResultsRepo: InMemoryQuizResultsRepo,
+    private readonly exerciseResultsRepo: InMemoryExerciseResultsRepo,
   ) {}
 
   async createMilestoneQuiz(
@@ -85,7 +89,8 @@ export class SupportProgramsService {
       questions: input.questions.map((question) => ({
         quizQuestionId: `quiz_question_${randomUUID()}`,
         prompt: question.prompt,
-        options: question.options.map((option) => ({
+        type: question.type ?? QuizQuestionType.MULTIPLE_CHOICE,
+        options: (question.options ?? []).map((option) => ({
           quizOptionId: `quiz_option_${randomUUID()}`,
           text: option.text,
           isCorrect: option.isCorrect,
@@ -112,15 +117,22 @@ export class SupportProgramsService {
     if (!quiz) {
       throw new NotFoundException('Quiz not found.');
     }
+    if (!quiz.supportProgramId || !quiz.milestoneId) {
+      throw new BadRequestException(
+        'This quiz is not attached to a support-program milestone.',
+      );
+    }
 
-    const score = this.gradeQuiz(quiz, answers);
+    const gradedSubmission = this.gradeQuiz(quiz, answers);
     const quizResult = await this.quizResultsRepo.create({
       quizResultId: `quiz_result_${randomUUID()}`,
       supportProgramId: quiz.supportProgramId,
       milestoneId: quiz.milestoneId,
       studentId,
       quizId: quiz.quizId,
-      score,
+      score: gradedSubmission.score,
+      status: gradedSubmission.status,
+      answers: gradedSubmission.answers,
       submittedAt: new Date(),
     });
 
@@ -161,12 +173,133 @@ export class SupportProgramsService {
       studentId,
       quizId,
       score,
+      status: SubmissionStatus.REVIEWED,
+      answers: [],
       submittedAt: new Date(),
+      reviewedAt: new Date(),
     });
 
     return {
       quizResult,
       ...(await this.updateMilestoneStateAfterProgress(studentId, milestoneId)),
+    };
+  }
+
+  async recordMilestoneExerciseResult(
+    supportProgramId: string,
+    milestoneId: string,
+    studentId: StudentId,
+    supportItemId: string,
+    passed: boolean | undefined,
+    answer?: string,
+  ): Promise<{
+    exerciseResult: ExerciseResult;
+    milestoneProgress: MilestoneProgressSummary;
+    studentProgramState: StudentSupportProgramState;
+  }> {
+    if (!studentId) {
+      throw new BadRequestException('studentId is required.');
+    }
+    if (!supportItemId) {
+      throw new BadRequestException('supportItemId is required.');
+    }
+
+    const { milestone } = await this.findMilestoneOrThrow(
+      supportProgramId,
+      milestoneId,
+    );
+    const supportItem = milestone.items.find(
+      (item) => item.supportItemId === supportItemId,
+    );
+    if (!supportItem) {
+      throw new NotFoundException('Support program item not found.');
+    }
+
+    const exerciseResult = await this.exerciseResultsRepo.create({
+      exerciseResultId: `exercise_result_${randomUUID()}`,
+      supportProgramId,
+      milestoneId,
+      studentId,
+      supportItemId,
+      passed: Boolean(passed),
+      status:
+        passed === undefined || passed === null
+          ? SubmissionStatus.PENDING_REVIEW
+          : SubmissionStatus.REVIEWED,
+      answer,
+      submittedAt: new Date(),
+    });
+
+    return {
+      exerciseResult,
+      ...(await this.updateMilestoneStateAfterProgress(studentId, milestoneId)),
+    };
+  }
+
+  async reviewQuizResult(
+    quizResultId: string,
+    score: number,
+    feedback?: string,
+  ): Promise<{
+    quizResult: QuizResult;
+    milestoneProgress: MilestoneProgressSummary;
+    studentProgramState: StudentSupportProgramState;
+  }> {
+    this.validateScore(score);
+
+    const quizResult = await this.quizResultsRepo.update(quizResultId, {
+      score,
+      feedback,
+      status: SubmissionStatus.REVIEWED,
+      reviewedAt: new Date(),
+    });
+    if (!quizResult) {
+      throw new NotFoundException('Quiz result not found.');
+    }
+
+    if (!quizResult.milestoneId) {
+      throw new BadRequestException(
+        'Quiz result is not linked to a support-program milestone.',
+      );
+    }
+
+    return {
+      quizResult,
+      ...(await this.updateMilestoneStateAfterProgress(
+        quizResult.studentId,
+        quizResult.milestoneId,
+      )),
+    };
+  }
+
+  async reviewExerciseResult(
+    exerciseResultId: string,
+    passed: boolean,
+    feedback?: string,
+  ): Promise<{
+    exerciseResult: ExerciseResult;
+    milestoneProgress: MilestoneProgressSummary;
+    studentProgramState: StudentSupportProgramState;
+  }> {
+    const exerciseResult = await this.exerciseResultsRepo.update(
+      exerciseResultId,
+      {
+        passed: Boolean(passed),
+        feedback,
+        status: SubmissionStatus.REVIEWED,
+        reviewedAt: new Date(),
+      },
+    );
+    if (!exerciseResult) {
+      throw new NotFoundException('Exercise result not found.');
+    }
+
+    return {
+      exerciseResult,
+      ...(await this.updateMilestoneStateAfterProgress(
+        exerciseResult.studentId,
+        exerciseResult.milestoneId,
+      )),
     };
   }
 
@@ -257,31 +390,61 @@ export class SupportProgramsService {
       studentId,
       milestone.milestoneId,
     );
-    const completedQuizCount = quizResults.length;
-    const currentAverageScore =
-      completedQuizCount === 0
+    const exerciseResults =
+      await this.exerciseResultsRepo.findByStudentAndMilestone(
+        studentId,
+        milestone.milestoneId,
+      );
+    const passedExerciseIds = new Set(
+      exerciseResults
+        .filter((exerciseResult) => exerciseResult.passed)
+        .map((exerciseResult) => exerciseResult.supportItemId),
+    );
+    const requiredExerciseCount =
+      milestone.requiredExerciseCount ?? this.countMilestonePracticeItems(milestone);
+    const passedExerciseCount = passedExerciseIds.size;
+    const requiredQuizScore =
+      milestone.requiredQuizScore ?? DEFAULT_REQUIRED_QUIZ_SCORE;
+    const bestQuizScore =
+      quizResults.length === 0
         ? 0
-        : quizResults.reduce((sum, quizResult) => sum + quizResult.score, 0) /
-          completedQuizCount;
-    const requiredQuizCount =
-      milestone.requiredQuizCount ?? DEFAULT_REQUIRED_QUIZ_COUNT;
-    const requiredAverageScore =
-      milestone.requiredAverageScore ?? DEFAULT_REQUIRED_AVERAGE_SCORE;
+        : Math.max(
+            ...quizResults
+              .filter(
+                (quizResult) =>
+                  quizResult.status !== SubmissionStatus.PENDING_REVIEW,
+              )
+              .map((quizResult) => quizResult.score),
+            0,
+          );
+    const hasPassedFinalQuiz = bestQuizScore >= requiredQuizScore;
     const isCompleted =
-      completedQuizCount >= requiredQuizCount &&
-      currentAverageScore >= requiredAverageScore;
+      passedExerciseCount >= requiredExerciseCount && hasPassedFinalQuiz;
 
     return {
       studentId,
       supportProgramId: supportProgram.supportProgramId,
       milestoneId: milestone.milestoneId,
-      requiredQuizCount,
-      completedQuizCount,
-      requiredAverageScore,
-      currentAverageScore,
+      requiredExerciseCount,
+      passedExerciseCount,
+      remainingExerciseCount: Math.max(
+        requiredExerciseCount - passedExerciseCount,
+        0,
+      ),
+      requiredQuizScore,
+      bestQuizScore,
+      quizAttemptCount: quizResults.length,
+      hasPassedFinalQuiz,
       isCompleted,
-      remainingQuizCount: Math.max(requiredQuizCount - completedQuizCount, 0),
     };
+  }
+
+  private countMilestonePracticeItems(
+    milestone: SupportProgramMilestone,
+  ): number {
+    return milestone.items.filter((item) =>
+      ['exercise', 'activity', 'practice'].includes(item.type),
+    ).length;
   }
 
   private async findMilestoneOrThrow(
@@ -438,6 +601,11 @@ export class SupportProgramsService {
         throw new BadRequestException('Each question must have a prompt.');
       }
 
+      const type = question.type ?? QuizQuestionType.MULTIPLE_CHOICE;
+      if (type === QuizQuestionType.ESSAY) {
+        continue;
+      }
+
       if (!question.options || question.options.length < 2) {
         throw new BadRequestException(
           'Each question must have at least two options.',
@@ -458,19 +626,58 @@ export class SupportProgramsService {
   private gradeQuiz(
     quiz: Quiz,
     answers: QuizSubmissionAnswerInput[] = [],
-  ): number {
-    if (quiz.questions.length === 0) return 0;
+  ): {
+    score: number;
+    status: SubmissionStatus;
+    answers: QuizResult['answers'];
+  } {
+    if (quiz.questions.length === 0) {
+      return {
+        score: 0,
+        status: SubmissionStatus.AUTO_GRADED,
+        answers: [],
+      };
+    }
 
     const answerMap = new Map(
-      answers.map((answer) => [answer.questionId, answer.selectedOptionId]),
+      answers.map((answer) => [answer.questionId, answer]),
     );
-    const correctAnswers = quiz.questions.filter((question) => {
-      const selectedOptionId = answerMap.get(question.quizQuestionId);
+    const hasEssayQuestion = quiz.questions.some(
+      (question) => question.type === QuizQuestionType.ESSAY,
+    );
+    const multipleChoiceQuestions = quiz.questions.filter(
+      (question) => question.type !== QuizQuestionType.ESSAY,
+    );
+    const gradedAnswers = quiz.questions.map((question) => {
+      const answer = answerMap.get(question.quizQuestionId);
+      if (question.type === QuizQuestionType.ESSAY) {
+        return {
+          questionId: question.quizQuestionId,
+          essayAnswer: answer?.essayAnswer ?? '',
+        };
+      }
+
       const correctOption = question.options.find((option) => option.isCorrect);
+      const isCorrect = correctOption?.quizOptionId === answer?.selectedOptionId;
+      return {
+        questionId: question.quizQuestionId,
+        selectedOptionId: answer?.selectedOptionId,
+        isCorrect,
+      };
+    });
+    const correctAnswers = gradedAnswers.filter(
+      (answer) => answer.isCorrect,
+    ).length;
 
-      return correctOption?.quizOptionId === selectedOptionId;
-    }).length;
-
-    return Math.round((correctAnswers / quiz.questions.length) * 100);
+    return {
+      score:
+        multipleChoiceQuestions.length === 0
+          ? 0
+          : Math.round((correctAnswers / multipleChoiceQuestions.length) * 100),
+      status: hasEssayQuestion
+        ? SubmissionStatus.PENDING_REVIEW
+        : SubmissionStatus.AUTO_GRADED,
+      answers: gradedAnswers,
+    };
   }
 }

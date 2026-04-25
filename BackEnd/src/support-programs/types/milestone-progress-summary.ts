@@ -4,10 +4,12 @@ export type MilestoneProgressSummary = {
   studentId: StudentId;
   supportProgramId: string;
   milestoneId: string;
-  requiredQuizCount: number;
-  completedQuizCount: number;
-  requiredAverageScore: number;
-  currentAverageScore: number;
+  requiredExerciseCount: number;
+  passedExerciseCount: number;
+  remainingExerciseCount: number;
+  requiredQuizScore: number;
+  bestQuizScore: number;
+  quizAttemptCount: number;
+  hasPassedFinalQuiz: boolean;
   isCompleted: boolean;
-  remainingQuizCount: number;
 };

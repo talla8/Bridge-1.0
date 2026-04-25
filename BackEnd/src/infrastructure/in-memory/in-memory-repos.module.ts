@@ -4,6 +4,7 @@ import { InMemoryAssesmentResultsRepo } from './in-memory-assesmentResult.repo';
 import { InMemoryAssignmentsRepo } from './in-memory-assignment.repo';
 import { InMemoryAttendancesRepo } from './in-memory-attendance.repo';
 import { InMemoryCurriculumItemsRepo } from './in-memory-curriculum-item.repo';
+import { InMemoryExerciseResultsRepo } from './in-memory-exercise-result.repo';
 import { InMemoryGradesRepo } from './in-memory-grade.repo';
 import { InMemoryParentsRepo } from './in-memory-parent.repo';
 import { InMemoryPlanItemsRepo } from './in-memory-plan-item.repo';
@@ -31,6 +32,7 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
     InMemoryAssignmentsRepo,
     InMemoryAttendancesRepo,
     InMemoryCurriculumItemsRepo,
+    InMemoryExerciseResultsRepo,
     InMemoryGradesRepo,
     InMemoryParentsRepo,
     InMemoryPlanItemsRepo,
@@ -57,6 +59,7 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
     InMemoryAssignmentsRepo,
     InMemoryAttendancesRepo,
     InMemoryCurriculumItemsRepo,
+    InMemoryExerciseResultsRepo,
     InMemoryGradesRepo,
     InMemoryParentsRepo,
     InMemoryPlanItemsRepo,

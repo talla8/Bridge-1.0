@@ -11,6 +11,31 @@ export class InMemoryQuizResultsRepo implements QuizResultRepository {
     return quizResult;
   }
 
+  async findById(quizResultId: string): Promise<QuizResult | null> {
+    return (
+      this.quizResults.find(
+        (quizResult) => quizResult.quizResultId === quizResultId,
+      ) ?? null
+    );
+  }
+
+  async update(
+    quizResultId: string,
+    patch: Partial<QuizResult>,
+  ): Promise<QuizResult | null> {
+    const index = this.quizResults.findIndex(
+      (quizResult) => quizResult.quizResultId === quizResultId,
+    );
+    if (index === -1) return null;
+
+    this.quizResults[index] = {
+      ...this.quizResults[index],
+      ...patch,
+    };
+
+    return this.quizResults[index];
+  }
+
   async findByStudentId(studentId: string): Promise<QuizResult[]> {
     return this.quizResults.filter(
       (quizResult) => quizResult.studentId === studentId,
@@ -31,6 +56,16 @@ export class InMemoryQuizResultsRepo implements QuizResultRepository {
       (quizResult) =>
         quizResult.studentId === studentId &&
         quizResult.milestoneId === milestoneId,
+    );
+  }
+
+  async findByStudentAndQuiz(
+    studentId: string,
+    quizId: string,
+  ): Promise<QuizResult[]> {
+    return this.quizResults.filter(
+      (quizResult) =>
+        quizResult.studentId === studentId && quizResult.quizId === quizId,
     );
   }
 

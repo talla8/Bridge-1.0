@@ -4,6 +4,8 @@ import {
   QuizQuestionId,
   SupportProgramId,
   SupportProgramMilestoneId,
+  SubjectId,
+  UserId,
 } from './ids';
 
 export class QuizOption {
@@ -12,16 +14,24 @@ export class QuizOption {
   isCorrect: boolean;
 }
 
+export enum QuizQuestionType {
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  ESSAY = 'ESSAY',
+}
+
 export class QuizQuestion {
   quizQuestionId: QuizQuestionId;
   prompt: string;
+  type: QuizQuestionType;
   options: QuizOption[];
 }
 
 export class Quiz {
   quizId: QuizId;
-  supportProgramId: SupportProgramId;
-  milestoneId: SupportProgramMilestoneId;
+  teacherId?: UserId;
+  subjectId?: SubjectId;
+  supportProgramId?: SupportProgramId;
+  milestoneId?: SupportProgramMilestoneId;
   title: string;
   questions: QuizQuestion[];
   createdAt: Date;

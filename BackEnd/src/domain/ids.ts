@@ -15,6 +15,7 @@ export type SupportProgramId = string;
 export type SupportProgramMilestoneId = string;
 export type SupportItemId = string;
 export type QuizResultId = string;
+export type ExerciseResultId = string;
 export type QuizId = string;
 export type QuizQuestionId = string;
 export type QuizOptionId = string;

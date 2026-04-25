@@ -19,6 +19,10 @@ export class InMemoryQuizzesRepo implements QuizRepository {
     return this.quizzes.filter((quiz) => quiz.milestoneId === milestoneId);
   }
 
+  async findByTeacherId(teacherId: string): Promise<Quiz[]> {
+    return this.quizzes.filter((quiz) => quiz.teacherId === teacherId);
+  }
+
   async findAll(): Promise<Quiz[]> {
     return this.quizzes;
   }
