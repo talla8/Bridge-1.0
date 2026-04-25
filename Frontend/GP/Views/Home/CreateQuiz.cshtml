@@ -1,0 +1,377 @@
+@{
+    ViewData["Title"] = "Create Quiz";
+}
+
+<style>
+    .quiz-builder {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px;
+    }
+
+    .quiz-builder-card,
+    .quiz-question-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        box-shadow: 0 10px 28px rgba(17,24,39,.05);
+    }
+
+    .quiz-builder-card {
+        padding: 26px;
+        margin-bottom: 18px;
+    }
+
+    .quiz-question-card {
+        padding: 22px;
+        margin-bottom: 16px;
+    }
+
+    .quiz-page-title {
+        font-size: 34px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        color: #111827;
+    }
+
+    .quiz-page-subtitle {
+        color: #6b7280;
+        margin-bottom: 22px;
+    }
+
+    .quiz-grid {
+        display: grid;
+        gap: 14px;
+    }
+
+    .quiz-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #4b5563;
+        margin-bottom: 8px;
+    }
+
+    .quiz-input,
+    .quiz-select,
+    .quiz-textarea {
+        width: 100%;
+        border: 1px solid #dbe3f0;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+        background: #fff;
+    }
+
+    .quiz-textarea {
+        min-height: 96px;
+        resize: vertical;
+    }
+
+    .quiz-option-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .quiz-radio {
+        width: 18px;
+        height: 18px;
+    }
+
+    .quiz-btn-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 22px;
+    }
+
+    .quiz-btn {
+        border: none;
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .quiz-btn-primary {
+        background: linear-gradient(135deg,#8b82ff,#6d8cff);
+        color: #fff;
+    }
+
+    .quiz-btn-soft {
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .quiz-btn-outline {
+        border: 1px solid #dbe3f0;
+        color: #374151;
+        background: #fff;
+    }
+
+    .quiz-question-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .quiz-question-title {
+        font-size: 20px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .quiz-helper {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .quiz-error {
+        margin-top: 14px;
+        color: #dc2626;
+        font-weight: 600;
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="quiz-builder">
+            <div class="quiz-builder-card">
+                <div class="quiz-page-title">Create Quiz</div>
+                <div class="quiz-page-subtitle">Build questions first, then move to publishing and choose who should receive the quiz.</div>
+
+                <div class="quiz-grid">
+                    <div>
+                        <label class="quiz-label" for="quizTitleInput">Quiz title</label>
+                        <input id="quizTitleInput" class="quiz-input" type="text" placeholder="Example: Writing support quiz" />
+                    </div>
+
+                    <div>
+                        <label class="quiz-label" for="quizSkillInput">Skill focus</label>
+                        <input id="quizSkillInput" class="quiz-input" type="text" placeholder="Example: Writing" />
+                    </div>
+                </div>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <div class="quiz-builder-card">
+                <button id="addQuestionBtn" class="quiz-btn quiz-btn-soft" type="button">Add question</button>
+                <div id="quizError" class="quiz-error d-none"></div>
+                <div class="quiz-btn-row">
+                    <a class="quiz-btn quiz-btn-outline" href="@Url.Action("WeakStudents", "Home")">Back</a>
+                    <button id="nextToPublishBtn" class="quiz-btn quiz-btn-primary" type="button">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questionsContainer = document.getElementById("questionsContainer");
+    const addQuestionBtn = document.getElementById("addQuestionBtn");
+    const nextToPublishBtn = document.getElementById("nextToPublishBtn");
+    const quizError = document.getElementById("quizError");
+    const quizTitleInput = document.getElementById("quizTitleInput");
+    const quizSkillInput = document.getElementById("quizSkillInput");
+    const subjectId = localStorage.getItem("teacherSelectedSubject") || "subject_arabic";
+    let questionIndex = 0;
+
+    function getSkillFromQuery() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("skill") || "";
+    }
+
+    function showQuizError(message) {
+        quizError.textContent = message;
+        quizError.classList.remove("d-none");
+    }
+
+    function hideQuizError() {
+        quizError.classList.add("d-none");
+    }
+
+    function createOptionRow(questionId, optionIndex, optionText = "", isCorrect = false) {
+        const row = document.createElement("div");
+        row.className = "quiz-option-row";
+        row.innerHTML = `
+            <input class="quiz-radio" type="radio" name="correct-${questionId}" ${isCorrect ? "checked" : ""} />
+            <input class="quiz-input" type="text" placeholder="Option ${optionIndex + 1}" value="${optionText.replace(/"/g, "&quot;")}" />
+            <button class="quiz-btn quiz-btn-outline" type="button">Remove</button>
+        `;
+
+        row.querySelector("button").addEventListener("click", () => {
+            row.remove();
+        });
+
+        return row;
+    }
+
+    function addQuestionCard(initialData) {
+        questionIndex += 1;
+        const questionId = `question-${questionIndex}`;
+        const type = initialData?.type || "MULTIPLE_CHOICE";
+        const card = document.createElement("div");
+        card.className = "quiz-question-card";
+        card.dataset.questionId = questionId;
+        card.innerHTML = `
+            <div class="quiz-question-head">
+                <div>
+                    <div class="quiz-question-title">Question ${questionIndex}</div>
+                    <div class="quiz-helper">Multiple choice questions support auto-grading. Essay questions are stored for manual review.</div>
+                </div>
+                <button class="quiz-btn quiz-btn-outline" type="button">Remove question</button>
+            </div>
+            <div class="quiz-grid">
+                <div>
+                    <label class="quiz-label">Question prompt</label>
+                    <textarea class="quiz-textarea question-prompt" placeholder="Write the question here...">${initialData?.prompt || ""}</textarea>
+                </div>
+                <div>
+                    <label class="quiz-label">Question type</label>
+                    <select class="quiz-select question-type">
+                        <option value="MULTIPLE_CHOICE" ${type === "MULTIPLE_CHOICE" ? "selected" : ""}>Multiple choice</option>
+                        <option value="ESSAY" ${type === "ESSAY" ? "selected" : ""}>Essay</option>
+                    </select>
+                </div>
+                <div class="options-block">
+                    <label class="quiz-label">Options</label>
+                    <div class="options-list"></div>
+                    <button class="quiz-btn quiz-btn-soft add-option-btn" type="button">Add option</button>
+                </div>
+            </div>
+        `;
+
+        const removeQuestionBtn = card.querySelector(".quiz-question-head button");
+        const typeSelect = card.querySelector(".question-type");
+        const optionsBlock = card.querySelector(".options-block");
+        const optionsList = card.querySelector(".options-list");
+        const addOptionButton = card.querySelector(".add-option-btn");
+
+        function syncOptionsVisibility() {
+            const isMcq = typeSelect.value === "MULTIPLE_CHOICE";
+            optionsBlock.style.display = isMcq ? "block" : "none";
+            if (isMcq && !optionsList.children.length) {
+                optionsList.appendChild(createOptionRow(questionId, 0, "", true));
+                optionsList.appendChild(createOptionRow(questionId, 1));
+            }
+        }
+
+        addOptionButton.addEventListener("click", () => {
+            optionsList.appendChild(
+                createOptionRow(questionId, optionsList.children.length)
+            );
+        });
+
+        removeQuestionBtn.addEventListener("click", () => {
+            card.remove();
+        });
+
+        typeSelect.addEventListener("change", syncOptionsVisibility);
+
+        if (Array.isArray(initialData?.options) && initialData.options.length) {
+            initialData.options.forEach((option, optionIndex) => {
+                optionsList.appendChild(
+                    createOptionRow(questionId, optionIndex, option.text, option.isCorrect)
+                );
+            });
+        }
+
+        syncOptionsVisibility();
+        questionsContainer.appendChild(card);
+    }
+
+    function collectDraft() {
+        const title = quizTitleInput.value.trim();
+        const skill = quizSkillInput.value.trim();
+        const questionCards = [...questionsContainer.querySelectorAll(".quiz-question-card")];
+
+        if (!title) {
+            throw new Error("Quiz title is required.");
+        }
+
+        if (!questionCards.length) {
+            throw new Error("Add at least one question.");
+        }
+
+        const questions = questionCards.map((card, index) => {
+            const prompt = card.querySelector(".question-prompt").value.trim();
+            const type = card.querySelector(".question-type").value;
+
+            if (!prompt) {
+                throw new Error(`Question ${index + 1} needs a prompt.`);
+            }
+
+            if (type === "ESSAY") {
+                return {
+                    prompt,
+                    type,
+                    options: []
+                };
+            }
+
+            const optionRows = [...card.querySelectorAll(".options-list .quiz-option-row")];
+            const options = optionRows.map((row) => ({
+                text: row.querySelector(".quiz-input").value.trim(),
+                isCorrect: row.querySelector(".quiz-radio").checked
+            })).filter((option) => option.text);
+
+            if (options.length < 2) {
+                throw new Error(`Question ${index + 1} needs at least two options.`);
+            }
+
+            const correctCount = options.filter((option) => option.isCorrect).length;
+            if (correctCount !== 1) {
+                throw new Error(`Question ${index + 1} must have exactly one correct answer.`);
+            }
+
+            return {
+                prompt,
+                type,
+                options
+            };
+        });
+
+        return {
+            title,
+            skill,
+            subjectId,
+            questions
+        };
+    }
+
+    addQuestionBtn.addEventListener("click", () => addQuestionCard());
+
+    nextToPublishBtn.addEventListener("click", () => {
+        hideQuizError();
+
+        try {
+            const draft = collectDraft();
+            sessionStorage.setItem("bridgeQuizDraft", JSON.stringify(draft));
+            window.location.href = "@Url.Action("PublishQuiz", "Home")";
+        } catch (error) {
+            showQuizError(error.message || "Unable to continue.");
+        }
+    });
+
+    const initialSkill = getSkillFromQuery();
+    if (initialSkill) {
+        quizSkillInput.value = initialSkill;
+        quizTitleInput.value = `${initialSkill} quiz`;
+    }
+
+    addQuestionCard();
+</script>

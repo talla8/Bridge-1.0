@@ -1,0 +1,157 @@
+@{
+    ViewData["Title"] = "Review Quiz";
+    var quizResultId = ViewData["QuizResultId"]?.ToString() ?? "";
+}
+
+<style>
+    .review-detail-page { max-width: 980px; margin: 0 auto; padding: 28px; }
+    .review-detail-card { background:#fff; border:1px solid #e5e7eb; border-radius:24px; box-shadow:0 10px 28px rgba(17,24,39,.06); padding:26px; margin-bottom:18px; }
+    .review-detail-nav { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+    .review-detail-tab { display:inline-flex; align-items:center; justify-content:center; padding:10px 16px; border-radius:999px; border:1px solid #dbe3f0; background:#fff; color:#374151; text-decoration:none; font-weight:700; }
+    .review-detail-tab.active { background:linear-gradient(135deg,#8b82ff,#6d8cff); border-color:transparent; color:#fff; }
+    .review-detail-title { font-size:34px; font-weight:800; color:#111827; margin-bottom:8px; }
+    .review-detail-subtitle { color:#6b7280; margin-bottom:18px; }
+    .review-answer-card { border:1px solid #e8edf5; border-radius:18px; padding:18px; margin-bottom:14px; }
+    .review-answer-head { font-size:20px; font-weight:800; color:#111827; margin-bottom:10px; }
+    .review-answer-prompt { color:#374151; margin-bottom:14px; line-height:1.6; }
+    .review-answer-meta { color:#6b7280; line-height:1.8; }
+    .review-input, .review-textarea { width:100%; border:1px solid #dbe3f0; border-radius:16px; padding:14px; outline:none; }
+    .review-textarea { min-height:120px; resize:vertical; }
+    .review-actions { display:flex; justify-content:space-between; gap:12px; margin-top:20px; flex-wrap:wrap; }
+    .review-btn { border:none; border-radius:14px; padding:12px 18px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
+    .review-btn-primary { background:linear-gradient(135deg,#8b82ff,#6d8cff); color:#fff; }
+    .review-btn-outline { background:#fff; border:1px solid #dbe3f0; color:#374151; }
+    .review-note,.review-error { margin-top:14px; font-weight:600; }
+    .review-note { color:#4f46e5; }
+    .review-error { color:#dc2626; }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="review-detail-page">
+            <div class="review-detail-card">
+                <div class="review-detail-nav">
+                    <a class="review-detail-tab" href="@Url.Action("TeacherQuizReviews", "Home")">Pending Reviews</a>
+                    <a class="review-detail-tab" href="@Url.Action("TeacherQuizReviewed", "Home")">Reviewed History</a>
+                    <span class="review-detail-tab active">Review Detail</span>
+                </div>
+                <div class="review-detail-title" id="reviewDetailTitle">Review Quiz</div>
+                <div class="review-detail-subtitle" id="reviewDetailSubtitle">Review essay answers and assign the final score.</div>
+                <div id="reviewAnswers"></div>
+                <div style="display:grid; gap:14px; margin-top:16px;">
+                    <div>
+                        <label style="display:block; font-weight:700; margin-bottom:8px;">Final score</label>
+                        <input id="reviewScoreInput" class="review-input" type="number" min="0" max="100" placeholder="0 - 100" />
+                    </div>
+                    <div>
+                        <label style="display:block; font-weight:700; margin-bottom:8px;">Feedback</label>
+                        <textarea id="reviewFeedbackInput" class="review-textarea" placeholder="Write feedback for the parent/student..."></textarea>
+                    </div>
+                </div>
+                <div id="reviewNote" class="review-note d-none"></div>
+                <div id="reviewError" class="review-error d-none"></div>
+                <div class="review-actions">
+                    <a class="review-btn review-btn-outline" href="@Url.Action("TeacherQuizReviews", "Home")">Back</a>
+                    <a class="review-btn review-btn-outline" href="@Url.Action("TeacherQuizReviewed", "Home")">Reviewed history</a>
+                    <button id="submitReviewBtn" class="review-btn review-btn-primary" type="button">Save review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const role = sessionStorage.getItem("bridgeUserRole");
+    const quizResultId = "@quizResultId";
+
+    const reviewDetailTitle = document.getElementById("reviewDetailTitle");
+    const reviewDetailSubtitle = document.getElementById("reviewDetailSubtitle");
+    const reviewAnswers = document.getElementById("reviewAnswers");
+    const reviewScoreInput = document.getElementById("reviewScoreInput");
+    const reviewFeedbackInput = document.getElementById("reviewFeedbackInput");
+    const reviewNote = document.getElementById("reviewNote");
+    const reviewError = document.getElementById("reviewError");
+    const submitReviewBtn = document.getElementById("submitReviewBtn");
+
+    function showReviewError(message) {
+        reviewError.textContent = message;
+        reviewError.classList.remove("d-none");
+    }
+
+    function hideReviewError() { reviewError.classList.add("d-none"); }
+    function showReviewNote(message) {
+        reviewNote.textContent = message;
+        reviewNote.classList.remove("d-none");
+    }
+
+    function renderReviewAnswers(detail) {
+        reviewAnswers.innerHTML = detail.answers.map((answer, index) => `
+            <div class="review-answer-card">
+                <div class="review-answer-head">Question ${index + 1}</div>
+                <div class="review-answer-prompt">${answer.prompt}</div>
+                <div class="review-answer-meta">
+                    ${answer.type === "MULTIPLE_CHOICE"
+                        ? `<div><strong>Student answer:</strong> ${answer.selectedOptionText || "-"}</div>
+                           <div><strong>Correct answer:</strong> ${answer.correctOptionText || "-"}</div>
+                           <div><strong>Auto-graded:</strong> ${answer.isCorrect ? "Correct" : "Incorrect"}</div>`
+                        : `<div><strong>Essay answer:</strong></div><div>${answer.essayAnswer || "-"}</div>`}
+                </div>
+            </div>
+        `).join("");
+    }
+
+    async function loadReviewDetail() {
+        if (!token) { window.location.replace('@Url.Action("Login", "Home")'); return; }
+        if (role && role !== "Teacher") { window.location.replace('@Url.Action("ParentDashboard", "Home")'); return; }
+
+        const response = await fetch(`${backendBaseUrl}/quizzes/results/${encodeURIComponent(quizResultId)}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !data) throw new Error(data?.message || "Unable to load quiz review.");
+
+        reviewDetailTitle.textContent = data.title;
+        reviewDetailSubtitle.textContent = `Submitted by ${data.studentName}`;
+        reviewScoreInput.value = data.score ?? 0;
+        reviewFeedbackInput.value = data.feedback || "";
+        renderReviewAnswers(data);
+    }
+
+    submitReviewBtn.addEventListener("click", async () => {
+        hideReviewError();
+        submitReviewBtn.disabled = true;
+        submitReviewBtn.textContent = "Saving...";
+        try {
+            const response = await fetch(`${backendBaseUrl}/quizzes/results/${encodeURIComponent(quizResultId)}/review`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    score: Number(reviewScoreInput.value),
+                    feedback: reviewFeedbackInput.value.trim() || undefined
+                })
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok || !data) throw new Error(data?.message || "Unable to save quiz review.");
+            showReviewNote("Quiz review saved.");
+            submitReviewBtn.textContent = "Saved";
+            setTimeout(() => {
+                window.location.href = '@Url.Action("TeacherQuizReviewed", "Home")';
+            }, 700);
+        } catch (error) {
+            showReviewError(error.message || "Unable to save quiz review.");
+            submitReviewBtn.disabled = false;
+            submitReviewBtn.textContent = "Save review";
+        }
+    });
+
+    loadReviewDetail().catch((error) => {
+        showReviewError(error.message || "Unable to load quiz review.");
+        submitReviewBtn.disabled = true;
+    });
+</script>

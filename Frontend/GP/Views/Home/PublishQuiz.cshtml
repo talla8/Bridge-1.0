@@ -1,0 +1,450 @@
+@{
+    ViewData["Title"] = "Publish Quiz";
+}
+
+<style>
+    .publish-quiz-page {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 28px;
+    }
+
+    .publish-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 22px;
+        box-shadow: 0 10px 28px rgba(17,24,39,.05);
+        padding: 24px;
+        margin-bottom: 18px;
+    }
+
+    .publish-title {
+        font-size: 34px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .publish-subtitle {
+        color: #6b7280;
+        margin-bottom: 18px;
+    }
+
+    .publish-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .publish-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #4b5563;
+        margin-bottom: 8px;
+    }
+
+    .publish-input,
+    .publish-select {
+        width: 100%;
+        border: 1px solid #dbe3f0;
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-size: 14px;
+        outline: none;
+        background: #fff;
+    }
+
+    .publish-summary-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .publish-students-list {
+        display: grid;
+        gap: 10px;
+        max-height: 420px;
+        overflow: auto;
+    }
+
+    .publish-student-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid #eef2f7;
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .publish-student-meta {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+    .publish-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .publish-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+    }
+
+    .publish-btn {
+        border: none;
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .publish-btn-primary {
+        background: linear-gradient(135deg,#8b82ff,#6d8cff);
+        color: #fff;
+    }
+
+    .publish-btn-outline {
+        background: #fff;
+        border: 1px solid #dbe3f0;
+        color: #374151;
+    }
+
+    .publish-error {
+        margin-top: 14px;
+        color: #dc2626;
+        font-weight: 600;
+    }
+
+    .publish-empty {
+        color: #6b7280;
+        text-align: center;
+        padding: 32px;
+    }
+
+    @@media (max-width: 900px) {
+        .publish-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="publish-quiz-page">
+            <div class="publish-card">
+                <div class="publish-title">Publish Quiz</div>
+                <div class="publish-subtitle">Review the quiz, choose recipients, and publish it as a real assignment.</div>
+
+                <div id="missingDraftState" class="publish-empty d-none">
+                    No quiz draft was found. Go back and create the quiz first.
+                </div>
+
+                <div id="publishContent">
+                    <div class="publish-grid">
+                        <div class="publish-card" style="margin-bottom:0;">
+                            <div class="publish-label">Quiz summary</div>
+                            <div id="quizSummary"></div>
+                        </div>
+
+                        <div class="publish-card" style="margin-bottom:0;">
+                            <div>
+                                <label class="publish-label" for="targetTypeSelect">Recipients</label>
+                                <select id="targetTypeSelect" class="publish-select">
+                                    <option value="WEAK_STUDENTS">Weak students</option>
+                                    <option value="WHOLE_CLASS">All students</option>
+                                    <option value="SELECTED_STUDENTS">Select students one by one</option>
+                                </select>
+                            </div>
+
+                            <div style="margin-top:14px;">
+                                <label class="publish-label" for="dueDateInput">Due date</label>
+                                <input id="dueDateInput" class="publish-input" type="date" />
+                            </div>
+
+                            <div style="margin-top:14px;">
+                                <label class="publish-label" for="studentSearchInput">Filter students</label>
+                                <input id="studentSearchInput" class="publish-input" type="text" placeholder="Search by student name" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="publish-card">
+                        <div class="publish-label">Students</div>
+                        <div id="selectedCountText" class="publish-subtitle" style="margin-bottom:16px;">0 students selected</div>
+                        <div id="studentsList" class="publish-students-list"></div>
+                    </div>
+
+                    <div id="publishError" class="publish-error d-none"></div>
+
+                    <div class="publish-actions">
+                        <a class="publish-btn publish-btn-outline" href="@Url.Action("CreateQuiz", "Home")">Back</a>
+                        <button id="publishQuizBtn" class="publish-btn publish-btn-primary" type="button">Publish quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const publishDraft = JSON.parse(sessionStorage.getItem("bridgeQuizDraft") || "null");
+
+    const quizSummary = document.getElementById("quizSummary");
+    const targetTypeSelect = document.getElementById("targetTypeSelect");
+    const dueDateInput = document.getElementById("dueDateInput");
+    const studentSearchInput = document.getElementById("studentSearchInput");
+    const studentsList = document.getElementById("studentsList");
+    const selectedCountText = document.getElementById("selectedCountText");
+    const publishQuizBtn = document.getElementById("publishQuizBtn");
+    const publishError = document.getElementById("publishError");
+    const missingDraftState = document.getElementById("missingDraftState");
+    const publishContent = document.getElementById("publishContent");
+
+    const state = {
+        students: [],
+        weakStudentIds: new Set(),
+        selectedStudentIds: new Set()
+    };
+
+    function showPublishError(message) {
+        publishError.textContent = message;
+        publishError.classList.remove("d-none");
+    }
+
+    function hidePublishError() {
+        publishError.classList.add("d-none");
+    }
+
+    function authorizedHeaders(extra = {}) {
+        return {
+            ...extra,
+            Authorization: `Bearer ${token}`
+        };
+    }
+
+    function renderSummary() {
+        if (!publishDraft) {
+            return;
+        }
+
+        quizSummary.innerHTML = `
+            <div class="publish-summary-line"><strong>Title</strong><span>${publishDraft.title}</span></div>
+            <div class="publish-summary-line"><strong>Skill focus</strong><span>${publishDraft.skill || "-"}</span></div>
+            <div class="publish-summary-line"><strong>Questions</strong><span>${publishDraft.questions.length}</span></div>
+            <div class="publish-summary-line"><strong>Auto-graded</strong><span>${publishDraft.questions.filter((question) => question.type === "MULTIPLE_CHOICE").length} multiple choice</span></div>
+        `;
+    }
+
+    function getVisibleStudents() {
+        const search = studentSearchInput.value.trim().toLowerCase();
+        let visibleStudents = [...state.students];
+
+        if (targetTypeSelect.value === "WEAK_STUDENTS") {
+            visibleStudents = visibleStudents.filter((student) => state.weakStudentIds.has(student.studentId));
+        }
+
+        if (search) {
+            visibleStudents = visibleStudents.filter((student) =>
+                `${student.fullEnglishName} ${student.fullArabicName}`.toLowerCase().includes(search)
+            );
+        }
+
+        return visibleStudents;
+    }
+
+    function syncSelectedStateForTargetType() {
+        if (targetTypeSelect.value === "WHOLE_CLASS") {
+            state.selectedStudentIds = new Set(state.students.map((student) => student.studentId));
+            return;
+        }
+
+        if (targetTypeSelect.value === "WEAK_STUDENTS") {
+            state.selectedStudentIds = new Set([...state.weakStudentIds]);
+        }
+    }
+
+    function renderStudents() {
+        syncSelectedStateForTargetType();
+
+        const visibleStudents = getVisibleStudents();
+        selectedCountText.textContent = `${state.selectedStudentIds.size} students selected`;
+
+        if (!visibleStudents.length) {
+            studentsList.innerHTML = `<div class="publish-empty">No students match the current filter.</div>`;
+            return;
+        }
+
+        studentsList.innerHTML = visibleStudents.map((student) => {
+            const checked = state.selectedStudentIds.has(student.studentId) ? "checked" : "";
+            const weakTag = state.weakStudentIds.has(student.studentId)
+                ? `<span class="publish-tag">Weak student</span>`
+                : "";
+            const disabled = targetTypeSelect.value === "WHOLE_CLASS" || targetTypeSelect.value === "WEAK_STUDENTS"
+                ? "disabled"
+                : "";
+
+            return `
+                <label class="publish-student-row">
+                    <div>
+                        <div><strong>${student.fullEnglishName}</strong></div>
+                        <div class="publish-student-meta">${student.fullArabicName || "-"}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        ${weakTag}
+                        <input type="checkbox" data-student-id="${student.studentId}" ${checked} ${disabled} />
+                    </div>
+                </label>
+            `;
+        }).join("");
+
+        studentsList.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.addEventListener("change", () => {
+                const studentId = checkbox.dataset.studentId;
+                if (checkbox.checked) {
+                    state.selectedStudentIds.add(studentId);
+                } else {
+                    state.selectedStudentIds.delete(studentId);
+                }
+                selectedCountText.textContent = `${state.selectedStudentIds.size} students selected`;
+            });
+        });
+    }
+
+    async function loadPublishingData() {
+        if (!publishDraft) {
+            missingDraftState.classList.remove("d-none");
+            publishContent.classList.add("d-none");
+            return;
+        }
+
+        renderSummary();
+
+        try {
+            const [studentsResponse, weakStudentsResponse] = await Promise.all([
+                fetch(`${backendBaseUrl}/students/myStudents`, {
+                    headers: authorizedHeaders()
+                }),
+                fetch(`${backendBaseUrl}/statistics/weak-students`, {
+                    headers: authorizedHeaders()
+                })
+            ]);
+
+            const students = await studentsResponse.json().catch(() => []);
+            const weakStudents = await weakStudentsResponse.json().catch(() => []);
+
+            if (!studentsResponse.ok) {
+                throw new Error("Unable to load students.");
+            }
+
+            state.students = Array.isArray(students) ? students : [];
+            state.weakStudentIds = new Set(
+                Array.isArray(weakStudents)
+                    ? weakStudents.map((student) => student.studentId)
+                    : []
+            );
+
+            renderStudents();
+        } catch (error) {
+            showPublishError(error.message || "Unable to load publish data.");
+        }
+    }
+
+    async function publishQuiz() {
+        hidePublishError();
+
+        if (!publishDraft) {
+            showPublishError("No quiz draft was found.");
+            return;
+        }
+
+        const targetType = targetTypeSelect.value;
+        const targetStudentIds = [...state.selectedStudentIds];
+
+        if (targetType === "SELECTED_STUDENTS" && !targetStudentIds.length) {
+            showPublishError("Select at least one student.");
+            return;
+        }
+
+        publishQuizBtn.disabled = true;
+        publishQuizBtn.textContent = "Publishing...";
+
+        try {
+            const createQuizResponse = await fetch(`${backendBaseUrl}/quizzes`, {
+                method: "POST",
+                headers: authorizedHeaders({
+                    "Content-Type": "application/json"
+                }),
+                body: JSON.stringify({
+                    subjectId: publishDraft.subjectId,
+                    title: publishDraft.title,
+                    questions: publishDraft.questions
+                })
+            });
+
+            const createdQuiz = await createQuizResponse.json().catch(() => null);
+            if (!createQuizResponse.ok || !createdQuiz?.quizId) {
+                throw new Error(createdQuiz?.message || "Unable to create quiz.");
+            }
+
+            const publishAssignmentResponse = await fetch(`${backendBaseUrl}/assignments/publish`, {
+                method: "POST",
+                headers: authorizedHeaders({
+                    "Content-Type": "application/json"
+                }),
+                body: JSON.stringify({
+                    subjectId: publishDraft.subjectId,
+                    title: publishDraft.title,
+                    type: "QUIZ",
+                    sourceType: "TEACHER_CREATED",
+                    sourceId: createdQuiz.quizId,
+                    targetType,
+                    targetStudentIds: targetType === "SELECTED_STUDENTS" ? targetStudentIds : undefined,
+                    dueDate: dueDateInput.value || undefined
+                })
+            });
+
+            const publishAssignment = await publishAssignmentResponse.json().catch(() => null);
+            if (!publishAssignmentResponse.ok) {
+                throw new Error(publishAssignment?.message || "Unable to publish quiz.");
+            }
+
+            sessionStorage.removeItem("bridgeQuizDraft");
+            window.location.href = "@Url.Action("WeakStudents", "Home")";
+        } catch (error) {
+            showPublishError(error.message || "Unable to publish quiz.");
+        } finally {
+            publishQuizBtn.disabled = false;
+            publishQuizBtn.textContent = "Publish quiz";
+        }
+    }
+
+    targetTypeSelect.addEventListener("change", renderStudents);
+    studentSearchInput.addEventListener("input", renderStudents);
+    publishQuizBtn.addEventListener("click", publishQuiz);
+
+    loadPublishingData();
+</script>
