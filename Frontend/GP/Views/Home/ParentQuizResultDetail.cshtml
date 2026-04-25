@@ -1,0 +1,79 @@
+@{
+    ViewData["Title"] = "Quiz Result";
+    var quizResultId = ViewData["QuizResultId"]?.ToString() ?? "";
+}
+
+<style>
+    .parent-result-detail-page { max-width: 980px; margin: 0 auto; padding: 28px; }
+    .parent-result-detail-card { background:#fff; border:1px solid #e5e7eb; border-radius:24px; box-shadow:0 10px 28px rgba(17,24,39,.06); padding:26px; margin-bottom:18px; }
+    .parent-result-detail-title { font-size:34px; font-weight:800; color:#111827; margin-bottom:8px; }
+    .parent-result-detail-subtitle { color:#6b7280; margin-bottom:18px; }
+    .parent-result-answer-card { border:1px solid #e8edf5; border-radius:18px; padding:18px; margin-bottom:14px; }
+    .parent-result-answer-head { font-size:20px; font-weight:800; color:#111827; margin-bottom:10px; }
+    .parent-result-answer-prompt { color:#374151; margin-bottom:14px; line-height:1.6; }
+    .parent-result-answer-meta { color:#6b7280; line-height:1.8; }
+    .parent-result-summary { display:flex; gap:24px; flex-wrap:wrap; margin-bottom:18px; color:#374151; font-weight:600; }
+</style>
+
+<div class="parent-result-detail-page">
+    <div class="parent-result-detail-card">
+        <div class="parent-result-detail-title" id="parentResultTitle">Quiz Result</div>
+        <div class="parent-result-detail-subtitle" id="parentResultSubtitle">Review the submitted quiz and the grading outcome.</div>
+        <div id="parentResultSummary" class="parent-result-summary"></div>
+        <div id="parentResultAnswers"></div>
+        <div style="margin-top:20px;">
+            <a class="parent-quiz-btn parent-quiz-btn-outline" href="@Url.Action("ParentQuizResults", "Home")">Back to results</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const role = sessionStorage.getItem("bridgeUserRole");
+    const quizResultId = "@quizResultId";
+
+    const parentResultTitle = document.getElementById("parentResultTitle");
+    const parentResultSubtitle = document.getElementById("parentResultSubtitle");
+    const parentResultSummary = document.getElementById("parentResultSummary");
+    const parentResultAnswers = document.getElementById("parentResultAnswers");
+
+    function renderParentResult(detail) {
+        parentResultTitle.textContent = detail.title;
+        parentResultSubtitle.textContent = `${detail.studentName} • ${detail.status}`;
+        parentResultSummary.innerHTML = `
+            <div>Score: ${detail.score}%</div>
+            <div>Submitted: ${new Date(detail.submittedAt).toLocaleDateString()}</div>
+            <div>Feedback: ${detail.feedback || "-"}</div>
+        `;
+        parentResultAnswers.innerHTML = detail.answers.map((answer, index) => `
+            <div class="parent-result-answer-card">
+                <div class="parent-result-answer-head">Question ${index + 1}</div>
+                <div class="parent-result-answer-prompt">${answer.prompt}</div>
+                <div class="parent-result-answer-meta">
+                    ${answer.type === "MULTIPLE_CHOICE"
+                        ? `<div><strong>Student answer:</strong> ${answer.selectedOptionText || "-"}</div>
+                           <div><strong>Correct answer:</strong> ${answer.correctOptionText || "-"}</div>
+                           <div><strong>Result:</strong> ${answer.isCorrect ? "Correct" : "Incorrect"}</div>`
+                        : `<div><strong>Essay answer:</strong></div><div>${answer.essayAnswer || "-"}</div>`}
+                </div>
+            </div>
+        `).join("");
+    }
+
+    async function loadParentResultDetail() {
+        if (!token) { window.location.replace('@Url.Action("Login", "Home")'); return; }
+        if (role && role !== "Parent") { window.location.replace('@Url.Action("Teacher", "Home")'); return; }
+
+        const response = await fetch(`${backendBaseUrl}/parents/me/quiz-results/${encodeURIComponent(quizResultId)}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !data) throw new Error(data?.message || "Unable to load quiz result.");
+        renderParentResult(data);
+    }
+
+    loadParentResultDetail().catch((error) => {
+        parentResultSubtitle.textContent = error.message || "Unable to load quiz result.";
+    });
+</script>

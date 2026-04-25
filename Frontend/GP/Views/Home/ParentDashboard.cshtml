@@ -1,0 +1,553 @@
+@{
+    ViewData["Title"] = "Parent Dashboard";
+}
+
+<style>
+    .parent-dashboard {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 28px;
+    }
+
+    .parent-dashboard-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) 260px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .parent-page-title {
+        font-size: 34px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .parent-page-subtitle {
+        color: #6b7280;
+        font-size: 15px;
+        margin-bottom: 18px;
+    }
+
+    .parent-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+    }
+
+    .parent-hero-card {
+        padding: 26px;
+        margin-bottom: 18px;
+    }
+
+    .parent-hero-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .parent-student-select {
+        min-width: 240px;
+        border: 1px solid #dbe3f0;
+        border-radius: 16px;
+        padding: 12px 14px;
+        font-size: 16px;
+        background: #fff;
+    }
+
+    .parent-summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1.5fr;
+        gap: 16px;
+    }
+
+    .parent-summary-card {
+        background: #eef2ff;
+        border-radius: 18px;
+        padding: 18px;
+        min-height: 138px;
+    }
+
+    .parent-summary-label {
+        color: #4b5563;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .parent-summary-value {
+        font-size: 26px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .parent-summary-subvalue {
+        font-size: 14px;
+        color: #374151;
+        margin-top: 8px;
+        line-height: 1.6;
+    }
+
+    .parent-pill {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        background: #fde68a;
+        color: #111827;
+        margin-top: 10px;
+    }
+
+    .parent-main-card {
+        padding: 24px;
+        margin-bottom: 18px;
+    }
+
+    .parent-section-title {
+        font-size: 17px;
+        font-weight: 800;
+        color: #4b5563;
+        margin-bottom: 14px;
+    }
+
+    .parent-today-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .parent-learning-card {
+        border: 1px solid #eef2f7;
+        border-radius: 18px;
+        padding: 18px;
+        background: #fff;
+    }
+
+    .parent-learning-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .parent-learning-text {
+        color: #6b7280;
+        margin-bottom: 14px;
+        line-height: 1.6;
+    }
+
+    .parent-progress-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: end;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .parent-progress-value {
+        font-size: 40px;
+        font-weight: 800;
+        color: #111827;
+        line-height: 1;
+    }
+
+    .parent-progress-note {
+        color: #6b7280;
+        font-size: 15px;
+        text-align: right;
+    }
+
+    .parent-progress-track {
+        width: 100%;
+        height: 14px;
+        border-radius: 999px;
+        background: #ece9ff;
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
+
+    .parent-progress-bar {
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg,#a59bff,#c9c6ff);
+    }
+
+    .parent-skill-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .parent-skill-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid #edf1f6;
+        border-radius: 18px;
+        padding: 14px 18px;
+        font-size: 18px;
+        color: #111827;
+    }
+
+    .parent-skill-percent {
+        font-weight: 800;
+        color: #6b7280;
+    }
+
+    .parent-side-panel {
+        background: #dff4ff;
+        border-radius: 24px;
+        padding: 18px;
+        min-height: 520px;
+        position: sticky;
+        top: 24px;
+    }
+
+    .parent-side-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 12px;
+    }
+
+    .parent-side-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .parent-side-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 9px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        background: rgba(255,255,255,.86);
+        color: #4f46e5;
+        border: 1px solid #d1d5db;
+    }
+
+    .parent-quiz-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .parent-quiz-card {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        background: rgba(255,255,255,.72);
+        border-radius: 18px;
+        padding: 14px;
+        color: #111827;
+    }
+
+    .parent-quiz-action {
+        border: none;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        background: #fff;
+        color: #4f46e5;
+        text-decoration: none;
+        border: 1px solid #d1d5db;
+        white-space: nowrap;
+    }
+
+    .parent-quiz-badge {
+        border: 1px solid #9ca3af;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+        background: #fff;
+    }
+
+    .parent-empty {
+        color: #6b7280;
+        text-align: center;
+        padding: 24px;
+    }
+
+    @@media (max-width: 1100px) {
+        .parent-dashboard-grid,
+        .parent-summary-grid,
+        .parent-today-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .parent-side-panel {
+            position: static;
+            min-height: 0;
+        }
+    }
+</style>
+
+<div class="parent-dashboard">
+    <div class="parent-dashboard-grid">
+        <div>
+            <div class="parent-card parent-hero-card">
+                <div class="parent-hero-head">
+                    <div>
+                        <div class="parent-page-title" id="parentWelcomeText">Welcome!</div>
+                        <div class="parent-page-subtitle" id="parentSubtitleText">Here is a quick update for your child.</div>
+                    </div>
+
+                    <select id="parentStudentSelect" class="parent-student-select"></select>
+                </div>
+
+                <div class="parent-summary-grid">
+                    <div class="parent-summary-card">
+                        <div class="parent-summary-label">Grade / Section</div>
+                        <div class="parent-summary-value" id="studentGradeSectionValue">-</div>
+                    </div>
+                    <div class="parent-summary-card">
+                        <div class="parent-summary-label">Attendance</div>
+                        <div class="parent-summary-value" id="studentAttendanceValue">0%</div>
+                    </div>
+                    <div class="parent-summary-card">
+                        <div class="parent-summary-label">Overall Progress</div>
+                        <div class="parent-summary-value" id="studentOverallProgressValue">0%</div>
+                    </div>
+                    <div class="parent-summary-card">
+                        <div class="parent-summary-value" id="supportPlanTitle">Support plan is inactive.</div>
+                        <div class="parent-summary-subvalue" id="supportPlanText">No active support plan is assigned right now.</div>
+                        <span class="parent-pill" id="supportPlanTag">No active support plan</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="parent-card parent-main-card">
+                <div class="parent-section-title">Today &amp; Next</div>
+                <div class="parent-today-grid">
+                    <div class="parent-learning-card">
+                        <div class="parent-learning-title">Today's Learning</div>
+                        <div class="parent-learning-text" id="todayLearningText">No lesson is scheduled for today.</div>
+                        <span class="parent-pill" id="todayLearningTag">No activity</span>
+                    </div>
+                    <div class="parent-learning-card">
+                        <div class="parent-learning-title">Next Lesson</div>
+                        <div class="parent-learning-text" id="nextLessonText">No upcoming lesson was found.</div>
+                        <span class="parent-pill" id="nextLessonTag">No activity</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="parent-card parent-main-card">
+                <div class="parent-progress-head">
+                    <div>
+                        <div class="parent-section-title">Progress</div>
+                        <div class="parent-progress-value" id="progressPercentValue">0%</div>
+                    </div>
+                    <div class="parent-progress-note" id="progressNoteText">Progress data will appear after assignments and support activity start.</div>
+                </div>
+
+                <div class="parent-progress-track">
+                    <div id="overallProgressBar" class="parent-progress-bar" style="width:0%"></div>
+                </div>
+
+                <div id="parentSkillList" class="parent-skill-list"></div>
+            </div>
+        </div>
+
+        <aside class="parent-side-panel">
+            <div class="parent-side-title">Quizzes</div>
+            <div class="parent-side-actions">
+                <a class="parent-side-link" href="@Url.Action("ParentQuizzes", "Home")">View all</a>
+                <a class="parent-side-link" href="@Url.Action("ParentQuizResults", "Home")">Results</a>
+            </div>
+            <div id="overdueQuizList" class="parent-quiz-list"></div>
+        </aside>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const role = sessionStorage.getItem("bridgeUserRole");
+
+    const parentWelcomeText = document.getElementById("parentWelcomeText");
+    const parentSubtitleText = document.getElementById("parentSubtitleText");
+    const parentStudentSelect = document.getElementById("parentStudentSelect");
+    const studentGradeSectionValue = document.getElementById("studentGradeSectionValue");
+    const studentAttendanceValue = document.getElementById("studentAttendanceValue");
+    const studentOverallProgressValue = document.getElementById("studentOverallProgressValue");
+    const supportPlanTitle = document.getElementById("supportPlanTitle");
+    const supportPlanText = document.getElementById("supportPlanText");
+    const supportPlanTag = document.getElementById("supportPlanTag");
+    const todayLearningText = document.getElementById("todayLearningText");
+    const todayLearningTag = document.getElementById("todayLearningTag");
+    const nextLessonText = document.getElementById("nextLessonText");
+    const nextLessonTag = document.getElementById("nextLessonTag");
+    const progressPercentValue = document.getElementById("progressPercentValue");
+    const progressNoteText = document.getElementById("progressNoteText");
+    const overallProgressBar = document.getElementById("overallProgressBar");
+    const parentSkillList = document.getElementById("parentSkillList");
+    const overdueQuizList = document.getElementById("overdueQuizList");
+
+    function parentAuthorizedHeaders() {
+        return {
+            Authorization: `Bearer ${token}`
+        };
+    }
+
+    function setEmptyParentState(message) {
+        parentSubtitleText.textContent = message;
+        studentGradeSectionValue.textContent = "-";
+        studentAttendanceValue.textContent = "0%";
+        studentOverallProgressValue.textContent = "0%";
+        supportPlanTitle.textContent = "Support plan is inactive.";
+        supportPlanText.textContent = "No active support plan is assigned right now.";
+        supportPlanTag.textContent = "No active support plan";
+        todayLearningText.textContent = "No lesson is scheduled for today.";
+        todayLearningTag.textContent = "No activity";
+        nextLessonText.textContent = "No upcoming lesson was found.";
+        nextLessonTag.textContent = "No activity";
+        progressPercentValue.textContent = "0%";
+        progressNoteText.textContent = "Progress data will appear after assignments and support activity start.";
+        overallProgressBar.style.width = "0%";
+        parentSkillList.innerHTML = `<div class="parent-empty">No skill progress available.</div>`;
+        overdueQuizList.innerHTML = `<div class="parent-empty">No overdue quizzes.</div>`;
+    }
+
+    function renderQuizList(quizzes) {
+        if (!quizzes.length) {
+            overdueQuizList.innerHTML = `<div class="parent-empty">No quizzes assigned.</div>`;
+            return;
+        }
+
+        overdueQuizList.innerHTML = quizzes.map((quiz) => `
+            <div class="parent-quiz-card">
+                <div>
+                    <div>${quiz.title}</div>
+                    <div class="parent-quiz-badge" style="margin-top:8px; display:inline-flex;">${quiz.dueLabel || "Assigned"}</div>
+                </div>
+                <a class="parent-quiz-action"
+                   href="@Url.Action("TakeQuiz", "Home")?studentId=${encodeURIComponent(parentStudentSelect.value)}&assignmentId=${encodeURIComponent(quiz.assignmentId)}">
+                    Take quiz
+                </a>
+            </div>
+        `).join("");
+    }
+
+    function renderSkillProgress(skills) {
+        if (!skills.length) {
+            parentSkillList.innerHTML = `<div class="parent-empty">No skill progress available.</div>`;
+            return;
+        }
+
+        parentSkillList.innerHTML = skills.map((skill) => `
+            <div class="parent-skill-row">
+                <span>${skill.skillName}</span>
+                <span class="parent-skill-percent">${skill.progress}%</span>
+            </div>
+        `).join("");
+    }
+
+    function renderStudentDashboard(dashboard) {
+        studentGradeSectionValue.textContent = dashboard.section
+            ? `${dashboard.grade} ${dashboard.section}`
+            : dashboard.grade;
+        studentAttendanceValue.textContent = `${dashboard.attendanceAverage}%`;
+        studentOverallProgressValue.textContent = `${dashboard.overallProgress}%`;
+        supportPlanTitle.textContent = dashboard.isInSupportPlan
+            ? `${dashboard.studentName} is part of the support plan.`
+            : `${dashboard.studentName} is on track.`;
+        supportPlanText.textContent = dashboard.supportPlanLabel || "No support-plan note available.";
+        supportPlanTag.textContent = dashboard.isInSupportPlan ? "Show activities" : "No support plan";
+        todayLearningText.textContent = dashboard.todayLearning?.description || "No lesson is scheduled for today.";
+        todayLearningTag.textContent = dashboard.todayLearning?.tag || "No activity";
+        nextLessonText.textContent = dashboard.nextLesson?.description || "No upcoming lesson was found.";
+        nextLessonTag.textContent = dashboard.nextLesson?.tag || "No activity";
+        progressPercentValue.textContent = `${dashboard.overallProgress}%`;
+        progressNoteText.textContent = dashboard.isInSupportPlan
+            ? "Support plan is active — focus on weak skills step by step."
+            : "Regular class progress is being tracked.";
+        overallProgressBar.style.width = `${dashboard.overallProgress}%`;
+        renderSkillProgress(dashboard.skillProgress || []);
+        renderQuizList(dashboard.assignedQuizzes || dashboard.overdueQuizzes || []);
+    }
+
+    async function loadStudentDashboard(studentId) {
+        const response = await fetch(`${backendBaseUrl}/parents/me/students/${encodeURIComponent(studentId)}/dashboard`, {
+            headers: parentAuthorizedHeaders()
+        });
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok || !data) {
+            throw new Error(data?.message || "Unable to load the student dashboard.");
+        }
+
+        renderStudentDashboard(data);
+        parentSubtitleText.textContent = `Here is a quick update for ${data.studentName}.`;
+    }
+
+    async function loadParentDashboard() {
+        if (!token) {
+            window.location.replace('@Url.Action("Login", "Home")');
+            return;
+        }
+
+        if (role && role !== "Parent") {
+            window.location.replace('@Url.Action("Teacher", "Home")');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/parents/me`, {
+                headers: parentAuthorizedHeaders()
+            });
+            const profile = await response.json().catch(() => null);
+
+            if (!response.ok || !profile) {
+                throw new Error(profile?.message || "Unable to load parent profile.");
+            }
+
+            sessionStorage.setItem("bridgeUserRole", "Parent");
+            if (profile.fullName) {
+                sessionStorage.setItem("bridgeUserName", profile.fullName);
+            }
+
+            parentWelcomeText.textContent = `Welcome, ${profile.fullName || "Parent"} !`;
+
+            const students = Array.isArray(profile.students) ? profile.students : [];
+            if (!students.length) {
+                parentStudentSelect.innerHTML = `<option>No linked students</option>`;
+                setEmptyParentState("No student is linked to this parent account yet.");
+                return;
+            }
+
+            parentStudentSelect.innerHTML = students.map((student) => `
+                <option value="${student.studentId}">
+                    ${student.fullEnglishName} | ${student.gradeId}
+                </option>
+            `).join("");
+
+            await loadStudentDashboard(parentStudentSelect.value);
+
+            parentStudentSelect.addEventListener("change", async () => {
+                try {
+                    await loadStudentDashboard(parentStudentSelect.value);
+                } catch (error) {
+                    setEmptyParentState("Some student dashboard data could not be loaded right now.");
+                }
+            });
+        } catch (error) {
+            setEmptyParentState("Unable to load the parent dashboard right now.");
+        }
+    }
+
+    loadParentDashboard();
+</script>

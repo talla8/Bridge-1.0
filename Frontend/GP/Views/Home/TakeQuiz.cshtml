@@ -1,0 +1,288 @@
+@{
+    ViewData["Title"] = "Take Quiz";
+    var studentId = ViewData["StudentId"]?.ToString() ?? "";
+    var assignmentId = ViewData["AssignmentId"]?.ToString() ?? "";
+}
+
+<style>
+    .parent-quiz-page {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 28px;
+    }
+
+    .parent-quiz-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+        padding: 26px;
+        margin-bottom: 18px;
+    }
+
+    .parent-quiz-title {
+        font-size: 34px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .parent-quiz-subtitle {
+        color: #6b7280;
+        margin-bottom: 18px;
+    }
+
+    .parent-quiz-question {
+        border: 1px solid #e8edf5;
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 14px;
+    }
+
+    .parent-quiz-question-head {
+        font-size: 20px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .parent-quiz-prompt {
+        color: #374151;
+        margin-bottom: 14px;
+        line-height: 1.6;
+    }
+
+    .parent-quiz-options {
+        display: grid;
+        gap: 10px;
+    }
+
+    .parent-quiz-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid #e8edf5;
+        border-radius: 14px;
+        padding: 12px 14px;
+    }
+
+    .parent-quiz-textarea {
+        width: 100%;
+        min-height: 120px;
+        border: 1px solid #dbe3f0;
+        border-radius: 16px;
+        padding: 14px;
+        resize: vertical;
+        outline: none;
+    }
+
+    .parent-quiz-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .parent-quiz-btn {
+        border: none;
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .parent-quiz-btn-primary {
+        background: linear-gradient(135deg,#8b82ff,#6d8cff);
+        color: #fff;
+    }
+
+    .parent-quiz-btn-outline {
+        background: #fff;
+        border: 1px solid #dbe3f0;
+        color: #374151;
+    }
+
+    .parent-quiz-note,
+    .parent-quiz-error {
+        margin-top: 14px;
+        font-weight: 600;
+    }
+
+    .parent-quiz-note {
+        color: #4f46e5;
+    }
+
+    .parent-quiz-error {
+        color: #dc2626;
+    }
+</style>
+
+<div class="parent-quiz-page">
+    <div class="parent-quiz-card">
+        <div class="parent-quiz-title" id="takeQuizTitle">Quiz</div>
+        <div class="parent-quiz-subtitle" id="takeQuizSubtitle">Answer all questions, then submit the quiz.</div>
+
+        <div id="takeQuizQuestions"></div>
+        <div id="takeQuizNote" class="parent-quiz-note d-none"></div>
+        <div id="takeQuizError" class="parent-quiz-error d-none"></div>
+
+        <div class="parent-quiz-actions">
+            <a class="parent-quiz-btn parent-quiz-btn-outline" href="@Url.Action("ParentDashboard", "Home")">Back</a>
+            <button id="submitParentQuizBtn" class="parent-quiz-btn parent-quiz-btn-primary" type="button">Submit quiz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const role = sessionStorage.getItem("bridgeUserRole");
+    const studentId = "@studentId";
+    const assignmentId = "@assignmentId";
+
+    const takeQuizTitle = document.getElementById("takeQuizTitle");
+    const takeQuizSubtitle = document.getElementById("takeQuizSubtitle");
+    const takeQuizQuestions = document.getElementById("takeQuizQuestions");
+    const takeQuizNote = document.getElementById("takeQuizNote");
+    const takeQuizError = document.getElementById("takeQuizError");
+    const submitParentQuizBtn = document.getElementById("submitParentQuizBtn");
+
+    let quizState = null;
+
+    function showQuizError(message) {
+        takeQuizError.textContent = message;
+        takeQuizError.classList.remove("d-none");
+    }
+
+    function hideQuizError() {
+        takeQuizError.classList.add("d-none");
+    }
+
+    function showQuizNote(message) {
+        takeQuizNote.textContent = message;
+        takeQuizNote.classList.remove("d-none");
+    }
+
+    function renderQuestions(quiz) {
+        takeQuizQuestions.innerHTML = quiz.questions.map((question, index) => `
+            <div class="parent-quiz-question" data-question-id="${question.questionId}" data-question-type="${question.type}">
+                <div class="parent-quiz-question-head">Question ${index + 1}</div>
+                <div class="parent-quiz-prompt">${question.prompt}</div>
+                ${question.type === "MULTIPLE_CHOICE"
+                    ? `<div class="parent-quiz-options">
+                        ${question.options.map((option) => `
+                            <label class="parent-quiz-option">
+                                <input type="radio" name="question-${question.questionId}" value="${option.optionId}" />
+                                <span>${option.text}</span>
+                            </label>
+                        `).join("")}
+                    </div>`
+                    : `<textarea class="parent-quiz-textarea" placeholder="Write your answer here..."></textarea>`}
+            </div>
+        `).join("");
+    }
+
+    function collectAnswers() {
+        return quizState.questions.map((question) => {
+            const block = takeQuizQuestions.querySelector(`[data-question-id="${question.questionId}"]`);
+            if (question.type === "MULTIPLE_CHOICE") {
+                const checked = block.querySelector(`input[name="question-${question.questionId}"]:checked`);
+                return {
+                    questionId: question.questionId,
+                    selectedOptionId: checked?.value || undefined
+                };
+            }
+
+            return {
+                questionId: question.questionId,
+                essayAnswer: block.querySelector("textarea")?.value?.trim() || ""
+            };
+        });
+    }
+
+    async function loadQuiz() {
+        if (!token) {
+            window.location.replace('@Url.Action("Login", "Home")');
+            return;
+        }
+
+        if (role && role !== "Parent") {
+            window.location.replace('@Url.Action("Teacher", "Home")');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/parents/me/students/${encodeURIComponent(studentId)}/quizzes/${encodeURIComponent(assignmentId)}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok || !data) {
+                throw new Error(data?.message || "Unable to load the quiz.");
+            }
+
+            quizState = data;
+            takeQuizTitle.textContent = data.title;
+            takeQuizSubtitle.textContent = `Quiz for ${data.studentName}`;
+            renderQuestions(data);
+
+            if (data.alreadySubmitted) {
+                submitParentQuizBtn.disabled = true;
+                submitParentQuizBtn.textContent = "Already submitted";
+                showQuizNote("This quiz has already been submitted.");
+            }
+        } catch (error) {
+            showQuizError(error.message || "Unable to load the quiz.");
+            submitParentQuizBtn.disabled = true;
+        }
+    }
+
+    submitParentQuizBtn.addEventListener("click", async () => {
+        if (!quizState || quizState.alreadySubmitted) {
+            return;
+        }
+
+        hideQuizError();
+        submitParentQuizBtn.disabled = true;
+        submitParentQuizBtn.textContent = "Submitting...";
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/parents/me/students/${encodeURIComponent(studentId)}/quizzes/${encodeURIComponent(assignmentId)}/submit`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    answers: collectAnswers()
+                })
+            });
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok || !data) {
+                throw new Error(data?.message || "Unable to submit the quiz.");
+            }
+
+            const message = data.status === "PENDING_REVIEW"
+                ? `Quiz submitted. ${data.pendingReviewQuestions} question(s) are pending review.`
+                : `Quiz submitted. Score: ${data.score}%.`;
+
+            showQuizNote(message);
+            submitParentQuizBtn.textContent = "Submitted";
+        } catch (error) {
+            showQuizError(error.message || "Unable to submit the quiz.");
+            submitParentQuizBtn.disabled = false;
+            submitParentQuizBtn.textContent = "Submit quiz";
+        }
+    });
+
+    loadQuiz();
+</script>

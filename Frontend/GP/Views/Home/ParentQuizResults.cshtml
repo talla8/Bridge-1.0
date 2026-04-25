@@ -1,0 +1,159 @@
+@{
+    ViewData["Title"] = "Quiz Results";
+}
+
+<style>
+    .parent-results-page {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 28px;
+    }
+
+    .parent-results-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+        padding: 24px;
+    }
+
+    .parent-results-title {
+        font-size: 34px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .parent-results-subtitle {
+        color: #6b7280;
+        margin-bottom: 18px;
+    }
+
+    .parent-results-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    .parent-results-row {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr .9fr .7fr .8fr auto;
+        gap: 14px;
+        align-items: center;
+        border: 1px solid #eef2f7;
+        border-radius: 18px;
+        padding: 16px;
+    }
+
+    .parent-results-head {
+        background: #f8fafc;
+        font-weight: 800;
+        color: #374151;
+    }
+
+    .parent-results-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        background: #eef2ff;
+        color: #4f46e5;
+        width: fit-content;
+    }
+
+    .parent-results-score {
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .parent-results-empty {
+        color: #6b7280;
+        text-align: center;
+        padding: 28px;
+    }
+
+    @@media (max-width: 960px) {
+        .parent-results-row {
+            grid-template-columns: 1fr;
+        }
+
+        .parent-results-head {
+            display: none;
+        }
+    }
+</style>
+
+<div class="parent-results-page">
+    <div class="parent-results-card">
+        <div class="parent-results-title">Quiz Results</div>
+        <div class="parent-results-subtitle">Submitted quizzes and their current grading status.</div>
+
+        <div id="parentQuizResultsList" class="parent-results-grid"></div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const role = sessionStorage.getItem("bridgeUserRole");
+    const parentQuizResultsList = document.getElementById("parentQuizResultsList");
+
+    function renderParentQuizResults(items) {
+        if (!items.length) {
+            parentQuizResultsList.innerHTML = `<div class="parent-results-empty">No quiz results yet.</div>`;
+            return;
+        }
+
+        parentQuizResultsList.innerHTML = `
+            <div class="parent-results-row parent-results-head">
+                <div>Quiz</div>
+                <div>Student</div>
+                <div>Submitted</div>
+                <div>Score</div>
+                <div>Status</div>
+                <div>Action</div>
+            </div>
+            ${items.map((item) => `
+                <div class="parent-results-row">
+                    <div><strong>${item.title}</strong></div>
+                    <div>${item.studentName}</div>
+                    <div>${new Date(item.submittedAt).toLocaleDateString()}</div>
+                    <div class="parent-results-score">${item.score}%</div>
+                    <div><span class="parent-results-badge">${item.status}</span></div>
+                    <div><a class="parent-list-btn" href="@Url.Action("ParentQuizResultDetail", "Home")?quizResultId=${encodeURIComponent(item.quizResultId)}">View detail</a></div>
+                </div>
+            `).join("")}
+        `;
+    }
+
+    async function loadParentQuizResults() {
+        if (!token) {
+            window.location.replace('@Url.Action("Login", "Home")');
+            return;
+        }
+
+        if (role && role !== "Parent") {
+            window.location.replace('@Url.Action("Teacher", "Home")');
+            return;
+        }
+
+        const response = await fetch(`${backendBaseUrl}/parents/me/quiz-results`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = await response.json().catch(() => []);
+
+        if (!response.ok) {
+            throw new Error(data?.message || "Unable to load quiz results.");
+        }
+
+        renderParentQuizResults(Array.isArray(data) ? data : []);
+    }
+
+    loadParentQuizResults().catch((error) => {
+        parentQuizResultsList.innerHTML = `<div class="parent-results-empty">${error.message || "Unable to load quiz results."}</div>`;
+    });
+</script>
