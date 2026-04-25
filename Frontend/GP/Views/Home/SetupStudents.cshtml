@@ -1,0 +1,332 @@
+@{
+    ViewData["Title"] = "SetupStudents";
+}
+
+<style>
+    .bridge-setup-shell {
+        min-height: calc(100vh - 9rem);
+        padding: 3rem 0 4rem;
+    }
+
+    .bridge-setup-frame {
+        padding: 2rem;
+        border: 1px solid rgba(123, 116, 216, 0.14);
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 24px 60px rgba(45, 39, 120, 0.1);
+    }
+
+    .bridge-setup-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .bridge-setup-step {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 8rem;
+        padding: 0.65rem 1rem;
+        border-radius: 999px;
+        background: #f0edff;
+        color: #7b74d8;
+        font-weight: 700;
+    }
+
+    .bridge-setup-title {
+        margin: 0.6rem 0 0.7rem;
+        font-size: clamp(2.2rem, 4vw, 3.3rem);
+        line-height: 1.06;
+        font-weight: 800;
+        color: #1f2430;
+    }
+
+    .bridge-setup-subtitle {
+        margin: 0;
+        color: #697387;
+        font-size: 1.02rem;
+        max-width: 42rem;
+    }
+
+    .bridge-setup-note,
+    .bridge-setup-card {
+        height: 100%;
+        padding: 2rem;
+        border: 1px solid rgba(123, 116, 216, 0.14);
+        border-radius: 1.75rem;
+        background: #fff;
+        box-shadow: 0 20px 45px rgba(45, 39, 120, 0.08);
+    }
+
+    .bridge-setup-note {
+        background: linear-gradient(180deg, #fbf9ff, #fff);
+    }
+
+    .bridge-setup-note-label {
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: #7b74d8;
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .bridge-setup-note h2,
+    .bridge-setup-card h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #1f2430;
+    }
+
+    .bridge-setup-note p,
+    .bridge-setup-card p,
+    .bridge-setup-helper {
+        color: #697387;
+    }
+
+    .bridge-outline-btn,
+    .bridge-primary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 3.25rem;
+        padding: 0.85rem 1.5rem;
+        border-radius: 999px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .bridge-primary-btn {
+        border: 0;
+        background: linear-gradient(135deg, #8e84ff, #b4abff);
+        color: #fff;
+    }
+
+    .bridge-primary-btn:hover,
+    .bridge-primary-btn:focus {
+        color: #fff;
+        opacity: 0.96;
+    }
+
+    .bridge-outline-btn {
+        border: 1px solid #d8d3ff;
+        background: #fff;
+        color: #7b74d8;
+    }
+
+    .bridge-outline-btn:hover,
+    .bridge-outline-btn:focus {
+        color: #695fd6;
+        background: #f7f5ff;
+    }
+
+    .bridge-upload-panel {
+        margin-top: 1.25rem;
+        padding: 1.4rem;
+        border-radius: 1.5rem;
+        background: #f5f3ff;
+    }
+
+    .bridge-dropzone {
+        display: grid;
+        place-items: center;
+        gap: 0.8rem;
+        min-height: 20rem;
+        padding: 2rem;
+        border: 2px dashed #cec8ff;
+        border-radius: 1.5rem;
+        background: #fff;
+        text-align: center;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .bridge-dropzone.is-dragging {
+        transform: translateY(-2px);
+        border-color: #8f84ff;
+        background: #faf9ff;
+    }
+
+    .bridge-upload-icon {
+        font-size: 3rem;
+        color: #8f84ff;
+    }
+
+    .bridge-file-summary {
+        margin-top: 1rem;
+        padding: 1rem 1.2rem;
+        border: 1px solid #e3deff;
+        border-radius: 1rem;
+        background: #fff;
+        color: #4a4f5a;
+    }
+
+    @@media (max-width: 991.98px) {
+        .bridge-setup-header {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="bridge-setup-shell">
+    <div class="container">
+        <div class="bridge-setup-frame">
+            <div class="bridge-setup-header">
+                <div>
+                    <div class="bridge-setup-step">Step 1 of 2</div>
+                    <h1 class="bridge-setup-title">Upload your student names</h1>
+                    <p class="bridge-setup-subtitle">
+                        Download the template, fill it with your students, then upload the completed Excel file.
+                    </p>
+                </div>
+            </div>
+
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-5">
+                    <div class="bridge-setup-note">
+                        <span class="bridge-setup-note-label">Page 1</span>
+                        <h2>Student names template</h2>
+                        <p>Use the same file structure provided by the template before importing the Excel file.</p>
+                        <a href="http://localhost:3000/students/download-template"
+                           class="bridge-outline-btn"
+                           download>
+                            Download
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="bridge-setup-card">
+                        <div class="bridge-upload-panel">
+                            <div id="studentDropArea" class="bridge-dropzone">
+                                <i class="bi bi-cloud-arrow-up bridge-upload-icon"></i>
+                                <h2>Import or drag your Excel file</h2>
+                                <p>Only `.xlsx` files are accepted for this step.</p>
+                                <label for="studentFileInput" class="bridge-primary-btn">Choose file</label>
+                                <input id="studentFileInput" type="file" class="d-none" accept=".xlsx">
+                            </div>
+
+                            <div id="studentFileSummary" class="bridge-file-summary d-none"></div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+                            <span id="studentUploadStatus" class="bridge-setup-helper">
+                                Upload the completed template to continue.
+                            </span>
+                            <div class="d-flex gap-3">
+                                <button type="button" id="uploadStudentsBtn" class="bridge-primary-btn">Upload</button>
+                                <button type="button" id="goToSlotsBtn" class="bridge-outline-btn" disabled>Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const studentDropArea = document.getElementById("studentDropArea");
+    const studentFileInput = document.getElementById("studentFileInput");
+    const studentFileSummary = document.getElementById("studentFileSummary");
+    const studentUploadStatus = document.getElementById("studentUploadStatus");
+    const uploadStudentsBtn = document.getElementById("uploadStudentsBtn");
+    const goToSlotsBtn = document.getElementById("goToSlotsBtn");
+    let selectedStudentFile = null;
+
+    function renderSelectedFile(file) {
+        if (!file) {
+            studentFileSummary.classList.add("d-none");
+            studentFileSummary.textContent = "";
+            return;
+        }
+
+        studentFileSummary.classList.remove("d-none");
+        studentFileSummary.innerHTML = `<strong>${file.name}</strong> <span class="text-secondary">(${(file.size / 1024).toFixed(1)} KB)</span>`;
+    }
+
+    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        studentDropArea.addEventListener(eventName, (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+    });
+
+    ["dragenter", "dragover"].forEach((eventName) => {
+        studentDropArea.addEventListener(eventName, () => studentDropArea.classList.add("is-dragging"));
+    });
+
+    ["dragleave", "drop"].forEach((eventName) => {
+        studentDropArea.addEventListener(eventName, () => studentDropArea.classList.remove("is-dragging"));
+    });
+
+    studentDropArea.addEventListener("drop", (event) => {
+        selectedStudentFile = event.dataTransfer.files[0] ?? null;
+        renderSelectedFile(selectedStudentFile);
+    });
+
+    studentFileInput.addEventListener("change", (event) => {
+        selectedStudentFile = event.target.files[0] ?? null;
+        renderSelectedFile(selectedStudentFile);
+    });
+
+    uploadStudentsBtn.addEventListener("click", async () => {
+        if (!selectedStudentFile) {
+            alert("Please choose the completed student template first.");
+            return;
+        }
+
+        if (!selectedStudentFile.name.toLowerCase().endsWith(".xlsx")) {
+            alert("Only .xlsx files are allowed.");
+            return;
+        }
+
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        if (!token) {
+            alert("You need to sign in again before uploading students.");
+            return;
+        }
+
+        uploadStudentsBtn.disabled = true;
+
+        try {
+            const formData = new FormData();
+            formData.append("file", selectedStudentFile);
+
+            const response = await fetch(`${backendBaseUrl}/students/import-template`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const message = Array.isArray(data?.message)
+                    ? data.message.join(", ")
+                    : data?.message;
+                throw new Error(message || "Unable to upload student names.");
+            }
+
+            const students = Array.isArray(data) ? data : [];
+            studentUploadStatus.textContent = `${students.length} students uploaded successfully.`;
+            localStorage.setItem("teacherStudentsTemplateUploaded", "true");
+            goToSlotsBtn.disabled = false;
+        } catch (error) {
+            alert(error.message || "Unable to upload student names.");
+        } finally {
+            uploadStudentsBtn.disabled = false;
+        }
+    });
+
+    goToSlotsBtn.addEventListener("click", () => {
+        window.location.href = '@Url.Action("SetupWeeklySlots", "Home")';
+    });
+</script>

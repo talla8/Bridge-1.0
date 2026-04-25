@@ -1,0 +1,255 @@
+﻿
+@{
+    ViewData["Title"] = "AfterVerification";
+}
+
+<style>
+    body {
+        background: #f6f7fb;
+        font-family: Arial, sans-serif;
+    }
+
+    .page-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 15px;
+    }
+
+    .main-card {
+        width: 100%;
+        max-width: 860px;
+        background: #fff;
+        border-radius: 28px;
+        box-shadow: 0 14px 40px rgba(0,0,0,.08);
+        padding: 40px 32px;
+    }
+
+    .title-ar {
+        text-align: center;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 26px;
+        direction: rtl;
+    }
+
+    .inner-card {
+        max-width: 560px;
+        margin: 0 auto;
+        border: 2px solid #e6e9f2;
+        border-radius: 24px;
+        padding: 28px 24px;
+        background: #fcfcff;
+    }
+
+    .section-label {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 14px;
+    }
+
+    .form-select {
+        border-radius: 14px;
+        min-height: 48px;
+    }
+
+    .semester-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .semester-btn {
+        min-width: 85px;
+        border-radius: 12px;
+        border: 1px solid #d7dcf0;
+        background: #fff;
+        color: #4b5563;
+        padding: 10px 16px;
+        font-weight: 600;
+    }
+
+        .semester-btn.active {
+            background: #b9b3ff;
+            color: #fff;
+            border-color: #b9b3ff;
+        }
+
+    .slots-box {
+        border: 1px solid #e5e7ef;
+        border-radius: 20px;
+        padding: 18px;
+        background: #fff;
+        margin-top: 18px;
+    }
+
+    .slot-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .day-name {
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .slot-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .slot-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        border: 1px solid #d6dbef;
+        background: #fff;
+        font-size: 22px;
+    }
+
+    .slot-value {
+        min-width: 44px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 700;
+        color: #4b5563;
+    }
+
+    .hint-text {
+        color: #8b5cf6;
+        font-size: 14px;
+        margin-top: 12px;
+    }
+
+    .action-row {
+        text-align: center;
+        margin-top: 22px;
+    }
+
+    .continue-btn {
+        background: #b9b3ff;
+        color: white;
+        min-width: 170px;
+        border: none;
+        border-radius: 14px;
+        padding: 10px 22px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="page-wrap">
+    <div class="main-card">
+
+        <div class="inner-card">
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="section-label">choose subject</label>
+                    <select class="form-select" id="subjectSelect">
+                        <option selected disabled>choose subject</option>
+                        <option>Arabic</option>
+                        <option>Math</option>
+                        <option>English</option>
+                        <option>Science</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="section-label">choose semester</label>
+                    <div class="semester-buttons">
+                        <button type="button" class="semester-btn active" onclick="setSemester(this, '1st')">1st</button>
+                        <button type="button" class="semester-btn" onclick="setSemester(this, '2nd')">2nd</button>
+                    </div>
+                    <input type="hidden" id="semesterValue" value="1st" />
+                </div>
+            </div>
+
+            <div class="slots-box">
+                <div class="section-label mb-3">fill available weekly slots</div>
+
+                <div class="slot-row">
+                    <div class="day-name">Sun</div>
+                    <div class="slot-actions">
+                        <button class="slot-btn" type="button" onclick="changeSlot('sun', -1)">-</button>
+                        <div class="slot-value" id="sunValue">1</div>
+                        <button class="slot-btn" type="button" onclick="changeSlot('sun', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="slot-row">
+                    <div class="day-name">Mon</div>
+                    <div class="slot-actions">
+                        <button class="slot-btn" type="button" onclick="changeSlot('mon', -1)">-</button>
+                        <div class="slot-value" id="monValue">1</div>
+                        <button class="slot-btn" type="button" onclick="changeSlot('mon', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="slot-row">
+                    <div class="day-name">Tue</div>
+                    <div class="slot-actions">
+                        <button class="slot-btn" type="button" onclick="changeSlot('tue', -1)">-</button>
+                        <div class="slot-value" id="tueValue">1</div>
+                        <button class="slot-btn" type="button" onclick="changeSlot('tue', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="slot-row">
+                    <div class="day-name">Wed</div>
+                    <div class="slot-actions">
+                        <button class="slot-btn" type="button" onclick="changeSlot('wed', -1)">-</button>
+                        <div class="slot-value" id="wedValue">1</div>
+                        <button class="slot-btn" type="button" onclick="changeSlot('wed', 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="slot-row">
+                    <div class="day-name">Thu</div>
+                    <div class="slot-actions">
+                        <button class="slot-btn" type="button" onclick="changeSlot('thu', -1)">-</button>
+                        <div class="slot-value" id="thuValue">1</div>
+                        <button class="slot-btn" type="button" onclick="changeSlot('thu', 1)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hint-text">min 0, max 7</div>
+
+            <div class="action-row">
+                <button class="continue-btn" type="button"
+                        onclick="window.location.href='@Url.Action("Index", "Home")'">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const slots = {
+        sun: 1,
+        mon: 1,
+        tue: 1,
+        wed: 1,
+        thu: 1
+    };
+
+    function setSemester(button, value) {
+        document.querySelectorAll('.semester-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById('semesterValue').value = value;
+    }
+
+    function changeSlot(day, amount) {
+        const nextValue = slots[day] + amount;
+        if (nextValue < 0 || nextValue > 7) return;
+        slots[day] = nextValue;
+        document.getElementById(day + 'Value').textContent = nextValue;
+    }
+</script>

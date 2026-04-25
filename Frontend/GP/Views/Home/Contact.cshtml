@@ -1,0 +1,467 @@
+﻿
+@{
+    ViewData["Title"] = "Contact";
+}
+
+
+<style>
+    .hero-section {
+        background: #e8f4fd;
+        padding: 3.5rem 0 2.5rem;
+    }
+
+    .hero-badge {
+        background: #c9c6ff;
+        color: #3C3489;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 5px 14px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+    .info-card {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 14px;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 0.85rem;
+    }
+
+    .info-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+        .info-icon.blue {
+            background: #e8f4fd;
+        }
+
+        .info-icon.purple {
+            background: #f0efff;
+        }
+
+        .info-icon.teal {
+            background: #e1f5ee;
+        }
+
+    .info-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 2px;
+    }
+
+    .info-value {
+        font-size: 14px;
+        font-weight: 500;
+        color: #212529;
+        margin: 0;
+    }
+
+    .form-card {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    .field-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #6c757d;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .field-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #dee2e6;
+        border-radius: 9px;
+        font-size: 14px;
+        background: #f8f9fa;
+        color: #212529;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+    }
+
+        .field-input:focus {
+            border-color: #0dcaf0;
+            background: #fff;
+            outline: none;
+            box-shadow: none;
+        }
+
+    .subject-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .subject-pill {
+        padding: 7px 12px;
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+        background: #fff;
+        color: #6c757d;
+        transition: all 0.2s;
+        user-select: none;
+    }
+
+        .subject-pill:hover {
+            border-color: #0dcaf0;
+            color: #0dcaf0;
+        }
+
+        .subject-pill.active {
+            background: #e8f4fd;
+            border-color: #0dcaf0;
+            color: #0d6efd;
+        }
+
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 25px;
+        background: #0dcaf0;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 0.5rem;
+    }
+
+        .submit-btn:hover {
+            background: #0bb5d8;
+        }
+
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+    .success-banner {
+        display: none;
+        background: #e1f5ee;
+        border: 1px solid #9FE1CB;
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-top: 1rem;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .success-banner.show {
+            display: flex;
+        }
+
+    .faq-section {
+        background: #fffdf0;
+        padding: 2.5rem 0 3rem;
+    }
+
+    .faq-item {
+        border-bottom: 1px solid #e9ecef;
+        padding: 0.85rem 0;
+        cursor: pointer;
+    }
+
+    .faq-q {
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .faq-a {
+        font-size: 13px;
+        color: #6c757d;
+        margin-top: 6px;
+        line-height: 1.6;
+        display: none;
+    }
+
+        .faq-a.open {
+            display: block;
+        }
+
+    .chevron {
+        transition: transform 0.2s;
+        display: inline-block;
+    }
+
+        .chevron.open {
+            transform: rotate(180deg);
+        }
+
+    .social-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #6c757d;
+        text-decoration: none;
+        background: #fff;
+    }
+
+        .social-btn:hover {
+            border-color: #0dcaf0;
+            color: #0d6efd;
+        }
+
+    @@media (max-width: 700px) {
+        .subject-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<!-- HERO -->
+<div class="hero-section">
+    <div class="container">
+        <span class="hero-badge">Get in touch</span>
+        <h1 class="fw-bold lh-sm mb-3">We'd love to hear from you</h1>
+        <p class="text-secondary lh-lg" style="max-width:460px;">
+            Have a question about Bridge? Whether you're a teacher, parent, or school
+            administrator, our team is here to help.
+        </p>
+    </div>
+</div>
+
+<!-- FORM + INFO -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5 align-items-start">
+
+            <!-- LEFT: Contact Info -->
+            <div class="col-12 col-lg-4">
+                <p class="text-uppercase fw-semibold mb-3" style="font-size:12px;letter-spacing:.06em;color:#6c757d;">
+                    Contact info
+                </p>
+
+                <div class="info-card">
+                    <div class="info-icon blue">
+                        <i class="bi bi-envelope" style="font-size:18px;color:#0d6efd;"></i>
+                    </div>
+                    <div>
+                        <p class="info-label">Email</p>
+                        <p class="info-value">support@bridgelearning.edu</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon purple">
+                        <i class="bi bi-telephone" style="font-size:18px;color:#534AB7;"></i>
+                    </div>
+                    <div>
+                        <p class="info-label">Phone</p>
+                        <p class="info-value">+962 6 123 4567</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon teal">
+                        <i class="bi bi-clock" style="font-size:18px;color:#0F6E56;"></i>
+                    </div>
+                    <div>
+                        <p class="info-label">Response time</p>
+                        <p class="info-value">Usually within 24 hours</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top">
+                    <p class="fw-semibold mb-3" style="font-size:13px;color:#6c757d;">Follow us</p>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="social-btn">
+                            <i class="bi bi-facebook" style="color:#1877F2;font-size:14px;"></i> Facebook
+                        </a>
+                        <a href="#" class="social-btn">
+                            <i class="bi bi-linkedin" style="color:#0A66C2;font-size:14px;"></i> LinkedIn
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Form -->
+            <div class="col-12 col-lg-8">
+                <div class="form-card">
+                    <h2 class="fw-bold mb-1">Send us a message</h2>
+                    <p class="text-secondary mb-4" style="font-size:14px;">
+                        Fill in the form and we'll get back to you as soon as possible.
+                    </p>
+
+                    <div class="row g-3">
+
+                        <div class="col-6">
+                            <label class="field-label">First name</label>
+                            <input type="text" class="field-input" placeholder="Ahmad" id="fname">
+                        </div>
+
+                        <div class="col-6">
+                            <label class="field-label">Last name</label>
+                            <input type="text" class="field-input" placeholder="Al-Khalidi" id="lname">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="field-label">Email address</label>
+                            <input type="email" class="field-input" placeholder="you@example.com" id="cemail">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="field-label">I am a...</label>
+                            <select class="field-input" id="crole">
+                                <option value="">Select your role</option>
+                                <option>Teacher</option>
+                                <option>Parent</option>
+                                <option>School administrator</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="field-label">Topic</label>
+                            <div class="subject-grid">
+                                <div class="subject-pill" onclick="selectTopic(this)">Getting started</div>
+                                <div class="subject-pill" onclick="selectTopic(this)">Account issue</div>
+                                <div class="subject-pill" onclick="selectTopic(this)">Reports &amp; data</div>
+                                <div class="subject-pill" onclick="selectTopic(this)">Learning plans</div>
+                                <div class="subject-pill" onclick="selectTopic(this)">Billing</div>
+                                <div class="subject-pill" onclick="selectTopic(this)">Other</div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="field-label">Message</label>
+                            <textarea class="field-input"
+                                      id="cmsg"
+                                      rows="4"
+                                      placeholder="Tell us how we can help..."></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
+                                Send Message →
+                            </button>
+
+                            <div class="success-banner" id="successBanner">
+                                <i class="bi bi-check-circle-fill" style="color:#085041;font-size:18px;"></i>
+                                <span style="font-size:14px;color:#085041;font-weight:500;">
+                                    Message sent! We'll be in touch within 24 hours.
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+    <div class="container">
+        <h2 class="fw-bold mb-4">Frequently asked questions</h2>
+
+        <div class="faq-item" onclick="toggleFaq(0)">
+            <div class="faq-q">
+                How do I register as a teacher?
+                <span class="chevron" id="chev0">▾</span>
+            </div>
+            <div class="faq-a" id="faq0">
+                Click "Get Started" on the homepage, select "Teacher", and follow the registration steps.
+                You'll need your school email to verify your account.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(1)">
+            <div class="faq-q">
+                Can parents track their child's progress?
+                <span class="chevron" id="chev1">▾</span>
+            </div>
+            <div class="faq-a" id="faq1">
+                Yes. Once linked by a teacher, parents can log in to view their child's learning plan,
+                progress reports, and upcoming focus areas.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(2)">
+            <div class="faq-q">
+                Is Bridge available in Arabic?
+                <span class="chevron" id="chev2">▾</span>
+            </div>
+            <div class="faq-a" id="faq2">
+                We are actively working on full Arabic language support. Stay tuned for updates,
+                or contact us to be notified when it launches.
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(3)">
+            <div class="faq-q">
+                How do I reset my password?
+                <span class="chevron" id="chev3">▾</span>
+            </div>
+            <div class="faq-a" id="faq3">
+                Go to the login page and click "Forgot Password". Enter your registered email
+                and we'll send a reset link within a few minutes.
+            </div>
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function selectTopic(el) {
+            document.querySelectorAll('.subject-pill').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function toggleFaq(i) {
+            const a = document.getElementById('faq' + i);
+            const c = document.getElementById('chev' + i);
+            const isOpen = a.classList.contains('open');
+            document.querySelectorAll('.faq-a').forEach(x => x.classList.remove('open'));
+            document.querySelectorAll('.chevron').forEach(x => x.classList.remove('open'));
+            if (!isOpen) { a.classList.add('open'); c.classList.add('open'); }
+        }
+
+        function handleSubmit() {
+            const email = document.getElementById('cemail').value;
+            if (!email) {
+                document.getElementById('cemail').focus();
+                return;
+            }
+            document.getElementById('successBanner').classList.add('show');
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Sent ✓';
+        }
+    </script>
+}
+

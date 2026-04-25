@@ -1,0 +1,211 @@
+@{
+    ViewData["Title"] = "Verification";
+}
+
+<style>
+    .verification-shell {
+        min-height: calc(100vh - 9rem);
+        display: grid;
+        place-items: center;
+        padding: 3rem 1rem;
+    }
+
+    .verification-card {
+        width: min(100%, 33rem);
+        padding: 2.2rem;
+        border: 1px solid rgba(123, 116, 216, 0.18);
+        border-radius: 1.6rem;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 24px 60px rgba(43, 36, 112, 0.12);
+    }
+
+    .verification-title {
+        margin: 0 0 0.75rem;
+        font-size: clamp(2rem, 3vw, 2.6rem);
+        font-weight: 800;
+        color: #1f2430;
+        text-align: center;
+    }
+
+    .verification-subtitle {
+        margin: 0 0 1.6rem;
+        color: #697387;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    .verification-alert {
+        border-radius: 1rem;
+    }
+
+    .verification-inputs {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 0.7rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .otp-input {
+        width: 100%;
+        height: 4.25rem;
+        border: 1.5px solid #d7d2ff;
+        border-radius: 1rem;
+        background: #fff;
+        color: #1f2430;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .otp-input:focus {
+        border-color: #8f84ff;
+        box-shadow: 0 0 0 0.22rem rgba(143, 132, 255, 0.18);
+        transform: translateY(-1px);
+    }
+
+    .verification-button {
+        width: 100%;
+        min-height: 3.3rem;
+        border: 0;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #8e84ff, #b4abff);
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .verification-button:hover,
+    .verification-button:focus {
+        color: #fff;
+        opacity: 0.96;
+        transform: translateY(-1px);
+    }
+
+    .verification-button:disabled {
+        opacity: 0.7;
+        transform: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .verification-card {
+            padding: 1.4rem;
+            border-radius: 1.25rem;
+        }
+
+        .verification-inputs {
+            gap: 0.45rem;
+        }
+
+        .otp-input {
+            height: 3.7rem;
+            font-size: 1.25rem;
+        }
+    }
+</style>
+
+<div class="verification-shell">
+    <div class="verification-card">
+        <h1 class="verification-title">Enter Verification Code</h1>
+        <p class="verification-subtitle">Enter the 6-digit code sent to your email.</p>
+
+        <div id="verificationErrorBox" class="alert alert-danger verification-alert d-none"></div>
+        <div id="verificationSuccessBox" class="alert alert-success verification-alert d-none"></div>
+
+        <div class="verification-inputs">
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric" autocomplete="one-time-code">
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input" inputmode="numeric">
+        </div>
+
+        <button class="verification-button" id="verifyCodeButton">Verify</button>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const inputs = document.querySelectorAll('.otp-input');
+    const verifyCodeButton = document.getElementById("verifyCodeButton");
+    const verificationErrorBox = document.getElementById("verificationErrorBox");
+    const verificationSuccessBox = document.getElementById("verificationSuccessBox");
+
+    function showVerificationError(message) {
+        verificationSuccessBox.classList.add("d-none");
+        verificationErrorBox.textContent = message;
+        verificationErrorBox.classList.remove("d-none");
+    }
+
+    function showVerificationSuccess(message) {
+        verificationErrorBox.classList.add("d-none");
+        verificationSuccessBox.textContent = message;
+        verificationSuccessBox.classList.remove("d-none");
+    }
+
+    inputs.forEach((input, index) => {
+        input.addEventListener('input', () => {
+            input.value = input.value.replace(/[^0-9]/g, "").slice(0, 1);
+            if (input.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+
+        input.addEventListener('keypress', (e) => {
+            if (!/[0-9]/.test(e.key)) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    verifyCodeButton.addEventListener("click", async () => {
+        let otp = '';
+        inputs.forEach(input => otp += input.value);
+
+        if (otp.length !== 6) {
+            showVerificationError("Please enter all 6 digits.");
+            return;
+        }
+
+        const role = sessionStorage.getItem("bridgeVerificationRole") || "teacher";
+        verifyCodeButton.disabled = true;
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/auth/verify-email`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    token: otp
+                })
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to verify email.");
+            }
+
+            showVerificationSuccess(data?.message || "Email has been verified successfully.");
+            setTimeout(() => {
+                window.location.href = role === "teacher"
+                    ? '@Url.Action("SetupStudents", "Home")'
+                    : '@Url.Action("ParentDashboard", "Home")';
+            }, 1000);
+        } catch (error) {
+            showVerificationError(error.message || "Unable to connect to the server.");
+        } finally {
+            verifyCodeButton.disabled = false;
+        }
+    });
+</script>

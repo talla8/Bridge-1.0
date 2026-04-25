@@ -22,7 +22,7 @@
                         helping every student grow.
                     </p>
 
-                    <div class="d-flex gap-3 mb-4">
+                    @* <div class="d-flex gap-3 mb-4">
                         <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm bg-primary bg-opacity-10">
                             <i class="bi bi-person-video3 fs-4"></i>
                             <span class="fw-semibold">Teacher</span>
@@ -36,6 +36,28 @@
 
                     <a class="btn btn-info rounded-pill px-4 py-2 fw-semibold" asp-controller="Home" asp-action="login">
                         Get Started →
+                    </a> *@
+                    <div class="d-flex gap-3 mb-4">
+
+                        <!-- Teacher -->
+                        <div onclick="selectRole('Teacher')" id="teacherBox"
+                             class="role-box d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm bg-primary bg-opacity-10">
+                            <i class="bi bi-person-video3 fs-4"></i>
+                            <span class="fw-semibold">Teacher</span>
+                        </div>
+
+                        <!-- Parent -->
+                        <div onclick="selectRole('Parent')" id="parentBox"
+                             class="role-box d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm bg-primary bg-opacity-10">
+                            <i class="bi bi-people fs-4"></i>
+                            <span class="fw-semibold">Parent</span>
+                        </div>
+
+                    </div>
+
+                    <!-- زر -->
+                    <a id="startBtn" class="btn btn-info rounded-pill px-4 py-2 fw-semibold">
+                        Get Started →
                     </a>
                 </div>
                 <div class="col-12 col-lg-6 text-center text-lg-end">
@@ -48,12 +70,41 @@
         </div>
     </section>
 
+    <script>
+        let selectedRole = "";
+
+        function selectRole(role) {
+            selectedRole = role;
+
+            document.getElementById("teacherBox").classList.remove("role-selected");
+            document.getElementById("parentBox").classList.remove("role-selected");
+
+            if (role === "Teacher") {
+                document.getElementById("teacherBox").classList.add("role-selected");
+            } else {
+                document.getElementById("parentBox").classList.add("role-selected");
+            }
+        }
+
+        document.getElementById("startBtn").addEventListener("click", function () {
+            if (selectedRole === "") {
+                alert("Pleas Select");
+                return;
+            }
+
+            if (selectedRole === "Teacher") {
+                window.location.href = "/Home/TeacheRegrister";
+            } else {
+                window.location.href = "/Home/ParentRegrister";
+            }
+        });
+    </script>
 
     <section class="py-5 bg-warning bg-opacity-10">
         <div class="container py-3">
 
             <div class="row g-4 justify-content-center">
-               
+
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 h-100">
                         <div class="card-body p-4 text-center">

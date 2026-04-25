@@ -1,0 +1,371 @@
+@{
+    ViewData["Title"] = "SetupWeeklySlots";
+}
+
+<style>
+    .bridge-slots-shell {
+        min-height: calc(100vh - 9rem);
+        padding: 3rem 0 4rem;
+    }
+
+    .bridge-slots-frame {
+        padding: 2rem;
+        border: 1px solid rgba(123, 116, 216, 0.14);
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.88);
+        box-shadow: 0 24px 60px rgba(45, 39, 120, 0.1);
+    }
+
+    .bridge-slots-step {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 8rem;
+        padding: 0.65rem 1rem;
+        border-radius: 999px;
+        background: #f0edff;
+        color: #7b74d8;
+        font-weight: 700;
+    }
+
+    .bridge-slots-title {
+        margin: 0.6rem 0 0.7rem;
+        font-size: clamp(2.2rem, 4vw, 3.3rem);
+        line-height: 1.06;
+        font-weight: 800;
+        color: #1f2430;
+    }
+
+    .bridge-slots-subtitle {
+        margin: 0;
+        color: #697387;
+        font-size: 1.02rem;
+        max-width: 42rem;
+    }
+
+    .bridge-slots-label {
+        margin-bottom: 0.55rem;
+        color: #1f2430;
+        font-weight: 700;
+    }
+
+    .bridge-slots-select {
+        min-height: 3.35rem;
+        border: 1px solid #ddd9ff;
+        border-radius: 1rem;
+        box-shadow: none;
+    }
+
+    .bridge-slots-select:focus {
+        border-color: #8f84ff;
+        box-shadow: 0 0 0 0.2rem rgba(143, 132, 255, 0.16);
+    }
+
+    .bridge-slots-grid {
+        display: grid;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .bridge-slot-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.2rem 1.3rem;
+        border: 1px solid #e2deff;
+        border-radius: 1.25rem;
+        background: #fff;
+    }
+
+    .bridge-slot-card h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #1f2430;
+    }
+
+    .bridge-slot-card p {
+        margin: 0;
+        color: #697387;
+    }
+
+    .bridge-slot-counter {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.9rem;
+    }
+
+    .bridge-slot-counter button {
+        width: 2.7rem;
+        height: 2.7rem;
+        border: 1px solid #d8d3ff;
+        border-radius: 999px;
+        background: #fff;
+        color: #7b74d8;
+        font-size: 1.3rem;
+        line-height: 1;
+    }
+
+    .bridge-slot-counter span {
+        min-width: 2ch;
+        text-align: center;
+        color: #1f2430;
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .bridge-slots-total {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding: 1rem 1.2rem;
+        border: 1px solid #e2deff;
+        border-radius: 1.25rem;
+        background: #fff;
+    }
+
+    .bridge-slots-total strong {
+        color: #1f2430;
+    }
+
+    .bridge-slots-total p {
+        margin: 0.2rem 0 0;
+        color: #697387;
+    }
+
+    .bridge-slots-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 3rem;
+        height: 3rem;
+        padding: 0 1rem;
+        border-radius: 999px;
+        background: #e8e4ff;
+        color: #7b74d8;
+        font-size: 1.1rem;
+        font-weight: 800;
+    }
+
+    .bridge-slots-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .bridge-slots-outline,
+    .bridge-slots-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 3.25rem;
+        padding: 0.85rem 1.5rem;
+        border-radius: 999px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .bridge-slots-outline {
+        border: 1px solid #d8d3ff;
+        background: #fff;
+        color: #7b74d8;
+    }
+
+    .bridge-slots-primary {
+        border: 0;
+        background: linear-gradient(135deg, #8e84ff, #b4abff);
+        color: #fff;
+    }
+
+    @@media (max-width: 767.98px) {
+        .bridge-slot-card {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="bridge-slots-shell">
+    <div class="container">
+        <div class="bridge-slots-frame">
+            <div>
+                <div class="bridge-slots-step">Step 2 of 2</div>
+                <h1 class="bridge-slots-title">Fill available weekly slots</h1>
+                <p class="bridge-slots-subtitle">
+                    Choose the subject and semester, then set how many weekly slots are available from Sunday to Thursday.
+                </p>
+            </div>
+
+            <div class="row g-3 mt-3">
+                <div class="col-md-6">
+                    <label for="subjectSelect" class="bridge-slots-label">Choose subject</label>
+                    <select id="subjectSelect" class="form-select bridge-slots-select">
+                        <option value="">Select subject</option>
+                        <option value="1">Math</option>
+                        <option value="2">Arabic</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="semesterSelect" class="bridge-slots-label">Choose semester</label>
+                    <select id="semesterSelect" class="form-select bridge-slots-select">
+                        <option value="">Select semester</option>
+                        <option value="1">1st semester</option>
+                        <option value="2">2nd semester</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="slotsGrid" class="bridge-slots-grid"></div>
+
+            <div class="bridge-slots-total">
+                <div>
+                    <strong>Total weekly slots</strong>
+                    <p>Minimum 1, maximum 7 per day.</p>
+                </div>
+                <span class="bridge-slots-badge" id="totalSlotsBadge">0</span>
+            </div>
+
+            <div class="bridge-slots-actions">
+                <a asp-action="SetupStudents" asp-controller="Home" class="bridge-slots-outline">Back</a>
+                <button type="button" id="finishSetupBtn" class="bridge-slots-primary">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+    const slotsGrid = document.getElementById("slotsGrid");
+    const totalSlotsBadge = document.getElementById("totalSlotsBadge");
+    const finishSetupBtn = document.getElementById("finishSetupBtn");
+    const subjectSelect = document.getElementById("subjectSelect");
+    const semesterSelect = document.getElementById("semesterSelect");
+    const slotCounts = Object.fromEntries(days.map((day) => [day, 0]));
+
+    function updateTotalSlots() {
+        const total = Object.values(slotCounts).reduce((sum, value) => sum + value, 0);
+        totalSlotsBadge.textContent = total;
+        return total;
+    }
+
+    function updateCountDisplay(day) {
+        const target = document.getElementById(`count-${day}`);
+        if (target) {
+            target.textContent = slotCounts[day];
+        }
+    }
+
+    function buildSlotsGrid() {
+        slotsGrid.innerHTML = "";
+
+        days.forEach((day) => {
+            const card = document.createElement("div");
+            card.className = "bridge-slot-card";
+
+            card.innerHTML = `
+                <div>
+                    <h3>${day}</h3>
+                    <p>Choose the number of available teaching slots.</p>
+                </div>
+                <div class="bridge-slot-counter">
+                    <button type="button" data-day="${day}" data-action="decrease">-</button>
+                    <span id="count-${day}">0</span>
+                    <button type="button" data-day="${day}" data-action="increase">+</button>
+                </div>
+            `;
+
+            slotsGrid.appendChild(card);
+        });
+    }
+
+    slotsGrid.addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-day]");
+        if (!button) {
+            return;
+        }
+
+        const day = button.dataset.day;
+        const action = button.dataset.action;
+        const currentValue = slotCounts[day];
+
+        if (action === "increase" && currentValue < 7) {
+            slotCounts[day] = currentValue + 1;
+        }
+
+        if (action === "decrease" && currentValue > 0) {
+            slotCounts[day] = currentValue - 1;
+        }
+
+        updateCountDisplay(day);
+        updateTotalSlots();
+    });
+
+    finishSetupBtn.addEventListener("click", async () => {
+        if (!subjectSelect.value || !semesterSelect.value) {
+            alert("Please choose both a subject and a semester.");
+            return;
+        }
+
+        if (updateTotalSlots() < 1) {
+            alert("Please add at least one weekly slot.");
+            return;
+        }
+
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        if (!token) {
+            alert("You need to sign in again before saving weekly slots.");
+            return;
+        }
+
+        finishSetupBtn.disabled = true;
+
+        const slots = days.flatMap((day) =>
+            Array.from({ length: slotCounts[day] }, (_, index) => ({
+                day,
+                slotNumber: index + 1
+            }))
+        );
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/plans/weekly-slots`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    subjectId: subjectSelect.value,
+                    slots
+                })
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const message = Array.isArray(data?.message)
+                    ? data.message.join(", ")
+                    : data?.message;
+                throw new Error(message || "Unable to save weekly slots.");
+            }
+
+            localStorage.setItem("teacherSelectedSubject", subjectSelect.value);
+            localStorage.setItem("teacherSelectedSemester", semesterSelect.value);
+            localStorage.setItem("teacherWeeklySlots", JSON.stringify(slotCounts));
+            window.location.href = '@Url.Action("Teacher", "Home")';
+        } catch (error) {
+            alert(error.message || "Unable to save weekly slots.");
+        } finally {
+            finishSetupBtn.disabled = false;
+        }
+    });
+
+    buildSlotsGrid();
+    updateTotalSlots();
+</script>

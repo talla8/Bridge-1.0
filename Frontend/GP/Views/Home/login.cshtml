@@ -1,45 +1,26 @@
-﻿@{
+@{
     ViewData["Title"] = "login";
 }
-<!-- CONTENT -->
+
 <div class="container py-5">
     <div class="row align-items-center">
-
-        <!-- LEFT -->
         <div class="col-lg-6">
+            <h1 class="fw-bold mb-1">Welcome Back !</h1>
+            <p class="text-secondary mb-4">Please login to your account.</p>
 
-            <h1 class="fw-bold mb-1" id="formTitle">Welcome Back !</h1>
-            <p class="text-secondary mb-4" id="formSubtitle">
-                Please login to your account.
-            </p>
+            <div id="loginErrorBox" class="alert alert-danger d-none"></div>
 
-            <!-- ERROR -->
-            @* <div id="errorBox"
-                 class="mb-3 p-3 rounded"
-                 style="background:#ffeaea;border:1px solid #ff6b6b;display:none">
-                <span class="fw-semibold text-danger">
-                    User Does Not Exist. Please Create a New Account.
-                </span>
-            </div> *@
-
-            <!-- FORM -->
-            <form>
-
-                <!-- FULL NAME (Sign Up only) -->
-                <div class="mb-3" id="fullNameBox" style="display:none">
-                    <input type="text"
-                           class="form-control p-3"
-                           placeholder="Full Name">
-                </div>
-
+            <form id="loginForm">
                 <div class="mb-3">
                     <input type="email"
+                           id="emailInput"
                            class="form-control p-3"
                            placeholder="Email Address">
                 </div>
 
                 <div class="mb-3">
                     <input type="password"
+                           id="passwordInput"
                            class="form-control p-3"
                            placeholder="Password">
                 </div>
@@ -49,79 +30,124 @@
                         <input class="form-check-input" type="checkbox">
                         <label class="form-check-label small">Remember Me</label>
                     </div>
-                    <a href="#" class="small text-secondary">Forgot Password?</a>
+                    <a asp-action="ForgotPassword" asp-controller="Home" class="small text-secondary">Forgot Password?</a>
                 </div>
 
-                <!-- BUTTONS -->
                 <div class="d-flex gap-3 mb-4">
-
-                    <a  asp-action="Index" asp-controller="Home" type="button"
-                       class="btn px-4 text-white"
-                       id="primaryBtn" style="background:#c9c6ff">
+                    <button type="submit"
+                            class="btn px-4 text-white"
+                            id="loginBtn"
+                            style="background:#c9c6ff">
                         Log in
-                    </a>
-                    
-
-                    <button type="button"
-                            class="btn px-4"
-                            id="switchBtn"
-                            style="border:1px solid #c9c6ff;color:#c9c6ff">
-                        Sign Up
-
                     </button>
+
+                    <a class="btn px-4"
+                       style="border:1px solid #c9c6ff;color:#c9c6ff"
+                       asp-action="SignUp"
+                       asp-controller="Home">
+                        Sign Up
+                    </a>
                 </div>
-
-                @* <div class="small text-secondary mb-2">Or login with</div> *@
-                @* <div class="d-flex gap-4 small">
-                    <a href="#" style="color:#c9c6ff">Facebook</a>
-                    <a href="#" style="color:#c9c6ff">LinkedIn</a>
-                    <a href="#" style="color:#c9c6ff">Google</a>
-                </div> *@
-
             </form>
         </div>
 
-        <!-- RIGHT -->
         <div class="col-lg-6 text-center">
             <img src="~/img/illustration.png" class="img-fluid" style="max-height:420px">
         </div>
-
     </div>
 </div>
 
 <script>
-    let isLogin = true;
+    const backendBaseUrl = "http://localhost:3000";
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginErrorBox = document.getElementById("loginErrorBox");
+    const emailInput = document.getElementById("emailInput");
+    const passwordInput = document.getElementById("passwordInput");
 
-    const title = document.getElementById("formTitle");
-    const subtitle = document.getElementById("formSubtitle");
-    const primaryBtn = document.getElementById("primaryBtn");
-    const switchBtn = document.getElementById("switchBtn");
-    const fullNameBox = document.getElementById("fullNameBox");
-    const errorBox = document.getElementById("errorBox");
+    function showError(message) {
+        loginErrorBox.textContent = message;
+        loginErrorBox.classList.remove("d-none");
+    }
 
-    switchBtn.onclick = () => {
-      isLogin = !isLogin;
+    function hideError() {
+        loginErrorBox.classList.add("d-none");
+    }
 
-      if(isLogin){
-        title.innerText = "Welcome Back !";
-        subtitle.innerText = "Please login to your account.";
-        primaryBtn.innerText = "Log in";
-        switchBtn.innerText = "Sign Up";
-        fullNameBox.style.display = "none";
-      }else{
-        title.innerText = "Welcome !";
-        subtitle.innerText = "Create your account.";
-        primaryBtn.innerText = "Sign Up";
-        switchBtn.innerText = "Login";
-        fullNameBox.style.display = "block";
-        errorBox.style.display = "none";
-      }
-    };
+    function storeUserSession(token, fallbackName) {
+        sessionStorage.setItem("bridgeAccessToken", token);
 
-    // DEMO ERROR
-    setTimeout(() => {
-      errorBox.style.display = "block";
-    }, 1000);
+        try {
+            const payloadPart = token.split(".")[1];
+            const normalizedPayload = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+            const paddedPayload = normalizedPayload.padEnd(
+                normalizedPayload.length + ((4 - normalizedPayload.length % 4) % 4),
+                "="
+            );
+            const decodedPayload = JSON.parse(atob(paddedPayload));
+            const displayName = decodedPayload.username || fallbackName || "";
+            const roleId = decodedPayload.roleId || "";
+
+            if (displayName) {
+                sessionStorage.setItem("bridgeUserName", displayName);
+            }
+
+            if (roleId) {
+                sessionStorage.setItem("bridgeUserRole", roleId);
+            }
+        } catch {
+            if (fallbackName) {
+                sessionStorage.setItem("bridgeUserName", fallbackName);
+            }
+        }
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        hideError();
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!email || !password) {
+            showError("Please enter your email and password.");
+            return;
+        }
+
+        loginBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to log in.");
+            }
+
+            storeUserSession(data.access_token, email);
+            const userRole = sessionStorage.getItem("bridgeUserRole");
+            const hasPendingSetup = sessionStorage.getItem("bridgePendingTeacherSetup") === "true";
+            const setupCompleted = sessionStorage.getItem("bridgeTeacherSetupComplete") === "true";
+            window.location.href = userRole === "Parent"
+                ? '@Url.Action("ParentDashboard", "Home")'
+                : (hasPendingSetup && !setupCompleted
+                    ? '@Url.Action("SetupStudents", "Home")'
+                    : '@Url.Action("Teacher", "Home")');
+        } catch (error) {
+            showError(error.message || "Unable to connect to the server.");
+        } finally {
+            loginBtn.disabled = false;
+        }
+    });
 </script>
-
-

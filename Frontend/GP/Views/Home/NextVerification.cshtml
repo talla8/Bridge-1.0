@@ -1,0 +1,157 @@
+﻿
+@{
+    ViewData["Title"] = "NextVerification";
+}
+
+<style>
+    body {
+        background: #f6f7fb;
+        font-family: Arial, sans-serif;
+    }
+
+    .page-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px 15px;
+    }
+
+    .main-card {
+        width: 100%;
+        max-width: 860px;
+        background: #fff;
+        border-radius: 28px;
+        box-shadow: 0 14px 40px rgba(0,0,0,.08);
+        padding: 40px 32px;
+    }
+
+    .title-ar {
+        text-align: center;
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 26px;
+        direction: rtl;
+    }
+
+    .inner-card {
+        max-width: 560px;
+        margin: 0 auto;
+        border: 2px solid #e6e9f2;
+        border-radius: 24px;
+        padding: 28px 24px;
+        background: #fcfcff;
+    }
+
+    .template-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .template-text {
+        font-size: 18px;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .download-btn, .next-btn {
+        border: none;
+        border-radius: 14px;
+        padding: 10px 22px;
+        font-weight: 600;
+    }
+
+    .download-btn {
+        background: #e8ebff;
+        color: #4a56a6;
+    }
+
+    .upload-label {
+        display: block;
+        margin-top: 18px;
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #444;
+        direction: rtl;
+    }
+
+    .drop-zone {
+        border: 2px dashed #cfd6ea;
+        background: #fff;
+        border-radius: 24px;
+        padding: 34px 18px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .drop-zone-icon {
+        font-size: 42px;
+        margin-bottom: 10px;
+    }
+
+    .drop-zone-text {
+        font-size: 18px;
+        color: #555;
+        margin-bottom: 0;
+    }
+
+    .file-name {
+        margin-top: 12px;
+        font-size: 15px;
+        color: #6b7280;
+        text-align: center;
+    }
+
+    .action-row {
+        text-align: center;
+        margin-top: 22px;
+    }
+
+    .next-btn {
+        background: #b9b3ff;
+        color: white;
+        min-width: 170px;
+        text-decoration: none;
+        display: inline-block;
+    }
+</style>
+
+<div class="page-wrap">
+    <div class="main-card">
+
+        <div class="inner-card">
+            <div class="template-box">
+                <div class="template-text">
+                    upload your students name by filling<br>
+                    this template
+                </div>
+                <button class="download-btn" type="button">Download ↓</button>
+            </div>
+
+
+            <label class="drop-zone" for="studentFile">
+                <div class="drop-zone-icon">☁️</div>
+                <p class="drop-zone-text">import or drag</p>
+                <input type="file" id="studentFile" hidden>
+            </label>
+
+            <div class="file-name" id="fileName">No file selected</div>
+
+            <div class="action-row">
+                <a asp-action="AfterVerification" asp-controller="Home" class="next-btn">next →</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('studentFile').addEventListener('change', function () {
+        const fileName = this.files.length ? this.files[0].name : 'No file selected';
+        document.getElementById('fileName').textContent = fileName;
+    });
+</script>

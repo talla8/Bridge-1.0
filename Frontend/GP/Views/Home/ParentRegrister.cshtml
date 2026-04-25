@@ -1,0 +1,183 @@
+@{
+    ViewData["Title"] = "ParentRegrister";
+}
+
+<div class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="fw-bold mb-1">Create parent account</h1>
+            <p class="text-secondary mb-4">Link yourself to your child using the parent student code.</p>
+
+            <div id="parentErrorBox" class="alert alert-danger d-none"></div>
+
+            <form id="parentRegisterForm">
+                <div class="row">
+                    <div class="mb-3 col-12">
+                        <input type="text" id="parentNameInput" class="form-control p-3" placeholder="Full Name">
+                    </div>
+
+                    <div class="mb-3 col-6">
+                        <input type="email" id="parentEmailInput" class="form-control p-3" placeholder="Email Address">
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="tel" id="parentPhoneInput" class="form-control p-3" placeholder="Phone Number">
+                    </div>
+                    <div class="mb-3 col-6">
+                        <select id="parentTypeInput" class="form-select p-3">
+                            <option value="">Choose relation</option>
+                            <option value="Father">Father</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Guardian">Guardian</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="text" id="parentStudentCodeInput" class="form-control p-3" placeholder="Parent Student Code">
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="password" id="parentPasswordInput" class="form-control p-3" placeholder="Password">
+                        <small id="parentPasswordStrength" class="fw-semibold"></small>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="password" id="parentConfirmPasswordInput" class="form-control p-3" placeholder="Confirm Password">
+                        <small id="parentMatchText" class="fw-semibold"></small>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <button type="submit"
+                                class="btn px-4 text-white"
+                                id="parentRegisterBtn"
+                                style="background:#c9c6ff">
+                            Next →
+                        </button>
+
+                        <a class="btn px-4"
+                           style="border:1px solid #c9c6ff;color:#c9c6ff"
+                           asp-action="SignUp"
+                           asp-controller="Home">
+                            Back
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-6 text-center">
+            <img src="~/img/illustration.png" class="img-fluid" style="max-height:420px">
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const parentRegisterForm = document.getElementById("parentRegisterForm");
+    const parentRegisterBtn = document.getElementById("parentRegisterBtn");
+    const parentErrorBox = document.getElementById("parentErrorBox");
+    const parentPasswordInput = document.getElementById("parentPasswordInput");
+    const parentConfirmPasswordInput = document.getElementById("parentConfirmPasswordInput");
+    const parentPasswordStrength = document.getElementById("parentPasswordStrength");
+    const parentMatchText = document.getElementById("parentMatchText");
+
+    function showParentError(message) {
+        parentErrorBox.textContent = message;
+        parentErrorBox.classList.remove("d-none");
+    }
+
+    function hideParentError() {
+        parentErrorBox.classList.add("d-none");
+    }
+
+    function updateParentPasswordState() {
+        const value = parentPasswordInput.value;
+        let strength = 0;
+
+        if (value.length >= 8) strength++;
+        if (/[A-Z]/.test(value)) strength++;
+        if (/[a-z]/.test(value)) strength++;
+        if (/[0-9]/.test(value)) strength++;
+
+        if (!value.length) {
+            parentPasswordStrength.textContent = "";
+        } else if (strength <= 2) {
+            parentPasswordStrength.textContent = "Weak password";
+            parentPasswordStrength.style.color = "red";
+        } else if (strength === 3) {
+            parentPasswordStrength.textContent = "Medium password";
+            parentPasswordStrength.style.color = "orange";
+        } else {
+            parentPasswordStrength.textContent = "Strong password";
+            parentPasswordStrength.style.color = "green";
+        }
+
+        if (!parentConfirmPasswordInput.value.length) {
+            parentMatchText.textContent = "";
+            return;
+        }
+
+        if (parentPasswordInput.value === parentConfirmPasswordInput.value) {
+            parentMatchText.textContent = "Passwords match";
+            parentMatchText.style.color = "green";
+        } else {
+            parentMatchText.textContent = "Passwords do not match";
+            parentMatchText.style.color = "red";
+        }
+    }
+
+    parentPasswordInput.addEventListener("input", updateParentPasswordState);
+    parentConfirmPasswordInput.addEventListener("input", updateParentPasswordState);
+
+    parentRegisterForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        hideParentError();
+
+        const payload = {
+            userFullName: document.getElementById("parentNameInput").value.trim(),
+            email: document.getElementById("parentEmailInput").value.trim(),
+            phoneNumber: document.getElementById("parentPhoneInput").value.trim() || undefined,
+            parentType: document.getElementById("parentTypeInput").value,
+            parentStudentCode: document.getElementById("parentStudentCodeInput").value.trim(),
+            password: parentPasswordInput.value
+        };
+
+        if (!payload.userFullName || !payload.email || !payload.parentType || !payload.parentStudentCode || !payload.password) {
+            showParentError("Please complete all required parent registration fields.");
+            return;
+        }
+
+        if (payload.password !== parentConfirmPasswordInput.value) {
+            showParentError("Passwords do not match.");
+            return;
+        }
+
+        parentRegisterBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/auth/signup/parent`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to create parent account.");
+            }
+
+            if (data?.access_token) {
+                sessionStorage.setItem("bridgeAccessToken", data.access_token);
+            }
+            sessionStorage.setItem("bridgeUserRole", "Parent");
+            sessionStorage.setItem("bridgeUserName", payload.userFullName);
+            sessionStorage.removeItem("bridgePendingTeacherSetup");
+            sessionStorage.removeItem("bridgeTeacherSetupComplete");
+            sessionStorage.setItem("bridgeVerificationRole", "parent");
+            window.location.href = '@Url.Action("Verification", "Home")';
+        } catch (error) {
+            showParentError(error.message || "Unable to connect to the server.");
+        } finally {
+            parentRegisterBtn.disabled = false;
+        }
+    });
+</script>
