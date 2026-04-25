@@ -1,0 +1,491 @@
+﻿
+@{
+    ViewData["Title"] = "Profile";
+}
+
+
+<style>
+    /* ── Header card ── */
+    .pf-header {
+        background: #e8f4fd;
+        border-radius: 18px;
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.75rem;
+        flex-wrap: wrap;
+    }
+
+    .pf-avatar-wrap {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .pf-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #c9c6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #534AB7;
+        object-fit: cover;
+    }
+
+    .pf-avatar-edit {
+        position: absolute;
+        bottom: 3px;
+        right: 3px;
+        width: 28px;
+        height: 28px;
+        background: #0dcaf0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: 2px solid #fff;
+    }
+
+    .pf-tag {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #495057;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .pf-tag.verified {
+            background: #e1f5ee;
+            border-color: #9FE1CB;
+            color: #0F6E56;
+        }
+
+    /* ── Info cards ── */
+    .info-card {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 13px;
+        padding: 1.1rem 1.3rem;
+        height: 100%;
+    }
+
+    .info-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        color: #6c757d;
+        margin-bottom: 4px;
+    }
+
+    .info-value {
+        font-size: 14px;
+        font-weight: 500;
+        color: #212529;
+        margin: 0;
+    }
+
+        .info-value.muted {
+            color: #6c757d;
+        }
+
+    /* ── Edit inputs ── */
+    .edit-field {
+        font-size: 14px;
+        font-weight: 500;
+        border: 1.5px solid #0dcaf0;
+        border-radius: 8px;
+        padding: 5px 10px;
+        width: 100%;
+        background: #f8f9fa;
+        outline: none;
+        display: none;
+        box-sizing: border-box;
+    }
+
+        .edit-field:focus {
+            background: #fff;
+        }
+
+    .editing .info-value {
+        display: none;
+    }
+
+    .editing .edit-field {
+        display: block;
+    }
+
+    .pencil-btn {
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 0;
+        font-size: 15px;
+        line-height: 1;
+        transition: color .15s;
+    }
+
+        .pencil-btn:hover {
+            color: #0d6efd;
+        }
+
+    /* ── Save button ── */
+    .save-btn {
+        background: #0dcaf0;
+        color: #fff;
+        border: none;
+        border-radius: 25px;
+        padding: 10px 30px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+        .save-btn:hover {
+            background: #0bb5d8;
+        }
+
+    /* ── Password card ── */
+    .pwd-field {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #dee2e6;
+        border-radius: 9px;
+        font-size: 14px;
+        background: #f8f9fa;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color .2s;
+    }
+
+        .pwd-field:focus {
+            border-color: #0dcaf0;
+            background: #fff;
+        }
+
+    /* ── Danger zone ── */
+    .danger-card {
+        background: #fff5f5;
+        border: 1px solid #f0b4b4;
+        border-radius: 13px;
+        padding: 1.25rem 1.5rem;
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+<div class="container py-5">
+
+    <!-- ══════════ HEADER CARD ══════════ -->
+    <div class="pf-header mb-4">
+
+        <div class="pf-avatar-wrap">
+            <img src="~/img/UserLogo.png"
+                 class="pf-avatar"
+                 id="avatarImg"
+                 alt="Profile photo"
+                 onerror="this.style.display='none';document.getElementById('avatarInitials').style.display='flex';">
+            <div class="pf-avatar"
+                 id="avatarInitials"
+                 style="display:none;">
+                MH
+            </div>
+            <label for="avatarInput" class="pf-avatar-edit" title="Change photo">
+                <i class="bi bi-pencil-fill" style="font-size:11px;color:#fff;"></i>
+            </label>
+            <input type="file" id="avatarInput" accept="image/*" class="d-none">
+        </div>
+
+        <div style="flex:1;min-width:0;">
+            <h5 class="fw-bold mb-1" id="headerName">Mr. Mohammad Al-Hassan</h5>
+            <p class="text-secondary mb-2" style="font-size:14px;">Teacher · Grade 3, Section "B"</p>
+            <div class="d-flex flex-wrap gap-2">
+                <span class="pf-tag"><i class="bi bi-book"></i> Grade 3</span>
+                <span class="pf-tag"><i class="bi bi-translate"></i> English</span>
+                <span class="pf-tag"><i class="bi bi-people"></i> 33 Students</span>
+                <span class="pf-tag verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ══════════ PERSONAL INFORMATION ══════════ -->
+    <h6 class="fw-bold text-uppercase mb-3"
+        style="font-size:12px;letter-spacing:.07em;color:#6c757d;">
+        Personal Information
+    </h6>
+
+    <div class="row g-3 mb-4">
+
+        <!-- Full Name -->
+        <div class="col-12 col-md-6">
+            <div class="info-card" id="card-name">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="info-label">Full Name</span>
+                    <button class="pencil-btn" onclick="toggleEdit('name')" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+                <p class="info-value">Mohammad Al-Hassan</p>
+                <input type="text" class="edit-field" id="inp-name" value="Mohammad Al-Hassan">
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="col-12 col-md-6">
+            <div class="info-card" id="card-email">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="info-label">Email Address</span>
+                    <button class="pencil-btn" onclick="toggleEdit('email')" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+                <p class="info-value">m.hassan@school.edu</p>
+                <input type="email" class="edit-field" id="inp-email" value="m.hassan@school.edu">
+            </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="col-12 col-md-6">
+            <div class="info-card" id="card-phone">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="info-label">Phone Number</span>
+                    <button class="pencil-btn" onclick="toggleEdit('phone')" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+                <p class="info-value">+962 79 123 4567</p>
+                <input type="tel" class="edit-field" id="inp-phone" value="+962 79 123 4567">
+            </div>
+        </div>
+
+        <!-- School -->
+        <div class="col-12 col-md-6">
+            <div class="info-card" id="card-school">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="info-label">School</span>
+                    <button class="pencil-btn" onclick="toggleEdit('school')" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+                <p class="info-value">Al-Nour National School</p>
+                <input type="text" class="edit-field" id="inp-school" value="Al-Nour National School">
+            </div>
+        </div>
+
+        <!-- Grade -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="info-card" id="card-grade">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="info-label">Grade</span>
+                    <button class="pencil-btn" onclick="toggleEdit('grade')" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+                <p class="info-value">Grade 3</p>
+                <input type="text" class="edit-field" id="inp-grade" value="Grade 3">
+            </div>
+        </div>
+
+        <!-- Section -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="info-card" id="card-section">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="info-label">Section</span>
+                    <button class="pencil-btn" onclick="toggleEdit('section')" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+                <p class="info-value">Section B</p>
+                <input type="text" class="edit-field" id="inp-section" value="Section B">
+            </div>
+        </div>
+
+        <!-- Subject -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="info-card" id="card-subject">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                    <span class="info-label">Subject</span>
+                    <button class="pencil-btn" onclick="toggleEdit('subject')" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+                <p class="info-value">English Language</p>
+                <input type="text" class="edit-field" id="inp-subject" value="English Language">
+            </div>
+        </div>
+
+        <!-- Member Since (read-only) -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="info-card">
+                <span class="info-label d-block mb-1">Member Since</span>
+                <p class="info-value muted">January 2024</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Save button -->
+    <div class="d-flex align-items-center gap-3 mb-5">
+        <button class="save-btn" onclick="saveChanges()">Save Changes</button>
+        <span id="saveMsg"
+              class="text-success fw-semibold"
+              style="font-size:14px;display:none;">
+            <i class="bi bi-check-circle-fill me-1"></i> Saved successfully
+        </span>
+    </div>
+
+    <!-- ══════════ CHANGE PASSWORD ══════════ -->
+    <h6 class="fw-bold text-uppercase mb-3"
+        style="font-size:12px;letter-spacing:.07em;color:#6c757d;">
+        Change Password
+    </h6>
+
+    <div class="row g-3 mb-5">
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="info-label d-block mb-1">Current Password</label>
+            <input type="password" class="pwd-field" id="pwdCurrent" placeholder="••••••••">
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="info-label d-block mb-1">New Password</label>
+            <input type="password" class="pwd-field" id="pwdNew" placeholder="••••••••">
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <label class="info-label d-block mb-1">Confirm New Password</label>
+            <input type="password" class="pwd-field" id="pwdConfirm" placeholder="••••••••">
+        </div>
+        <div class="col-12">
+            <button class="save-btn" onclick="changePassword()">Update Password</button>
+            <span id="pwdMsg" class="fw-semibold ms-3" style="font-size:14px;display:none;"></span>
+        </div>
+    </div>
+
+    <!-- ══════════ DANGER ZONE ══════════ -->
+    <h6 class="fw-bold text-uppercase mb-3"
+        style="font-size:12px;letter-spacing:.07em;color:#dc3545;">
+        Danger Zone
+    </h6>
+
+    <div class="danger-card d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <p class="fw-semibold mb-1" style="font-size:14px;">Delete Account</p>
+            <p class="text-secondary mb-0" style="font-size:13px;">
+                Permanently delete your account and all associated data. This cannot be undone.
+            </p>
+        </div>
+        <button class="btn btn-outline-danger btn-sm rounded-pill px-4 fw-semibold"
+                onclick="confirmDelete()">
+            Delete Account
+        </button>
+    </div>
+
+</div>
+</div>
+</div>
+
+@section Scripts {
+    <script>
+        /* ── Avatar preview ── */
+        document.getElementById('avatarInput').addEventListener('change', function () {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.getElementById('avatarImg');
+                img.src = e.target.result;
+                img.style.display = 'flex';
+                document.getElementById('avatarInitials').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        /* ── Toggle inline edit ── */
+        function toggleEdit(field) {
+            const card  = document.getElementById('card-' + field);
+            const val   = card.querySelector('.info-value');
+            const input = document.getElementById('inp-' + field);
+
+            const isEditing = card.classList.contains('editing');
+
+            if (isEditing) {
+                val.textContent = input.value;
+                card.classList.remove('editing');
+                if (field === 'name') {
+                    document.getElementById('headerName').textContent = 'Mr. ' + input.value;
+                }
+            } else {
+                card.classList.add('editing');
+                input.focus();
+            }
+        }
+
+        /* ── Save all changes ── */
+        function saveChanges() {
+            const fields = ['name', 'email', 'phone', 'school', 'grade', 'section', 'subject'];
+            fields.forEach(f => {
+                const card = document.getElementById('card-' + f);
+                if (card.classList.contains('editing')) toggleEdit(f);
+            });
+
+            const msg = document.getElementById('saveMsg');
+            msg.style.display = 'inline';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        }
+
+        /* ── Change password ── */
+        function changePassword() {
+            const current = document.getElementById('pwdCurrent').value;
+            const newPwd  = document.getElementById('pwdNew').value;
+            const confirm = document.getElementById('pwdConfirm').value;
+            const msg     = document.getElementById('pwdMsg');
+
+            if (!current || !newPwd || !confirm) {
+                msg.textContent = '⚠ Please fill in all password fields.';
+                msg.style.color = '#dc3545';
+                msg.style.display = 'inline';
+                return;
+            }
+            if (newPwd !== confirm) {
+                msg.textContent = '⚠ Passwords do not match.';
+                msg.style.color = '#dc3545';
+                msg.style.display = 'inline';
+                return;
+            }
+            if (newPwd.length < 8) {
+                msg.textContent = '⚠ Password must be at least 8 characters.';
+                msg.style.color = '#dc3545';
+                msg.style.display = 'inline';
+                return;
+            }
+
+            msg.textContent = '✓ Password updated successfully.';
+            msg.style.color = '#0F6E56';
+            msg.style.display = 'inline';
+            document.getElementById('pwdCurrent').value = '';
+            document.getElementById('pwdNew').value     = '';
+            document.getElementById('pwdConfirm').value = '';
+            setTimeout(() => { msg.style.display = 'none'; }, 3500);
+        }
+
+        /* ── Delete account confirmation ── */
+        function confirmDelete() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                alert('Account deleted.');
+            }
+        }
+    </script>
+}
+
+

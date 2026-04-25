@@ -1,0 +1,730 @@
+@{
+    ViewData["Title"] = "Weak Students";
+}
+
+<style>
+    .weak-page{
+      max-width:1280px;
+      margin:0 auto;
+      padding:28px;
+      color:#111827;
+    }
+    .weak-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      flex-wrap:wrap;
+      margin-bottom:22px;
+    }
+    .weak-title{
+      font-size:34px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+    .weak-subtitle{
+      font-size:15px;
+      color:#6b7280;
+    }
+    .weak-btn{
+      border:none;
+      border-radius:14px;
+      padding:12px 16px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .weak-btn-primary{
+      background:linear-gradient(135deg,#8b82ff,#6d8cff);
+      color:#fff;
+    }
+    .weak-btn-soft{
+      background:#eef2ff;
+      color:#4f46e5;
+    }
+    .weak-btn-outline{
+      background:#fff;
+      border:1px solid #dbe3f0;
+      color:#374151;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+    }
+    .weak-btn-disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+    .weak-card{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:22px;
+      box-shadow:0 10px 28px rgba(17,24,39,.05);
+    }
+    .weak-summary-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .weak-focus-card{
+      padding:24px;
+      margin-bottom:18px;
+      display:grid;
+      grid-template-columns:1.4fr .9fr;
+      gap:22px;
+      align-items:center;
+    }
+    .weak-focus-kicker{
+      color:#6366f1;
+      font-size:13px;
+      font-weight:800;
+      margin-bottom:8px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+    .weak-focus-title{
+      font-size:28px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+    .weak-focus-text{
+      color:#6b7280;
+      line-height:1.7;
+      max-width:720px;
+    }
+    .weak-focus-action{
+      background:#f8fafc;
+      border:1px solid #eef2f7;
+      border-radius:18px;
+      padding:18px;
+    }
+    .weak-focus-action-label{
+      color:#6b7280;
+      font-size:13px;
+      margin-bottom:8px;
+    }
+    .weak-focus-action-title{
+      font-size:19px;
+      font-weight:800;
+      margin-bottom:14px;
+    }
+    .weak-focus-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .weak-summary-card{
+      padding:22px;
+    }
+    .weak-summary-label{
+      color:#6b7280;
+      font-size:14px;
+      margin-bottom:10px;
+    }
+    .weak-summary-value{
+      font-size:30px;
+      font-weight:800;
+    }
+    .weak-toolbar{
+      padding:18px;
+      margin-bottom:18px;
+    }
+    .weak-toolbar-top{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:14px;
+    }
+    .weak-search{
+      flex:1;
+      min-width:250px;
+    }
+    .weak-input, .weak-select{
+      width:100%;
+      border:1px solid #dbe3f0;
+      border-radius:14px;
+      padding:12px 14px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+      color:#374151;
+    }
+    .weak-filter-row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      min-width:320px;
+    }
+    .weak-toggle{
+      display:inline-flex;
+      background:#eef2ff;
+      border-radius:14px;
+      padding:4px;
+      gap:4px;
+    }
+    .weak-toggle button{
+      border:none;
+      background:transparent;
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      color:#4b5563;
+    }
+    .weak-toggle button.active{
+      background:#fff;
+      color:#111827;
+      box-shadow:0 2px 8px rgba(17,24,39,.08);
+    }
+    .weak-state{
+      padding:40px 24px;
+      text-align:center;
+    }
+    .weak-state h3{
+      font-size:22px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+    .weak-state p{
+      color:#6b7280;
+      margin-bottom:16px;
+    }
+    .weak-students-grid, .weak-skills-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:16px;
+    }
+    .weak-student-card, .weak-skill-card{
+      padding:20px;
+    }
+    .weak-student-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:14px;
+    }
+    .weak-student-name{
+      font-size:22px;
+      font-weight:800;
+      margin-bottom:6px;
+    }
+    .weak-student-ar{
+      color:#374151;
+      font-weight:600;
+      direction:rtl;
+      text-align:right;
+      margin-bottom:8px;
+    }
+    .weak-overall{
+      font-size:14px;
+      color:#4b5563;
+    }
+    .weak-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .weak-badge-danger{
+      background:#feecec;
+      color:#dc2626;
+    }
+    .weak-badge-warning{
+      background:#fff7db;
+      color:#a16207;
+    }
+    .weak-badge-success{
+      background:#e7f8ee;
+      color:#15803d;
+    }
+    .weak-skills-list{
+      display:grid;
+      gap:10px;
+      margin-bottom:16px;
+    }
+    .weak-skill-box{
+      background:#f8fafc;
+      border:1px solid #eef2f7;
+      border-radius:16px;
+      padding:14px;
+    }
+    .weak-skill-box h4{
+      font-size:15px;
+      margin-bottom:10px;
+    }
+    .weak-skill-stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+    }
+    .weak-skill-stat{
+      background:#fff;
+      border:1px solid #edf1f6;
+      border-radius:12px;
+      padding:10px;
+      font-size:13px;
+    }
+    .weak-skill-stat span{
+      display:block;
+      font-size:11px;
+      color:#6b7280;
+      margin-bottom:4px;
+    }
+    .weak-row-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .weak-skill-card h3{
+      font-size:22px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+    .weak-skill-meta{
+      color:#6b7280;
+      font-size:14px;
+      margin-bottom:14px;
+    }
+    .weak-affected-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-bottom:16px;
+    }
+    .weak-tag{
+      background:#f3f4f6;
+      color:#374151;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:13px;
+      font-weight:600;
+    }
+    .weak-hidden{ display:none !important; }
+
+    @@media (max-width: 980px){
+      .weak-summary-grid,
+      .weak-focus-card,
+      .weak-students-grid,
+      .weak-skills-grid,
+      .weak-skill-stats{
+        grid-template-columns:1fr;
+      }
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="weak-page">
+            <div class="weak-header">
+                <div>
+                    <div class="weak-title">Weak Students Summary</div>
+                    <div class="weak-subtitle">Students below class average across required skills.</div>
+                </div>
+            </div>
+
+            <div class="weak-card weak-focus-card">
+                <div>
+                    <div class="weak-focus-kicker">Support focus</div>
+                    <div class="weak-focus-title" id="focusTitle">Start with the highest need</div>
+                    <div class="weak-focus-text" id="focusText">Use the weak-student list to focus on the biggest skill gap first.</div>
+                </div>
+                <div class="weak-focus-action">
+                    <div class="weak-focus-action-label">Recommended next step</div>
+                    <div class="weak-focus-action-title" id="focusActionTitle">Create targeted support work</div>
+                    <div class="weak-focus-actions">
+                        <button id="createQuizBtn" class="weak-btn weak-btn-primary" type="button">Create quiz</button>
+                        <button class="weak-btn weak-btn-soft weak-btn-disabled" type="button" disabled>Publish practice</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="weak-summary-grid">
+                <div class="weak-card weak-summary-card">
+                    <div class="weak-summary-label">Weak students count</div>
+                    <div class="weak-summary-value" id="weakCountValue">0</div>
+                </div>
+                <div class="weak-card weak-summary-card">
+                    <div class="weak-summary-label">Most affected skill</div>
+                    <div class="weak-summary-value" id="mostAffectedSkillValue">-</div>
+                </div>
+                <div class="weak-card weak-summary-card">
+                    <div class="weak-summary-label">Highest gap skill</div>
+                    <div class="weak-summary-value" id="highestGapSkillValue">-</div>
+                </div>
+            </div>
+
+            <div class="weak-card weak-toolbar">
+                <div class="weak-toolbar-top">
+                    <div class="weak-search">
+                        <input id="searchInput" class="weak-input" type="text" placeholder="Search by student name" />
+                    </div>
+
+                    <div class="weak-filter-row">
+                        <select id="skillFilter" class="weak-select">
+                            <option value="ALL">All skills</option>
+                        </select>
+
+                        <select id="sortFilter" class="weak-select">
+                            <option value="NAME">Sort by: Name</option>
+                            <option value="LOWEST_AVERAGE">Sort by: Lowest average</option>
+                            <option value="BIGGEST_GAP">Sort by: Biggest gap</option>
+                        </select>
+                    </div>
+
+                    <div class="weak-toggle">
+                        <button id="studentToggle" class="active" type="button">By student</button>
+                        <button id="skillToggle" type="button">By skill</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loadingState" class="weak-card weak-state">
+                <h3>Loading weak students...</h3>
+                <p>Please wait while the student list is being loaded.</p>
+            </div>
+
+            <div id="errorState" class="weak-card weak-state weak-hidden">
+                <h3>Could not load weak students.</h3>
+                <p>Please try again.</p>
+                <button class="weak-btn weak-btn-primary" id="retryBtn" type="button">Retry</button>
+            </div>
+
+            <div id="emptyState" class="weak-card weak-state weak-hidden">
+                <h3>No weak students found.</h3>
+                <p>There are no students below class average right now.</p>
+            </div>
+
+            <div id="noResultsState" class="weak-card weak-state weak-hidden">
+                <h3>No students match this search.</h3>
+                <p>Clear the current search or filters.</p>
+                <button class="weak-btn weak-btn-soft" id="clearFiltersBtn" type="button">Clear filters</button>
+            </div>
+
+            <div id="studentView" class="weak-students-grid weak-hidden"></div>
+            <div id="skillView" class="weak-skills-grid weak-hidden"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+
+    const state = {
+      weakStudents: [],
+      groupedSkills: [],
+      currentView: 'student'
+    };
+
+    const dom = {
+      loadingState: document.getElementById('loadingState'),
+      errorState: document.getElementById('errorState'),
+      emptyState: document.getElementById('emptyState'),
+      noResultsState: document.getElementById('noResultsState'),
+      studentView: document.getElementById('studentView'),
+      skillView: document.getElementById('skillView'),
+      retryBtn: document.getElementById('retryBtn'),
+      clearFiltersBtn: document.getElementById('clearFiltersBtn'),
+      searchInput: document.getElementById('searchInput'),
+      skillFilter: document.getElementById('skillFilter'),
+      sortFilter: document.getElementById('sortFilter'),
+      studentToggle: document.getElementById('studentToggle'),
+      skillToggle: document.getElementById('skillToggle'),
+      weakCountValue: document.getElementById('weakCountValue'),
+      mostAffectedSkillValue: document.getElementById('mostAffectedSkillValue'),
+      highestGapSkillValue: document.getElementById('highestGapSkillValue'),
+      focusTitle: document.getElementById('focusTitle'),
+      focusText: document.getElementById('focusText'),
+      focusActionTitle: document.getElementById('focusActionTitle'),
+      createQuizBtn: document.getElementById('createQuizBtn')
+    };
+
+    function authorizedHeaders() {
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    function skillLabel(skill) {
+      return skill?.skillName || skill?.skillId || 'Unknown skill';
+    }
+
+    function slug(value) {
+      return String(value || '').toLowerCase().trim();
+    }
+
+    function setVisibility(target, isVisible) {
+      target.classList.toggle('weak-hidden', !isVisible);
+    }
+
+    function computeGroupedSkills(students) {
+      const grouped = new Map();
+
+      students.forEach((student) => {
+        (student.weakSkills || []).forEach((skill) => {
+          const key = skill.skillId;
+          if (!grouped.has(key)) {
+            grouped.set(key, {
+              skillId: skill.skillId,
+              skillName: skill.skillName,
+              students: [],
+              highestGap: 0,
+              averageGap: 0,
+              classAverage: skill.classAverage
+            });
+          }
+
+          const entry = grouped.get(key);
+          entry.students.push({
+            studentId: student.studentId,
+            fullEnglishName: student.fullEnglishName,
+            fullArabicName: student.fullArabicName,
+            overallAverage: student.overallAverage,
+            studentScore: skill.studentScore,
+            classAverage: skill.classAverage,
+            gap: skill.gap
+          });
+          entry.highestGap = Math.max(entry.highestGap, skill.gap);
+        });
+      });
+
+      return Array.from(grouped.values()).map((entry) => {
+        const totalGap = entry.students.reduce((sum, student) => sum + student.gap, 0);
+        entry.averageGap = entry.students.length ? totalGap / entry.students.length : 0;
+        return entry;
+      });
+    }
+
+    function populateSummary() {
+      dom.weakCountValue.textContent = String(state.weakStudents.length);
+
+      const affectedCounts = new Map();
+      let highestGapSkill = null;
+
+      state.weakStudents.forEach((student) => {
+        (student.weakSkills || []).forEach((skill) => {
+          const currentCount = affectedCounts.get(skill.skillId) || { name: skill.skillName, count: 0 };
+          currentCount.count += 1;
+          affectedCounts.set(skill.skillId, currentCount);
+
+          if (!highestGapSkill || skill.gap > highestGapSkill.gap) {
+            highestGapSkill = skill;
+          }
+        });
+      });
+
+      const mostAffected = Array.from(affectedCounts.values()).sort((a, b) => b.count - a.count)[0];
+
+      dom.mostAffectedSkillValue.textContent = mostAffected?.name || '-';
+      dom.highestGapSkillValue.textContent = highestGapSkill?.skillName || '-';
+
+      if (mostAffected && highestGapSkill) {
+        dom.focusTitle.textContent = `${mostAffected.name} needs attention first`;
+        dom.focusText.textContent = `${state.weakStudents.length} students need support. ${mostAffected.name} affects the largest group, while ${highestGapSkill.skillName} has the highest gap.`;
+        dom.focusActionTitle.textContent = `Create a ${mostAffected.name.toLowerCase()} quiz for weak students`;
+      } else {
+        dom.focusTitle.textContent = 'Start with the highest need';
+        dom.focusText.textContent = 'Use the weak-student list to focus on the biggest skill gap first.';
+        dom.focusActionTitle.textContent = 'Create targeted support work';
+      }
+
+      dom.createQuizBtn.onclick = () => {
+        const skill = dom.mostAffectedSkillValue.textContent && dom.mostAffectedSkillValue.textContent !== '-'
+          ? dom.mostAffectedSkillValue.textContent
+          : '';
+        const targetUrl = new URL('@Url.Action("CreateQuiz", "Home")', window.location.origin);
+
+        if (skill) {
+          targetUrl.searchParams.set('skill', skill);
+        }
+
+        window.location.href = targetUrl.toString();
+      };
+    }
+
+    function populateSkillFilter() {
+      const currentValue = dom.skillFilter.value;
+      const options = ['<option value="ALL">All skills</option>']
+        .concat(
+          state.groupedSkills.map((skill) =>
+            `<option value="${skill.skillId}">${skill.skillName}</option>`
+          ),
+        );
+
+      dom.skillFilter.innerHTML = options.join('');
+      dom.skillFilter.value = state.groupedSkills.some((skill) => skill.skillId === currentValue)
+        ? currentValue
+        : 'ALL';
+    }
+
+    function filterStudents() {
+      const search = slug(dom.searchInput.value);
+      const selectedSkill = dom.skillFilter.value;
+      const sortMode = dom.sortFilter.value;
+
+      let filtered = [...state.weakStudents].filter((student) => {
+        const matchesSearch =
+          slug(student.fullEnglishName).includes(search) ||
+          slug(student.fullArabicName).includes(search);
+
+        const matchesSkill =
+          selectedSkill === 'ALL' ||
+          (student.weakSkills || []).some((skill) => skill.skillId === selectedSkill);
+
+        return matchesSearch && matchesSkill;
+      });
+
+      if (sortMode === 'LOWEST_AVERAGE') {
+        filtered.sort((a, b) => a.overallAverage - b.overallAverage);
+      } else if (sortMode === 'BIGGEST_GAP') {
+        const maxGap = (student) => Math.max(...(student.weakSkills || []).map((skill) => skill.gap), 0);
+        filtered.sort((a, b) => maxGap(b) - maxGap(a));
+      } else {
+        filtered.sort((a, b) => (a.fullEnglishName || '').localeCompare(b.fullEnglishName || ''));
+      }
+
+      return filtered;
+    }
+
+    function renderStudentView(students) {
+      dom.studentView.innerHTML = students.map((student) => `
+        <article class="weak-card weak-student-card">
+          <div class="weak-student-top">
+            <div>
+              <div class="weak-student-name">${student.fullEnglishName}</div>
+              <div class="weak-student-ar">${student.fullArabicName}</div>
+              <div class="weak-overall">Overall average: ${Math.round(student.overallAverage)}%</div>
+            </div>
+            <span class="weak-badge weak-badge-danger">Needs support</span>
+          </div>
+
+          <div class="weak-skills-list">
+            ${(student.weakSkills || []).map((skill) => `
+              <div class="weak-skill-box">
+                <h4>${skill.skillName}</h4>
+                <div class="weak-skill-stats">
+                  <div class="weak-skill-stat"><span>Student</span>${Math.round(skill.studentScore)}%</div>
+                  <div class="weak-skill-stat"><span>Class</span>${Math.round(skill.classAverage)}%</div>
+                  <div class="weak-skill-stat"><span>Gap</span>${Math.round(skill.gap)}%</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="weak-row-actions">
+            <a class="weak-btn weak-btn-soft" href="/Home/StudentProfile?studentId=${encodeURIComponent(student.studentId)}">View Student Profile</a>
+            <button class="weak-btn weak-btn-primary weak-btn-disabled" type="button" disabled>Create a practice</button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function renderSkillView(groupedSkills) {
+      dom.skillView.innerHTML = groupedSkills.map((skill) => `
+        <article class="weak-card weak-skill-card">
+          <h3>${skill.skillName}</h3>
+          <div class="weak-skill-meta">
+            ${skill.students.length} students are below average in this skill. Class average: ${Math.round(skill.classAverage)}%
+          </div>
+          <div class="weak-affected-list">
+            ${skill.students.map((student) => `<span class="weak-tag">${student.fullEnglishName}</span>`).join('')}
+          </div>
+          <div class="weak-row-actions">
+            <button class="weak-btn weak-btn-primary weak-btn-disabled" type="button" disabled>Create quiz</button>
+            <button class="weak-btn weak-btn-soft weak-btn-disabled" type="button" disabled>Publish practice</button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function render() {
+      const filteredStudents = filterStudents();
+      const selectedSkill = dom.skillFilter.value;
+      const filteredGroupedSkills = state.groupedSkills.filter((skill) =>
+        selectedSkill === 'ALL' || skill.skillId === selectedSkill,
+      );
+
+      setVisibility(dom.loadingState, false);
+      setVisibility(dom.errorState, false);
+      setVisibility(dom.emptyState, state.weakStudents.length === 0);
+
+      const hasResults = state.currentView === 'student'
+        ? filteredStudents.length > 0
+        : filteredGroupedSkills.length > 0;
+
+      setVisibility(dom.noResultsState, state.weakStudents.length > 0 && !hasResults);
+      setVisibility(dom.studentView, state.currentView === 'student' && hasResults);
+      setVisibility(dom.skillView, state.currentView === 'skill' && hasResults);
+
+      if (!hasResults) {
+        dom.studentView.innerHTML = '';
+        dom.skillView.innerHTML = '';
+        return;
+      }
+
+      renderStudentView(filteredStudents);
+      renderSkillView(filteredGroupedSkills);
+    }
+
+    async function loadWeakStudents() {
+      if (!token) {
+        setVisibility(dom.loadingState, false);
+        setVisibility(dom.errorState, true);
+        return;
+      }
+
+      setVisibility(dom.loadingState, true);
+      setVisibility(dom.errorState, false);
+
+      try {
+        const response = await fetch(`${backendBaseUrl}/statistics/weak-students`, {
+          headers: authorizedHeaders()
+        });
+        const data = await response.json().catch(() => []);
+
+        if (!response.ok) {
+          throw new Error('Unable to load weak students.');
+        }
+
+        state.weakStudents = Array.isArray(data) ? data : [];
+        state.groupedSkills = computeGroupedSkills(state.weakStudents);
+        populateSummary();
+        populateSkillFilter();
+        render();
+      } catch {
+        setVisibility(dom.loadingState, false);
+        setVisibility(dom.errorState, true);
+      }
+    }
+
+    dom.retryBtn.addEventListener('click', loadWeakStudents);
+    dom.clearFiltersBtn.addEventListener('click', () => {
+      dom.searchInput.value = '';
+      dom.skillFilter.value = 'ALL';
+      dom.sortFilter.value = 'NAME';
+      render();
+    });
+    dom.searchInput.addEventListener('input', render);
+    dom.skillFilter.addEventListener('change', render);
+    dom.sortFilter.addEventListener('change', render);
+    dom.studentToggle.addEventListener('click', () => {
+      state.currentView = 'student';
+      dom.studentToggle.classList.add('active');
+      dom.skillToggle.classList.remove('active');
+      render();
+    });
+    dom.skillToggle.addEventListener('click', () => {
+      state.currentView = 'skill';
+      dom.skillToggle.classList.add('active');
+      dom.studentToggle.classList.remove('active');
+      render();
+    });
+
+    loadWeakStudents();
+</script>

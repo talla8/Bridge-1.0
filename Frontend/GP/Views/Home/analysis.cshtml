@@ -1,221 +1,780 @@
-﻿@{
+@{
     ViewData["Title"] = "analysis";
 }
-<div class="container py-4">
 
-    
-    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
-        <h1 class="fw-bold mb-0">Your Learning Plan</h1>
+<style>
+    .bridge-accent {
+        background: #c9c6ff !important;
+        border-color: #c9c6ff !important;
+        color: #1f2430 !important;
+    }
+</style>
 
-        <div class="dropdown">
-            <button class="btn btn-light border rounded-pill dropdown-toggle text-secondary"
-                    data-bs-toggle="dropdown">
-                plan-ID: 218
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">plan-ID: 217</a></li>
-                <li><a class="dropdown-item" href="#">plan-ID: 218</a></li>
-                <li><a class="dropdown-item" href="#">plan-ID: 219</a></li>
-            </ul>
-        </div>
-    </div>
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="container py-4">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                <div>
+                    <h1 class="fw-bold mb-1">Generated Learning Plan</h1>
+                    <p class="text-secondary mb-0" id="planSummaryText">
+                        Review the generated sessions for the selected week and subject.
+                    </p>
+                </div>
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
+                <div class="dropdown">
+                    <button class="btn btn-light border rounded-pill dropdown-toggle text-secondary"
+                            data-bs-toggle="dropdown"
+                            id="planIdButton">
+                        Plan ID
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><span class="dropdown-item-text" id="planMetaLabel">Current generated plan</span></li>
+                    </ul>
+                </div>
+            </div>
 
-        <div class="dropdown">
-            <button class="btn btn-light border rounded-pill px-4 dropdown-toggle text-secondary"
-                    data-bs-toggle="dropdown">
-                G3–B | Mathmatics| Week 0 ( Nov 10– Nov 15 )
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">G3–B | Mathmatics| Week 0 ( Nov 10– Nov 15 )</a></li>
-                <li><a class="dropdown-item" href="#">G3–B | Mathmatics| Week 1 ( Nov 16– Nov 22 )</a></li>
-            </ul>
-        </div>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
+                <div class="dropdown">
+                    <button class="btn btn-light border rounded-pill px-4 dropdown-toggle text-secondary"
+                            data-bs-toggle="dropdown"
+                            id="weekFilterButton">
+                        Week 1
+                    </button>
+                    <ul class="dropdown-menu" id="weekFilterMenu"></ul>
+                </div>
 
-        <div class="d-flex gap-3">
-            <button class="btn btn-light border rounded-4 shadow-sm px-3 d-flex align-items-center gap-2 fw-semibold">
-                <i class="bi bi-file-earmark-spreadsheet fs-5"></i>
-                Export Excel
-            </button>
+                <div class="d-flex gap-3">
+                    <button class="btn btn-light border rounded-4 shadow-sm px-3 d-flex align-items-center gap-2 fw-semibold">
+                        <i class="bi bi-file-earmark-spreadsheet fs-5"></i>
+                        Export Excel
+                    </button>
 
-            <button class="btn btn-info rounded-4 shadow-sm px-3 d-flex align-items-center gap-2 fw-semibold">
-                <i class="bi bi-filetype-pdf fs-5"></i>
-                Download PDF
-            </button>
-        </div>
+                    <button class="btn rounded-4 shadow-sm px-3 d-flex align-items-center gap-2 fw-semibold bridge-accent">
+                        <i class="bi bi-filetype-pdf fs-5"></i>
+                        Download PDF
+                    </button>
+                </div>
+            </div>
 
-    </div>
+            <div class="row g-4 mt-3">
+                <div class="col-12 col-md-4">
+                    <div class="border rounded-4 p-4 h-100">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-graph-up-arrow fs-2 text-secondary"></i>
+                            <div>
+                                <div class="fs-2 fw-bold text-success" id="planProgressValue">0%</div>
+                                <div class="text-secondary">Progress made</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="row g-4 mt-3">
+                <div class="col-12 col-md-4">
+                    <div class="border rounded-4 p-4 h-100">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-journal-check fs-2 text-secondary"></i>
+                            <div>
+                                <div class="fs-2 fw-bold" id="sessionCountValue">0</div>
+                                <div class="text-secondary">Sessions in selected week</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="col-12 col-md-4">
-            <div class="border rounded-4 p-4 h-100">
-                <div class="d-flex align-items-start gap-3">
-                    <i class="bi bi-people fs-2 text-secondary"></i>
-                    <div>
-                        <div class="fs-2 fw-bold text-success">0%</div>
-                        <div class="text-secondary">Plan progress</div>
+                <div class="col-12 col-md-4">
+                    <div class="border rounded-4 p-4 h-100">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-clipboard2-pulse fs-2 text-secondary"></i>
+                            <div>
+                                <div class="fs-2 fw-bold" id="atRiskValue">0</div>
+                                <div class="text-secondary">At Risk Students</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-12 col-md-4">
-            <div class="border rounded-4 p-4 h-100">
-                <div class="d-flex align-items-start gap-3">
-                    <i class="bi bi-journal-check fs-2 text-secondary"></i>
-                    <div>
-                        <div class="fs-2 fw-bold">0</div>
-                        <div class="text-secondary">Tasks Completed For<br>Today</div>
+        <div class="container py-4">
+            <section class="weekly-plan-shell">
+                <div class="weekly-plan-grid" id="weeklyPlanGrid"></div>
+
+                <div class="weekly-plan-footer">
+                    <div class="week-pager" id="weekPager"></div>
+                    <div class="plan-actions">
+                        <button type="button" class="plan-secondary-btn" id="replanBtn">Reorder</button>
+                        <a class="plan-secondary-btn plan-link-btn" asp-controller="Home" asp-action="History">History</a>
+                        <button type="button" class="plan-secondary-btn">View Full Plan <i class="bi bi-arrow-right"></i></button>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-
-        <div class="col-12 col-md-4">
-            <div class="border rounded-4 p-4 h-100">
-                <div class="d-flex align-items-start gap-3">
-                    <i class="bi bi-clipboard2-pulse fs-2 text-secondary"></i>
-                    <div>
-                        <div class="fs-2 fw-bold">4</div>
-                        <div class="text-secondary">At Risk Students</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
-
 </div>
-<div class="container py-4">
 
-    <div class="row g-3 mb-4">
-        <div class="col-2">
-            <div class="text-center fw-semibold rounded-pill py-2"
-                 style="background:#e8f6fb;border:1px solid #bcdde8">
-                Skill Focus
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="text-center fw-semibold rounded-pill py-2"
-                 style="background:#d6d6ff;border:1px solid #b7b7f0">
-                Sunday
-            </div>
-        </div>
-        <div class="col">
-            <div class="text-center fw-semibold rounded-pill py-2"
-                 style="background:#d6d6ff;border:1px solid #b7b7f0">
-                Monday
-            </div>
-        </div>
-        <div class="col">
-            <div class="text-center fw-semibold rounded-pill py-2"
-                 style="background:#d6d6ff;border:1px solid #b7b7f0">
-                Tuesday
-            </div>
-        </div>
-        <div class="col">
-            <div class="text-center fw-semibold rounded-pill py-2"
-                 style="background:#d6d6ff;border:1px solid #b7b7f0">
-                Wednesday
-            </div>
-        </div>
-        <div class="col">
-            <div class="text-center fw-semibold rounded-pill py-2"
-                 style="background:#d6d6ff;border:1px solid #b7b7f0">
-                Thursday
-            </div>
-        </div>
+<div class="activity-panel-backdrop d-none" id="activityPanelBackdrop"></div>
+<aside class="activity-panel d-none" id="activityDetailsPanel" aria-label="Activity details">
+    <div class="activity-panel-header">
+        <span>Activity Details</span>
+        <button type="button" class="activity-icon js-close-panels" aria-label="Close"><i class="bi bi-x"></i></button>
     </div>
-
-    <div class="row g-3 mb-4">
-
-        <div class="col-2">
-            <div class="h-100 p-4 fw-semibold rounded-4"
-                 style="background:#e9f7fd;border:1px solid #cfe6ef;height:130px">
-                Simplifying<br>Fractions
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 rounded-4"
-                 style="background:linear-gradient(#f8f1b5,#f4f6b2);border:1px solid #e1e1c2;height:130px"></div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 p-3 rounded-4"
-                 style="background:#f3f3f3;border:1px solid #d9d9d9;height:130px">
-                <div class="fw-semibold mb-2">Group Practice</div>
-                <div class="small text-secondary mb-2">15 min</div>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill">Show Details</button>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 rounded-4"
-                 style="background:linear-gradient(#f8f1b5,#f4f6b2);border:1px solid #e1e1c2;height:130px"></div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 rounded-4"
-                 style="background:linear-gradient(#f8f1b5,#f4f6b2);border:1px solid #e1e1c2;height:130px"></div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 p-3 rounded-4"
-                 style="background:#f3f3f3;border:1px solid #d9d9d9;height:130px">
-                <div class="fw-semibold mb-2">Review & Mini Quiz</div>
-                <div class="small text-secondary mb-2">30 min</div>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill">Show Details</button>
-            </div>
-        </div>
-
+    <div class="activity-panel-body">
+        <button type="button" class="activity-icon activity-panel-edit" id="detailsEditButton" aria-label="Edit activity"><i class="bi bi-pencil"></i></button>
+        <h3 id="detailsTitle">Activity name</h3>
+        <p id="detailsUnit">Unit name</p>
+        <dl class="activity-detail-list">
+            <div><dt>Duration</dt><dd id="detailsDuration">5 minutes</dd></div>
+            <div><dt>Status</dt><dd id="detailsStatus">Planned</dd></div>
+            <div><dt>Notes</dt><dd id="detailsNotes">No notes yet</dd></div>
+        </dl>
     </div>
+</aside>
 
-    <div class="row g-3">
-
-        <div class="col-2">
-            <div class="h-100 p-4 fw-semibold rounded-4"
-                 style="background:#e9f7fd;border:1px solid #cfe6ef;height:130px">
-                Mixed Numbers
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 p-3 rounded-4"
-                 style="background:#f3f3f3;border:1px solid #d9d9d9;height:130px">
-                <div class="fw-semibold mb-2">Improper Conversion</div>
-                <div class="small text-secondary mb-2">15 min</div>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill">Show Details</button>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 rounded-4"
-                 style="background:linear-gradient(#f8f1b5,#f4f6b2);border:1px solid #e1e1c2;height:130px"></div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 p-3 rounded-4"
-                 style="background:#f3f3f3;border:1px solid #d9d9d9;height:130px">
-                <div class="fw-semibold mb-2">Review & Mini Quiz</div>
-                <div class="small text-secondary mb-2">30 min</div>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill">Show Details</button>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 rounded-4"
-                 style="background:linear-gradient(#f8f1b5,#f4f6b2);border:1px solid #e1e1c2;height:130px"></div>
-        </div>
-
-        <div class="col">
-            <div class="h-100 rounded-4"
-                 s  tyle="background:linear-gradient(#f8f1b5,#f4f6b2);border:1px solid #e1e1c2;height:130px"></div>
-        </div>
-
+<aside class="activity-panel edit-panel d-none" id="activityEditPanel" aria-label="Edit activity">
+    <div class="activity-panel-header">
+        <span>Edit Activity</span>
+        <button type="button" class="activity-icon js-close-panels" aria-label="Close"><i class="bi bi-x"></i></button>
     </div>
+    <div class="activity-panel-body">
+        <label class="edit-label">Duration</label>
+        <div class="duration-control">
+            <button type="button" id="durationIncreaseButton">+</button>
+            <strong id="editDuration">5 minutes</strong>
+            <button type="button" id="durationDecreaseButton">-</button>
+        </div>
+        <label class="edit-label">Status</label>
+        <div class="status-options">
+            <label><input type="radio" name="activityStatus" value="Planned"> Planned</label>
+            <label><input type="radio" name="activityStatus" value="Completed"> Completed</label>
+            <label><input type="radio" name="activityStatus" value="Postponed"> Postpone</label>
+            <label><input type="radio" name="activityStatus" value="Cancelled"> Cancelled</label>
+        </div>
+        <label class="edit-label" for="activityNotes">Notes</label>
+        <textarea id="activityNotes" rows="4"></textarea>
+    </div>
+    <div class="activity-panel-footer">
+        <button type="button" class="activity-cancel-btn js-close-panels">Cancel</button>
+        <button type="button" class="activity-save-btn" id="activitySaveButton">Save</button>
+    </div>
+</aside>
 
-</div>
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const dayOrder = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+    const planStorage = sessionStorage.getItem("bridgeGeneratedPlan");
+    let generatedPlan = planStorage ? JSON.parse(planStorage) : null;
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const teacherGrade = sessionStorage.getItem("teacherGrade") || sessionStorage.getItem("bridgeTeacherGrade") || "Grade";
+
+    const planIdButton = document.getElementById("planIdButton");
+    const planMetaLabel = document.getElementById("planMetaLabel");
+    const planSummaryText = document.getElementById("planSummaryText");
+    const weekFilterButton = document.getElementById("weekFilterButton");
+    const weekFilterMenu = document.getElementById("weekFilterMenu");
+    const planProgressValue = document.getElementById("planProgressValue");
+    const sessionCountValue = document.getElementById("sessionCountValue");
+    const atRiskValue = document.getElementById("atRiskValue");
+    const weeklyPlanGrid = document.getElementById("weeklyPlanGrid");
+    const weekPager = document.getElementById("weekPager");
+    const activityPanelBackdrop = document.getElementById("activityPanelBackdrop");
+    const activityDetailsPanel = document.getElementById("activityDetailsPanel");
+    const activityEditPanel = document.getElementById("activityEditPanel");
+    const detailsTitle = document.getElementById("detailsTitle");
+    const detailsUnit = document.getElementById("detailsUnit");
+    const detailsDuration = document.getElementById("detailsDuration");
+    const detailsStatus = document.getElementById("detailsStatus");
+    const detailsNotes = document.getElementById("detailsNotes");
+    const editDuration = document.getElementById("editDuration");
+    const activityNotes = document.getElementById("activityNotes");
+    const detailsEditButton = document.getElementById("detailsEditButton");
+    const durationIncreaseButton = document.getElementById("durationIncreaseButton");
+    const durationDecreaseButton = document.getElementById("durationDecreaseButton");
+    const activitySaveButton = document.getElementById("activitySaveButton");
+    const replanBtn = document.getElementById("replanBtn");
+    let selectedActivity = null;
+    let selectedAnchor = null;
+    let selectedWeekNo = 1;
+    let editedDurationMinutes = 0;
+
+    function subjectLabel(subjectId) {
+        if (String(subjectId) === "1") return "Math";
+        if (String(subjectId) === "2") return "Arabic";
+        return `Subject ${subjectId}`;
+    }
+
+    function skillLabel(skillId) {
+        const labels = {
+            skill_vocal: "الوعي الصوتي",
+            skill_sounds_of_letters: "قراءة أصوات الحروف",
+            skill_writing: "الكتابة"
+        };
+
+        return labels[skillId] ?? skillId;
+    }
+
+    function normalizeStatus(status) {
+        const statusMap = {
+            PLANNED: "Planned",
+            COMPLETED: "Completed",
+            POSTPONED: "Postponed",
+            CANCELLED: "Cancelled",
+            Planned: "Planned",
+            Completed: "Completed",
+            Postponed: "Postponed",
+            Cancelled: "Cancelled"
+        };
+
+        return statusMap[status] ?? "Planned";
+    }
+
+    function renderWeekFilter(maxWeek, selectedWeek) {
+        weekFilterMenu.innerHTML = "";
+
+        for (let week = 1; week <= maxWeek; week++) {
+            const item = document.createElement("li");
+            item.innerHTML = `<button type="button" class="dropdown-item" data-week="${week}">Week ${week}</button>`;
+            weekFilterMenu.appendChild(item);
+        }
+    }
+
+    function renderWeekPager(maxWeek, selectedWeek) {
+        weekPager.innerHTML = "";
+
+        const previous = document.createElement("button");
+        previous.type = "button";
+        previous.disabled = selectedWeek === 1;
+        previous.innerHTML = `<i class="bi bi-chevron-left"></i>`;
+        previous.dataset.week = String(Math.max(1, selectedWeek - 1));
+        weekPager.appendChild(previous);
+
+        const visibleWeeks = Array.from(
+            new Set([1, 2, 3, selectedWeek, maxWeek].filter((week) => week >= 1 && week <= maxWeek))
+        ).sort((left, right) => left - right);
+
+        visibleWeeks.forEach((week, index) => {
+            const previousWeek = visibleWeeks[index - 1];
+            if (index > 0 && week - previousWeek > 1) {
+                const dots = document.createElement("span");
+                dots.textContent = "...";
+                weekPager.appendChild(dots);
+            }
+
+            const button = document.createElement("button");
+            button.type = "button";
+            button.dataset.week = String(week);
+            button.className = week === selectedWeek ? "active" : "";
+            button.textContent = String(week);
+            weekPager.appendChild(button);
+        });
+
+        const next = document.createElement("button");
+        next.type = "button";
+        next.disabled = selectedWeek === maxWeek;
+        next.innerHTML = `<i class="bi bi-chevron-right"></i>`;
+        next.dataset.week = String(Math.min(maxWeek, selectedWeek + 1));
+        weekPager.appendChild(next);
+
+        const label = document.createElement("small");
+        label.textContent = `week ${selectedWeek} of ${maxWeek}`;
+        weekPager.appendChild(label);
+    }
+
+    function formatDateRange(sessions) {
+        if (!sessions.length) {
+            return "No dates";
+        }
+
+        const sortedDates = sessions
+            .map((session) => new Date(session.sessionDate))
+            .sort((a, b) => a - b);
+
+        const formatter = new Intl.DateTimeFormat("en-US", {
+            month: "short",
+            day: "numeric"
+        });
+
+        return `${formatter.format(sortedDates[0])} - ${formatter.format(sortedDates[sortedDates.length - 1])}`;
+    }
+
+    function updateWeekHeader(subjectId, selectedWeek, weekSessions) {
+        const dateRange = formatDateRange(weekSessions);
+        weekFilterButton.textContent = `${teacherGrade} | ${subjectLabel(subjectId)} | Week ${selectedWeek} (${dateRange})`;
+    }
+
+    function describeSession(session) {
+        const items = Array.isArray(session.items)
+            ? session.items.filter((item) => normalizeStatus(item.status) !== "Cancelled")
+            : [];
+        const skillIds = Array.from(
+            new Set(
+                items.flatMap((item) => Array.isArray(item.skillsSupported) ? item.skillsSupported : [])
+            )
+        );
+        const itemBreakdown = items.map((item) => ({
+            name: item.title ?? item.name ?? "Planned activity",
+            minutes: Number(item.estimatedTime ?? item.estimatedMinutes ?? 0),
+            status: normalizeStatus(item.status),
+            notes: item.notes ?? "No notes yet",
+            sourceItem: item,
+            skillNames: Array.isArray(item.skillsSupported)
+                ? item.skillsSupported.map((skill) => skillLabel(skill))
+                : []
+        }));
+        const totalMinutes = itemBreakdown.reduce((sum, item) => sum + item.minutes, 0);
+        const focusSummary = skillIds.length
+            ? skillIds.map((skill) => skillLabel(skill)).join(" • ")
+            : "Planned lesson";
+        const firstItem = items[0];
+
+        return {
+            title: skillIds.length ? `${skillLabel(skillIds[0])} Focus` : (firstItem?.name ?? "Teaching session"),
+            lessonLabel: firstItem
+                ? `Unit ${firstItem.unitNo} • Lesson ${firstItem.lessonNo}`
+                : "Planned lesson",
+            focusSummary,
+            itemCount: itemBreakdown.length,
+            totalMinutes,
+            itemBreakdown
+        };
+    }
+
+    function renderBoard(sessions, selectedWeek, totalWeeks) {
+        selectedWeekNo = selectedWeek;
+        const weekSessions = sessions.filter(
+            (session) => Number(session.sessionWeekNo) === selectedWeek
+        );
+
+        planProgressValue.textContent = "0%";
+        sessionCountValue.textContent = String(weekSessions.length);
+        updateWeekHeader(generatedPlan?.subjectId ?? "", selectedWeek, weekSessions);
+        renderWeekPager(totalWeeks, selectedWeek);
+
+        weeklyPlanGrid.innerHTML = "";
+
+        dayOrder.forEach((day) => {
+            const session = weekSessions.find((entry) => entry.day === day);
+            const column = document.createElement("article");
+            column.className = "day-plan-column";
+
+            if (!session) {
+                column.innerHTML = `
+                    <div class="day-pill">${day}</div>
+                    <div class="empty-session-card"></div>
+                `;
+                weeklyPlanGrid.appendChild(column);
+                return;
+            }
+
+            const summary = describeSession(session);
+            const activityRows = summary.itemBreakdown.length
+                ? summary.itemBreakdown.map((item, index) => `
+                    <div class="activity-row">
+                        <span>${item.name}</span>
+                        <div>
+                            <button type="button" class="activity-icon js-edit-activity" data-day="${day}" data-index="${index}" aria-label="Edit activity"><i class="bi bi-pencil"></i></button>
+                            <button type="button" class="activity-icon js-show-details" data-day="${day}" data-index="${index}" aria-label="Show details"><i class="bi bi-card-list"></i></button>
+                        </div>
+                        <small><i class="bi bi-clock"></i> ${item.minutes} minutes</small>
+                    </div>
+                `).join("")
+                : `<div class="activity-row activity-row-plain"><span>No activities assigned</span></div>`;
+
+            column.innerHTML = `
+                <div class="day-pill">${day}</div>
+                <div class="session-card">
+                    <h2 class="session-title">${summary.title}</h2>
+                    <p class="session-unit">${summary.lessonLabel}</p>
+                    <p class="session-skills">Skill Focus: <span>${summary.focusSummary}</span></p>
+                    <div class="session-meta">
+                        <span><i class="bi bi-lightbulb"></i> ${summary.itemCount} Activities</span>
+                        <span><i class="bi bi-clock"></i> ${summary.totalMinutes} minutes</span>
+                    </div>
+                    <div class="activity-list">${activityRows}</div>
+                </div>
+            `;
+
+            weeklyPlanGrid.appendChild(column);
+        });
+
+        attachActivityActions(weekSessions);
+    }
+
+    function findActivity(weekSessions, day, index) {
+        const session = weekSessions.find((entry) => entry.day === day);
+        if (!session) return null;
+        const summary = describeSession(session);
+        return {
+            session,
+            item: summary.itemBreakdown[Number(index)],
+            sourceItem: summary.itemBreakdown[Number(index)]?.sourceItem,
+            title: summary.itemBreakdown[Number(index)]?.name ?? "Activity name",
+            unit: summary.lessonLabel
+        };
+    }
+
+    function fillPanels(activity) {
+        selectedActivity = activity;
+        const item = activity?.item;
+        const status = normalizeStatus(item?.status);
+        detailsTitle.textContent = activity?.title ?? "Activity name";
+        detailsUnit.textContent = activity?.unit ?? "Unit name";
+        detailsDuration.textContent = `${item?.minutes ?? 0} minutes`;
+        detailsStatus.textContent = status;
+        detailsNotes.textContent = item?.notes ?? "No notes yet";
+        editedDurationMinutes = Number(item?.minutes ?? 0);
+        editDuration.textContent = `${editedDurationMinutes} minutes`;
+        activityNotes.value = item?.notes === "No notes yet" ? "" : item?.notes ?? "";
+
+        document.querySelectorAll('input[name="activityStatus"]').forEach((input) => {
+            input.checked = input.value === status;
+        });
+    }
+
+    function recalculateSessionDuration(session) {
+        const items = Array.isArray(session.items) ? session.items : [];
+        session.usedDuration = items
+            .filter((item) => normalizeStatus(item.status) !== "Cancelled" && normalizeStatus(item.status) !== "Postponed")
+            .reduce((sum, item) => sum + Number(item.estimatedTime ?? item.estimatedMinutes ?? 0), 0);
+    }
+
+    function saveGeneratedPlan() {
+        if (generatedPlan) {
+            sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(generatedPlan));
+        }
+    }
+
+    function replaceSessionInGeneratedPlan(updatedSession) {
+        if (!generatedPlan?.sessions || !updatedSession?.sessionId) return;
+
+        generatedPlan.sessions = generatedPlan.sessions.map((session) =>
+            session.sessionId === updatedSession.sessionId ? updatedSession : session
+        );
+    }
+
+    function getFirstSessionForSelectedWeek() {
+        if (!generatedPlan?.sessions) return null;
+
+        return generatedPlan.sessions
+            .filter((session) => Number(session.sessionWeekNo) === selectedWeekNo)
+            .sort((left, right) => {
+                const leftDay = dayOrder.indexOf(left.day);
+                const rightDay = dayOrder.indexOf(right.day);
+                return leftDay - rightDay || Number(left.slotNumber ?? 0) - Number(right.slotNumber ?? 0);
+            })[0] ?? null;
+    }
+
+    function updateStoredPlanFromResponse(updatedPlan) {
+        if (!generatedPlan || !updatedPlan) return;
+
+        Object.assign(generatedPlan, updatedPlan);
+        saveGeneratedPlan();
+
+        const totalWeeks = Math.max(1, Number(generatedPlan.totalWeeks ?? 0));
+        planMetaLabel.textContent = `${teacherGrade} | ${subjectLabel(generatedPlan.subjectId)} | ${totalWeeks} weeks`;
+        planSummaryText.textContent = `${subjectLabel(generatedPlan.subjectId)} plan with ${generatedPlan.sessions.length} generated sessions.`;
+        renderWeekFilter(totalWeeks, selectedWeekNo);
+        renderBoard(generatedPlan.sessions, selectedWeekNo, totalWeeks);
+    }
+
+    async function replanSelectedWeek() {
+        if (!generatedPlan?.planId) {
+            alert("No generated plan is available to reorder.");
+            return;
+        }
+
+        if (!token) {
+            alert("You need to be logged in before reordering the plan.");
+            return;
+        }
+
+        const anchorSession = getFirstSessionForSelectedWeek();
+        if (!anchorSession?.sessionId) {
+            alert("No session found in this week to reorder from.");
+            return;
+        }
+
+        replanBtn.disabled = true;
+        replanBtn.textContent = "Reordering...";
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/plans/${generatedPlan.planId}/replan`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    fromSessionId: anchorSession.sessionId
+                })
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to reorder the plan.");
+            }
+
+            updateStoredPlanFromResponse(data?.plan);
+
+            if (data?.planOverCapacity) {
+                alert(`${data.unplacedItems?.length ?? 0} item(s) could not fit in the remaining sessions.`);
+            }
+        } catch (error) {
+            alert(error.message || "Unable to reorder the plan.");
+        } finally {
+            replanBtn.disabled = false;
+            replanBtn.textContent = "Reorder";
+        }
+    }
+
+    function updateDuration(delta) {
+        editedDurationMinutes = Math.max(1, editedDurationMinutes + delta);
+        editDuration.textContent = `${editedDurationMinutes} minutes`;
+    }
+
+    async function saveActivityEdit() {
+        if (!selectedActivity?.sourceItem || !selectedActivity?.session || !generatedPlan) {
+            closeActivityPanels();
+            return;
+        }
+
+        if (!token) {
+            alert("You need to be logged in before updating the activity.");
+            return;
+        }
+
+        if (!generatedPlan.planId || !selectedActivity.session.sessionId || !selectedActivity.sourceItem.planItemId) {
+            alert("This activity is missing the ids needed for updating.");
+            return;
+        }
+
+        const selectedStatus = document.querySelector('input[name="activityStatus"]:checked')?.value ?? "Planned";
+        const previousDuration = Number(selectedActivity.sourceItem.estimatedTime ?? selectedActivity.sourceItem.estimatedMinutes ?? 0);
+        const previousStatus = normalizeStatus(selectedActivity.sourceItem.status);
+
+        activitySaveButton.disabled = true;
+        activitySaveButton.textContent = "Saving...";
+
+        try {
+            if (editedDurationMinutes !== previousDuration) {
+                const timeResponse = await fetch(`${backendBaseUrl}/plans/${generatedPlan.planId}/items/time`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        sessionId: selectedActivity.session.sessionId,
+                        planItemId: selectedActivity.sourceItem.planItemId,
+                        estimatedMinutes: editedDurationMinutes
+                    })
+                });
+
+                const timeData = await timeResponse.json().catch(() => null);
+                if (!timeResponse.ok) {
+                    throw new Error(timeData?.message || "Unable to update activity duration.");
+                }
+
+                replaceSessionInGeneratedPlan(timeData);
+                selectedActivity.session = timeData;
+                const refreshedItem = timeData.items?.find((item) => item.planItemId === selectedActivity.sourceItem.planItemId);
+                if (refreshedItem) {
+                    selectedActivity.sourceItem = refreshedItem;
+                }
+            }
+
+            if (selectedStatus !== previousStatus) {
+                const statusResponse = await fetch(`${backendBaseUrl}/plans/${generatedPlan.planId}/items/status`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        sessionId: selectedActivity.session.sessionId,
+                        planItemId: selectedActivity.sourceItem.planItemId,
+                        status: selectedStatus
+                    })
+                });
+
+                const statusData = await statusResponse.json().catch(() => null);
+                if (!statusResponse.ok) {
+                    throw new Error(statusData?.message || "Unable to update activity status.");
+                }
+
+                if (statusData?.session) {
+                    replaceSessionInGeneratedPlan(statusData.session);
+                    selectedActivity.session = statusData.session;
+                    const refreshedItem = statusData.session.items?.find((item) => item.planItemId === selectedActivity.sourceItem.planItemId);
+                    if (refreshedItem) {
+                        selectedActivity.sourceItem = refreshedItem;
+                    }
+                }
+            }
+
+            selectedActivity.sourceItem.notes = activityNotes.value.trim() || undefined;
+
+            recalculateSessionDuration(selectedActivity.session);
+            replaceSessionInGeneratedPlan(selectedActivity.session);
+            saveGeneratedPlan();
+            closeActivityPanels();
+            renderWeekFilter(Math.max(1, Number(generatedPlan.totalWeeks ?? 0)), selectedWeekNo);
+            renderBoard(generatedPlan.sessions, selectedWeekNo, Math.max(1, Number(generatedPlan.totalWeeks ?? 0)));
+        } catch (error) {
+            alert(error.message || "Unable to save activity changes.");
+        } finally {
+            activitySaveButton.disabled = false;
+            activitySaveButton.textContent = "Save";
+        }
+    }
+
+    function closeActivityPanels() {
+        activityPanelBackdrop.classList.add("d-none");
+        activityDetailsPanel.classList.add("d-none");
+        activityEditPanel.classList.add("d-none");
+    }
+
+    function placePanel(panel, anchor) {
+        if (!panel || !anchor) return;
+
+        const panelWidth = panel.offsetWidth || 384;
+        const panelHeight = panel.offsetHeight || 420;
+        const anchorRect = anchor.getBoundingClientRect();
+        const gap = 12;
+        const margin = 16;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        let left = anchorRect.right + gap;
+        let top = anchorRect.top;
+
+        if (left + panelWidth > viewportWidth - margin) {
+            left = anchorRect.left - panelWidth - gap;
+        }
+
+        if (left < margin) {
+            left = Math.min(anchorRect.right + gap, viewportWidth - panelWidth - margin);
+        }
+
+        if (top + panelHeight > viewportHeight - margin) {
+            top = viewportHeight - panelHeight - margin;
+        }
+
+        if (top < margin) {
+            top = margin;
+        }
+
+        panel.style.left = `${left}px`;
+        panel.style.top = `${top}px`;
+    }
+
+    function openDetailsPanel(activity, anchor) {
+        selectedAnchor = anchor;
+        fillPanels(activity);
+        activityPanelBackdrop.classList.remove("d-none");
+        activityDetailsPanel.classList.remove("d-none");
+        activityEditPanel.classList.add("d-none");
+        placePanel(activityDetailsPanel, selectedAnchor);
+    }
+
+    function openEditPanel(activity = selectedActivity, anchor = selectedAnchor) {
+        selectedAnchor = anchor;
+        fillPanels(activity);
+        activityPanelBackdrop.classList.remove("d-none");
+        activityDetailsPanel.classList.add("d-none");
+        activityEditPanel.classList.remove("d-none");
+        placePanel(activityEditPanel, selectedAnchor);
+    }
+
+    function attachActivityActions(weekSessions) {
+        document.querySelectorAll(".js-show-details").forEach((button) => {
+            button.addEventListener("click", () => {
+                openDetailsPanel(findActivity(weekSessions, button.dataset.day, button.dataset.index), button.closest(".activity-row"));
+            });
+        });
+
+        document.querySelectorAll(".js-edit-activity").forEach((button) => {
+            button.addEventListener("click", () => {
+                openEditPanel(findActivity(weekSessions, button.dataset.day, button.dataset.index), button.closest(".activity-row"));
+            });
+        });
+    }
+
+    async function loadAtRiskStudents() {
+        if (!token) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/statistics/needHelp`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                return;
+            }
+
+            atRiskValue.textContent = Array.isArray(data) ? String(data.length) : "0";
+        } catch {
+            atRiskValue.textContent = "0";
+        }
+    }
+
+    function initializePlanBoard() {
+        if (!generatedPlan || !Array.isArray(generatedPlan.sessions)) {
+            planSummaryText.textContent = "No generated plan was found. Go back to the teacher page and generate one first.";
+            renderBoard([], 1, 1);
+            return;
+        }
+
+        const totalWeeks = Math.max(1, Number(generatedPlan.totalWeeks ?? 0));
+        const initialWeek = 1;
+
+        planIdButton.textContent = generatedPlan.planId
+            ? `plan-ID: ${generatedPlan.planId}`
+            : "Current plan";
+        planMetaLabel.textContent = `${teacherGrade} | ${subjectLabel(generatedPlan.subjectId)} | ${totalWeeks} weeks`;
+        planSummaryText.textContent = `${subjectLabel(generatedPlan.subjectId)} plan with ${generatedPlan.sessions.length} generated sessions.`;
+
+        renderWeekFilter(totalWeeks, initialWeek);
+        renderBoard(generatedPlan.sessions, initialWeek, totalWeeks);
+        loadAtRiskStudents();
+
+        weekFilterMenu.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-week]");
+            if (!button) {
+                return;
+            }
+
+            const selectedWeek = Number(button.dataset.week);
+            renderWeekFilter(totalWeeks, selectedWeek);
+            renderBoard(generatedPlan.sessions, selectedWeek, totalWeeks);
+        });
+
+        weekPager.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-week]");
+            if (!button || button.disabled) return;
+
+            const selectedWeek = Number(button.dataset.week);
+            renderWeekFilter(totalWeeks, selectedWeek);
+            renderBoard(generatedPlan.sessions, selectedWeek, totalWeeks);
+        });
+    }
+
+    initializePlanBoard();
+
+    detailsEditButton.addEventListener("click", () => openEditPanel());
+    durationIncreaseButton.addEventListener("click", () => updateDuration(1));
+    durationDecreaseButton.addEventListener("click", () => updateDuration(-1));
+    activitySaveButton.addEventListener("click", saveActivityEdit);
+    replanBtn.addEventListener("click", replanSelectedWeek);
+    activityPanelBackdrop.addEventListener("click", closeActivityPanels);
+    document.querySelectorAll(".js-close-panels").forEach((button) => {
+        button.addEventListener("click", closeActivityPanels);
+    });
+</script>

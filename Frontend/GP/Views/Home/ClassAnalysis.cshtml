@@ -1,0 +1,413 @@
+@{
+    ViewData["Title"] = "Class Analysis";
+}
+
+<style>
+    .class-analysis-page {
+        padding: 1.5rem 0 3rem;
+    }
+
+    .class-analysis-title {
+        margin: 0;
+        color: #0f1020;
+        font-size: clamp(2.3rem, 4vw, 3.5rem);
+        font-weight: 800;
+    }
+
+    .class-analysis-subtitle {
+        margin: 0.45rem 0 0;
+        color: #7b74d8;
+        font-size: 1.1rem;
+    }
+
+    .class-analysis-card {
+        height: 100%;
+        padding: 1.2rem 1.25rem;
+        border: 1px solid rgba(23, 50, 77, 0.12);
+        border-radius: 1.2rem;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(23, 50, 77, 0.08);
+    }
+
+    .class-analysis-card-label {
+        color: #555b68;
+        font-size: 0.95rem;
+    }
+
+    .class-analysis-card-value {
+        margin-top: 0.7rem;
+        color: #09090f;
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .class-analysis-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1.15rem;
+        padding: 0.75rem 1.35rem;
+        border-radius: 999px;
+        background: #efedff;
+        color: #b6b1ff;
+        font-weight: 700;
+    }
+
+    .class-analysis-pill-warning {
+        background: #fff7da;
+        color: #f5c542;
+    }
+
+    .class-analysis-top-skills {
+        display: grid;
+        gap: 0.15rem;
+        margin-top: 0.75rem;
+        color: #12131a;
+        font-size: 0.95rem;
+        font-weight: 800;
+    }
+
+    .class-analysis-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(21rem, 1fr);
+        gap: 1.75rem;
+        margin-top: 2rem;
+    }
+
+    .class-analysis-table-card,
+    .class-analysis-insight-card {
+        padding: 1.45rem;
+        border: 1px solid rgba(23, 50, 77, 0.12);
+        border-radius: 1.4rem;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(23, 50, 77, 0.08);
+    }
+
+    .class-analysis-table-head,
+    .class-analysis-table-row {
+        display: grid;
+        grid-template-columns: minmax(10rem, 1.2fr) minmax(6rem, 0.7fr) minmax(11rem, 1.4fr) minmax(6rem, 0.7fr);
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .class-analysis-table-head {
+        padding: 0 1rem 0.8rem;
+        color: #232530;
+        font-size: 0.95rem;
+    }
+
+    .class-analysis-table-row {
+        margin-top: 0.85rem;
+        padding: 1rem;
+        border: 1px solid rgba(23, 50, 77, 0.12);
+        border-radius: 1rem;
+        background: #fff;
+    }
+
+    .class-analysis-skill-name {
+        color: #14151d;
+        font-size: 0.95rem;
+        font-weight: 700;
+    }
+
+    .class-analysis-progress {
+        width: 100%;
+        height: 0.5rem;
+        border-radius: 999px;
+        background: #f0edf7;
+        overflow: hidden;
+    }
+
+    .class-analysis-progress span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: #c8c5ff;
+    }
+
+    .class-analysis-priority {
+        color: #232530;
+        font-weight: 700;
+    }
+
+    .class-analysis-insight-top {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .class-analysis-insight-icon {
+        font-size: 3.4rem;
+        line-height: 1;
+    }
+
+    .class-analysis-insight-title {
+        margin: 0;
+        color: #09090f;
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .class-analysis-insight-copy {
+        margin: 0.9rem 0 0;
+        color: #4e5563;
+        font-size: 1rem;
+        line-height: 1.55;
+    }
+
+    .class-analysis-insight-bar {
+        width: 100%;
+        height: 0.75rem;
+        margin-top: 2rem;
+        border-radius: 999px;
+        background: #f1edf7;
+        overflow: hidden;
+    }
+
+    .class-analysis-insight-bar span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: #c8c5ff;
+    }
+
+    .class-analysis-empty {
+        margin-top: 1rem;
+        color: #6b7280;
+    }
+
+    @@media (max-width: 1199.98px) {
+        .class-analysis-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 767.98px) {
+        .class-analysis-table-head,
+        .class-analysis-table-row {
+            grid-template-columns: 1fr;
+        }
+
+        .class-analysis-table-head {
+            display: none;
+        }
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="container class-analysis-page">
+            <div>
+                <h1 class="class-analysis-title">Class Analysis</h1>
+                <p class="class-analysis-subtitle">Summary of Class Performance</p>
+            </div>
+
+            <div class="row g-4 mt-3">
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="class-analysis-card">
+                        <div class="class-analysis-card-label">Class Average</div>
+                        <div class="class-analysis-card-value" id="classAverageValue">0%</div>
+                        <div class="class-analysis-pill">Needs Focus</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="class-analysis-card">
+                        <div class="class-analysis-card-label">Students Needing Support</div>
+                        <div class="class-analysis-card-value" id="needSupportValue">0</div>
+                        <div class="class-analysis-pill class-analysis-pill-warning" id="needSupportPct">0% Of Class</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="class-analysis-card">
+                        <div class="class-analysis-card-label">Attendance Average</div>
+                        <div class="class-analysis-card-value" id="attendanceValue">--</div>
+                        <div class="class-analysis-pill">Coming Soon</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="class-analysis-card">
+                        <div class="class-analysis-card-label">Top 3 Skills:</div>
+                        <div class="class-analysis-top-skills" id="topSkillsList"></div>
+                        <div class="class-analysis-pill class-analysis-pill-warning">Need more Focus!</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="class-analysis-grid">
+                <section class="class-analysis-table-card">
+                    <div class="class-analysis-table-head">
+                        <div>Skill</div>
+                        <div>Below AVG</div>
+                        <div>Class AVG</div>
+                        <div>Priority</div>
+                    </div>
+                    <div id="classAnalysisRows"></div>
+                    <p class="class-analysis-empty d-none" id="classAnalysisEmpty">No class skill data available yet.</p>
+                </section>
+
+                <section class="class-analysis-insight-card">
+                    <div class="class-analysis-insight-top">
+                        <div class="class-analysis-insight-icon">💡</div>
+                        <div>
+                            <h2 class="class-analysis-insight-title">Insights</h2>
+                            <p class="class-analysis-insight-copy" id="insightText">
+                                No class insight is available yet.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="class-analysis-insight-bar">
+                        <span id="insightBar" style="width:0%"></span>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const baselineReady = sessionStorage.getItem("bridgeBaselineReady") === "true";
+
+    const classAverageValue = document.getElementById("classAverageValue");
+    const needSupportValue = document.getElementById("needSupportValue");
+    const needSupportPct = document.getElementById("needSupportPct");
+    const topSkillsList = document.getElementById("topSkillsList");
+    const classAnalysisRows = document.getElementById("classAnalysisRows");
+    const classAnalysisEmpty = document.getElementById("classAnalysisEmpty");
+    const insightText = document.getElementById("insightText");
+    const insightBar = document.getElementById("insightBar");
+
+    const skillNameMap = {
+        skill_vocal: "Vocal Awareness",
+        skill_sounds_of_letters: "Sounds of Letters",
+        skill_writing: "Writing"
+    };
+
+    function skillLabel(skillId) {
+        return skillNameMap[skillId] ?? skillId;
+    }
+
+    function priorityLabel(priority) {
+        if (!priority) return "Low";
+        return String(priority).charAt(0) + String(priority).slice(1).toLowerCase();
+    }
+
+    function authorizedHeaders() {
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    function roundPercent(value) {
+        return Math.round(Number(value) || 0);
+    }
+
+    function buildInsightCopy(weakestSkill) {
+        if (!weakestSkill) {
+            return "No class insight is available yet.";
+        }
+
+        const weakestName = skillLabel(weakestSkill.skillId);
+        const average = roundPercent(weakestSkill.avg);
+        return `The lowest-performing skill is "${weakestName}" (${average}%). Consider allocating more practice activities and using the support plan for students below average.`;
+    }
+
+    async function loadClassAnalysis() {
+        if (!token) {
+            insightText.textContent = "Sign in again to load class analysis.";
+            return;
+        }
+
+        if (!baselineReady) {
+            classAverageValue.textContent = "0%";
+            needSupportValue.textContent = "0";
+            needSupportPct.textContent = "0% Of Class";
+            topSkillsList.innerHTML = "";
+            classAnalysisRows.innerHTML = "";
+            classAnalysisEmpty.classList.remove("d-none");
+            classAnalysisEmpty.textContent = "No assessment results were uploaded yet. Upload the baseline file first.";
+            insightText.textContent = "No class insight is available until the assessment results are uploaded.";
+            insightBar.style.width = "0%";
+            return;
+        }
+
+        try {
+            const [classAverageResponse, weakStudentsResponse, classSkillsResponse, studentsResponse] = await Promise.all([
+                fetch(`${backendBaseUrl}/statistics/class`, { headers: authorizedHeaders() }),
+                fetch(`${backendBaseUrl}/statistics/weak-students`, { headers: authorizedHeaders() }),
+                fetch(`${backendBaseUrl}/statistics/class/skills`, { headers: authorizedHeaders() }),
+                fetch(`${backendBaseUrl}/students/myStudents`, { headers: authorizedHeaders() })
+            ]);
+
+            const classAverage = await classAverageResponse.json().catch(() => 0);
+            const weakStudents = await weakStudentsResponse.json().catch(() => []);
+            const classSkills = await classSkillsResponse.json().catch(() => []);
+            const students = await studentsResponse.json().catch(() => []);
+
+            if (!classAverageResponse.ok || !weakStudentsResponse.ok || !classSkillsResponse.ok || !studentsResponse.ok) {
+                throw new Error("Unable to load class analysis.");
+            }
+
+            const totalStudents = Array.isArray(students) ? students.length : 0;
+            const weakStudentSummaries = Array.isArray(weakStudents) ? weakStudents : [];
+            const skillRows = Array.isArray(classSkills) ? classSkills : [];
+
+            classAverageValue.textContent = `${roundPercent(classAverage)}%`;
+            needSupportValue.textContent = String(weakStudentSummaries.length);
+            needSupportPct.textContent = `${totalStudents ? roundPercent((weakStudentSummaries.length / totalStudents) * 100) : 0}% Of Class`;
+
+            topSkillsList.innerHTML = "";
+            skillRows.slice(0, 3).forEach((row) => {
+                const skill = document.createElement("div");
+                skill.textContent = skillLabel(row.skillId);
+                topSkillsList.appendChild(skill);
+            });
+
+            if (!skillRows.length) {
+                classAnalysisRows.innerHTML = "";
+                classAnalysisEmpty.classList.remove("d-none");
+                insightText.textContent = "No class insight is available yet.";
+                insightBar.style.width = "0%";
+                return;
+            }
+
+            classAnalysisEmpty.classList.add("d-none");
+
+            classAnalysisRows.innerHTML = skillRows.map((row) => {
+                const belowAverageCount = weakStudentSummaries.filter((student) =>
+                    Array.isArray(student.weakSkills) && student.weakSkills.some((skill) => skill.skillId === row.skillId)
+                ).length;
+                const belowAveragePct = totalStudents ? roundPercent((belowAverageCount / totalStudents) * 100) : 0;
+                const classAvg = roundPercent(row.avg);
+
+                return `
+                    <div class="class-analysis-table-row">
+                        <div class="class-analysis-skill-name">${skillLabel(row.skillId)}</div>
+                        <div>${belowAveragePct}%</div>
+                        <div>
+                            <div class="class-analysis-progress"><span style="width:${classAvg}%"></span></div>
+                        </div>
+                        <div class="class-analysis-priority">${priorityLabel(row.priority)}</div>
+                    </div>
+                `;
+            }).join("");
+
+            const weakestSkill = skillRows[0];
+            insightText.textContent = buildInsightCopy(weakestSkill);
+            insightBar.style.width = `${Math.max(0, Math.min(100, roundPercent(weakestSkill.avg)))}%`;
+        } catch (error) {
+            classAnalysisRows.innerHTML = "";
+            classAnalysisEmpty.classList.remove("d-none");
+            insightText.textContent = error.message || "Unable to load class analysis.";
+            insightBar.style.width = "0%";
+        }
+    }
+
+    loadClassAnalysis();
+</script>

@@ -1,0 +1,376 @@
+@{
+    ViewData["Title"] = "Plan History";
+}
+
+<style>
+    .history-page {
+      font-family: "Inter", sans-serif;
+      background: #f7f8fc;
+      padding: 32px;
+      color: #1f2937;
+      min-height: calc(100vh - 10rem);
+    }
+
+    .history-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 24px;
+    }
+
+    .history-title {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .history-subtitle {
+      color: #6b7280;
+      margin-bottom: 0;
+    }
+
+    .history-back-btn {
+      border: 1px solid #d5d5dc;
+      border-radius: 8px;
+      background: #ddd9ff;
+      color: #20202a;
+      padding: 0.7rem 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .history-filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .history-filters input,
+    .history-filters select {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    .history-filters input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .history-timeline {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .history-timeline::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: #dbe3f0;
+    }
+
+    .history-card {
+      margin-left: 50px;
+      background: white;
+      border-radius: 8px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+      position: relative;
+    }
+
+    .history-dot {
+      position: absolute;
+      left: -40px;
+      top: 22px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 4px solid white;
+    }
+
+    .history-top {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .history-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .history-green { background: #e7f8ee; color: #15803d; }
+    .history-blue { background: #e8f1ff; color: #2563eb; }
+    .history-yellow { background: #fff7db; color: #a16207; }
+    .history-red { background: #feecec; color: #dc2626; }
+    .history-purple { background: #f3e8ff; color: #7c3aed; }
+    .history-gray { background: #eef2f7; color: #475569; }
+
+    .history-time {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .history-desc {
+      font-size: 15px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .history-meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .history-meta-box {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .history-meta-box span {
+      display: block;
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .history-empty {
+      margin-left: 50px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      color: #6b7280;
+    }
+
+    @@media(max-width:600px){
+      .history-page {
+        padding: 20px;
+      }
+
+      .history-header {
+        flex-direction: column;
+      }
+
+      .history-meta {
+        grid-template-columns: 1fr;
+      }
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <section class="history-page">
+            <div class="history-container">
+                <div class="history-header">
+                    <div>
+                        <h1 class="history-title">Plan History</h1>
+                        <p class="history-subtitle" id="historySubtitle">Track all actions performed on the plan</p>
+                    </div>
+                    <a class="history-back-btn" asp-controller="Home" asp-action="Analysis">
+                        <i class="bi bi-arrow-left"></i> Back to plan
+                    </a>
+                </div>
+
+                <div class="history-filters">
+                    <input id="historySearch" placeholder="Search..." />
+                    <select id="historyFilter">
+                        <option value="ALL">All</option>
+                        <option value="PLAN_GENERATED">Plan Generated</option>
+                        <option value="ITEM_COMPLETED">Item Completed</option>
+                        <option value="ITEM_POSTPONED">Item Postponed</option>
+                        <option value="ITEM_CANCELLED">Item Cancelled</option>
+                        <option value="ITEM_TIME_UPDATED">Item Time Updated</option>
+                        <option value="ITEM_REINSERTED">Item Reinserted</option>
+                        <option value="PLAN_REGENERATED">Plan Replanned</option>
+                    </select>
+                </div>
+
+                <div class="history-timeline" id="historyTimeline"></div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const storedPlan = sessionStorage.getItem("bridgeGeneratedPlan");
+    const generatedPlan = storedPlan ? JSON.parse(storedPlan) : null;
+    const historyTimeline = document.getElementById("historyTimeline");
+    const historySearch = document.getElementById("historySearch");
+    const historyFilter = document.getElementById("historyFilter");
+    const historySubtitle = document.getElementById("historySubtitle");
+    let historyLogs = [];
+
+    function color(type){
+      if(type === "ITEM_COMPLETED") return "#22c55e";
+      if(type === "PLAN_GENERATED") return "#3b82f6";
+      if(type === "ITEM_POSTPONED") return "#f59e0b";
+      if(type === "ITEM_CANCELLED") return "#ef4444";
+      if(type === "ITEM_TIME_UPDATED") return "#8b5cf6";
+      if(type === "PLAN_REGENERATED") return "#6366f1";
+      if(type === "ITEM_REINSERTED") return "#14b8a6";
+      return "#64748b";
+    }
+
+    function badge(type){
+      if(type === "ITEM_COMPLETED") return "history-green";
+      if(type === "PLAN_GENERATED") return "history-blue";
+      if(type === "ITEM_POSTPONED") return "history-yellow";
+      if(type === "ITEM_CANCELLED") return "history-red";
+      if(type === "ITEM_TIME_UPDATED") return "history-purple";
+      if(type === "PLAN_REGENERATED") return "history-purple";
+      if(type === "ITEM_REINSERTED") return "history-green";
+      return "history-gray";
+    }
+
+    function formatDate(d){
+      return new Date(d).toLocaleString();
+    }
+
+    function formatAction(type) {
+      return String(type || "UNKNOWN").replaceAll("_", " ");
+    }
+
+    function buildMeta(item){
+      const m = item.metadata || {};
+
+      if(item.actionType === "ITEM_TIME_UPDATED"){
+        return `
+          <div class="history-meta-box"><span>Duration</span>${m.oldEstimatedTime ?? "-"} -> ${m.newEstimatedTime ?? m.estimatedTime ?? "-"} min</div>
+          <div class="history-meta-box"><span>Status</span>${m.status ?? "-"}</div>
+        `;
+      }
+
+      if(item.actionType === "PLAN_REGENERATED"){
+        return `
+          <div class="history-meta-box"><span>From session</span>${m.fromSessionId ?? item.sessionId ?? "-"}</div>
+          <div class="history-meta-box"><span>Moved items</span>${m.movedItemsCount ?? 0}</div>
+          <div class="history-meta-box"><span>Behind pace</span>${m.behindPace ? "Yes" : "No"}</div>
+          <div class="history-meta-box"><span>Over capacity</span>${m.planOverCapacity ? "Yes" : "No"}</div>
+        `;
+      }
+
+      if(item.actionType === "PLAN_GENERATED"){
+        return `
+          <div class="history-meta-box"><span>Sessions</span>${m.sessionCount ?? "-"}</div>
+          <div class="history-meta-box"><span>Items</span>${m.itemCount ?? "-"}</div>
+          <div class="history-meta-box"><span>Total weeks</span>${m.totalWeeks ?? "-"}</div>
+          <div class="history-meta-box"><span>Subject</span>${m.subjectId ?? "-"}</div>
+        `;
+      }
+
+      return `
+        <div class="history-meta-box"><span>Status</span>${m.status ?? "-"}</div>
+        <div class="history-meta-box"><span>Time</span>${m.estimatedTime ?? "-"} min</div>
+        <div class="history-meta-box"><span>Session</span>${item.sessionId ?? "-"}</div>
+        <div class="history-meta-box"><span>Item</span>${item.planItemId ?? "-"}</div>
+      `;
+    }
+
+    function render(list){
+      historyTimeline.innerHTML = "";
+
+      if (!list.length) {
+        historyTimeline.innerHTML = `<div class="history-empty">No history logs found.</div>`;
+        return;
+      }
+
+      list.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .forEach(item => {
+            historyTimeline.innerHTML += `
+              <div class="history-card">
+                <div class="history-dot" style="background:${color(item.actionType)}"></div>
+
+                <div class="history-top">
+                  <div class="history-badge ${badge(item.actionType)}">${formatAction(item.actionType)}</div>
+                  <div class="history-time">${formatDate(item.createdAt)}</div>
+                </div>
+
+                <div class="history-desc">${item.description ?? "No description."}</div>
+
+                <div class="history-meta">
+                  ${buildMeta(item)}
+                </div>
+              </div>
+            `;
+          });
+    }
+
+    function filter(){
+      const search = historySearch.value.toLowerCase();
+      const type = historyFilter.value;
+
+      const filtered = historyLogs.filter((item) => {
+        const matchType = type === "ALL" || item.actionType === type;
+        const searchableText = `${item.description ?? ""} ${item.actionType ?? ""}`.toLowerCase();
+        const matchSearch = searchableText.includes(search);
+        return matchType && matchSearch;
+      });
+
+      render(filtered);
+    }
+
+    async function loadHistory() {
+      if (!generatedPlan?.planId) {
+        historySubtitle.textContent = "No generated plan was found. Go back to the plan page first.";
+        render([]);
+        return;
+      }
+
+      historySubtitle.textContent = `Track all actions performed on ${generatedPlan.planId}`;
+
+      if (!token) {
+        historyTimeline.innerHTML = `<div class="history-empty">You need to be logged in to view plan history.</div>`;
+        return;
+      }
+
+      try {
+        const response = await fetch(`${backendBaseUrl}/plans/${generatedPlan.planId}/history`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json().catch(() => null);
+        if (!response.ok) {
+          throw new Error(data?.message || "Unable to load plan history.");
+        }
+
+        historyLogs = Array.isArray(data) ? data : [];
+        render(historyLogs);
+      } catch (error) {
+        historyTimeline.innerHTML = `<div class="history-empty">${error.message || "Unable to load plan history."}</div>`;
+      }
+    }
+
+    historySearch.addEventListener("input", filter);
+    historyFilter.addEventListener("change", filter);
+    loadHistory();
+</script>

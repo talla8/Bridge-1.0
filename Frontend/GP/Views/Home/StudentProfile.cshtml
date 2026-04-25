@@ -1,0 +1,147 @@
+@{
+    ViewData["Title"] = "Student Profile";
+    var studentId = (ViewData["StudentId"]?.ToString() ?? "").Trim();
+}
+
+<style>
+    .student-profile-page {
+        padding: 1.5rem 0 3rem;
+    }
+
+    .student-profile-card,
+    .student-profile-section {
+        padding: 1.4rem;
+        border: 1px solid rgba(23, 50, 77, 0.12);
+        border-radius: 1.35rem;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(23, 50, 77, 0.08);
+    }
+
+    .student-profile-name {
+        margin: 0;
+        color: #111827;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+    }
+
+    .student-profile-subtitle {
+        margin: 0.45rem 0 0;
+        color: #6b7280;
+    }
+
+    .student-profile-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .student-profile-label {
+        color: #6b7280;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .student-profile-value {
+        margin-top: 0.35rem;
+        color: #111827;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 767.98px) {
+        .student-profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="container student-profile-page">
+            <div class="student-profile-card">
+                <h1 class="student-profile-name" id="studentName">Student Profile</h1>
+                <p class="student-profile-subtitle" id="studentProfileSubtitle">Loading student details...</p>
+            </div>
+
+            <div class="student-profile-section mt-4">
+                <div class="student-profile-grid">
+                    <div>
+                        <div class="student-profile-label">English Name</div>
+                        <div class="student-profile-value" id="studentEnglishName">-</div>
+                    </div>
+                    <div>
+                        <div class="student-profile-label">Arabic Name</div>
+                        <div class="student-profile-value" id="studentArabicName">-</div>
+                    </div>
+                    <div>
+                        <div class="student-profile-label">Grade</div>
+                        <div class="student-profile-value" id="studentGrade">-</div>
+                    </div>
+                    <div>
+                        <div class="student-profile-label">School</div>
+                        <div class="student-profile-value" id="studentSchool">-</div>
+                    </div>
+                    <div>
+                        <div class="student-profile-label">Parent Link Code</div>
+                        <div class="student-profile-value" id="studentParentLinkCode">-</div>
+                    </div>
+                    <div>
+                        <div class="student-profile-label">Active</div>
+                        <div class="student-profile-value" id="studentActive">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const studentId = "@studentId";
+
+    const studentName = document.getElementById("studentName");
+    const studentProfileSubtitle = document.getElementById("studentProfileSubtitle");
+    const studentEnglishName = document.getElementById("studentEnglishName");
+    const studentArabicName = document.getElementById("studentArabicName");
+    const studentGrade = document.getElementById("studentGrade");
+    const studentSchool = document.getElementById("studentSchool");
+    const studentParentLinkCode = document.getElementById("studentParentLinkCode");
+    const studentActive = document.getElementById("studentActive");
+
+    async function loadStudentProfile() {
+        if (!token || !studentId) {
+            studentProfileSubtitle.textContent = "Missing student id or login state.";
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/students/findOne/${encodeURIComponent(studentId)}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const student = await response.json().catch(() => null);
+
+            if (!response.ok || !student) {
+                throw new Error(student?.message || "Unable to load student profile.");
+            }
+
+            studentName.textContent = student.fullEnglishName || "Student Profile";
+            studentProfileSubtitle.textContent = student.fullArabicName || "Student details";
+            studentEnglishName.textContent = student.fullEnglishName || "-";
+            studentArabicName.textContent = student.fullArabicName || "-";
+            studentGrade.textContent = student.gradeId || "-";
+            studentSchool.textContent = student.schoolName || "-";
+            studentParentLinkCode.textContent = student.parentLinkCode || "-";
+            studentActive.textContent = student.isActive ? "Yes" : "No";
+        } catch (error) {
+            studentProfileSubtitle.textContent = error.message || "Unable to load student profile.";
+        }
+    }
+
+    loadStudentProfile();
+</script>

@@ -1,0 +1,524 @@
+@{
+    ViewData["Title"] = "Student List";
+}
+
+<style>
+    .student-list-page {
+        padding: 1.5rem 0 3rem;
+    }
+
+    .student-list-title {
+        margin: 0;
+        color: #0f1020;
+        font-size: clamp(2.3rem, 4vw, 3.5rem);
+        font-weight: 800;
+    }
+
+    .student-list-subtitle {
+        margin: 0.55rem 0 0;
+        color: #5d6270;
+        font-size: 1.05rem;
+    }
+
+    .student-list-table {
+        margin-top: 2rem;
+        display: grid;
+        gap: 1.05rem;
+    }
+
+    .student-list-head,
+    .student-list-row {
+        display: grid;
+        grid-template-columns: minmax(12rem, 1fr) minmax(12rem, 1fr) minmax(11rem, 0.9fr) minmax(8rem, 0.75fr) minmax(7rem, 0.65fr) minmax(12rem, 1fr);
+        align-items: center;
+        border: 1px solid rgba(23, 50, 77, 0.12);
+        border-radius: 1.35rem;
+        background: #fff;
+        box-shadow: 0 10px 24px rgba(23, 50, 77, 0.06);
+        overflow: hidden;
+    }
+
+    .student-list-head {
+        color: #7f7474;
+        font-size: 0.96rem;
+        font-weight: 800;
+    }
+
+    .student-list-cell {
+        padding: 1.25rem 1rem;
+        min-height: 5.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .student-list-head .student-list-cell + .student-list-cell,
+    .student-list-row .student-list-cell + .student-list-cell {
+        border-left: 1px solid rgba(23, 50, 77, 0.12);
+    }
+
+    .student-list-name {
+        justify-content: flex-start;
+        text-align: left;
+        font-weight: 700;
+        color: #151623;
+    }
+
+    .student-list-score {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #212330;
+    }
+
+    .student-list-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        font-size: 0.92rem;
+        font-weight: 700;
+    }
+
+    .student-list-badge-support {
+        background: #ffe9e7;
+        color: #ef4437;
+    }
+
+    .student-list-badge-track {
+        background: #f3f4f8;
+        color: #4b5563;
+    }
+
+    .student-list-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+        flex-wrap: wrap;
+    }
+
+    .student-list-btn,
+    .student-list-btn-disabled {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.5rem;
+        padding: 0.6rem 0.95rem;
+        border-radius: 0.9rem;
+        font-size: 0.86rem;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .student-list-btn {
+        border: 1px solid #dce4ff;
+        background: #eef2ff;
+        color: #4f46e5;
+    }
+
+    .student-list-btn-secondary {
+        border-color: #d7dde8;
+        background: #fff;
+        color: #4b5563;
+    }
+
+    .student-list-btn-disabled {
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        color: #9ca3af;
+        cursor: not-allowed;
+    }
+
+    .student-list-empty {
+        padding: 1.25rem;
+        border: 1px solid rgba(23, 50, 77, 0.12);
+        border-radius: 1.2rem;
+        background: #fff;
+        color: #6b7280;
+    }
+
+    .student-profile-drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.24);
+        z-index: 40;
+    }
+
+    .student-profile-drawer {
+        position: fixed;
+        top: 1.5rem;
+        right: 1.5rem;
+        bottom: 1.5rem;
+        width: min(28rem, calc(100vw - 2rem));
+        padding: 1.25rem;
+        border: 1px solid rgba(23, 50, 77, 0.12);
+        border-radius: 1.5rem;
+        background: #fff;
+        box-shadow: 0 24px 48px rgba(23, 50, 77, 0.16);
+        z-index: 50;
+        overflow: auto;
+    }
+
+    .student-profile-drawer-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .student-profile-drawer-title {
+        margin: 0;
+        color: #111827;
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+
+    .student-profile-drawer-subtitle {
+        margin: 0.35rem 0 0;
+        color: #6b7280;
+    }
+
+    .student-profile-drawer-close {
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 999px;
+        background: #fff;
+        color: #111827;
+    }
+
+    .student-profile-drawer-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+    }
+
+    .student-profile-drawer-card {
+        padding: 0.9rem;
+        border: 1px solid #eceff4;
+        border-radius: 1rem;
+        background: #fafbfd;
+    }
+
+    .student-profile-drawer-label {
+        color: #6b7280;
+        font-size: 0.76rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .student-profile-drawer-value {
+        margin-top: 0.35rem;
+        color: #111827;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .student-profile-drawer-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    .student-profile-drawer-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.75rem;
+        padding: 0.7rem 1rem;
+        border-radius: 0.95rem;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .student-profile-drawer-btn-primary {
+        background: #eef2ff;
+        border: 1px solid #dce4ff;
+        color: #4f46e5;
+    }
+
+    .student-profile-drawer-btn-secondary {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        color: #4b5563;
+    }
+
+    @@media (max-width: 1199.98px) {
+        .student-list-head,
+        .student-list-row {
+            grid-template-columns: 1fr;
+        }
+
+        .student-list-head {
+            display: none;
+        }
+
+        .student-list-cell {
+            justify-content: flex-start;
+            text-align: left;
+            min-height: auto;
+            border-left: 0 !important;
+            border-top: 1px solid rgba(23, 50, 77, 0.08);
+        }
+
+        .student-list-row .student-list-cell:first-child {
+            border-top: 0;
+        }
+
+        .student-profile-drawer {
+            top: auto;
+            right: 0.75rem;
+            left: 0.75rem;
+            bottom: 0.75rem;
+            width: auto;
+        }
+
+        .student-profile-drawer-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="container student-list-page">
+            <div>
+                <h1 class="student-list-title">Student List</h1>
+                <p class="student-list-subtitle">Manage your class, check progress, and open student profiles.</p>
+            </div>
+
+            <section class="student-list-table">
+                <div class="student-list-head">
+                    <div class="student-list-cell">Student Name</div>
+                    <div class="student-list-cell">Student Arabic Name</div>
+                    <div class="student-list-cell">Parent Code</div>
+                    <div class="student-list-cell">Status</div>
+                    <div class="student-list-cell">Score</div>
+                    <div class="student-list-cell">Action</div>
+                </div>
+
+                <div id="studentListRows"></div>
+                <div id="studentListEmpty" class="student-list-empty d-none">No students were found for this teacher.</div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<div id="studentProfileDrawerBackdrop" class="student-profile-drawer-backdrop d-none"></div>
+<aside id="studentProfileDrawer" class="student-profile-drawer d-none" aria-label="Student profile preview">
+    <div class="student-profile-drawer-header">
+        <div>
+            <h2 id="studentDrawerName" class="student-profile-drawer-title">Student Profile</h2>
+            <p id="studentDrawerSubtitle" class="student-profile-drawer-subtitle">Loading student details...</p>
+        </div>
+        <button id="studentDrawerClose" type="button" class="student-profile-drawer-close">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div class="student-profile-drawer-grid">
+        <div class="student-profile-drawer-card">
+            <div class="student-profile-drawer-label">English Name</div>
+            <div class="student-profile-drawer-value" id="drawerEnglishName">-</div>
+        </div>
+        <div class="student-profile-drawer-card">
+            <div class="student-profile-drawer-label">Arabic Name</div>
+            <div class="student-profile-drawer-value" id="drawerArabicName">-</div>
+        </div>
+        <div class="student-profile-drawer-card">
+            <div class="student-profile-drawer-label">Grade</div>
+            <div class="student-profile-drawer-value" id="drawerGrade">-</div>
+        </div>
+        <div class="student-profile-drawer-card">
+            <div class="student-profile-drawer-label">School</div>
+            <div class="student-profile-drawer-value" id="drawerSchool">-</div>
+        </div>
+        <div class="student-profile-drawer-card">
+            <div class="student-profile-drawer-label">Parent Link Code</div>
+            <div class="student-profile-drawer-value" id="drawerParentCode">-</div>
+        </div>
+        <div class="student-profile-drawer-card">
+            <div class="student-profile-drawer-label">Active</div>
+            <div class="student-profile-drawer-value" id="drawerActive">-</div>
+        </div>
+    </div>
+
+    <div class="student-profile-drawer-actions">
+        <a id="drawerFullProfileLink" class="student-profile-drawer-btn student-profile-drawer-btn-primary" href="#">View full profile</a>
+        <button type="button" id="drawerAssignPractice" class="student-profile-drawer-btn student-profile-drawer-btn-secondary" disabled>Assign practice</button>
+    </div>
+</aside>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const studentListRows = document.getElementById("studentListRows");
+    const studentListEmpty = document.getElementById("studentListEmpty");
+    const studentProfileDrawerBackdrop = document.getElementById("studentProfileDrawerBackdrop");
+    const studentProfileDrawer = document.getElementById("studentProfileDrawer");
+    const studentDrawerName = document.getElementById("studentDrawerName");
+    const studentDrawerSubtitle = document.getElementById("studentDrawerSubtitle");
+    const drawerEnglishName = document.getElementById("drawerEnglishName");
+    const drawerArabicName = document.getElementById("drawerArabicName");
+    const drawerGrade = document.getElementById("drawerGrade");
+    const drawerSchool = document.getElementById("drawerSchool");
+    const drawerParentCode = document.getElementById("drawerParentCode");
+    const drawerActive = document.getElementById("drawerActive");
+    const drawerFullProfileLink = document.getElementById("drawerFullProfileLink");
+    const studentDrawerClose = document.getElementById("studentDrawerClose");
+
+    function authorizedHeaders() {
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    function roundScore(score) {
+        return Math.round(Number(score) || 0);
+    }
+
+    function closeStudentDrawer() {
+        studentProfileDrawerBackdrop.classList.add("d-none");
+        studentProfileDrawer.classList.add("d-none");
+    }
+
+    async function openStudentDrawer(studentId) {
+        if (!studentId || !token) {
+            return;
+        }
+
+        studentDrawerName.textContent = "Student Profile";
+        studentDrawerSubtitle.textContent = "Loading student details...";
+        drawerEnglishName.textContent = "-";
+        drawerArabicName.textContent = "-";
+        drawerGrade.textContent = "-";
+        drawerSchool.textContent = "-";
+        drawerParentCode.textContent = "-";
+        drawerActive.textContent = "-";
+        drawerFullProfileLink.href = `/Home/StudentProfile?studentId=${encodeURIComponent(studentId)}`;
+
+        studentProfileDrawerBackdrop.classList.remove("d-none");
+        studentProfileDrawer.classList.remove("d-none");
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/students/findOne/${encodeURIComponent(studentId)}`, {
+                headers: authorizedHeaders()
+            });
+            const student = await response.json().catch(() => null);
+
+            if (!response.ok || !student) {
+                throw new Error(student?.message || "Unable to load student profile.");
+            }
+
+            studentDrawerName.textContent = student.fullEnglishName || "Student Profile";
+            studentDrawerSubtitle.textContent = student.fullArabicName || "Student details";
+            drawerEnglishName.textContent = student.fullEnglishName || "-";
+            drawerArabicName.textContent = student.fullArabicName || "-";
+            drawerGrade.textContent = student.gradeId || "-";
+            drawerSchool.textContent = student.schoolName || "-";
+            drawerParentCode.textContent = student.parentLinkCode || "-";
+            drawerActive.textContent = student.isActive ? "Yes" : "No";
+        } catch (error) {
+            studentDrawerSubtitle.textContent = error.message || "Unable to load student profile.";
+        }
+    }
+
+    async function loadStudentsList() {
+        if (!token) {
+            studentListEmpty.textContent = "Sign in again to load the class list.";
+            studentListEmpty.classList.remove("d-none");
+            return;
+        }
+
+        try {
+            const [studentsResponse, weakStudentsResponse] = await Promise.all([
+                fetch(`${backendBaseUrl}/students/myStudents`, { headers: authorizedHeaders() }),
+                fetch(`${backendBaseUrl}/statistics/weak-students`, { headers: authorizedHeaders() })
+            ]);
+
+            const students = await studentsResponse.json().catch(() => []);
+            const weakStudents = await weakStudentsResponse.json().catch(() => []);
+
+            if (!studentsResponse.ok || !weakStudentsResponse.ok) {
+                throw new Error("Unable to load students.");
+            }
+
+            if (!Array.isArray(students) || students.length === 0) {
+                studentListRows.innerHTML = "";
+                studentListEmpty.classList.remove("d-none");
+                return;
+            }
+
+            studentListEmpty.classList.add("d-none");
+            const weakStudentMap = new Map(
+                (Array.isArray(weakStudents) ? weakStudents : []).map((student) => [student.studentId, student])
+            );
+
+            const studentScores = await Promise.all(
+                students.map(async (student) => {
+                    try {
+                        const response = await fetch(`${backendBaseUrl}/statistics/avgPerSTD/${student.studentId}`, {
+                            headers: authorizedHeaders()
+                        });
+                        const data = await response.json().catch(() => 0);
+                        return [student.studentId, response.ok ? roundScore(data) : 0];
+                    } catch {
+                        return [student.studentId, 0];
+                    }
+                })
+            );
+
+            const studentScoreMap = new Map(studentScores);
+
+            studentListRows.innerHTML = students.map((student) => {
+                const isWeak = weakStudentMap.has(student.studentId);
+                const score = studentScoreMap.get(student.studentId) ?? 0;
+
+                return `
+                    <article class="student-list-row">
+                        <div class="student-list-cell student-list-name">${student.fullEnglishName ?? "-"}</div>
+                        <div class="student-list-cell">${student.fullArabicName ?? "-"}</div>
+                        <div class="student-list-cell">${student.parentLinkCode ?? "-"}</div>
+                        <div class="student-list-cell">
+                            <span class="student-list-badge ${isWeak ? "student-list-badge-support" : "student-list-badge-track"}">
+                                ${isWeak ? "Needs support" : "On track"}
+                            </span>
+                        </div>
+                        <div class="student-list-cell student-list-score">${score}%</div>
+                        <div class="student-list-cell">
+                            <div class="student-list-actions">
+                                <a class="student-list-btn js-view-profile" href="/Home/StudentProfile?studentId=${encodeURIComponent(student.studentId)}" data-student-id="${student.studentId}">View profile</a>
+                                <span class="student-list-btn-disabled">Assign practice</span>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+
+            document.querySelectorAll(".js-view-profile").forEach((link) => {
+                link.addEventListener("click", (event) => {
+                    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    openStudentDrawer(link.dataset.studentId);
+                });
+            });
+        } catch (error) {
+            studentListRows.innerHTML = "";
+            studentListEmpty.textContent = error.message || "Unable to load students.";
+            studentListEmpty.classList.remove("d-none");
+        }
+    }
+
+    studentDrawerClose.addEventListener("click", closeStudentDrawer);
+    studentProfileDrawerBackdrop.addEventListener("click", closeStudentDrawer);
+
+    loadStudentsList();
+</script>

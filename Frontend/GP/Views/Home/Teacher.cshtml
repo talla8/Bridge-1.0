@@ -2,20 +2,23 @@
     ViewData["Title"] = "Teacher";
 }
 
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
 <div class="container py-4">
 
     <div class="row g-4 align-items-stretch">
 
         <div class="col-12 col-lg-6">
             <div class="p-4 rounded-4 bg-info bg-opacity-25 h-100 d-flex align-items-center gap-4">
-                <img src="~/img/profile.png"
+                <img src="~/img/UserLogo.png"
                      class="rounded-circle img-fluid"
-                     style="width:110px;height:110px;object-fit:cover"
+                     style="width:130px;height:130px;object-fit:cover"
                      alt="Profile">
 
                 <div>
-                    <h6 class="fw-bold mb-1 text-uppercase">
-                        Welcome, Mr Mohammad!
+                    <h6 class="fw-bold mb-1 text-uppercase" id="teacherWelcomeText">
+                        Welcome, Teacher!
                     </h6>
 
                     <p class="mb-3 text-secondary">
@@ -23,14 +26,14 @@
                     </p>
 
                     <div class="d-flex flex-wrap gap-3 text-secondary">
-                        <span>
-                            <i class="bi bi-book me-1"></i> Grade 3
+                        <span id="teacherDashboardGrade">
+                            <i class="bi bi-book me-1"></i> Grade
                         </span>
-                        <span>
-                            <i class="bi bi-diagram-3 me-1"></i> Section “B”
+                        <span id="teacherDashboardSection">
+                            <i class="bi bi-diagram-3 me-1"></i> Section -
                         </span>
-                        <span>
-                            <i class="bi bi-people me-1"></i> Total of 33 Students
+                        <span id="teacherDashboardStudentCount">
+                            <i class="bi bi-people me-1"></i> Total of 0 Students
                         </span>
                     </div>
                 </div>
@@ -111,9 +114,81 @@
 </div>
 
 <script>
+    const backendBaseUrl = "http://localhost:3000";
+    sessionStorage.removeItem("bridgeGeneratedPlan");
+    sessionStorage.removeItem("bridgeBaselineReady");
     const dropArea = document.getElementById("dropArea");
     const fileInput = document.getElementById("fileInput");
     const fileList = document.getElementById("fileList");
+    let selectedBaselineFiles = [];
+
+    const teacherWelcomeText = document.getElementById("teacherWelcomeText");
+    const teacherDashboardGrade = document.getElementById("teacherDashboardGrade");
+    const teacherDashboardSection = document.getElementById("teacherDashboardSection");
+    const teacherDashboardStudentCount = document.getElementById("teacherDashboardStudentCount");
+
+    function setTeacherDashboardHeader(profile, studentCount) {
+      const fullName = profile?.fullName || sessionStorage.getItem("bridgeUserName") || "Teacher";
+      const grade = profile?.grade || sessionStorage.getItem("bridgeTeacherGrade") || "";
+      const section = sessionStorage.getItem("bridgeTeacherSection") || "";
+
+      if (teacherWelcomeText) {
+        teacherWelcomeText.textContent = `Welcome, ${fullName}!`;
+      }
+
+      if (teacherDashboardGrade) {
+        teacherDashboardGrade.innerHTML = `<i class="bi bi-book me-1"></i> ${grade || "Grade -"}`;
+      }
+
+      if (teacherDashboardSection) {
+        teacherDashboardSection.innerHTML = `<i class="bi bi-diagram-3 me-1"></i> ${section ? `Section ${section}` : "Section -"}`;
+      }
+
+      if (teacherDashboardStudentCount) {
+        teacherDashboardStudentCount.innerHTML = `<i class="bi bi-people me-1"></i> Total of ${studentCount} Students`;
+      }
+    }
+
+    async function hydrateTeacherDashboardHeader() {
+      const token = sessionStorage.getItem("bridgeAccessToken");
+
+      if (!token) {
+        setTeacherDashboardHeader(null, 0);
+        return;
+      }
+
+      try {
+        const [profileResponse, studentsResponse] = await Promise.all([
+          fetch(`${backendBaseUrl}/auth/profile`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }),
+          fetch(`${backendBaseUrl}/students/myStudents`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
+        ]);
+
+        const profile = profileResponse.ok ? await profileResponse.json() : null;
+        const students = studentsResponse.ok ? await studentsResponse.json() : [];
+
+        if (profile?.fullName) {
+          sessionStorage.setItem("bridgeUserName", profile.fullName);
+        }
+
+        if (profile?.grade) {
+          sessionStorage.setItem("bridgeTeacherGrade", profile.grade);
+        }
+
+        setTeacherDashboardHeader(profile, Array.isArray(students) ? students.length : 0);
+      } catch {
+        setTeacherDashboardHeader(null, 0);
+      }
+    }
+
+    hydrateTeacherDashboardHeader();
 
     ["dragenter","dragover","dragleave","drop"].forEach(eventName => {
       dropArea.addEventListener(eventName, e => e.preventDefault());
@@ -130,10 +205,11 @@
     });
 
     function handleFiles(files) {
+      selectedBaselineFiles = Array.from(files);
       fileList.innerHTML = "";
       fileList.classList.remove("d-none");
 
-      Array.from(files).forEach(file => {
+      selectedBaselineFiles.forEach(file => {
         const li = document.createElement("li");
         li.className = "list-group-item d-flex justify-content-between align-items-center";
         li.innerHTML = `
@@ -143,13 +219,123 @@
         fileList.appendChild(li);
       });
     }
+
+    async function generatePlanFromBaseline() {
+      const token = sessionStorage.getItem("bridgeAccessToken");
+      const selectedFile = selectedBaselineFiles[0];
+      const subjectId = localStorage.getItem("teacherSelectedSubject");
+      const semester = Number(localStorage.getItem("teacherSelectedSemester") || "1");
+
+      if (!token) {
+        alert("You need to sign in again before generating a plan.");
+        return;
+      }
+
+      if (!selectedFile) {
+        alert("Please upload the baseline Excel file first.");
+        return;
+      }
+
+      if (!subjectId) {
+        alert("Weekly slots are missing a selected subject. Go back to setup and save them again.");
+        return;
+      }
+
+      const generateButton = document.getElementById("generatePlanButton");
+      generateButton.classList.add("disabled");
+      generateButton.textContent = "Generating...";
+      generateButton.style.pointerEvents = "none";
+
+      try {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        const normalizationResponse = await fetch(`${backendBaseUrl}/baseline/normalization`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        });
+        const normalizedRows = await normalizationResponse.json().catch(() => null);
+        if (!normalizationResponse.ok || !Array.isArray(normalizedRows)) {
+          throw new Error(normalizedRows?.message || "Unable to normalize baseline rows.");
+        }
+
+        const matchResponse = await fetch(`${backendBaseUrl}/baseline/matchStudents`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(normalizedRows)
+        });
+        const matchedRows = await matchResponse.json().catch(() => null);
+        if (!matchResponse.ok || !Array.isArray(matchedRows)) {
+          throw new Error(matchedRows?.message || "Unable to match baseline rows to students.");
+        }
+
+        const saveResponse = await fetch(`${backendBaseUrl}/baseline/save`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(matchedRows)
+        });
+        const saveData = await saveResponse.json().catch(() => null);
+        if (!saveResponse.ok) {
+          throw new Error(saveData?.message || "Unable to save baseline results.");
+        }
+
+        sessionStorage.setItem("bridgeBaselineReady", "true");
+
+        const planResponse = await fetch(`${backendBaseUrl}/plans/generate`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            subjectId,
+            semester
+          })
+        });
+        const generatedPlan = await planResponse.json().catch(() => null);
+        if (!planResponse.ok || !generatedPlan?.planId) {
+          throw new Error(generatedPlan?.message || "Unable to generate plan.");
+        }
+
+        sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(generatedPlan));
+        window.location.href = '@Url.Action("Analysis", "Home")';
+      } catch (error) {
+        alert(error.message || "Unable to generate the learning plan.");
+      } finally {
+        generateButton.classList.remove("disabled");
+        generateButton.textContent = "Generate";
+        generateButton.style.pointerEvents = "";
+      }
+    }
 </script>
 <!-- Generate Button -->
 <div class="text-center mt-4">
 
-    <a class=" rounded-pill px-5 fw-semibold btn btn-info rounded-pill px-4 py-2 fw-semibold" asp-controller="Home" asp-action="analysis">Generate</a>
+    <a class="rounded-pill px-5 fw-semibold btn btn-info rounded-pill px-4 py-2 fw-semibold"
+       href="#"
+       id="generatePlanButton">
+        Generate
+    </a>
  
 </div>
+</div>
+</div>
+
+<script>
+    document.getElementById("generatePlanButton")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      generatePlanFromBaseline();
+    });
+</script>
 
 <div class="container py-5">
 
