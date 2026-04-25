@@ -22,22 +22,181 @@ namespace GP.Controllers
         {
             return View();
         }
+
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
         public IActionResult Teacher()
         {
             return View();
         }
-        public IActionResult analysis()
+
+        public IActionResult Analysis()
         {
             return View();
         }
-        public IActionResult login()
+
+        public IActionResult History()
         {
             return View();
         }
+
+        public IActionResult ClassAnalysis()
+        {
+            return View();
+        }
+
+        public IActionResult StudentsList()
+        {
+            return View();
+        }
+
+        public IActionResult WeakStudents()
+        {
+            return View();
+        }
+
+        public IActionResult TeacherQuizReviews()
+        {
+            return View();
+        }
+
+        public IActionResult TeacherQuizReviewed()
+        {
+            return View();
+        }
+
+        public IActionResult TeacherQuizReviewDetail(string quizResultId)
+        {
+            ViewData["QuizResultId"] = quizResultId;
+            return View();
+        }
+
+        public IActionResult StudentProfile(string studentId)
+        {
+            ViewData["StudentId"] = studentId;
+            return View();
+        }
+
+        public IActionResult ParentDashboard()
+        {
+            return View();
+        }
+
+        public IActionResult ParentQuizzes()
+        {
+            return View();
+        }
+
+        public IActionResult ParentQuizResults()
+        {
+            return View();
+        }
+
+        public IActionResult ParentQuizResultDetail(string quizResultId)
+        {
+            ViewData["QuizResultId"] = quizResultId;
+            return View();
+        }
+
+        public IActionResult TakeQuiz(string studentId, string assignmentId)
+        {
+            ViewData["StudentId"] = studentId;
+            ViewData["AssignmentId"] = assignmentId;
+            return View();
+        }
+
+        public IActionResult CreateQuiz()
+        {
+            return View();
+        }
+
+        public IActionResult PublishQuiz()
+        {
+            return View();
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+
+        // ? ???? ????? ??????
+        public IActionResult TeacheRegrister()
+        {
+            return View();
+        }
+
+        // ? ???? ????? ??? ?????
+        public IActionResult ParentRegrister()
+        {
+            return View();
+        }
+
+        public IActionResult VerifyOtp()
+        {
+            return View();
+        }
+
+        public IActionResult SetupStudents()
+        {
+            return View();
+        }
+
+        public IActionResult SetupWeeklySlots()
+        {
+            return View();
+        }
+
+        public IActionResult Verification()
+        {
+            return View();
+        }
+
+        public IActionResult NextVerification()
+        {
+            return View();
+        }
+
+        public IActionResult AfterVerification()
+        {
+            return View();
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        public IActionResult NewPassword()
+        {
+            return View();
+        }
+
+        public IActionResult Profile()
+        {
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
     }
 }

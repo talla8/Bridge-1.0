@@ -29,3 +29,506 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.role-box {
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+    .role-box:hover {
+        transform: translateY(-5px) scale(1.03);
+        background-color: rgba(13, 110, 253, 0.2) !important;
+    }
+
+.role-selected {
+    border: 3px solid #0d6efd;
+    background-color: rgba(13, 110, 253, 0.25) !important;
+}
+
+.weekly-plan-shell {
+  padding: 1.25rem 0 2rem;
+  overflow-x: auto;
+}
+
+.weekly-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(13.75rem, 1fr));
+  gap: 2rem;
+  min-width: 72rem;
+  align-items: start;
+}
+
+.day-plan-column {
+  display: grid;
+  gap: 1.55rem;
+}
+
+.day-pill {
+  width: 100%;
+  padding: 0.82rem 1rem;
+  border: 1px solid #a8a4d9;
+  border-radius: 8px;
+  background: #d7d3ff;
+  color: #151623;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.session-card,
+.empty-session-card {
+  min-height: 24.5rem;
+  border: 1px solid #a7a7a7;
+  border-radius: 8px;
+}
+
+.session-card {
+  overflow: hidden;
+  background: #f6f6f6;
+  color: #2d2d33;
+}
+
+.empty-session-card {
+  background: linear-gradient(180deg, #f8efbf, #f5f9ae);
+}
+
+.teacher-shell {
+  display: grid;
+  grid-template-columns: 21rem minmax(0, 1fr);
+  gap: 2rem;
+  align-items: start;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.teacher-shell-content {
+  min-width: 0;
+}
+
+.teacher-sidebar {
+  position: sticky;
+  top: 1.5rem;
+  padding: 2rem 1.25rem;
+  border: 1px solid rgba(23, 50, 77, 0.1);
+  border-radius: 1.5rem;
+  background: #fff;
+  box-shadow: 0 20px 44px rgba(23, 50, 77, 0.08);
+}
+
+.teacher-sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.6rem;
+  border-bottom: 1px solid rgba(23, 50, 77, 0.12);
+}
+
+.teacher-sidebar-avatar {
+  display: grid;
+  place-items: center;
+  width: 4.75rem;
+  height: 4.75rem;
+  border-radius: 50%;
+  color: #1f2430;
+  font-size: 3rem;
+}
+
+.teacher-sidebar-grade,
+.teacher-sidebar-section-title {
+  color: #7d7f93;
+  font-size: 0.92rem;
+}
+
+.teacher-sidebar-name {
+  margin: 0.15rem 0 0;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #151623;
+}
+
+.teacher-sidebar-section {
+  padding-top: 1.5rem;
+}
+
+.teacher-sidebar-section-settings {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(23, 50, 77, 0.12);
+}
+
+.teacher-sidebar-link,
+.teacher-sidebar-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  width: 100%;
+  margin-top: 0.95rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  color: #151623;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.teacher-sidebar-link i,
+.teacher-sidebar-summary-icon {
+  font-size: 1.65rem;
+}
+
+.teacher-sidebar-link.active {
+  background: #bbe8ff;
+}
+
+.teacher-sidebar-group {
+  margin-top: 1rem;
+}
+
+.teacher-sidebar-group summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.teacher-sidebar-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.teacher-sidebar-summary-arrow {
+  display: inline-flex;
+  transition: transform 0.2s ease;
+}
+
+.teacher-sidebar-group[open] .teacher-sidebar-summary-arrow {
+  transform: rotate(90deg);
+}
+
+.teacher-sidebar-submenu {
+  display: grid;
+  gap: 0.9rem;
+  margin-left: 3.1rem;
+  padding: 0.35rem 0 0.2rem 1.25rem;
+  border-left: 1px solid rgba(23, 50, 77, 0.18);
+}
+
+.teacher-sidebar-sublink,
+.teacher-sidebar-disabled {
+  color: #2c2d39;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.teacher-sidebar-sublink.active {
+  color: #7b74d8;
+  font-weight: 700;
+}
+
+.teacher-sidebar-disabled {
+  opacity: 0.6;
+}
+
+@media (max-width: 1199.98px) {
+  .teacher-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .teacher-sidebar {
+    position: static;
+  }
+}
+
+.session-title {
+  margin: 1.1rem 1rem 0.2rem;
+  font-size: 1.25rem;
+  line-height: 1.15;
+  font-weight: 800;
+  text-align: right;
+}
+
+.session-unit {
+  margin: 0 1rem 1.8rem;
+  color: #3d3d3d;
+  font-weight: 700;
+  text-align: right;
+}
+
+.session-skills {
+  margin: 0 1rem 1.35rem;
+  color: #777;
+  font-size: 0.95rem;
+}
+
+.session-meta {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0 1rem 1rem;
+  color: #6f6f73;
+  font-weight: 800;
+}
+
+.session-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.session-meta .bi-lightbulb {
+  color: #d8aa20;
+}
+
+.activity-list {
+  border-top: 1px solid #bababa;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem 0.75rem;
+  min-height: 3.2rem;
+  padding: 0.55rem 0.85rem 0.5rem;
+  border-bottom: 1px solid #c6c6c6;
+  font-weight: 700;
+}
+
+.activity-row small {
+  grid-column: 2;
+  color: #6f6f73;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.activity-row-plain {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.activity-row-plain small {
+  grid-column: 1;
+  justify-self: end;
+}
+
+.activity-icon {
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #333;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activity-icon:hover,
+.activity-icon:focus {
+  background: #ececff;
+}
+
+.weekly-plan-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6rem;
+  min-width: 72rem;
+  margin-top: 1.4rem;
+}
+
+.week-pager,
+.plan-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.week-pager button,
+.plan-secondary-btn {
+  min-width: 2.15rem;
+  min-height: 2.15rem;
+  border: 1px solid #d5d5dc;
+  border-radius: 6px;
+  background: #fff;
+  color: #20202a;
+  font-weight: 700;
+}
+
+.week-pager button.active {
+  border-color: #9f93ff;
+  background: #f1efff;
+  color: #685cef;
+}
+
+.week-pager button:disabled {
+  opacity: 0.45;
+}
+
+.week-pager small {
+  order: -1;
+  color: #9a9aa5;
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+.plan-secondary-btn {
+  min-width: 8.5rem;
+  padding: 0.55rem 1.2rem;
+  background: #ddd9ff;
+  border-color: #b7afea;
+}
+
+.plan-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.activity-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 20, 0.12);
+  z-index: 1040;
+}
+
+.activity-panel {
+  position: fixed;
+  width: min(24rem, calc(100vw - 2rem));
+  border: 1px solid #b8b8b8;
+  border-radius: 8px;
+  background: #f7f7f7;
+  box-shadow: 0 1.25rem 2.8rem rgba(25, 25, 25, 0.24);
+  z-index: 1050;
+}
+
+.edit-panel {
+  width: min(22rem, calc(100vw - 2rem));
+}
+
+.activity-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3.2rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #b8b8b8;
+  color: #757575;
+  font-weight: 700;
+}
+
+.activity-panel-body {
+  position: relative;
+  padding: 1.25rem 1rem;
+}
+
+.activity-panel-edit {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.activity-panel-body h3 {
+  margin: 2.3rem 0 0.25rem;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.activity-panel-body p {
+  text-align: center;
+  color: #4d4d4d;
+  font-weight: 700;
+}
+
+.activity-detail-list {
+  display: grid;
+  gap: 1.25rem;
+  margin: 2.5rem 0 0;
+}
+
+.activity-detail-list div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+}
+
+.activity-detail-list dt {
+  color: #737373;
+  font-weight: 800;
+}
+
+.activity-detail-list dd {
+  margin: 0;
+  color: #6d6d6d;
+  font-weight: 700;
+}
+
+.edit-label {
+  display: block;
+  margin: 1rem 0 0.55rem;
+  color: #737373;
+  font-weight: 800;
+}
+
+.duration-control {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.duration-control button {
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 50%;
+  background: #ecebff;
+  color: #5f5acc;
+  font-weight: 800;
+}
+
+.status-options {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.status-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #777;
+}
+
+.activity-panel textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid #b8b8b8;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.activity-panel-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem 1rem;
+}
+
+.activity-cancel-btn,
+.activity-save-btn {
+  min-width: 7rem;
+  border: 0;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  font-weight: 800;
+}
+
+.activity-cancel-btn {
+  background: transparent;
+  color: #777;
+}
+
+.activity-save-btn {
+  background: #ddd9ff;
+  color: #5f5acc;
+}
+
+@media (max-width: 991.98px) {
+  .weekly-plan-footer {
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+}

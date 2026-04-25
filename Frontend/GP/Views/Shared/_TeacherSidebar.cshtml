@@ -1,0 +1,167 @@
+@{
+    var currentAction = (ViewContext.RouteData.Values["action"]?.ToString() ?? "").ToLowerInvariant();
+    var studentsOpen = currentAction is "studentslist" or "weakstudents" or "studentprofile" or "teacherquizreviews" or "teacherquizreviewdetail" or "teacherquizreviewed";
+    var planOpen = currentAction is "analysis" or "history";
+    var classOpen = currentAction is "classanalysis" or "classscores";
+}
+
+<aside class="teacher-sidebar">
+    <div class="teacher-sidebar-profile">
+        <div class="teacher-sidebar-avatar">
+            <i class="bi bi-person-circle"></i>
+        </div>
+        <div>
+            <div class="teacher-sidebar-grade" id="teacherSidebarGrade">Teacher</div>
+            <h2 class="teacher-sidebar-name" id="teacherSidebarName">Teacher</h2>
+        </div>
+    </div>
+
+    <div class="teacher-sidebar-section">
+        <div class="teacher-sidebar-section-title">Main</div>
+        <a asp-controller="Home"
+           asp-action="Teacher"
+           class="teacher-sidebar-link @(currentAction == "teacher" ? "active" : "")">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <details class="teacher-sidebar-group" @(studentsOpen ? "open" : null)>
+            <summary class="teacher-sidebar-summary">
+                <span class="teacher-sidebar-summary-arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="teacher-sidebar-summary-icon"><i class="bi bi-mortarboard"></i></span>
+                <span>My Students</span>
+            </summary>
+            <div class="teacher-sidebar-submenu">
+                <a asp-controller="Home"
+                   asp-action="StudentsList"
+                   class="teacher-sidebar-sublink @(currentAction == "studentslist" || currentAction == "studentprofile" ? "active" : "")">
+                    Students List
+                </a>
+                <a asp-controller="Home"
+                   asp-action="WeakStudents"
+                   class="teacher-sidebar-sublink @(currentAction == "weakstudents" ? "active" : "")">
+                    Weak Students
+                </a>
+                <a asp-controller="Home"
+                   asp-action="TeacherQuizReviews"
+                   class="teacher-sidebar-sublink @(currentAction is "teacherquizreviews" or "teacherquizreviewdetail" ? "active" : "")">
+                    Pending Reviews
+                </a>
+                <a asp-controller="Home"
+                   asp-action="TeacherQuizReviewed"
+                   class="teacher-sidebar-sublink @(currentAction == "teacherquizreviewed" ? "active" : "")">
+                    Reviewed Quizzes
+                </a>
+            </div>
+        </details>
+
+        <details class="teacher-sidebar-group" @(planOpen ? "open" : null)>
+            <summary class="teacher-sidebar-summary">
+                <span class="teacher-sidebar-summary-arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="teacher-sidebar-summary-icon"><i class="bi bi-journal-text"></i></span>
+                <span>My Plan</span>
+            </summary>
+            <div class="teacher-sidebar-submenu">
+                <a asp-controller="Home"
+                   asp-action="Analysis"
+                   class="teacher-sidebar-sublink @(currentAction == "analysis" ? "active" : "")">
+                    View Plan
+                </a>
+                <a asp-controller="Home"
+                   asp-action="History"
+                   class="teacher-sidebar-sublink @(currentAction == "history" ? "active" : "")">
+                    Plan History
+                </a>
+            </div>
+        </details>
+
+        <details class="teacher-sidebar-group" @(classOpen ? "open" : null)>
+            <summary class="teacher-sidebar-summary">
+                <span class="teacher-sidebar-summary-arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="teacher-sidebar-summary-icon"><i class="bi bi-easel2"></i></span>
+                <span>My Class</span>
+            </summary>
+            <div class="teacher-sidebar-submenu">
+                <a asp-controller="Home"
+                   asp-action="ClassAnalysis"
+                   class="teacher-sidebar-sublink @(currentAction == "classanalysis" ? "active" : "")">
+                    Class Analysis
+                </a>
+                <span class="teacher-sidebar-disabled">Class Scores</span>
+            </div>
+        </details>
+    </div>
+
+    <div class="teacher-sidebar-section teacher-sidebar-section-settings">
+        <div class="teacher-sidebar-section-title">Settings</div>
+        <a asp-controller="Home"
+           asp-action="Profile"
+           class="teacher-sidebar-link @(currentAction == "profile" ? "active" : "")">
+            <i class="bi bi-gear"></i>
+            <span>Settings</span>
+        </a>
+    </div>
+</aside>
+
+<script>
+    (() => {
+        const backendBaseUrl = "http://localhost:3000";
+        const role = sessionStorage.getItem("bridgeUserRole");
+        const gradeElement = document.getElementById("teacherSidebarGrade");
+        const nameElement = document.getElementById("teacherSidebarName");
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        const fallbackName = sessionStorage.getItem("bridgeUserName") || "Teacher";
+        const fallbackGrade = sessionStorage.getItem("bridgeTeacherGrade");
+
+        if (role && role !== "Teacher") {
+            window.location.replace('@Url.Action("ParentDashboard", "Home")');
+            return;
+        }
+
+        function renderProfile(name, grade) {
+            if (nameElement) {
+                nameElement.textContent = name || fallbackName;
+            }
+
+            if (gradeElement) {
+                gradeElement.textContent = grade ? `${grade} Teacher` : "Teacher";
+            }
+        }
+
+        renderProfile(fallbackName, fallbackGrade);
+
+        if (!token) {
+            return;
+        }
+
+        fetch(`${backendBaseUrl}/auth/profile`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Unable to load profile.");
+                }
+
+                return response.json();
+            })
+            .then((profile) => {
+                const fullName = profile?.fullName || fallbackName;
+                const grade = profile?.grade || fallbackGrade || "";
+
+                if (fullName) {
+                    sessionStorage.setItem("bridgeUserName", fullName);
+                }
+
+                if (grade) {
+                    sessionStorage.setItem("bridgeTeacherGrade", grade);
+                }
+
+                renderProfile(fullName, grade);
+            })
+            .catch(() => {
+                renderProfile(fallbackName, fallbackGrade);
+            });
+    })();
+</script>
