@@ -15,6 +15,7 @@ import { StudentUploadService } from './students/student-upload.service';
 import { SupportProgramsModule } from './support-programs/support-programs.module';
 import { ParentsModule } from './parents/parents.module';
 import { QuizzesModule } from './quizzes/quizzes.module';
+import { InstitutionsModule } from './institutions/institutions.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { QuizzesModule } from './quizzes/quizzes.module';
     SupportProgramsModule,
     AssignmentsModule,
     QuizzesModule,
+    InstitutionsModule,
     ParentsModule,
     InMemoryReposModule,
   ],

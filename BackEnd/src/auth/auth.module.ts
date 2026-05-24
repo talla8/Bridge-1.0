@@ -10,10 +10,12 @@ import { InMemoryReposModule } from 'src/infrastructure/in-memory/in-memory-repo
 import { VerificationService } from './verification.service';
 import { RolesGuard } from './roles.guard';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { StudentsModule } from 'src/students/students.module';
 
 @Module({
   imports: [
     UsersModule,
+    StudentsModule,
     ConfigModule,
     InMemoryReposModule,
     MailerModule.forRootAsync({

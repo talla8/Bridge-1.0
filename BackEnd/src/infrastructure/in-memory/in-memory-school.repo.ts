@@ -12,7 +12,31 @@ export class InMemorySchoolsRepo implements SchoolRepository {
   }
 
   async findById(id: string): Promise<School | null> {
-    return this.schools.find((school: School): boolean => school.schoolId === id) ?? null;
+    return (
+      this.schools.find(
+        (school: School): boolean => String(school.schoolId) === String(id),
+      ) ?? null
+    );
+  }
+
+  async findByAdminUserId(adminUserId: string): Promise<School | null> {
+    return (
+      this.schools.find(
+        (school: School): boolean =>
+          String(school.adminUserId) === String(adminUserId),
+      ) ?? null
+    );
+  }
+
+  async findByTeacherJoinCode(
+    teacherJoinCode: string,
+  ): Promise<School | null> {
+    return (
+      this.schools.find(
+        (school: School): boolean =>
+          String(school.teacherJoinCode) === String(teacherJoinCode),
+      ) ?? null
+    );
   }
 
   async findAll(): Promise<School[]> {
@@ -20,7 +44,9 @@ export class InMemorySchoolsRepo implements SchoolRepository {
   }
 
   async update(id: string, patch: Partial<School>): Promise<School | null> {
-    const index = this.schools.findIndex((item: School): boolean => item.schoolId === id);
+    const index = this.schools.findIndex(
+      (item: School): boolean => String(item.schoolId) === String(id),
+    );
     if (index === -1) return null;
 
     const updated: School = { ...this.schools[index], ...patch };
@@ -29,7 +55,9 @@ export class InMemorySchoolsRepo implements SchoolRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.schools.findIndex((item: School): boolean => item.schoolId === id);
+    const index = this.schools.findIndex(
+      (item: School): boolean => String(item.schoolId) === String(id),
+    );
     if (index === -1) return false;
 
     this.schools.splice(index, 1);

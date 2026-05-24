@@ -22,6 +22,13 @@ import { ForgotPasswordDTO } from './DTO/forgot-password.dto';
 import { ResetPasswordDTO } from './DTO/reset-password.dto';
 import { VerificationTokenType } from 'src/domain/verificationToken';
 import { VerifyEmailDTO } from './DTO/verify-email.dto';
+import { UpdateProfileDTO } from './DTO/update-profile.dto';
+import { ChangePasswordDTO } from './DTO/change-password.dto';
+import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
+import { InMemorySubjectsRepo } from 'src/infrastructure/in-memory/in-memory-subject.repo';
+import { StudentsService } from 'src/students/students.service';
+import { InMemorySchoolsRepo } from 'src/infrastructure/in-memory/in-memory-school.repo';
+import { InstitutionSignUpDTO } from './DTO/institution-sign-up.dto';
 
 // we use @UseGuards(RolesGuard) on top of the controller so we can use a specific guard
 //on top of any method or route we use @Roles() to determine the roles allowd to use this specific routes so both are used for
@@ -35,6 +42,10 @@ export class AuthService {
     private readonly gradesRepo: InMemoryGradesRepo,
     private readonly verificationService: VerificationService,
     private readonly studentsRepo: InMemoryStudentsRepo,
+    private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
+    private readonly subjectsRepo: InMemorySubjectsRepo,
+    private readonly studentsService: StudentsService,
+    private readonly schoolsRepo: InMemorySchoolsRepo,
   ) {}
 
   async signIn(signInDto: SignInDTO): Promise<{ access_token: string }> {
@@ -63,7 +74,7 @@ export class AuthService {
   }
 
   async createBaseUser(
-    baseSignUpDto: BaseSignUpDTO,
+    baseSignUpDto: BaseSignUpDTO, //comment: maybe we can remove the role from the dto and just use the one in the argument
     role: RoleId,
   ): Promise<User> {
     const existingUser = await this.usersService.findbyEmail(
@@ -71,18 +82,18 @@ export class AuthService {
     );
     if (existingUser) {
       throw new ConflictException('Email already exists');
-    } // we already have this check in the original method
+    }
 
     const userId = `user_${randomUUID()}`;
     const saltOrRounds = 10;
     const password = baseSignUpDto.password;
     const user = await this.usersService.create({
       ...baseSignUpDto,
-      email: baseSignUpDto.email,
+      email: baseSignUpDto.email, // comment: test if we can remove this
       roleId: role,
       passwordHash: await bcrypt.hash(password, saltOrRounds),
       userId,
-      fullName: baseSignUpDto.userFullName,
+      fullName: baseSignUpDto.userFullName, // comment: test if we can remove this
       isActive: true,
       isVerified: false,
     });
@@ -113,11 +124,29 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
-  }
+  } // comment: where is this used? try commenting it out
 
   async teacherSignUp(
     teacherSignUpDTO: TeacherSignUpDTO,
   ): Promise<{ access_token: string }> {
+    const normalizedInstitutionCode =
+      teacherSignUpDTO.institutionCode?.trim() || '';
+    const normalizedSchoolName = teacherSignUpDTO.school?.trim() || '';
+
+    let linkedSchoolId: string | undefined = '';
+    let gradeSchoolName = normalizedSchoolName; // comment : might want to change the variable name
+
+    if (normalizedInstitutionCode) {
+      const school = await this.schoolsRepo.findByTeacherJoinCode(
+        normalizedInstitutionCode,
+      );
+      if (!school || school.teacherSelfRegistrationEnabled === false) {
+        throw new NotFoundException('Institution code is invalid');
+      }
+
+      linkedSchoolId = school.schoolId;
+      gradeSchoolName = school.schoolName;
+    }
     const user = await this.createBaseUser(
       {
         userFullName: teacherSignUpDTO.userFullName,
@@ -127,13 +156,76 @@ export class AuthService {
       },
       RoleId.TEACHER,
     );
+    if (linkedSchoolId) {
+      await this.usersService.update(user.userId, {
+        schoolId: linkedSchoolId,
+      });
+    }
     await this.verificationService.sendEmail(user.userId, user.email);
 
     await this.gradesRepo.create({
       gradeId: teacherSignUpDTO.grade,
       gradeName: teacherSignUpDTO.grade,
-      schoolName: teacherSignUpDTO.school, //check this
+      gradeSection: teacherSignUpDTO.section?.trim() || null,
+      schoolName: gradeSchoolName,
       teacherId: user.userId,
+    });
+
+    const subjects = await this.subjectsRepo.findAll();
+    const requiredSubjects = subjects.filter(
+      (subject) =>
+        subject.subjectName === 'Arabic' ||
+        subject.subjectName === 'Mathematics',
+    );
+
+    for (const subject of requiredSubjects) {
+      await this.subjectOfferingsRepo.create({
+        subjectOfferingId: `subject_offering_${randomUUID()}`,
+        subjectId: subject.subjectId,
+        gradeId: teacherSignUpDTO.grade,
+        teacherId: user.userId,
+        schoolId: linkedSchoolId || '',
+        schoolYear: this.getCurrentSchoolYear(),
+      });
+    }
+
+    const payload = {
+      sub: user.userId,
+      username: user.fullName,
+      roleId: user.roleId,
+    };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async institutionSignUp(institutionSignUpDto: InstitutionSignUpDTO): Promise<{
+    access_token: string;
+    schoolId: string;
+    schoolName: string;
+    teacherJoinCode: string;
+  }> {
+    const user = await this.createBaseUser(
+      {
+        userFullName: institutionSignUpDto.userFullName,
+        email: institutionSignUpDto.email,
+        phoneNumber: institutionSignUpDto.phoneNumber,
+        password: institutionSignUpDto.password,
+      },
+      RoleId.INSTITUTION,
+    );
+    await this.verificationService.sendEmail(user.userId, user.email);
+
+    const school = await this.schoolsRepo.create({
+      schoolId: `school_${randomUUID()}`,
+      schoolName: institutionSignUpDto.schoolName.trim(),
+      adminUserId: user.userId,
+      teacherJoinCode: this.generateTeacherJoinCode(),
+      teacherSelfRegistrationEnabled: true,
+    });
+    await this.usersService.update(user.userId, {
+      schoolId: school.schoolId,
     });
 
     const payload = {
@@ -144,6 +236,9 @@ export class AuthService {
 
     return {
       access_token: await this.jwtService.signAsync(payload),
+      schoolId: school.schoolId,
+      schoolName: school.schoolName,
+      teacherJoinCode: school.teacherJoinCode ?? '',
     };
   }
 
@@ -194,20 +289,98 @@ export class AuthService {
     }
 
     const grade = await this.gradesRepo.findByTeacherId(userId);
+    const [subjectOfferings, subjects] = await Promise.all([
+      this.subjectOfferingsRepo.findAll(),
+      this.subjectsRepo.findAll(),
+    ]);
+    const teacherOffering = subjectOfferings.find(
+      (offering) => String(offering.teacherId) === String(userId),
+    );
+    const subject = teacherOffering
+      ? (subjects.find(
+          (item) =>
+            String(item.subjectId) === String(teacherOffering.subjectId),
+        ) ?? null)
+      : null;
+    const students =
+      user.roleId === RoleId.TEACHER
+        ? await this.studentsService.getStudents(userId)
+        : [];
+    const ownedSchool =
+      user.roleId === RoleId.INSTITUTION
+        ? await this.schoolsRepo.findByAdminUserId(userId)
+        : null;
 
     return {
       userId: user.userId,
       fullName: user.fullName,
       email: user.email,
+      phoneNumber: user.phoneNumber ?? null,
       roleId: user.roleId,
       isActive: user.isActive,
       isVerified: user.isVerified,
       grade: grade?.gradeName ?? null,
-      school: grade?.schoolName ?? null,
+      section: grade?.gradeSection ?? null,
+      school: grade?.schoolName ?? ownedSchool?.schoolName ?? null,
+      subject: subject?.subjectName ?? null,
+      studentCount: students.length,
+      teacherJoinCode: ownedSchool?.teacherJoinCode ?? null,
+      teacherSelfRegistrationEnabled:
+        ownedSchool?.teacherSelfRegistrationEnabled ?? null,
     };
   }
 
-  async sendEmailVerification(userId: UserId): Promise<any> {
+  async updateProfile(userId: UserId, dto: UpdateProfileDTO) {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+
+    if (dto.email && String(dto.email).trim() !== String(user.email).trim()) {
+      const existingUser = await this.usersService.findbyEmail(
+        dto.email.trim(),
+      );
+      if (existingUser && String(existingUser.userId) !== String(userId)) {
+        throw new ConflictException('Email already exists');
+      }
+    }
+
+    const updated = await this.usersService.update(userId, {
+      fullName: dto.fullName?.trim() || user.fullName,
+      email: dto.email?.trim() || user.email,
+      phoneNumber: dto.phoneNumber?.trim() || undefined,
+    });
+
+    if (!updated) {
+      throw new NotFoundException('User Not Found');
+    }
+
+    return this.getProfile(userId);
+  }
+
+  async changePassword(userId: UserId, dto: ChangePasswordDTO) {
+    const user = await this.usersService.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User Not Found');
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      dto.currentPassword,
+      user.passwordHash,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    await this.usersService.update(userId, {
+      passwordHash: await bcrypt.hash(dto.newPassword, 10),
+    });
+
+    return { message: 'Password updated successfully.' };
+  }
+
+  async sendEmailVerification(userId: UserId): Promise<any> { //comment: am i even using this?
     const user = await this.usersService.findById(userId);
 
     if (!user) {
@@ -296,7 +469,14 @@ export class AuthService {
 
     return { message: 'Email has been verified successfully.' };
   }
-}
 
-// forgotPassword
-// resetPassword
+  private generateTeacherJoinCode(): string {
+    return `SCH-${randomUUID().slice(0, 8).toUpperCase()}`;
+  }
+
+  private getCurrentSchoolYear(): string {
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    return `${year}-${year + 1}`;
+  }
+}

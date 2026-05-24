@@ -20,7 +20,7 @@ export class BaseSignUpDTO {
   @IsString()
   phoneNumber?: string;
 
-  @IsOptional()
+  @IsOptional() // comment: try deleting optional
   @IsEnum(RoleId)
   role?: RoleId;
 

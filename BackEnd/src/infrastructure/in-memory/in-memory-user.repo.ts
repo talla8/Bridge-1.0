@@ -47,11 +47,17 @@ export class InMemoryUsersRepo implements UserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.users.find((user: User): boolean => user.userId === id) ?? null;
+    return (
+      this.users.find(
+        (user: User): boolean => String(user.userId) === String(id),
+      ) ?? null
+    );
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.users.findIndex((user: User): boolean => user.userId === id);
+    const index = this.users.findIndex(
+      (user: User): boolean => String(user.userId) === String(id),
+    );
     if (index === -1) return false;
 
     this.users[index] = {
@@ -65,7 +71,9 @@ export class InMemoryUsersRepo implements UserRepository {
     id: string,
     patch: Partial<Omit<User, 'userId'>>,
   ): Promise<User | null> {
-    const index = this.users.findIndex((user: User): boolean => user.userId === id);
+    const index = this.users.findIndex(
+      (user: User): boolean => String(user.userId) === String(id),
+    );
     if (index === -1) return null;
 
     const updated: User = { ...this.users[index], ...patch };
@@ -75,6 +83,8 @@ export class InMemoryUsersRepo implements UserRepository {
   }
 
   async exists(id: string): Promise<boolean> {
-    return this.users.some((user: User): boolean => user.userId === id);
+    return this.users.some(
+      (user: User): boolean => String(user.userId) === String(id),
+    );
   }
 }

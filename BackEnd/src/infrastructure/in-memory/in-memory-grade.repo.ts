@@ -13,11 +13,20 @@ export class InMemoryGradesRepo implements GradeRepository {
   }
 
   async findById(id: string): Promise<Grade | null> {
-    return this.grades.find((grade: Grade): boolean => grade.gradeId === id) ?? null;
+    return (
+      this.grades.find(
+        (grade: Grade): boolean => String(grade.gradeId) === String(id),
+      ) ?? null
+    );
   }
 
   async findByTeacherId(teacherId: UserId): Promise<Grade | null> {
-    return this.grades.find((grade: Grade): boolean => grade.teacherId === teacherId) ?? null;
+    return (
+      this.grades.find(
+        (grade: Grade): boolean =>
+          String(grade.teacherId) === String(teacherId),
+      ) ?? null
+    );
   }
 
   async findAll(): Promise<Grade[]> {
@@ -25,7 +34,9 @@ export class InMemoryGradesRepo implements GradeRepository {
   }
 
   async update(id: string, patch: Partial<Grade>): Promise<Grade | null> {
-    const index = this.grades.findIndex((item: Grade): boolean => item.gradeId === id);
+    const index = this.grades.findIndex(
+      (item: Grade): boolean => String(item.gradeId) === String(id),
+    );
     if (index === -1) return null;
 
     const updated: Grade = { ...this.grades[index], ...patch };
@@ -34,7 +45,9 @@ export class InMemoryGradesRepo implements GradeRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    const index = this.grades.findIndex((item: Grade): boolean => item.gradeId === id);
+    const index = this.grades.findIndex(
+      (item: Grade): boolean => String(item.gradeId) === String(id),
+    );
     if (index === -1) return false;
 
     this.grades.splice(index, 1);

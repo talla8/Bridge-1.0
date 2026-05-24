@@ -1,4 +1,12 @@
-import { Controller, Body, Post, Get, Request, Param } from '@nestjs/common';
+import {
+  Controller,
+  Body,
+  Post,
+  Get,
+  Request,
+  Param,
+  Patch,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDTO } from './DTO/sign-in.dto';
 import { BaseSignUpDTO } from './DTO/base-sign-up.dto';
@@ -9,6 +17,9 @@ import type { UserId } from 'src/domain/ids';
 import { ForgotPasswordDTO } from './DTO/forgot-password.dto';
 import { ResetPasswordDTO } from './DTO/reset-password.dto';
 import { VerifyEmailDTO } from './DTO/verify-email.dto';
+import { UpdateProfileDTO } from './DTO/update-profile.dto';
+import { ChangePasswordDTO } from './DTO/change-password.dto';
+import { InstitutionSignUpDTO } from './DTO/institution-sign-up.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -25,6 +36,12 @@ export class AuthController {
   // signUp(@Body() baseSignUpDto: BaseSignUpDTO) {
   //   return this.authService.signup(baseSignUpDto);
   // }
+
+  @Public()
+  @Post('signup/institution')
+  institutionSignUp(@Body() institutionSignUpDto: InstitutionSignUpDTO) {
+    return this.authService.institutionSignUp(institutionSignUpDto);
+  }
 
   @Public()
   @Post('signup/teacher')
@@ -61,9 +78,19 @@ export class AuthController {
     return this.authService.getProfile(req.user.sub);
   }
 
+  @Patch('profile')
+  updateProfile(@Request() req, @Body() dto: UpdateProfileDTO) {
+    return this.authService.updateProfile(req.user.sub, dto);
+  }
+
+  @Post('change-password')
+  changePassword(@Request() req, @Body() dto: ChangePasswordDTO) {
+    return this.authService.changePassword(req.user.sub, dto);
+  }
+
   @Get('sendEmail/:userId')
   sendEmail(@Param('userId') userId: UserId) {
     console.log(userId);
     return this.authService.sendEmailVerification(userId);
-  }
+  } //comment: why not getting the userid fromthe request?
 }
