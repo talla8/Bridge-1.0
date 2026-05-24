@@ -1,0 +1,117 @@
+@{
+    ViewData["Title"] = "InstitutionSettings";
+}
+
+<style>
+    .institution-settings-page { padding: 1.5rem 0 3rem; }
+    .institution-settings-card { padding: 1.5rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1.2rem; background: #fff; box-shadow: 0 12px 28px rgba(23,50,77,.08); }
+    .institution-code { font-size: 2rem; font-weight: 800; color: #111827; letter-spacing: .05em; }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_InstitutionSidebar" />
+    <div class="teacher-shell-content">
+        <div class="container institution-settings-page">
+            <div class="institution-settings-card">
+                <h1 class="h2 fw-bold">School Settings</h1>
+                <p class="text-secondary mb-4">Manage your teacher join code and self-registration policy.</p>
+                <div class="mb-4">
+                    <div class="small text-secondary mb-2">Teacher Join Code</div>
+                    <div id="institutionJoinCodeValue" class="institution-code">-</div>
+                </div>
+                <div class="form-check form-switch mb-4">
+                    <input class="form-check-input" type="checkbox" id="institutionSelfRegistrationToggle">
+                    <label class="form-check-label" for="institutionSelfRegistrationToggle">Allow teacher self-registration with this code</label>
+                </div>
+                <div class="d-flex gap-3 flex-wrap">
+                    <button id="institutionCopyCodeBtn" class="btn btn-outline-secondary rounded-pill px-4">Copy Code</button>
+                    <button id="institutionRegenerateCodeBtn" class="btn btn-info rounded-pill px-4 fw-semibold">Regenerate Code</button>
+                </div>
+                <div id="institutionSettingsStatus" class="small text-secondary mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        const backendBaseUrl = "http://localhost:3000";
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        const role = sessionStorage.getItem("bridgeUserRole");
+        if (role && role !== "Institution") {
+            window.location.replace('@Url.Action("Teacher", "Home")');
+            return;
+        }
+        if (!token) {
+            window.location.replace('@Url.Action("Login", "Home")');
+            return;
+        }
+
+        const joinCodeValue = document.getElementById("institutionJoinCodeValue");
+        const selfRegistrationToggle = document.getElementById("institutionSelfRegistrationToggle");
+        const statusElement = document.getElementById("institutionSettingsStatus");
+
+        function authHeaders(includeJson = false) {
+            return includeJson
+                ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+                : { Authorization: `Bearer ${token}` };
+        }
+
+        async function loadSettings() {
+            const response = await fetch(`${backendBaseUrl}/institutions/me/join-code`, {
+                headers: authHeaders()
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to load join code settings.");
+            }
+
+            joinCodeValue.textContent = data.teacherJoinCode || "-";
+            selfRegistrationToggle.checked = Boolean(data.teacherSelfRegistrationEnabled);
+            sessionStorage.setItem("bridgeInstitutionTeacherJoinCode", data.teacherJoinCode || "");
+        }
+
+        document.getElementById("institutionCopyCodeBtn").addEventListener("click", async () => {
+            const code = joinCodeValue.textContent?.trim();
+            if (!code || code === "-") return;
+            await navigator.clipboard.writeText(code);
+            statusElement.textContent = "Join code copied.";
+        });
+
+        document.getElementById("institutionRegenerateCodeBtn").addEventListener("click", async () => {
+            const response = await fetch(`${backendBaseUrl}/institutions/me/join-code/regenerate`, {
+                method: "POST",
+                headers: authHeaders()
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                statusElement.textContent = data?.message || "Unable to regenerate join code.";
+                return;
+            }
+            joinCodeValue.textContent = data.teacherJoinCode || "-";
+            sessionStorage.setItem("bridgeInstitutionTeacherJoinCode", data.teacherJoinCode || "");
+            statusElement.textContent = "Join code regenerated.";
+        });
+
+        selfRegistrationToggle.addEventListener("change", async () => {
+            const response = await fetch(`${backendBaseUrl}/institutions/me/join-code/self-registration`, {
+                method: "PATCH",
+                headers: authHeaders(true),
+                body: JSON.stringify({ enabled: selfRegistrationToggle.checked })
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                statusElement.textContent = data?.message || "Unable to update self-registration setting.";
+                selfRegistrationToggle.checked = !selfRegistrationToggle.checked;
+                return;
+            }
+            statusElement.textContent = selfRegistrationToggle.checked
+                ? "Teacher self-registration is enabled."
+                : "Teacher self-registration is disabled.";
+        });
+
+        loadSettings().catch((error) => {
+            statusElement.textContent = error.message || "Unable to load school settings.";
+        });
+    })();
+</script>

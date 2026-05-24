@@ -1,0 +1,159 @@
+@{
+    ViewData["Title"] = "InstitutionDashboard";
+}
+
+<style>
+    .institution-page { padding: 1.5rem 0 5rem; }
+    .institution-title { margin: 0; color: #0f1020; font-size: clamp(2.3rem, 4vw, 3.5rem); font-weight: 800; }
+    .institution-subtitle { margin: 0.45rem 0 0; color: #6366f1; font-size: 1.05rem; }
+    .institution-metric-card, .institution-panel { padding: 1.35rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1.2rem; background: #fff; box-shadow: 0 12px 28px rgba(23,50,77,.08); height: 100%; overflow: hidden; }
+    .institution-metric-label { color: #556070; font-size: .95rem; }
+    .institution-metric-value { margin-top: .6rem; font-size: 2.6rem; font-weight: 800; color: #0f1020; line-height: 1; }
+    .institution-section-title { margin: 0 0 1rem; font-size: 1.2rem; font-weight: 800; color: #0f1020; }
+    .institution-list { display: grid; gap: .85rem; }
+    .institution-list-item { padding: .95rem 1rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1rem; background: #fafbfd; }
+    .institution-list-title { font-weight: 700; color: #111827; }
+    .institution-list-copy { margin-top: .25rem; color: #5f6675; font-size: .94rem; }
+    .institution-table { display: grid; gap: .85rem; min-width: 0; }
+    .institution-row, .institution-head { display: grid; grid-template-columns: minmax(12rem,1.3fr) minmax(10rem,1fr) minmax(8rem,.8fr) minmax(8rem,.8fr) minmax(8rem,.8fr) minmax(8rem,.8fr); gap: .75rem; align-items: center; padding: 1rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1rem; background: #fff; }
+    .institution-head { color: #6b7280; font-weight: 800; }
+    .institution-empty { color: #6b7280; }
+    .institution-side-stack { display:grid; gap:1.5rem; }
+    @@media (max-width: 1199.98px) { .institution-panel { height: auto; } }
+    @@media (max-width: 991.98px) { .institution-head, .institution-row { grid-template-columns: 1fr; } .institution-head { display:none; } }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_InstitutionSidebar" />
+    <div class="teacher-shell-content">
+        <div class="container institution-page">
+            <div>
+                <h1 class="institution-title">Institution Dashboard</h1>
+                <p class="institution-subtitle" id="institutionDashboardSubtitle">School-wide monitoring for teachers and progress.</p>
+            </div>
+
+            <div class="row g-4 mt-3">
+                <div class="col-12 col-md-6 col-xl-3"><div class="institution-metric-card"><div class="institution-metric-label">Total Teachers</div><div class="institution-metric-value" id="totalTeachersValue">0</div></div></div>
+                <div class="col-12 col-md-6 col-xl-3"><div class="institution-metric-card"><div class="institution-metric-label">Teachers With Plans</div><div class="institution-metric-value" id="teachersWithPlansValue">0</div></div></div>
+                <div class="col-12 col-md-6 col-xl-3"><div class="institution-metric-card"><div class="institution-metric-label">Average Class Score</div><div class="institution-metric-value" id="averageClassScoreValue">0%</div></div></div>
+                <div class="col-12 col-md-6 col-xl-3"><div class="institution-metric-card"><div class="institution-metric-label">Behind Pace Classes</div><div class="institution-metric-value" id="behindPaceValue">0</div></div></div>
+            </div>
+
+            <div class="row g-4 mt-2">
+                <div class="col-12 col-xl-7">
+                    <div class="institution-panel">
+                        <h2 class="institution-section-title">Teacher Overview</h2>
+                        <div class="institution-head">
+                            <div>Teacher</div><div>Grade / Subject</div><div>Students</div><div>Class Avg</div><div>Weak Students</div><div>Plan</div>
+                        </div>
+                        <div id="institutionTeachersTable" class="institution-table"></div>
+                        <div id="institutionTeachersEmpty" class="institution-empty d-none">No teachers are linked to this school yet.</div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-5">
+                    <div class="institution-side-stack">
+                        <div class="institution-panel">
+                            <h2 class="institution-section-title">Open Tasks</h2>
+                            <div id="institutionOpenTasks" class="institution-list"></div>
+                            <div id="institutionOpenTasksEmpty" class="institution-empty d-none">No open tasks right now.</div>
+                        </div>
+                        <div class="institution-panel">
+                            <h2 class="institution-section-title">Recent Notifications</h2>
+                            <div id="institutionNotifications" class="institution-list"></div>
+                            <div id="institutionNotificationsEmpty" class="institution-empty d-none">No notifications have been sent yet.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        const backendBaseUrl = "http://localhost:3000";
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        const role = sessionStorage.getItem("bridgeUserRole");
+
+        if (role && role !== "Institution") {
+            window.location.replace('@Url.Action("Teacher", "Home")');
+            return;
+        }
+
+        if (!token) {
+            window.location.replace('@Url.Action("Login", "Home")');
+            return;
+        }
+
+        const totalTeachersValue = document.getElementById("totalTeachersValue");
+        const teachersWithPlansValue = document.getElementById("teachersWithPlansValue");
+        const averageClassScoreValue = document.getElementById("averageClassScoreValue");
+        const behindPaceValue = document.getElementById("behindPaceValue");
+        const institutionDashboardSubtitle = document.getElementById("institutionDashboardSubtitle");
+        const institutionTeachersTable = document.getElementById("institutionTeachersTable");
+        const institutionTeachersEmpty = document.getElementById("institutionTeachersEmpty");
+        const institutionOpenTasks = document.getElementById("institutionOpenTasks");
+        const institutionOpenTasksEmpty = document.getElementById("institutionOpenTasksEmpty");
+        const institutionNotifications = document.getElementById("institutionNotifications");
+        const institutionNotificationsEmpty = document.getElementById("institutionNotificationsEmpty");
+
+        function authHeaders() {
+            return { Authorization: `Bearer ${token}` };
+        }
+
+        function renderTeachers(teachers) {
+            institutionTeachersTable.innerHTML = "";
+            const rows = Array.isArray(teachers) ? teachers : [];
+            institutionTeachersEmpty.classList.toggle("d-none", rows.length > 0);
+
+            rows.forEach((teacher) => {
+                const row = document.createElement("div");
+                row.className = "institution-row";
+                row.innerHTML = `
+                    <div><div class="institution-list-title">${teacher.fullName}</div><div class="institution-list-copy">${teacher.email}</div></div>
+                    <div>${teacher.grade || "-"}${teacher.section ? ` / ${teacher.section}` : ""}<div class="institution-list-copy">${teacher.subject || "No subject"}</div></div>
+                    <div>${teacher.studentCount ?? 0}</div>
+                    <div>${teacher.classAverage ?? 0}%</div>
+                    <div>${teacher.weakStudentCount ?? 0}</div>
+                    <div>${teacher.hasGeneratedPlan ? `${teacher.progressPercentage ?? 0}%` : "No plan"}</div>
+                `;
+                institutionTeachersTable.appendChild(row);
+            });
+        }
+
+        function renderList(container, emptyElement, items, titleSelector, copyBuilder) {
+            container.innerHTML = "";
+            const rows = Array.isArray(items) ? items : [];
+            emptyElement.classList.toggle("d-none", rows.length > 0);
+
+            rows.forEach((item) => {
+                const element = document.createElement("div");
+                element.className = "institution-list-item";
+                element.innerHTML = `<div class="institution-list-title">${titleSelector(item)}</div><div class="institution-list-copy">${copyBuilder(item)}</div>`;
+                container.appendChild(element);
+            });
+        }
+
+        fetch(`${backendBaseUrl}/institutions/me/dashboard`, { headers: authHeaders() })
+            .then(async (response) => {
+                const data = await response.json().catch(() => null);
+                if (!response.ok) {
+                    throw new Error(data?.message || "Unable to load institution dashboard.");
+                }
+                return data;
+            })
+            .then((dashboard) => {
+                totalTeachersValue.textContent = String(dashboard.totalTeachers ?? 0);
+                teachersWithPlansValue.textContent = String(dashboard.teachersWithPlans ?? 0);
+                averageClassScoreValue.textContent = `${dashboard.averageClassScore ?? 0}%`;
+                behindPaceValue.textContent = String(dashboard.behindPaceClasses ?? 0);
+                institutionDashboardSubtitle.textContent = `${dashboard.schoolName || "School"} at a glance.`;
+                renderTeachers(dashboard.teachers);
+                renderList(institutionOpenTasks, institutionOpenTasksEmpty, dashboard.openTasks, (item) => item.title, (item) => item.description || "No description");
+                renderList(institutionNotifications, institutionNotificationsEmpty, dashboard.recentNotifications, (item) => item.title, (item) => item.message || "No message");
+            })
+            .catch((error) => {
+                institutionDashboardSubtitle.textContent = error.message || "Unable to load school data.";
+            });
+    })();
+</script>

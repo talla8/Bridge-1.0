@@ -1,0 +1,172 @@
+@{
+    ViewData["Title"] = "InstitutionTeachers";
+}
+
+<style>
+    .institution-simple-page { padding: 1.5rem 0 3rem; }
+    .institution-simple-title { margin: 0; color: #0f1020; font-size: clamp(2rem, 3vw, 3rem); font-weight: 800; }
+    .institution-card { padding: 1.35rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1.2rem; background: #fff; box-shadow: 0 12px 28px rgba(23,50,77,.08); }
+    .institution-join-card { margin-top: 1.25rem; padding: 1rem 1.1rem; border:1px solid rgba(99,102,241,.18); border-radius:1rem; background:#f8f8ff; }
+    .institution-join-label { color:#5f6675; font-size:.92rem; margin-bottom:.35rem; }
+    .institution-join-code { font-size:1.2rem; font-weight:800; color:#111827; letter-spacing:.05em; }
+    .institution-teachers-grid { display:grid; gap:1rem; margin-top:1.25rem; }
+    .institution-teacher-card { padding: 1rem; border:1px solid rgba(23,50,77,.12); border-radius:1rem; background:#fafbfd; }
+    .institution-teacher-head { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; }
+    .institution-teacher-name { font-weight:800; color:#111827; }
+    .institution-teacher-meta { color:#5f6675; font-size:.94rem; }
+    .institution-invite-copy { color:#5f6675; font-size:.97rem; line-height:1.7; }
+    .institution-invite-actions { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem; }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_InstitutionSidebar" />
+    <div class="teacher-shell-content">
+        <div class="container institution-simple-page">
+            <div class="row g-4">
+                <div class="col-12 col-xl-7">
+                    <div class="institution-card">
+                        <h1 class="institution-simple-title">Teachers</h1>
+                        <p class="text-secondary mb-0">Monitor the teacher roster and review class ownership.</p>
+                        <div class="institution-join-card">
+                            <div class="institution-join-label">Teacher join code</div>
+                            <div class="d-flex justify-content-between align-items-center gap-3 flex-wrap">
+                                <div id="institutionTeachersJoinCode" class="institution-join-code">-</div>
+                                <a class="btn btn-outline-secondary rounded-pill px-3" asp-controller="Home" asp-action="InstitutionSettings">Manage code</a>
+                            </div>
+                        </div>
+                        <div id="institutionTeachersList" class="institution-teachers-grid"></div>
+                        <div id="institutionTeachersListEmpty" class="text-secondary mt-3 d-none">No teachers are linked to this school yet.</div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-5">
+                    <div class="institution-card">
+                        <h2 class="h4 fw-bold">Invite Teachers</h2>
+                        <p class="institution-invite-copy mb-0">
+                            Teachers should register from the normal teacher signup page and enter this school's join code.
+                            Once they verify their account and complete setup, their roster entry and analysis will appear here automatically.
+                        </p>
+                        <div class="institution-invite-actions">
+                            <a class="btn btn-info rounded-pill px-4 fw-semibold" asp-controller="Home" asp-action="InstitutionSettings">Manage join code</a>
+                            <a class="btn btn-outline-secondary rounded-pill px-4" asp-controller="Home" asp-action="TeacheRegrister">Open teacher signup</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        const backendBaseUrl = "http://localhost:3000";
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        const role = sessionStorage.getItem("bridgeUserRole");
+
+        if (role && role !== "Institution") {
+            window.location.replace('@Url.Action("Teacher", "Home")');
+            return;
+        }
+        if (!token) {
+            window.location.replace('@Url.Action("Login", "Home")');
+            return;
+        }
+
+        const teachersList = document.getElementById("institutionTeachersList");
+        const teachersListEmpty = document.getElementById("institutionTeachersListEmpty");
+        const joinCodeElement = document.getElementById("institutionTeachersJoinCode");
+
+        function authHeaders(includeJson = false) {
+            return includeJson
+                ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+                : { Authorization: `Bearer ${token}` };
+        }
+
+        function renderTeacherStats(teacher) {
+            if (!teacher.isVerified) {
+                return "Awaiting teacher verification and setup";
+            }
+
+            return `${teacher.studentCount ?? 0} students · ${teacher.classAverage ?? 0}% avg · ${teacher.weakStudentCount ?? 0} weak students · ${teacher.hasGeneratedPlan ? `Plan ${teacher.progressPercentage ?? 0}%` : "No plan"}`;
+        }
+
+        function renderTeachers(teachers) {
+            teachersList.innerHTML = "";
+            const rows = Array.isArray(teachers) ? teachers : [];
+            teachersListEmpty.classList.toggle("d-none", rows.length > 0);
+
+            rows.forEach((teacher) => {
+                const item = document.createElement("div");
+                item.className = "institution-teacher-card";
+                item.innerHTML = `
+                    <div class="institution-teacher-head">
+                        <div>
+                            <div class="institution-teacher-name">${teacher.fullName}</div>
+                            <div class="institution-teacher-meta">${teacher.email}</div>
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm rounded-pill js-view-teacher" data-teacher-id="${teacher.userId}">View</button>
+                    </div>
+                    <div class="institution-teacher-meta mt-3">
+                        ${teacher.grade || "-"}${teacher.section ? ` / ${teacher.section}` : ""} · ${teacher.subject || "Arabic, Mathematics"}<br>
+                        ${renderTeacherStats(teacher)}
+                    </div>
+                `;
+                teachersList.appendChild(item);
+            });
+
+            document.querySelectorAll(".js-view-teacher").forEach((button) => {
+                button.addEventListener("click", async () => {
+                    const teacherUserId = button.dataset.teacherId;
+                    if (!teacherUserId) return;
+                    const response = await fetch(`${backendBaseUrl}/institutions/me/teachers/${encodeURIComponent(teacherUserId)}`, {
+                        headers: authHeaders()
+                    });
+                    const data = await response.json().catch(() => null);
+                    if (!response.ok) {
+                        alert(data?.message || "Unable to load teacher details.");
+                        return;
+                    }
+                    const statsLine = data.isVerified
+                        ? `Students: ${data.studentCount ?? 0}\nClass Average: ${data.classAverage ?? 0}%`
+                        : `Teacher has not verified the account yet.\nClass metrics will appear after setup.`;
+                    alert(`${data.fullName}\n${data.grade || "-"} ${data.section || ""}\n${data.subject || "Arabic, Mathematics"}\n${statsLine}\nRecent activity items: ${Array.isArray(data.recentActivity) ? data.recentActivity.length : 0}`);
+                });
+            });
+        }
+
+        async function loadJoinCode() {
+            const response = await fetch(`${backendBaseUrl}/institutions/me/join-code`, {
+                headers: authHeaders()
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to load join code.");
+            }
+
+            joinCodeElement.textContent = data.teacherJoinCode || "-";
+        }
+
+        async function loadTeachers() {
+            const response = await fetch(`${backendBaseUrl}/institutions/me/teachers`, {
+                headers: authHeaders()
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to load teachers.");
+            }
+            renderTeachers(data);
+        }
+
+        Promise.allSettled([loadJoinCode(), loadTeachers()]).then((results) => {
+            const teacherResult = results[1];
+            if (teacherResult.status === "rejected") {
+                teachersListEmpty.textContent = teacherResult.reason?.message || "Unable to load teachers.";
+                teachersListEmpty.classList.remove("d-none");
+            }
+
+            const joinCodeResult = results[0];
+            if (joinCodeResult.status === "rejected") {
+                joinCodeElement.textContent = "Unavailable";
+            }
+        });
+    })();
+</script>

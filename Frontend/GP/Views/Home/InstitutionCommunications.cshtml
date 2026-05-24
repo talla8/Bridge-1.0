@@ -1,0 +1,151 @@
+@{
+    ViewData["Title"] = "InstitutionCommunications";
+}
+
+<style>
+    .institution-comm-page { padding: 1.5rem 0 3rem; }
+    .institution-comm-card { padding: 1.35rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1.2rem; background: #fff; box-shadow: 0 12px 28px rgba(23,50,77,.08); height: 100%; }
+    .institution-comm-item { padding: 1rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1rem; background: #fafbfd; margin-top: .85rem; }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_InstitutionSidebar" />
+    <div class="teacher-shell-content">
+        <div class="container institution-comm-page">
+            <div class="row g-4">
+                <div class="col-12 col-xl-6">
+                    <div class="institution-comm-card">
+                        <h1 class="h3 fw-bold">Notifications</h1>
+                        <div id="institutionNotificationError" class="alert alert-danger d-none mt-3"></div>
+                        <form id="institutionNotificationForm" class="mt-3">
+                            <input class="form-control p-3 mb-3" id="institutionNotificationTitle" type="text" placeholder="Title" />
+                            <textarea class="form-control p-3 mb-3" id="institutionNotificationMessage" rows="4" placeholder="Message"></textarea>
+                            <button class="btn btn-info rounded-pill px-4 fw-semibold" id="institutionNotificationBtn" type="submit">Send Notification</button>
+                        </form>
+                        <div id="institutionNotificationsList" class="mt-4"></div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="institution-comm-card">
+                        <h1 class="h3 fw-bold">Tasks</h1>
+                        <div id="institutionTaskError" class="alert alert-danger d-none mt-3"></div>
+                        <form id="institutionTaskForm" class="mt-3">
+                            <input class="form-control p-3 mb-3" id="institutionTaskTitle" type="text" placeholder="Task Title" />
+                            <textarea class="form-control p-3 mb-3" id="institutionTaskDescription" rows="4" placeholder="Description"></textarea>
+                            <input class="form-control p-3 mb-3" id="institutionTaskTeacherEmails" type="text" placeholder="Teacher emails (comma separated)" />
+                            <input class="form-control p-3 mb-3" id="institutionTaskDueDate" type="date" />
+                            <button class="btn btn-info rounded-pill px-4 fw-semibold" id="institutionTaskBtn" type="submit">Create Task</button>
+                        </form>
+                        <div id="institutionTasksList" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        const backendBaseUrl = "http://localhost:3000";
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        const role = sessionStorage.getItem("bridgeUserRole");
+        if (role && role !== "Institution") {
+            window.location.replace('@Url.Action("Teacher", "Home")');
+            return;
+        }
+        if (!token) {
+            window.location.replace('@Url.Action("Login", "Home")');
+            return;
+        }
+
+        const notificationsList = document.getElementById("institutionNotificationsList");
+        const tasksList = document.getElementById("institutionTasksList");
+        const notificationError = document.getElementById("institutionNotificationError");
+        const taskError = document.getElementById("institutionTaskError");
+
+        function authHeaders(includeJson = false) {
+            return includeJson
+                ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
+                : { Authorization: `Bearer ${token}` };
+        }
+
+        function renderCollection(container, rows, copyBuilder) {
+            container.innerHTML = "";
+            (rows || []).forEach((row) => {
+                const item = document.createElement("div");
+                item.className = "institution-comm-item";
+                item.innerHTML = `<div class="fw-bold">${row.title}</div><div class="text-secondary mt-2">${copyBuilder(row)}</div>`;
+                container.appendChild(item);
+            });
+        }
+
+        async function loadCommunications() {
+            const [notificationsResponse, tasksResponse] = await Promise.all([
+                fetch(`${backendBaseUrl}/institutions/me/notifications`, { headers: authHeaders() }),
+                fetch(`${backendBaseUrl}/institutions/me/tasks`, { headers: authHeaders() })
+            ]);
+
+            const notifications = notificationsResponse.ok ? await notificationsResponse.json() : [];
+            const tasks = tasksResponse.ok ? await tasksResponse.json() : [];
+
+            renderCollection(notificationsList, notifications, (row) => row.message || "No message");
+            renderCollection(tasksList, tasks, (row) => `${row.description || "No description"}${row.dueDate ? `<br>Due: ${new Date(row.dueDate).toLocaleDateString()}` : ""}`);
+        }
+
+        document.getElementById("institutionNotificationForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            notificationError.classList.add("d-none");
+            try {
+                const response = await fetch(`${backendBaseUrl}/institutions/me/notifications`, {
+                    method: "POST",
+                    headers: authHeaders(true),
+                    body: JSON.stringify({
+                        title: document.getElementById("institutionNotificationTitle").value.trim(),
+                        message: document.getElementById("institutionNotificationMessage").value.trim()
+                    })
+                });
+                const data = await response.json().catch(() => null);
+                if (!response.ok) {
+                    throw new Error(data?.message || "Unable to send notification.");
+                }
+                event.target.reset();
+                await loadCommunications();
+            } catch (error) {
+                notificationError.textContent = error.message || "Unable to send notification.";
+                notificationError.classList.remove("d-none");
+            }
+        });
+
+        document.getElementById("institutionTaskForm").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            taskError.classList.add("d-none");
+            try {
+                const teacherEmails = document.getElementById("institutionTaskTeacherEmails").value
+                    .split(",")
+                    .map((value) => value.trim())
+                    .filter(Boolean);
+                const response = await fetch(`${backendBaseUrl}/institutions/me/tasks`, {
+                    method: "POST",
+                    headers: authHeaders(true),
+                    body: JSON.stringify({
+                        title: document.getElementById("institutionTaskTitle").value.trim(),
+                        description: document.getElementById("institutionTaskDescription").value.trim() || undefined,
+                        assignedTeacherEmails: teacherEmails,
+                        dueDate: document.getElementById("institutionTaskDueDate").value || undefined
+                    })
+                });
+                const data = await response.json().catch(() => null);
+                if (!response.ok) {
+                    throw new Error(Array.isArray(data?.message) ? data.message.join(", ") : (data?.message || "Unable to create task."));
+                }
+                event.target.reset();
+                await loadCommunications();
+            } catch (error) {
+                taskError.textContent = error.message || "Unable to create task.";
+                taskError.classList.remove("d-none");
+            }
+        });
+
+        loadCommunications();
+    })();
+</script>
