@@ -1,0 +1,161 @@
+@{
+    var currentAction = (ViewContext.RouteData.Values["action"]?.ToString() ?? "").ToLowerInvariant();
+    var teachersOpen = currentAction is "institutionteachers";
+    var communicationsOpen = currentAction is "institutioncommunications";
+}
+
+<button type="button" class="teacher-sidebar-toggle-button" id="institutionSidebarToggle" aria-controls="institutionSidebar" aria-expanded="false" aria-label="Open sidebar">
+    <i class="bi bi-list"></i>
+    <span>Menu</span>
+</button>
+
+<div class="teacher-sidebar-backdrop" id="institutionSidebarBackdrop"></div>
+
+<aside class="teacher-sidebar" id="institutionSidebar">
+    <div class="teacher-sidebar-toolbar">
+        <button type="button" class="teacher-sidebar-close-button" id="institutionSidebarClose" aria-label="Close sidebar">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <div class="teacher-sidebar-profile">
+        <div class="teacher-sidebar-avatar">
+            <i class="bi bi-buildings"></i>
+        </div>
+        <div>
+            <div class="teacher-sidebar-grade" id="institutionSidebarSchool">Institution</div>
+            <h2 class="teacher-sidebar-name" id="institutionSidebarName">School Admin</h2>
+        </div>
+    </div>
+
+    <div class="teacher-sidebar-section">
+        <div class="teacher-sidebar-section-title">Main</div>
+        <a asp-controller="Home"
+           asp-action="InstitutionDashboard"
+           class="teacher-sidebar-link @(currentAction == "institutiondashboard" ? "active" : "")">
+            <i class="bi bi-house-door-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <details class="teacher-sidebar-group" @(teachersOpen ? "open" : null)>
+            <summary class="teacher-sidebar-summary">
+                <span class="teacher-sidebar-summary-arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="teacher-sidebar-summary-icon"><i class="bi bi-person-workspace"></i></span>
+                <span>Teachers</span>
+            </summary>
+            <div class="teacher-sidebar-submenu">
+                <a asp-controller="Home"
+                   asp-action="InstitutionTeachers"
+                   class="teacher-sidebar-sublink @(currentAction == "institutionteachers" ? "active" : "")">
+                    Teacher Roster
+                </a>
+            </div>
+        </details>
+
+        <details class="teacher-sidebar-group" @(communicationsOpen ? "open" : null)>
+            <summary class="teacher-sidebar-summary">
+                <span class="teacher-sidebar-summary-arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="teacher-sidebar-summary-icon"><i class="bi bi-megaphone"></i></span>
+                <span>Communications</span>
+            </summary>
+            <div class="teacher-sidebar-submenu">
+                <a asp-controller="Home"
+                   asp-action="InstitutionCommunications"
+                   class="teacher-sidebar-sublink @(currentAction == "institutioncommunications" ? "active" : "")">
+                    Notifications & Tasks
+                </a>
+            </div>
+        </details>
+    </div>
+
+    <div class="teacher-sidebar-section teacher-sidebar-section-settings">
+        <div class="teacher-sidebar-section-title">Settings</div>
+        <a asp-controller="Home"
+           asp-action="InstitutionSettings"
+           class="teacher-sidebar-link @(currentAction == "institutionsettings" ? "active" : "")">
+            <i class="bi bi-gear"></i>
+            <span>School Settings</span>
+        </a>
+    </div>
+</aside>
+
+<script>
+    (() => {
+        const backendBaseUrl = "http://localhost:3000";
+        const role = sessionStorage.getItem("bridgeUserRole");
+        const schoolElement = document.getElementById("institutionSidebarSchool");
+        const nameElement = document.getElementById("institutionSidebarName");
+        const sidebarBackdrop = document.getElementById("institutionSidebarBackdrop");
+        const sidebarToggle = document.getElementById("institutionSidebarToggle");
+        const sidebarClose = document.getElementById("institutionSidebarClose");
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        const fallbackName = sessionStorage.getItem("bridgeUserName") || "Institution";
+        const fallbackSchool = sessionStorage.getItem("bridgeInstitutionSchoolName") || "Institution";
+        const sidebarStorageKey = "bridgeInstitutionSidebarOpen";
+
+        if (role && role !== "Institution") {
+            window.location.replace('@Url.Action("Teacher", "Home")');
+            return;
+        }
+
+        function setSidebarOpen(isOpen) {
+            document.body.classList.toggle("teacher-sidebar-open", isOpen);
+            sidebarToggle?.setAttribute("aria-expanded", String(isOpen));
+            sessionStorage.setItem(sidebarStorageKey, isOpen ? "open" : "closed");
+        }
+
+        function getPreferredSidebarState() {
+            const storedState = sessionStorage.getItem(sidebarStorageKey);
+            if (storedState === "open") return true;
+            if (storedState === "closed") return false;
+            return window.innerWidth >= 1200;
+        }
+
+        function renderProfile(name, schoolName) {
+            if (nameElement) nameElement.textContent = name || fallbackName;
+            if (schoolElement) schoolElement.textContent = schoolName || fallbackSchool;
+        }
+
+        renderProfile(fallbackName, fallbackSchool);
+
+        if (token) {
+            fetch(`${backendBaseUrl}/institutions/me/profile`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Unable to load institution profile.");
+                    }
+                    return response.json();
+                })
+                .then((profile) => {
+                    const name = profile?.fullName || fallbackName;
+                    const schoolName = profile?.schoolName || fallbackSchool;
+                    sessionStorage.setItem("bridgeUserName", name);
+                    sessionStorage.setItem("bridgeInstitutionSchoolName", schoolName);
+                    if (profile?.teacherJoinCode) {
+                        sessionStorage.setItem("bridgeInstitutionTeacherJoinCode", profile.teacherJoinCode);
+                    }
+                    renderProfile(name, schoolName);
+                })
+                .catch(() => renderProfile(fallbackName, fallbackSchool));
+        }
+
+        setSidebarOpen(getPreferredSidebarState());
+
+        sidebarToggle?.addEventListener("click", () => {
+            setSidebarOpen(!document.body.classList.contains("teacher-sidebar-open"));
+        });
+
+        sidebarClose?.addEventListener("click", () => setSidebarOpen(false));
+        sidebarBackdrop?.addEventListener("click", () => setSidebarOpen(false));
+
+        window.addEventListener("resize", () => {
+            const hasStoredPreference = sessionStorage.getItem(sidebarStorageKey) !== null;
+            if (!hasStoredPreference) {
+                setSidebarOpen(getPreferredSidebarState());
+            }
+        });
+    })();
+</script>

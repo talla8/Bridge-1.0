@@ -6,7 +6,7 @@
     <div class="row align-items-center">
         <div class="col-lg-6">
             <h1 class="fw-bold mb-1">Create teacher account</h1>
-            <p class="text-secondary mb-4">Add your profile details, including your grade and school.</p>
+            <p class="text-secondary mb-4">Register with an institution code, or continue as an individual teacher with your school name.</p>
 
             <div id="teacherErrorBox" class="alert alert-danger d-none"></div>
 
@@ -23,15 +23,21 @@
                         <input type="tel" id="teacherPhoneInput" class="form-control p-3" placeholder="Phone Number">
                     </div>
                     <div class="mb-3 col-6">
-                        <input type="text" id="teacherSchoolInput" class="form-control p-3" placeholder="School">
-                    </div>
-                    <div class="mb-3 col-6">
                         <select id="teacherGradeInput" class="form-select p-3">
                             <option value="">Choose Grade</option>
                             <option value="First Grade">First Grade</option>
                             <option value="Second Grade">Second Grade</option>
                             <option value="Third Grade">Third Grade</option>
                         </select>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="text" id="teacherSectionInput" class="form-control p-3" placeholder="Section (Optional)">
+                    </div>
+                    <div class="mb-3 col-12">
+                        <input type="text" id="teacherSchoolInput" class="form-control p-3" placeholder="School Name (Required if no institution code)">
+                    </div>
+                    <div class="mb-3 col-12">
+                        <input type="text" id="teacherInstitutionCodeInput" class="form-control p-3" placeholder="Institution Code (Optional)">
                     </div>
                     <div class="mb-3 col-6">
                         <input type="password" id="teacherPasswordInput" class="form-control p-3" placeholder="Password">
@@ -141,13 +147,20 @@
             userFullName: document.getElementById("teacherNameInput").value.trim(),
             email: document.getElementById("teacherEmailInput").value.trim(),
             phoneNumber: document.getElementById("teacherPhoneInput").value.trim() || undefined,
-            school: document.getElementById("teacherSchoolInput").value.trim(),
             grade: document.getElementById("teacherGradeInput").value,
+            section: document.getElementById("teacherSectionInput").value.trim() || undefined,
+            school: document.getElementById("teacherSchoolInput").value.trim() || undefined,
+            institutionCode: document.getElementById("teacherInstitutionCodeInput").value.trim() || undefined,
             password: teacherPasswordInput.value
         };
 
-        if (!payload.userFullName || !payload.email || !payload.school || !payload.grade || !payload.password) {
-            showTeacherError("Please complete your full name, email, school, grade, and password.");
+        if (!payload.userFullName || !payload.email || !payload.grade || !payload.password) {
+            showTeacherError("Please complete your full name, email, grade, and password.");
+            return;
+        }
+
+        if (!payload.institutionCode && !payload.school) {
+            showTeacherError("Enter an institution code or provide a school name.");
             return;
         }
 
@@ -176,7 +189,6 @@
             sessionStorage.setItem("bridgePendingTeacherSetup", "true");
             sessionStorage.setItem("bridgeTeacherSetupComplete", "false");
             sessionStorage.setItem("bridgeTeacherGrade", payload.grade);
-            sessionStorage.setItem("bridgeTeacherSchool", payload.school);
             sessionStorage.setItem("bridgeUserRole", "Teacher");
             sessionStorage.setItem("bridgeUserName", payload.userFullName);
             if (data?.access_token) {

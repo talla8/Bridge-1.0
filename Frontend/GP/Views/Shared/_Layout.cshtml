@@ -152,6 +152,8 @@
 
             if (role === "Parent") {
                 profileButton.href = '@Url.Action("ParentDashboard", "Home")';
+            } else if (role === "Institution") {
+                profileButton.href = '@Url.Action("InstitutionDashboard", "Home")';
             } else {
                 profileButton.href = '@Url.Action("Profile", "Home")';
             }

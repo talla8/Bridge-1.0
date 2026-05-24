@@ -1,0 +1,183 @@
+@{
+    ViewData["Title"] = "InstitutionRegrister";
+}
+
+<div class="container py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="fw-bold mb-1">Create institution account</h1>
+            <p class="text-secondary mb-4">Register your school administrator account and receive a teacher join code.</p>
+
+            <div id="institutionErrorBox" class="alert alert-danger d-none"></div>
+
+            <form id="institutionRegisterForm">
+                <div class="row">
+                    <div class="mb-3 col-12">
+                        <input type="text" id="institutionAdminNameInput" class="form-control p-3" placeholder="Administrator Name">
+                    </div>
+                    <div class="mb-3 col-12">
+                        <input type="text" id="institutionSchoolNameInput" class="form-control p-3" placeholder="School Name">
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="email" id="institutionEmailInput" class="form-control p-3" placeholder="Email Address">
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="tel" id="institutionPhoneInput" class="form-control p-3" placeholder="Phone Number">
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="password" id="institutionPasswordInput" class="form-control p-3" placeholder="Password">
+                        <small id="institutionPasswordStrength" class="fw-semibold"></small>
+                    </div>
+                    <div class="mb-3 col-6">
+                        <input type="password" id="institutionConfirmPasswordInput" class="form-control p-3" placeholder="Confirm Password">
+                        <small id="institutionMatchText" class="fw-semibold"></small>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <button type="submit"
+                                class="btn px-4 text-white"
+                                id="institutionRegisterBtn"
+                                style="background:#c9c6ff">
+                            Next →
+                        </button>
+
+                        <a class="btn px-4"
+                           style="border:1px solid #c9c6ff;color:#c9c6ff"
+                           asp-action="SignUp"
+                           asp-controller="Home">
+                            Back
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-6 text-center">
+            <img src="~/img/illustration.png" class="img-fluid" style="max-height:420px">
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const institutionRegisterForm = document.getElementById("institutionRegisterForm");
+    const institutionRegisterBtn = document.getElementById("institutionRegisterBtn");
+    const institutionErrorBox = document.getElementById("institutionErrorBox");
+    const institutionPasswordInput = document.getElementById("institutionPasswordInput");
+    const institutionConfirmPasswordInput = document.getElementById("institutionConfirmPasswordInput");
+    const institutionPasswordStrength = document.getElementById("institutionPasswordStrength");
+    const institutionMatchText = document.getElementById("institutionMatchText");
+
+    function showInstitutionError(message) {
+        institutionErrorBox.textContent = message;
+        institutionErrorBox.classList.remove("d-none");
+    }
+
+    function hideInstitutionError() {
+        institutionErrorBox.classList.add("d-none");
+    }
+
+    function checkInstitutionPasswordStrength() {
+        const value = institutionPasswordInput.value;
+        let strength = 0;
+
+        if (value.length >= 8) strength++;
+        if (/[A-Z]/.test(value)) strength++;
+        if (/[a-z]/.test(value)) strength++;
+        if (/[0-9]/.test(value)) strength++;
+
+        if (!value.length) {
+            institutionPasswordStrength.textContent = "";
+            return;
+        }
+
+        if (strength <= 2) {
+            institutionPasswordStrength.textContent = "Weak password";
+            institutionPasswordStrength.style.color = "red";
+        } else if (strength === 3) {
+            institutionPasswordStrength.textContent = "Medium password";
+            institutionPasswordStrength.style.color = "orange";
+        } else {
+            institutionPasswordStrength.textContent = "Strong password";
+            institutionPasswordStrength.style.color = "green";
+        }
+    }
+
+    function checkInstitutionPasswordMatch() {
+        if (!institutionConfirmPasswordInput.value.length) {
+            institutionMatchText.textContent = "";
+            return;
+        }
+
+        if (institutionPasswordInput.value === institutionConfirmPasswordInput.value) {
+            institutionMatchText.textContent = "Passwords match";
+            institutionMatchText.style.color = "green";
+        } else {
+            institutionMatchText.textContent = "Passwords do not match";
+            institutionMatchText.style.color = "red";
+        }
+    }
+
+    institutionPasswordInput.addEventListener("input", () => {
+        checkInstitutionPasswordStrength();
+        checkInstitutionPasswordMatch();
+    });
+    institutionConfirmPasswordInput.addEventListener("input", checkInstitutionPasswordMatch);
+
+    institutionRegisterForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        hideInstitutionError();
+
+        const payload = {
+            userFullName: document.getElementById("institutionAdminNameInput").value.trim(),
+            schoolName: document.getElementById("institutionSchoolNameInput").value.trim(),
+            email: document.getElementById("institutionEmailInput").value.trim(),
+            phoneNumber: document.getElementById("institutionPhoneInput").value.trim() || undefined,
+            password: institutionPasswordInput.value
+        };
+
+        if (!payload.userFullName || !payload.schoolName || !payload.email || !payload.password) {
+            showInstitutionError("Please complete the administrator name, school name, email, and password.");
+            return;
+        }
+
+        if (payload.password !== institutionConfirmPasswordInput.value) {
+            showInstitutionError("Passwords do not match.");
+            return;
+        }
+
+        institutionRegisterBtn.disabled = true;
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/auth/signup/institution`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to create institution account.");
+            }
+
+            sessionStorage.setItem("bridgeUserRole", "Institution");
+            sessionStorage.setItem("bridgeUserName", payload.userFullName);
+            sessionStorage.setItem("bridgeInstitutionSchoolName", data?.schoolName || payload.schoolName);
+            if (data?.teacherJoinCode) {
+                sessionStorage.setItem("bridgeInstitutionTeacherJoinCode", data.teacherJoinCode);
+            }
+            if (data?.access_token) {
+                sessionStorage.setItem("bridgeAccessToken", data.access_token);
+            }
+            sessionStorage.setItem("bridgeVerificationRole", "institution");
+            window.location.href = '@Url.Action("Verification", "Home")';
+        } catch (error) {
+            showInstitutionError(error.message || "Unable to connect to the server.");
+        } finally {
+            institutionRegisterBtn.disabled = false;
+        }
+    });
+</script>

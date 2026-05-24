@@ -90,6 +90,36 @@ namespace GP.Controllers
             return View();
         }
 
+        public IActionResult InstitutionDashboard()
+        {
+            return View();
+        }
+
+        public IActionResult InstitutionTeachers()
+        {
+            return View();
+        }
+
+        public IActionResult InstitutionCommunications()
+        {
+            return View();
+        }
+
+        public IActionResult InstitutionSettings()
+        {
+            return View();
+        }
+
+        public IActionResult TeacherInbox()
+        {
+            return View();
+        }
+
+        public IActionResult AddChild()
+        {
+            return View();
+        }
+
         public IActionResult ParentQuizzes()
         {
             return View();
@@ -141,6 +171,11 @@ namespace GP.Controllers
 
         // ? ???? ????? ??? ?????
         public IActionResult ParentRegrister()
+        {
+            return View();
+        }
+
+        public IActionResult InstitutionRegrister()
         {
             return View();
         }

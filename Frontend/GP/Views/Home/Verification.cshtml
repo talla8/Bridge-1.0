@@ -176,7 +176,7 @@
             return;
         }
 
-        const role = sessionStorage.getItem("bridgeVerificationRole") || "teacher";
+        const role = (sessionStorage.getItem("bridgeVerificationRole") || "teacher").toLowerCase();
         verifyCodeButton.disabled = true;
 
         try {
@@ -198,9 +198,19 @@
 
             showVerificationSuccess(data?.message || "Email has been verified successfully.");
             setTimeout(() => {
-                window.location.href = role === "teacher"
-                    ? '@Url.Action("SetupStudents", "Home")'
-                    : '@Url.Action("ParentDashboard", "Home")';
+                sessionStorage.removeItem("bridgeVerificationRole");
+
+                if (role === "teacher") {
+                    window.location.href = '@Url.Action("SetupStudents", "Home")';
+                    return;
+                }
+
+                if (role === "institution") {
+                    window.location.href = '@Url.Action("InstitutionDashboard", "Home")';
+                    return;
+                }
+
+                window.location.href = '@Url.Action("ParentDashboard", "Home")';
             }, 1000);
         } catch (error) {
             showVerificationError(error.message || "Unable to connect to the server.");

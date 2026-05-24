@@ -3,9 +3,22 @@
     var studentsOpen = currentAction is "studentslist" or "weakstudents" or "studentprofile" or "teacherquizreviews" or "teacherquizreviewdetail" or "teacherquizreviewed";
     var planOpen = currentAction is "analysis" or "history";
     var classOpen = currentAction is "classanalysis" or "classscores";
+    var communicationOpen = currentAction is "teacherinbox";
 }
 
-<aside class="teacher-sidebar">
+<button type="button" class="teacher-sidebar-toggle-button" id="teacherSidebarToggle" aria-controls="teacherSidebar" aria-expanded="false" aria-label="Open sidebar">
+    <i class="bi bi-list"></i>
+    <span>Menu</span>
+</button>
+
+<div class="teacher-sidebar-backdrop" id="teacherSidebarBackdrop"></div>
+
+<aside class="teacher-sidebar" id="teacherSidebar">
+    <div class="teacher-sidebar-toolbar">
+        <button type="button" class="teacher-sidebar-close-button" id="teacherSidebarClose" aria-label="Close sidebar">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
     <div class="teacher-sidebar-profile">
         <div class="teacher-sidebar-avatar">
             <i class="bi bi-person-circle"></i>
@@ -90,6 +103,21 @@
                 <span class="teacher-sidebar-disabled">Class Scores</span>
             </div>
         </details>
+
+        <details class="teacher-sidebar-group" @(communicationOpen ? "open" : null)>
+            <summary class="teacher-sidebar-summary">
+                <span class="teacher-sidebar-summary-arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="teacher-sidebar-summary-icon"><i class="bi bi-bell"></i></span>
+                <span>Communications</span>
+            </summary>
+            <div class="teacher-sidebar-submenu">
+                <a asp-controller="Home"
+                   asp-action="TeacherInbox"
+                   class="teacher-sidebar-sublink @(currentAction == "teacherinbox" ? "active" : "")">
+                    Notifications & Tasks
+                </a>
+            </div>
+        </details>
     </div>
 
     <div class="teacher-sidebar-section teacher-sidebar-section-settings">
@@ -109,13 +137,37 @@
         const role = sessionStorage.getItem("bridgeUserRole");
         const gradeElement = document.getElementById("teacherSidebarGrade");
         const nameElement = document.getElementById("teacherSidebarName");
+        const sidebar = document.getElementById("teacherSidebar");
+        const sidebarBackdrop = document.getElementById("teacherSidebarBackdrop");
+        const sidebarToggle = document.getElementById("teacherSidebarToggle");
+        const sidebarClose = document.getElementById("teacherSidebarClose");
         const token = sessionStorage.getItem("bridgeAccessToken");
         const fallbackName = sessionStorage.getItem("bridgeUserName") || "Teacher";
         const fallbackGrade = sessionStorage.getItem("bridgeTeacherGrade");
+        const sidebarStorageKey = "bridgeTeacherSidebarOpen";
 
         if (role && role !== "Teacher") {
             window.location.replace('@Url.Action("ParentDashboard", "Home")');
             return;
+        }
+
+        function setSidebarOpen(isOpen) {
+            document.body.classList.toggle("teacher-sidebar-open", isOpen);
+            if (sidebarToggle) {
+                sidebarToggle.setAttribute("aria-expanded", String(isOpen));
+            }
+            sessionStorage.setItem(sidebarStorageKey, isOpen ? "open" : "closed");
+        }
+
+        function getPreferredSidebarState() {
+            const storedState = sessionStorage.getItem(sidebarStorageKey);
+            if (storedState === "open") return true;
+            if (storedState === "closed") return false;
+            return window.innerWidth >= 1200;
+        }
+
+        function syncSidebarForViewport() {
+            setSidebarOpen(getPreferredSidebarState());
         }
 
         function renderProfile(name, grade) {
@@ -163,5 +215,26 @@
             .catch(() => {
                 renderProfile(fallbackName, fallbackGrade);
             });
+
+        syncSidebarForViewport();
+
+        sidebarToggle?.addEventListener("click", () => {
+            setSidebarOpen(!document.body.classList.contains("teacher-sidebar-open"));
+        });
+
+        sidebarClose?.addEventListener("click", () => {
+            setSidebarOpen(false);
+        });
+
+        sidebarBackdrop?.addEventListener("click", () => {
+            setSidebarOpen(false);
+        });
+
+        window.addEventListener("resize", () => {
+            const hasStoredPreference = sessionStorage.getItem(sidebarStorageKey) !== null;
+            if (!hasStoredPreference) {
+                syncSidebarForViewport();
+            }
+        });
     })();
 </script>

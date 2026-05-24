@@ -33,6 +33,12 @@
                             <span class="fw-semibold">Parent</span>
                         </div>
 
+                        <div onclick="selectRole('Institution')" id="institutionBox"
+                             class="role-box d-flex align-items-center gap-2 px-3 py-2 rounded-3 shadow-sm bg-primary bg-opacity-10">
+                            <i class="bi bi-buildings fs-4"></i>
+                            <span class="fw-semibold">Institution</span>
+                        </div>
+
                     </div>
 
                     <div class="col-3 ps-2">
@@ -64,11 +70,14 @@
 
                 document.getElementById("teacherBox").classList.remove("role-selected");
                 document.getElementById("parentBox").classList.remove("role-selected");
+                document.getElementById("institutionBox").classList.remove("role-selected");
 
                 if (role === "Teacher") {
                     document.getElementById("teacherBox").classList.add("role-selected");
-                } else {
+                } else if (role === "Parent") {
                     document.getElementById("parentBox").classList.add("role-selected");
+                } else {
+                    document.getElementById("institutionBox").classList.add("role-selected");
                 }
             }
 
@@ -80,6 +89,8 @@
 
                 if (selectedRole === "Teacher") {
                     window.location.href = "/Home/TeacheRegrister";
+                } else if (selectedRole === "Institution") {
+                    window.location.href = "/Home/InstitutionRegrister";
                 } else {
                     window.location.href = "/Home/ParentRegrister";
                 }
