@@ -1,491 +1,582 @@
-﻿
 @{
     ViewData["Title"] = "Profile";
 }
 
-
 <style>
-    /* ── Header card ── */
-    .pf-header {
-        background: #e8f4fd;
-        border-radius: 18px;
-        padding: 2rem;
-        display: flex;
-        align-items: center;
-        gap: 1.75rem;
-        flex-wrap: wrap;
+    .profile-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 28px;
     }
 
-    .pf-avatar-wrap {
-        position: relative;
-        flex-shrink: 0;
-    }
-
-    .pf-avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: #c9c6ff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: 700;
-        color: #534AB7;
-        object-fit: cover;
-    }
-
-    .pf-avatar-edit {
-        position: absolute;
-        bottom: 3px;
-        right: 3px;
-        width: 28px;
-        height: 28px;
-        background: #0dcaf0;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border: 2px solid #fff;
-    }
-
-    .pf-tag {
+    .profile-card {
         background: #fff;
-        border: 1px solid #dee2e6;
+        border: 1px solid #e5e7eb;
         border-radius: 20px;
-        padding: 4px 12px;
-        font-size: 12px;
-        font-weight: 500;
-        color: #495057;
+        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+    }
+
+    .profile-hero {
+        display: flex;
+        gap: 22px;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 26px;
+        background: #e8f4fd;
+    }
+
+    .profile-avatar {
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: #c9c6ff;
+        color: #534ab7;
+        font-size: 34px;
+        font-weight: 800;
+    }
+
+    .profile-name {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .profile-subtitle {
+        margin: 6px 0 0;
+        color: #6b7280;
+        font-size: 15px;
+    }
+
+    .profile-tags {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+
+    .profile-tag {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
-    }
-
-        .pf-tag.verified {
-            background: #e1f5ee;
-            border-color: #9FE1CB;
-            color: #0F6E56;
-        }
-
-    /* ── Info cards ── */
-    .info-card {
+        gap: 6px;
+        padding: 7px 12px;
+        border-radius: 999px;
         background: #fff;
-        border: 1px solid #dee2e6;
-        border-radius: 13px;
-        padding: 1.1rem 1.3rem;
-        height: 100%;
+        border: 1px solid #dbe3f0;
+        color: #4b5563;
+        font-size: 13px;
+        font-weight: 700;
     }
 
-    .info-label {
-        font-size: 11px;
-        font-weight: 600;
+    .profile-tag-verified {
+        background: #e7f7f0;
+        border-color: #9fe1cb;
+        color: #0f6e56;
+    }
+
+    .profile-section {
+        margin-top: 28px;
+    }
+
+    .profile-section-label {
+        margin: 0 0 12px;
+        color: #6b7280;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .08em;
         text-transform: uppercase;
-        letter-spacing: .05em;
-        color: #6c757d;
-        margin-bottom: 4px;
     }
 
-    .info-value {
-        font-size: 14px;
-        font-weight: 500;
-        color: #212529;
-        margin: 0;
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 14px;
     }
 
-        .info-value.muted {
-            color: #6c757d;
-        }
+    .profile-field {
+        grid-column: span 6;
+        padding: 18px 20px;
+    }
 
-    /* ── Edit inputs ── */
-    .edit-field {
-        font-size: 14px;
-        font-weight: 500;
-        border: 1.5px solid #0dcaf0;
-        border-radius: 8px;
-        padding: 5px 10px;
+    .profile-field-sm {
+        grid-column: span 3;
+    }
+
+    .profile-field-head {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .profile-field-label {
+        color: #6b7280;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .profile-field-value {
+        color: #111827;
+        font-size: 16px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .profile-field-value-muted {
+        color: #9ca3af;
+    }
+
+    .profile-field-input {
         width: 100%;
-        background: #f8f9fa;
-        outline: none;
-        display: none;
-        box-sizing: border-box;
-    }
-
-        .edit-field:focus {
-            background: #fff;
-        }
-
-    .editing .info-value {
-        display: none;
-    }
-
-    .editing .edit-field {
-        display: block;
-    }
-
-    .pencil-btn {
-        background: none;
-        border: none;
-        color: #6c757d;
-        cursor: pointer;
-        padding: 0;
+        min-height: 46px;
+        padding: 0 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        background: #fff;
         font-size: 15px;
-        line-height: 1;
-        transition: color .15s;
     }
 
-        .pencil-btn:hover {
-            color: #0d6efd;
-        }
+    .profile-field-edit {
+        border: none;
+        background: transparent;
+        color: #6b7280;
+    }
 
-    /* ── Save button ── */
-    .save-btn {
+    .profile-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+    }
+
+    .profile-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 18px;
+        border-radius: 999px;
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #111827;
+        font-weight: 700;
+    }
+
+    .profile-btn-primary {
+        border-color: transparent;
         background: #0dcaf0;
         color: #fff;
-        border: none;
-        border-radius: 25px;
-        padding: 10px 30px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background .2s;
     }
 
-        .save-btn:hover {
-            background: #0bb5d8;
-        }
-
-    /* ── Password card ── */
-    .pwd-field {
-        width: 100%;
-        padding: 10px 14px;
-        border: 1px solid #dee2e6;
-        border-radius: 9px;
+    .profile-status {
         font-size: 14px;
-        background: #f8f9fa;
-        box-sizing: border-box;
-        outline: none;
-        transition: border-color .2s;
+        font-weight: 700;
     }
 
-        .pwd-field:focus {
-            border-color: #0dcaf0;
-            background: #fff;
+    .profile-status-success {
+        color: #0f6e56;
+    }
+
+    .profile-status-error {
+        color: #b91c1c;
+    }
+
+    .profile-password-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    @@media (max-width: 992px) {
+        .profile-field,
+        .profile-field-sm {
+            grid-column: span 12;
         }
 
-    /* ── Danger zone ── */
-    .danger-card {
-        background: #fff5f5;
-        border: 1px solid #f0b4b4;
-        border-radius: 13px;
-        padding: 1.25rem 1.5rem;
+        .profile-password-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
 <div class="teacher-shell">
     <partial name="_TeacherSidebar" />
     <div class="teacher-shell-content">
-<div class="container py-5">
-
-    <!-- ══════════ HEADER CARD ══════════ -->
-    <div class="pf-header mb-4">
-
-        <div class="pf-avatar-wrap">
-            <img src="~/img/UserLogo.png"
-                 class="pf-avatar"
-                 id="avatarImg"
-                 alt="Profile photo"
-                 onerror="this.style.display='none';document.getElementById('avatarInitials').style.display='flex';">
-            <div class="pf-avatar"
-                 id="avatarInitials"
-                 style="display:none;">
-                MH
-            </div>
-            <label for="avatarInput" class="pf-avatar-edit" title="Change photo">
-                <i class="bi bi-pencil-fill" style="font-size:11px;color:#fff;"></i>
-            </label>
-            <input type="file" id="avatarInput" accept="image/*" class="d-none">
-        </div>
-
-        <div style="flex:1;min-width:0;">
-            <h5 class="fw-bold mb-1" id="headerName">Mr. Mohammad Al-Hassan</h5>
-            <p class="text-secondary mb-2" style="font-size:14px;">Teacher · Grade 3, Section "B"</p>
-            <div class="d-flex flex-wrap gap-2">
-                <span class="pf-tag"><i class="bi bi-book"></i> Grade 3</span>
-                <span class="pf-tag"><i class="bi bi-translate"></i> English</span>
-                <span class="pf-tag"><i class="bi bi-people"></i> 33 Students</span>
-                <span class="pf-tag verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- ══════════ PERSONAL INFORMATION ══════════ -->
-    <h6 class="fw-bold text-uppercase mb-3"
-        style="font-size:12px;letter-spacing:.07em;color:#6c757d;">
-        Personal Information
-    </h6>
-
-    <div class="row g-3 mb-4">
-
-        <!-- Full Name -->
-        <div class="col-12 col-md-6">
-            <div class="info-card" id="card-name">
-                <div class="d-flex justify-content-between align-items-start mb-1">
-                    <span class="info-label">Full Name</span>
-                    <button class="pencil-btn" onclick="toggleEdit('name')" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                    </button>
+        <div class="profile-page">
+            <div class="profile-card profile-hero">
+                <div id="profileAvatar" class="profile-avatar">--</div>
+                <div style="flex:1; min-width: 0;">
+                    <h1 id="profileHeaderName" class="profile-name">Profile</h1>
+                    <div id="profileHeaderSubtitle" class="profile-subtitle">Loading profile...</div>
+                    <div class="profile-tags">
+                        <span class="profile-tag"><i class="bi bi-book"></i> <span id="profileGradeTag">-</span></span>
+                        <span class="profile-tag"><i class="bi bi-translate"></i> <span id="profileSubjectTag">-</span></span>
+                        <span class="profile-tag"><i class="bi bi-people"></i> <span id="profileStudentCountTag">0 Students</span></span>
+                        <span id="profileVerifiedTag" class="profile-tag profile-tag-verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                    </div>
                 </div>
-                <p class="info-value">Mohammad Al-Hassan</p>
-                <input type="text" class="edit-field" id="inp-name" value="Mohammad Al-Hassan">
             </div>
-        </div>
 
-        <!-- Email -->
-        <div class="col-12 col-md-6">
-            <div class="info-card" id="card-email">
-                <div class="d-flex justify-content-between align-items-start mb-1">
-                    <span class="info-label">Email Address</span>
-                    <button class="pencil-btn" onclick="toggleEdit('email')" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                    </button>
+            <div class="profile-section">
+                <h2 class="profile-section-label">Personal Information</h2>
+                <div class="profile-grid">
+                    <div class="profile-card profile-field">
+                        <div class="profile-field-head">
+                            <div class="profile-field-label">Full Name</div>
+                            <button type="button" class="profile-field-edit" data-edit-field="fullName"><i class="bi bi-pencil"></i></button>
+                        </div>
+                        <div id="fullNameDisplay" class="profile-field-value">-</div>
+                        <input id="fullNameInput" class="profile-field-input d-none" type="text" />
+                    </div>
+
+                    <div class="profile-card profile-field">
+                        <div class="profile-field-head">
+                            <div class="profile-field-label">Email Address</div>
+                            <button type="button" class="profile-field-edit" data-edit-field="email"><i class="bi bi-pencil"></i></button>
+                        </div>
+                        <div id="emailDisplay" class="profile-field-value">-</div>
+                        <input id="emailInput" class="profile-field-input d-none" type="email" />
+                    </div>
+
+                    <div class="profile-card profile-field">
+                        <div class="profile-field-head">
+                            <div class="profile-field-label">Phone Number</div>
+                            <button type="button" class="profile-field-edit" data-edit-field="phoneNumber"><i class="bi bi-pencil"></i></button>
+                        </div>
+                        <div id="phoneNumberDisplay" class="profile-field-value profile-field-value-muted">Not set</div>
+                        <input id="phoneNumberInput" class="profile-field-input d-none" type="tel" />
+                    </div>
+
+                    <div class="profile-card profile-field">
+                        <div class="profile-field-head">
+                            <div class="profile-field-label">School</div>
+                        </div>
+                        <div id="schoolDisplay" class="profile-field-value profile-field-value-muted">-</div>
+                    </div>
+
+                    <div class="profile-card profile-field profile-field-sm">
+                        <div class="profile-field-head">
+                            <div class="profile-field-label">Grade</div>
+                        </div>
+                        <div id="gradeDisplay" class="profile-field-value profile-field-value-muted">-</div>
+                    </div>
+
+                    <div class="profile-card profile-field profile-field-sm">
+                        <div class="profile-field-head">
+                            <div class="profile-field-label">Section</div>
+                        </div>
+                        <div id="sectionDisplay" class="profile-field-value profile-field-value-muted">-</div>
+                    </div>
+
+                    <div class="profile-card profile-field profile-field-sm">
+                        <div class="profile-field-head">
+                            <div class="profile-field-label">Subject</div>
+                        </div>
+                        <div id="subjectDisplay" class="profile-field-value profile-field-value-muted">-</div>
+                    </div>
+
+                    <div class="profile-card profile-field profile-field-sm">
+                        <div class="profile-field-head">
+                            <div class="profile-field-label">Students</div>
+                        </div>
+                        <div id="studentCountDisplay" class="profile-field-value profile-field-value-muted">0</div>
+                    </div>
                 </div>
-                <p class="info-value">m.hassan@school.edu</p>
-                <input type="email" class="edit-field" id="inp-email" value="m.hassan@school.edu">
-            </div>
-        </div>
 
-        <!-- Phone -->
-        <div class="col-12 col-md-6">
-            <div class="info-card" id="card-phone">
-                <div class="d-flex justify-content-between align-items-start mb-1">
-                    <span class="info-label">Phone Number</span>
-                    <button class="pencil-btn" onclick="toggleEdit('phone')" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                    </button>
+                <div class="profile-actions">
+                    <button id="saveProfileButton" type="button" class="profile-btn profile-btn-primary">Save Changes</button>
+                    <span id="saveProfileStatus" class="profile-status d-none"></span>
                 </div>
-                <p class="info-value">+962 79 123 4567</p>
-                <input type="tel" class="edit-field" id="inp-phone" value="+962 79 123 4567">
             </div>
-        </div>
 
-        <!-- School -->
-        <div class="col-12 col-md-6">
-            <div class="info-card" id="card-school">
-                <div class="d-flex justify-content-between align-items-start mb-1">
-                    <span class="info-label">School</span>
-                    <button class="pencil-btn" onclick="toggleEdit('school')" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                    </button>
+            <div class="profile-section">
+                <h2 class="profile-section-label">Change Password</h2>
+                <div class="profile-password-grid">
+                    <div>
+                        <label class="profile-field-label d-block mb-2">Current Password</label>
+                        <input id="currentPasswordInput" class="profile-field-input" type="password" />
+                    </div>
+                    <div>
+                        <label class="profile-field-label d-block mb-2">New Password</label>
+                        <input id="newPasswordInput" class="profile-field-input" type="password" />
+                    </div>
+                    <div>
+                        <label class="profile-field-label d-block mb-2">Confirm New Password</label>
+                        <input id="confirmPasswordInput" class="profile-field-input" type="password" />
+                    </div>
                 </div>
-                <p class="info-value">Al-Nour National School</p>
-                <input type="text" class="edit-field" id="inp-school" value="Al-Nour National School">
-            </div>
-        </div>
 
-        <!-- Grade -->
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="info-card" id="card-grade">
-                <div class="d-flex justify-content-between align-items-start mb-1">
-                    <span class="info-label">Grade</span>
-                    <button class="pencil-btn" onclick="toggleEdit('grade')" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                    </button>
+                <div class="profile-actions">
+                    <button id="changePasswordButton" type="button" class="profile-btn profile-btn-primary">Update Password</button>
+                    <span id="changePasswordStatus" class="profile-status d-none"></span>
                 </div>
-                <p class="info-value">Grade 3</p>
-                <input type="text" class="edit-field" id="inp-grade" value="Grade 3">
             </div>
-        </div>
-
-        <!-- Section -->
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="info-card" id="card-section">
-                <div class="d-flex justify-content-between align-items-start mb-1">
-                    <span class="info-label">Section</span>
-                    <button class="pencil-btn" onclick="toggleEdit('section')" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                </div>
-                <p class="info-value">Section B</p>
-                <input type="text" class="edit-field" id="inp-section" value="Section B">
-            </div>
-        </div>
-
-        <!-- Subject -->
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="info-card" id="card-subject">
-                <div class="d-flex justify-content-between align-items-start mb-1">
-                    <span class="info-label">Subject</span>
-                    <button class="pencil-btn" onclick="toggleEdit('subject')" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                </div>
-                <p class="info-value">English Language</p>
-                <input type="text" class="edit-field" id="inp-subject" value="English Language">
-            </div>
-        </div>
-
-        <!-- Member Since (read-only) -->
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="info-card">
-                <span class="info-label d-block mb-1">Member Since</span>
-                <p class="info-value muted">January 2024</p>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Save button -->
-    <div class="d-flex align-items-center gap-3 mb-5">
-        <button class="save-btn" onclick="saveChanges()">Save Changes</button>
-        <span id="saveMsg"
-              class="text-success fw-semibold"
-              style="font-size:14px;display:none;">
-            <i class="bi bi-check-circle-fill me-1"></i> Saved successfully
-        </span>
-    </div>
-
-    <!-- ══════════ CHANGE PASSWORD ══════════ -->
-    <h6 class="fw-bold text-uppercase mb-3"
-        style="font-size:12px;letter-spacing:.07em;color:#6c757d;">
-        Change Password
-    </h6>
-
-    <div class="row g-3 mb-5">
-        <div class="col-12 col-md-6 col-lg-4">
-            <label class="info-label d-block mb-1">Current Password</label>
-            <input type="password" class="pwd-field" id="pwdCurrent" placeholder="••••••••">
-        </div>
-        <div class="col-12 col-md-6 col-lg-4">
-            <label class="info-label d-block mb-1">New Password</label>
-            <input type="password" class="pwd-field" id="pwdNew" placeholder="••••••••">
-        </div>
-        <div class="col-12 col-md-6 col-lg-4">
-            <label class="info-label d-block mb-1">Confirm New Password</label>
-            <input type="password" class="pwd-field" id="pwdConfirm" placeholder="••••••••">
-        </div>
-        <div class="col-12">
-            <button class="save-btn" onclick="changePassword()">Update Password</button>
-            <span id="pwdMsg" class="fw-semibold ms-3" style="font-size:14px;display:none;"></span>
         </div>
     </div>
-
-    <!-- ══════════ DANGER ZONE ══════════ -->
-    <h6 class="fw-bold text-uppercase mb-3"
-        style="font-size:12px;letter-spacing:.07em;color:#dc3545;">
-        Danger Zone
-    </h6>
-
-    <div class="danger-card d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <div>
-            <p class="fw-semibold mb-1" style="font-size:14px;">Delete Account</p>
-            <p class="text-secondary mb-0" style="font-size:13px;">
-                Permanently delete your account and all associated data. This cannot be undone.
-            </p>
-        </div>
-        <button class="btn btn-outline-danger btn-sm rounded-pill px-4 fw-semibold"
-                onclick="confirmDelete()">
-            Delete Account
-        </button>
-    </div>
-
-</div>
-</div>
 </div>
 
-@section Scripts {
-    <script>
-        /* ── Avatar preview ── */
-        document.getElementById('avatarInput').addEventListener('change', function () {
-            const file = this.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                const img = document.getElementById('avatarImg');
-                img.src = e.target.result;
-                img.style.display = 'flex';
-                document.getElementById('avatarInitials').style.display = 'none';
-            };
-            reader.readAsDataURL(file);
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const profileToken = sessionStorage.getItem("bridgeAccessToken");
+    const profileRole = sessionStorage.getItem("bridgeUserRole");
+
+    const editableFields = {
+        fullName: {
+            display: document.getElementById("fullNameDisplay"),
+            input: document.getElementById("fullNameInput")
+        },
+        email: {
+            display: document.getElementById("emailDisplay"),
+            input: document.getElementById("emailInput")
+        },
+        phoneNumber: {
+            display: document.getElementById("phoneNumberDisplay"),
+            input: document.getElementById("phoneNumberInput")
+        }
+    };
+
+    const profileAvatar = document.getElementById("profileAvatar");
+    const profileHeaderName = document.getElementById("profileHeaderName");
+    const profileHeaderSubtitle = document.getElementById("profileHeaderSubtitle");
+    const profileGradeTag = document.getElementById("profileGradeTag");
+    const profileSubjectTag = document.getElementById("profileSubjectTag");
+    const profileStudentCountTag = document.getElementById("profileStudentCountTag");
+    const profileVerifiedTag = document.getElementById("profileVerifiedTag");
+    const schoolDisplay = document.getElementById("schoolDisplay");
+    const gradeDisplay = document.getElementById("gradeDisplay");
+    const sectionDisplay = document.getElementById("sectionDisplay");
+    const subjectDisplay = document.getElementById("subjectDisplay");
+    const studentCountDisplay = document.getElementById("studentCountDisplay");
+    const saveProfileButton = document.getElementById("saveProfileButton");
+    const saveProfileStatus = document.getElementById("saveProfileStatus");
+    const changePasswordButton = document.getElementById("changePasswordButton");
+    const changePasswordStatus = document.getElementById("changePasswordStatus");
+    const currentPasswordInput = document.getElementById("currentPasswordInput");
+    const newPasswordInput = document.getElementById("newPasswordInput");
+    const confirmPasswordInput = document.getElementById("confirmPasswordInput");
+
+    let profileState = null;
+
+    function authorizedHeaders(includeJson = false) {
+        const headers = {
+            Authorization: `Bearer ${profileToken}`
+        };
+
+        if (includeJson) {
+            headers["Content-Type"] = "application/json";
+        }
+
+        return headers;
+    }
+
+    function showStatus(target, message, isError = false) {
+        target.textContent = message;
+        target.classList.remove("d-none", "profile-status-success", "profile-status-error");
+        target.classList.add(isError ? "profile-status-error" : "profile-status-success");
+    }
+
+    function hideStatus(target) {
+        target.classList.add("d-none");
+        target.textContent = "";
+    }
+
+    function getInitials(name) {
+        const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+        return parts.slice(0, 2).map((part) => part[0]?.toUpperCase() || "").join("") || "--";
+    }
+
+    function setEditableField(fieldName, value, emptyLabel = "Not set") {
+        const field = editableFields[fieldName];
+        const normalizedValue = value ? String(value) : "";
+        field.display.textContent = normalizedValue || emptyLabel;
+        field.display.classList.toggle("profile-field-value-muted", !normalizedValue);
+        field.input.value = normalizedValue;
+        field.input.classList.add("d-none");
+        field.display.classList.remove("d-none");
+    }
+
+    function toggleEdit(fieldName) {
+        const field = editableFields[fieldName];
+        if (!field) {
+            return;
+        }
+
+        const isEditing = field.input.classList.contains("d-none");
+        if (isEditing) {
+            field.display.classList.add("d-none");
+            field.input.classList.remove("d-none");
+            field.input.focus();
+            field.input.select();
+            return;
+        }
+
+        field.display.textContent = field.input.value.trim() || (fieldName === "phoneNumber" ? "Not set" : "-");
+        field.display.classList.toggle("profile-field-value-muted", !field.input.value.trim());
+        field.input.classList.add("d-none");
+        field.display.classList.remove("d-none");
+    }
+
+    function renderProfile(profile) {
+        profileState = profile;
+        const grade = profile.grade || "-";
+        const section = profile.section || "-";
+        const subject = profile.subject || "-";
+        const studentCount = Number(profile.studentCount || 0);
+        const verified = Boolean(profile.isVerified);
+
+        profileAvatar.textContent = getInitials(profile.fullName);
+        profileHeaderName.textContent = profile.fullName || "Profile";
+        profileHeaderSubtitle.textContent = `${profile.roleId || "User"} · ${grade}${section !== "-" ? `, Section "${section}"` : ""}`;
+        profileGradeTag.textContent = grade;
+        profileSubjectTag.textContent = subject;
+        profileStudentCountTag.textContent = `${studentCount} Students`;
+        profileVerifiedTag.classList.toggle("d-none", !verified);
+        schoolDisplay.textContent = profile.school || "-";
+        schoolDisplay.classList.toggle("profile-field-value-muted", !profile.school);
+        gradeDisplay.textContent = grade;
+        gradeDisplay.classList.toggle("profile-field-value-muted", grade === "-");
+        sectionDisplay.textContent = section;
+        sectionDisplay.classList.toggle("profile-field-value-muted", section === "-");
+        subjectDisplay.textContent = subject;
+        subjectDisplay.classList.toggle("profile-field-value-muted", subject === "-");
+        studentCountDisplay.textContent = String(studentCount);
+        studentCountDisplay.classList.toggle("profile-field-value-muted", studentCount === 0);
+
+        setEditableField("fullName", profile.fullName, "-");
+        setEditableField("email", profile.email, "-");
+        setEditableField("phoneNumber", profile.phoneNumber, "Not set");
+    }
+
+    async function loadProfile() {
+        if (!profileToken) {
+            window.location.replace('@Url.Action("Login", "Home")');
+            return;
+        }
+
+        if (profileRole && profileRole !== "Teacher") {
+            window.location.replace('@Url.Action("ParentDashboard", "Home")');
+            return;
+        }
+
+        const response = await fetch(`${backendBaseUrl}/auth/profile`, {
+            headers: authorizedHeaders()
         });
+        const data = await response.json().catch(() => null);
 
-        /* ── Toggle inline edit ── */
-        function toggleEdit(field) {
-            const card  = document.getElementById('card-' + field);
-            const val   = card.querySelector('.info-value');
-            const input = document.getElementById('inp-' + field);
-
-            const isEditing = card.classList.contains('editing');
-
-            if (isEditing) {
-                val.textContent = input.value;
-                card.classList.remove('editing');
-                if (field === 'name') {
-                    document.getElementById('headerName').textContent = 'Mr. ' + input.value;
-                }
-            } else {
-                card.classList.add('editing');
-                input.focus();
-            }
+        if (!response.ok || !data) {
+            throw new Error(data?.message || "Unable to load profile.");
         }
 
-        /* ── Save all changes ── */
-        function saveChanges() {
-            const fields = ['name', 'email', 'phone', 'school', 'grade', 'section', 'subject'];
-            fields.forEach(f => {
-                const card = document.getElementById('card-' + f);
-                if (card.classList.contains('editing')) toggleEdit(f);
+        renderProfile(data);
+    }
+
+    async function saveProfile() {
+        hideStatus(saveProfileStatus);
+        const payload = {
+            fullName: editableFields.fullName.input.value.trim(),
+            email: editableFields.email.input.value.trim(),
+            phoneNumber: editableFields.phoneNumber.input.value.trim()
+        };
+
+        if (!payload.fullName || !payload.email) {
+            showStatus(saveProfileStatus, "Full name and email are required.", true);
+            return;
+        }
+
+        saveProfileButton.disabled = true;
+        saveProfileButton.textContent = "Saving...";
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/auth/profile`, {
+                method: "PATCH",
+                headers: authorizedHeaders(true),
+                body: JSON.stringify(payload)
             });
+            const data = await response.json().catch(() => null);
 
-            const msg = document.getElementById('saveMsg');
-            msg.style.display = 'inline';
-            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+            if (!response.ok || !data) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to save profile.");
+            }
+
+            sessionStorage.setItem("bridgeUserName", data.fullName || payload.fullName);
+            renderProfile(data);
+            showStatus(saveProfileStatus, "Profile saved successfully.");
+        } catch (error) {
+            showStatus(saveProfileStatus, error.message || "Unable to save profile.", true);
+        } finally {
+            saveProfileButton.disabled = false;
+            saveProfileButton.textContent = "Save Changes";
+        }
+    }
+
+    async function changePassword() {
+        hideStatus(changePasswordStatus);
+        const currentPassword = currentPasswordInput.value;
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            showStatus(changePasswordStatus, "Fill in all password fields.", true);
+            return;
         }
 
-        /* ── Change password ── */
-        function changePassword() {
-            const current = document.getElementById('pwdCurrent').value;
-            const newPwd  = document.getElementById('pwdNew').value;
-            const confirm = document.getElementById('pwdConfirm').value;
-            const msg     = document.getElementById('pwdMsg');
-
-            if (!current || !newPwd || !confirm) {
-                msg.textContent = '⚠ Please fill in all password fields.';
-                msg.style.color = '#dc3545';
-                msg.style.display = 'inline';
-                return;
-            }
-            if (newPwd !== confirm) {
-                msg.textContent = '⚠ Passwords do not match.';
-                msg.style.color = '#dc3545';
-                msg.style.display = 'inline';
-                return;
-            }
-            if (newPwd.length < 8) {
-                msg.textContent = '⚠ Password must be at least 8 characters.';
-                msg.style.color = '#dc3545';
-                msg.style.display = 'inline';
-                return;
-            }
-
-            msg.textContent = '✓ Password updated successfully.';
-            msg.style.color = '#0F6E56';
-            msg.style.display = 'inline';
-            document.getElementById('pwdCurrent').value = '';
-            document.getElementById('pwdNew').value     = '';
-            document.getElementById('pwdConfirm').value = '';
-            setTimeout(() => { msg.style.display = 'none'; }, 3500);
+        if (newPassword !== confirmPassword) {
+            showStatus(changePasswordStatus, "New passwords do not match.", true);
+            return;
         }
 
-        /* ── Delete account confirmation ── */
-        function confirmDelete() {
-            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-                alert('Account deleted.');
-            }
+        if (newPassword.length < 8) {
+            showStatus(changePasswordStatus, "New password must be at least 8 characters.", true);
+            return;
         }
-    </script>
-}
 
+        changePasswordButton.disabled = true;
+        changePasswordButton.textContent = "Updating...";
 
+        try {
+            const response = await fetch(`${backendBaseUrl}/auth/change-password`, {
+                method: "POST",
+                headers: authorizedHeaders(true),
+                body: JSON.stringify({
+                    currentPassword,
+                    newPassword
+                })
+            });
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to update password.");
+            }
+
+            currentPasswordInput.value = "";
+            newPasswordInput.value = "";
+            confirmPasswordInput.value = "";
+            showStatus(changePasswordStatus, data?.message || "Password updated successfully.");
+        } catch (error) {
+            showStatus(changePasswordStatus, error.message || "Unable to update password.", true);
+        } finally {
+            changePasswordButton.disabled = false;
+            changePasswordButton.textContent = "Update Password";
+        }
+    }
+
+    document.querySelectorAll("[data-edit-field]").forEach((button) => {
+        button.addEventListener("click", () => {
+            toggleEdit(button.dataset.editField);
+        });
+    });
+
+    saveProfileButton.addEventListener("click", saveProfile);
+    changePasswordButton.addEventListener("click", changePassword);
+
+    loadProfile().catch((error) => {
+        showStatus(saveProfileStatus, error.message || "Unable to load profile.", true);
+    });
+</script>

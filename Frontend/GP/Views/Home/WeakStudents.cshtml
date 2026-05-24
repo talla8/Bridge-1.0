@@ -527,11 +527,13 @@
       if (mostAffected && highestGapSkill) {
         dom.focusTitle.textContent = `${mostAffected.name} needs attention first`;
         dom.focusText.textContent = `${state.weakStudents.length} students need support. ${mostAffected.name} affects the largest group, while ${highestGapSkill.skillName} has the highest gap.`;
-        dom.focusActionTitle.textContent = `Create a ${mostAffected.name.toLowerCase()} quiz for weak students`;
+        dom.focusActionTitle.textContent = `Assign a recommended ${mostAffected.name.toLowerCase()} quiz for weak students`;
+        dom.createQuizBtn.textContent = "Assign recommended quiz";
       } else {
         dom.focusTitle.textContent = 'Start with the highest need';
         dom.focusText.textContent = 'Use the weak-student list to focus on the biggest skill gap first.';
         dom.focusActionTitle.textContent = 'Create targeted support work';
+        dom.createQuizBtn.textContent = "Create quiz";
       }
 
       dom.createQuizBtn.onclick = () => {
@@ -543,6 +545,8 @@
         if (skill) {
           targetUrl.searchParams.set('skill', skill);
         }
+
+        targetUrl.searchParams.set('targetType', 'WEAK_STUDENTS');
 
         window.location.href = targetUrl.toString();
       };

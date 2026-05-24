@@ -91,6 +91,11 @@
         color: #4b5563;
     }
 
+    .student-list-badge-pending {
+        background: #fff7d6;
+        color: #9a6700;
+    }
+
     .student-list-actions {
         display: flex;
         align-items: center;
@@ -372,6 +377,7 @@
     const drawerParentCode = document.getElementById("drawerParentCode");
     const drawerActive = document.getElementById("drawerActive");
     const drawerFullProfileLink = document.getElementById("drawerFullProfileLink");
+    const drawerAssignPractice = document.getElementById("drawerAssignPractice");
     const studentDrawerClose = document.getElementById("studentDrawerClose");
 
     function authorizedHeaders() {
@@ -382,9 +388,37 @@
         return Math.round(Number(score) || 0);
     }
 
+    function getStudentStatus(isWeak, score) {
+        if (isWeak) {
+            return {
+                label: "Needs support",
+                badgeClass: "student-list-badge-support"
+            };
+        }
+
+        if (score <= 0) {
+            return {
+                label: "No baseline yet",
+                badgeClass: "student-list-badge-pending"
+            };
+        }
+
+        return {
+            label: "On track",
+            badgeClass: "student-list-badge-track"
+        };
+    }
+
     function closeStudentDrawer() {
         studentProfileDrawerBackdrop.classList.add("d-none");
         studentProfileDrawer.classList.add("d-none");
+    }
+
+    function buildSelectedStudentQuizUrl(studentId) {
+        const targetUrl = new URL('@Url.Action("CreateQuiz", "Home")', window.location.origin);
+        targetUrl.searchParams.set("targetType", "SELECTED_STUDENTS");
+        targetUrl.searchParams.set("studentId", studentId);
+        return targetUrl.toString();
     }
 
     async function openStudentDrawer(studentId) {
@@ -401,6 +435,8 @@
         drawerParentCode.textContent = "-";
         drawerActive.textContent = "-";
         drawerFullProfileLink.href = `/Home/StudentProfile?studentId=${encodeURIComponent(studentId)}`;
+        drawerAssignPractice.disabled = true;
+        drawerAssignPractice.onclick = null;
 
         studentProfileDrawerBackdrop.classList.remove("d-none");
         studentProfileDrawer.classList.remove("d-none");
@@ -423,6 +459,10 @@
             drawerSchool.textContent = student.schoolName || "-";
             drawerParentCode.textContent = student.parentLinkCode || "-";
             drawerActive.textContent = student.isActive ? "Yes" : "No";
+            drawerAssignPractice.disabled = false;
+            drawerAssignPractice.onclick = () => {
+                window.location.href = buildSelectedStudentQuizUrl(student.studentId);
+            };
         } catch (error) {
             studentDrawerSubtitle.textContent = error.message || "Unable to load student profile.";
         }
@@ -478,6 +518,7 @@
             studentListRows.innerHTML = students.map((student) => {
                 const isWeak = weakStudentMap.has(student.studentId);
                 const score = studentScoreMap.get(student.studentId) ?? 0;
+                const status = getStudentStatus(isWeak, score);
 
                 return `
                     <article class="student-list-row">
@@ -485,15 +526,15 @@
                         <div class="student-list-cell">${student.fullArabicName ?? "-"}</div>
                         <div class="student-list-cell">${student.parentLinkCode ?? "-"}</div>
                         <div class="student-list-cell">
-                            <span class="student-list-badge ${isWeak ? "student-list-badge-support" : "student-list-badge-track"}">
-                                ${isWeak ? "Needs support" : "On track"}
+                            <span class="student-list-badge ${status.badgeClass}">
+                                ${status.label}
                             </span>
                         </div>
                         <div class="student-list-cell student-list-score">${score}%</div>
                         <div class="student-list-cell">
                             <div class="student-list-actions">
                                 <a class="student-list-btn js-view-profile" href="/Home/StudentProfile?studentId=${encodeURIComponent(student.studentId)}" data-student-id="${student.studentId}">View profile</a>
-                                <span class="student-list-btn-disabled">Assign practice</span>
+                                <a class="student-list-btn student-list-btn-secondary" href="${buildSelectedStudentQuizUrl(student.studentId)}">Assign practice</a>
                             </div>
                         </div>
                     </article>

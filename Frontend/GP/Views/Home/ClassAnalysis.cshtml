@@ -179,6 +179,88 @@
         color: #6b7280;
     }
 
+    .class-analysis-action-card {
+        margin-top: 1.75rem;
+        padding: 1.45rem;
+        border: 1px solid rgba(23, 50, 77, 0.12);
+        border-radius: 1.4rem;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(23, 50, 77, 0.08);
+    }
+
+    .class-analysis-action-kicker {
+        color: #7b74d8;
+        font-size: 0.82rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .class-analysis-action-title {
+        margin: 0.55rem 0 0;
+        color: #111827;
+        font-size: 1.7rem;
+        font-weight: 800;
+    }
+
+    .class-analysis-action-copy {
+        margin: 0.85rem 0 0;
+        color: #4b5563;
+        font-size: 1rem;
+        line-height: 1.6;
+        max-width: 60rem;
+    }
+
+    .class-analysis-action-meta {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .class-analysis-action-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        border-radius: 999px;
+        padding: 0.55rem 0.9rem;
+        background: #f5f3ff;
+        color: #5b50d6;
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .class-analysis-action-actions {
+        display: flex;
+        gap: 0.85rem;
+        flex-wrap: wrap;
+        margin-top: 1.2rem;
+    }
+
+    .class-analysis-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 0.95rem;
+        padding: 0.9rem 1.15rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .class-analysis-action-btn-primary {
+        background: linear-gradient(135deg, #8b82ff, #6d8cff);
+        color: #fff;
+    }
+
+    .class-analysis-action-btn-secondary {
+        border: 1px solid #dbe3f0;
+        background: #fff;
+        color: #374151;
+    }
+
     @@media (max-width: 1199.98px) {
         .class-analysis-grid {
             grid-template-columns: 1fr;
@@ -240,6 +322,23 @@
                 </div>
             </div>
 
+            <section class="class-analysis-action-card">
+                <div class="class-analysis-action-kicker">Recommended Next Step</div>
+                <h2 class="class-analysis-action-title" id="actionRecommendationTitle">No immediate action</h2>
+                <p class="class-analysis-action-copy" id="actionRecommendationReason">
+                    The class recommendation will appear here once the backend analysis is loaded.
+                </p>
+                <div class="class-analysis-action-meta">
+                    <div class="class-analysis-action-chip" id="actionRecommendationSkill">Focus skill: -</div>
+                    <div class="class-analysis-action-chip" id="actionRecommendationScope">Scope: -</div>
+                    <div class="class-analysis-action-chip" id="actionRecommendationRecentQuiz">Recent quiz: none</div>
+                </div>
+                <div class="class-analysis-action-actions">
+                    <a id="actionRecommendationPrimary" class="class-analysis-action-btn class-analysis-action-btn-primary" href="@Url.Action("CreateQuiz", "Home")">Open action</a>
+                    <a id="actionRecommendationSecondary" class="class-analysis-action-btn class-analysis-action-btn-secondary" href="@Url.Action("WeakStudents", "Home")">Review weak students</a>
+                </div>
+            </section>
+
             <div class="class-analysis-grid">
                 <section class="class-analysis-table-card">
                     <div class="class-analysis-table-head">
@@ -274,7 +373,6 @@
 <script>
     const backendBaseUrl = "http://localhost:3000";
     const token = sessionStorage.getItem("bridgeAccessToken");
-    const baselineReady = sessionStorage.getItem("bridgeBaselineReady") === "true";
 
     const classAverageValue = document.getElementById("classAverageValue");
     const needSupportValue = document.getElementById("needSupportValue");
@@ -284,6 +382,13 @@
     const classAnalysisEmpty = document.getElementById("classAnalysisEmpty");
     const insightText = document.getElementById("insightText");
     const insightBar = document.getElementById("insightBar");
+    const actionRecommendationTitle = document.getElementById("actionRecommendationTitle");
+    const actionRecommendationReason = document.getElementById("actionRecommendationReason");
+    const actionRecommendationSkill = document.getElementById("actionRecommendationSkill");
+    const actionRecommendationScope = document.getElementById("actionRecommendationScope");
+    const actionRecommendationRecentQuiz = document.getElementById("actionRecommendationRecentQuiz");
+    const actionRecommendationPrimary = document.getElementById("actionRecommendationPrimary");
+    const actionRecommendationSecondary = document.getElementById("actionRecommendationSecondary");
 
     const skillNameMap = {
         skill_vocal: "Vocal Awareness",
@@ -318,39 +423,80 @@
         return `The lowest-performing skill is "${weakestName}" (${average}%). Consider allocating more practice activities and using the support plan for students below average.`;
     }
 
+    function buildCreateQuizUrl(skill, targetType) {
+        const targetUrl = new URL('@Url.Action("CreateQuiz", "Home")', window.location.origin);
+        if (skill) {
+            targetUrl.searchParams.set("skill", skill);
+        }
+        if (targetType) {
+            targetUrl.searchParams.set("targetType", targetType);
+        }
+        return targetUrl.toString();
+    }
+
+    function applyActionRecommendation(recommendation) {
+        const focusSkill = recommendation?.focusSkillName || "-";
+        const scopeLabel = recommendation?.targetType === "WHOLE_CLASS"
+            ? "Whole class"
+            : recommendation?.targetType === "WEAK_STUDENTS"
+                ? "Weak students"
+                : recommendation?.recommendationType === "GUIDED_PRACTICE"
+                    ? "Guided practice"
+                    : "-";
+        const recentQuizLabel = recommendation?.recentQuizAssigned
+            ? `Recent quiz: ${recommendation.daysSinceLastQuizForSkill ?? 0} day(s) ago`
+            : "Recent quiz: none";
+
+        actionRecommendationTitle.textContent = recommendation?.actionLabel || "No immediate action";
+        actionRecommendationReason.textContent = recommendation?.reason || "No recommendation is available right now.";
+        actionRecommendationSkill.textContent = `Focus skill: ${focusSkill}`;
+        actionRecommendationScope.textContent = `Scope: ${scopeLabel}`;
+        actionRecommendationRecentQuiz.textContent = recentQuizLabel;
+
+        if (recommendation?.recommendationType === "CLASS_QUIZ" || recommendation?.recommendationType === "SUPPORT_GROUP_QUIZ") {
+            actionRecommendationPrimary.textContent = recommendation.actionLabel;
+            actionRecommendationPrimary.href = buildCreateQuizUrl(recommendation.focusSkillName, recommendation.targetType);
+            actionRecommendationSecondary.textContent = "Review weak students";
+            actionRecommendationSecondary.href = '@Url.Action("WeakStudents", "Home")';
+            return;
+        }
+
+        if (recommendation?.recommendationType === "GUIDED_PRACTICE") {
+            actionRecommendationPrimary.textContent = "Review weak students";
+            actionRecommendationPrimary.href = '@Url.Action("WeakStudents", "Home")';
+            actionRecommendationSecondary.textContent = "Create support-group quiz";
+            actionRecommendationSecondary.href = buildCreateQuizUrl(recommendation.focusSkillName, "WEAK_STUDENTS");
+            return;
+        }
+
+        actionRecommendationPrimary.textContent = "Review weak students";
+        actionRecommendationPrimary.href = '@Url.Action("WeakStudents", "Home")';
+        actionRecommendationSecondary.textContent = "Create class quiz";
+        actionRecommendationSecondary.href = buildCreateQuizUrl(recommendation?.focusSkillName, "WHOLE_CLASS");
+    }
+
     async function loadClassAnalysis() {
         if (!token) {
             insightText.textContent = "Sign in again to load class analysis.";
             return;
         }
 
-        if (!baselineReady) {
-            classAverageValue.textContent = "0%";
-            needSupportValue.textContent = "0";
-            needSupportPct.textContent = "0% Of Class";
-            topSkillsList.innerHTML = "";
-            classAnalysisRows.innerHTML = "";
-            classAnalysisEmpty.classList.remove("d-none");
-            classAnalysisEmpty.textContent = "No assessment results were uploaded yet. Upload the baseline file first.";
-            insightText.textContent = "No class insight is available until the assessment results are uploaded.";
-            insightBar.style.width = "0%";
-            return;
-        }
-
         try {
-            const [classAverageResponse, weakStudentsResponse, classSkillsResponse, studentsResponse] = await Promise.all([
+            const [classAverageResponse, weakStudentsResponse, classSkillsResponse, studentsResponse, recommendationResponse] = await Promise.all([
                 fetch(`${backendBaseUrl}/statistics/class`, { headers: authorizedHeaders() }),
                 fetch(`${backendBaseUrl}/statistics/weak-students`, { headers: authorizedHeaders() }),
                 fetch(`${backendBaseUrl}/statistics/class/skills`, { headers: authorizedHeaders() }),
-                fetch(`${backendBaseUrl}/students/myStudents`, { headers: authorizedHeaders() })
+                fetch(`${backendBaseUrl}/students/myStudents`, { headers: authorizedHeaders() }),
+                fetch(`${backendBaseUrl}/statistics/class/recommendation`, { headers: authorizedHeaders() })
             ]);
 
             const classAverage = await classAverageResponse.json().catch(() => 0);
             const weakStudents = await weakStudentsResponse.json().catch(() => []);
             const classSkills = await classSkillsResponse.json().catch(() => []);
             const students = await studentsResponse.json().catch(() => []);
+            const recommendation = await recommendationResponse.json().catch(() => null);
 
-            if (!classAverageResponse.ok || !weakStudentsResponse.ok || !classSkillsResponse.ok || !studentsResponse.ok) {
+            if (!classAverageResponse.ok || !weakStudentsResponse.ok || !classSkillsResponse.ok || !studentsResponse.ok || !recommendationResponse.ok) {
                 throw new Error("Unable to load class analysis.");
             }
 
@@ -361,6 +507,7 @@
             classAverageValue.textContent = `${roundPercent(classAverage)}%`;
             needSupportValue.textContent = String(weakStudentSummaries.length);
             needSupportPct.textContent = `${totalStudents ? roundPercent((weakStudentSummaries.length / totalStudents) * 100) : 0}% Of Class`;
+            applyActionRecommendation(recommendation);
 
             topSkillsList.innerHTML = "";
             skillRows.slice(0, 3).forEach((row) => {
@@ -372,7 +519,8 @@
             if (!skillRows.length) {
                 classAnalysisRows.innerHTML = "";
                 classAnalysisEmpty.classList.remove("d-none");
-                insightText.textContent = "No class insight is available yet.";
+                classAnalysisEmpty.textContent = "No class skill data is available for this teacher yet.";
+                insightText.textContent = "No class insight is available until class skill data exists for this teacher.";
                 insightBar.style.width = "0%";
                 return;
             }
@@ -404,6 +552,7 @@
         } catch (error) {
             classAnalysisRows.innerHTML = "";
             classAnalysisEmpty.classList.remove("d-none");
+            classAnalysisEmpty.textContent = "Unable to load class skill data right now.";
             insightText.textContent = error.message || "Unable to load class analysis.";
             insightBar.style.width = "0%";
         }
