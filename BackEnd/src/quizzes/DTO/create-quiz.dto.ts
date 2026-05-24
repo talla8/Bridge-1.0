@@ -44,6 +44,10 @@ export class CreateQuizDTO {
   @IsNotEmpty()
   subjectId: string;
 
+  @IsOptional()
+  @IsString()
+  skillFocus?: string;
+
   @IsString()
   @IsNotEmpty()
   title: string;

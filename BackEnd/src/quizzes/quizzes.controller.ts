@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { CreateQuizDTO } from './DTO/create-quiz.dto';
 import { ReviewQuizResultDTO } from './DTO/review-quiz-result.dto';
 import { QuizzesService } from './quizzes.service';
@@ -10,6 +10,14 @@ export class QuizzesController {
   @Post()
   createQuiz(@Req() req, @Body() dto: CreateQuizDTO) {
     return this.quizzesService.createQuiz(req.user.sub, dto);
+  }
+
+  @Get('library')
+  getQuizLibrary(
+    @Query('subjectId') subjectId?: string,
+    @Query('skillId') skillId?: string,
+  ) {
+    return this.quizzesService.getQuizLibraryTemplates(subjectId, skillId);
   }
 
   @Get(':quizId')

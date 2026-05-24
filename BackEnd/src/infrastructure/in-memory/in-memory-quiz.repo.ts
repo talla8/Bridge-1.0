@@ -12,15 +12,21 @@ export class InMemoryQuizzesRepo implements QuizRepository {
   }
 
   async findById(id: string): Promise<Quiz | null> {
-    return this.quizzes.find((quiz) => quiz.quizId === id) ?? null;
+    return (
+      this.quizzes.find((quiz) => String(quiz.quizId) === String(id)) ?? null
+    );
   }
 
   async findByMilestoneId(milestoneId: string): Promise<Quiz[]> {
-    return this.quizzes.filter((quiz) => quiz.milestoneId === milestoneId);
+    return this.quizzes.filter(
+      (quiz) => String(quiz.milestoneId) === String(milestoneId),
+    );
   }
 
   async findByTeacherId(teacherId: string): Promise<Quiz[]> {
-    return this.quizzes.filter((quiz) => quiz.teacherId === teacherId);
+    return this.quizzes.filter(
+      (quiz) => String(quiz.teacherId) === String(teacherId),
+    );
   }
 
   async findAll(): Promise<Quiz[]> {

@@ -78,7 +78,7 @@ export class SupportProgramsService {
     milestoneId: string,
     input: CreateQuizInput,
   ): Promise<Quiz> {
-    await this.findMilestoneOrThrow(supportProgramId, milestoneId);
+    await this.findMilestoneOrThrow(supportProgramId, milestoneId); //comeent: we can literlly losose this
     this.validateQuizInput(input);
 
     return this.quizzesRepo.create({

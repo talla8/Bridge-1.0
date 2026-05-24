@@ -9,8 +9,8 @@ export class StatisticsController {
 
   assesmentResulttest: AssesmentResult[] = [];
   @Get('class')
-  getClassavg() {
-    return this.statisticsService.classAverage();
+  getClassavg(@Req() req) {
+    return this.statisticsService.classAverage(req.user.sub);
   }
   @Get('avgPerSTD/:studentId')
   getAvgPerSTD(@Param('studentId') studentId: StudentId) {
@@ -33,7 +33,12 @@ export class StatisticsController {
   }
 
   @Get('class/skills')
-  getClassSkillAverages() {
-    return this.statisticsService.sortWeakestSkills();
+  getClassSkillAverages(@Req() req) {
+    return this.statisticsService.sortWeakestSkills(req.user.sub);
+  }
+
+  @Get('class/recommendation')
+  getClassRecommendation(@Req() req) {
+    return this.statisticsService.getClassActionRecommendation(req.user.sub);
   }
 }

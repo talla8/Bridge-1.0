@@ -30,6 +30,7 @@ export class Quiz {
   quizId: QuizId;
   teacherId?: UserId;
   subjectId?: SubjectId;
+  skillFocus?: string;
   supportProgramId?: SupportProgramId;
   milestoneId?: SupportProgramMilestoneId;
   title: string;

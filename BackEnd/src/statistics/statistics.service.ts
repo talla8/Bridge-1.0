@@ -1,8 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import {
+  AssignmentSourceType,
+  AssignmentStatus,
+  AssignmentTargetType,
+  AssignmentType,
+} from 'src/domain/assignment';
 import { BaselineProcessingServiceService } from 'src/baseline/baseline-processing-service.service';
 import { AssesmentResult } from 'src/domain/assesmentResult';
 import { SkillId, StudentId, UserId } from 'src/domain/ids';
 import { Student } from 'src/domain/student';
+import { InMemoryAssignmentsRepo } from 'src/infrastructure/in-memory/in-memory-assignment.repo';
+import { InMemoryQuizzesRepo } from 'src/infrastructure/in-memory/in-memory-quiz.repo';
 import { InMemorySkillsRepo } from 'src/infrastructure/in-memory/in-memory-skill.repo';
 import { StudentsService } from 'src/students/students.service';
 
@@ -37,16 +45,38 @@ export type WeakStudentSummary = {
   }[];
 };
 
+export type ClassActionRecommendation = {
+  focusSkillId: SkillId | null;
+  focusSkillName: string | null;
+  classAveragePct: number;
+  affectedClassPct: number;
+  affectedStudentCount: number;
+  totalStudents: number;
+  weakStudentCount: number;
+  recentQuizAssigned: boolean;
+  daysSinceLastQuizForSkill: number | null;
+  recommendationType:
+    | 'CLASS_QUIZ'
+    | 'SUPPORT_GROUP_QUIZ'
+    | 'GUIDED_PRACTICE'
+    | 'NONE';
+  targetType: AssignmentTargetType | null;
+  reason: string;
+  actionLabel: string;
+};
+
 @Injectable()
 export class StatisticsService {
   constructor(
     private readonly baselineProcessingService: BaselineProcessingServiceService,
     private readonly studentsService: StudentsService,
     private readonly skillsRepo: InMemorySkillsRepo,
+    private readonly assignmentsRepo: InMemoryAssignmentsRepo,
+    private readonly quizzesRepo: InMemoryQuizzesRepo,
   ) {}
 
-  async classAverage(): Promise<number> {
-    const results = await this.baselineProcessingService.getAllResults();
+  async classAverage(teacherId?: UserId): Promise<number> {
+    const results = await this.getResultsForTeacher(teacherId);
     // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     // console.log(results);
     if (results.length === 0) {
@@ -69,7 +99,7 @@ export class StatisticsService {
 
     return totalAverage / studentAverages.length;
   }
-
+// comment : i need to combine those we dont need 2 methods
   async countSkillsAvgPerStudent(studentId: string): Promise<number> {
     const studentResults =
       await this.baselineProcessingService.findByStudentId(studentId);
@@ -196,8 +226,8 @@ export class StatisticsService {
     });
   }
 
-  async calculateAvgForEachSkill(): Promise<any> {
-    const results = await this.baselineProcessingService.getAllResults();
+  async calculateAvgForEachSkill(teacherId?: UserId): Promise<any> {
+    const results = await this.getResultsForTeacher(teacherId);
     return this.calculateSkillAveragesFromResults(results);
   }
 
@@ -253,8 +283,8 @@ export class StatisticsService {
     return skillNameMap.get(skillId) ?? skillId;
   }
 
-  async sortWeakestSkills(): Promise<SkillPriorityRow[]> {
-    const skillsAndAverages = await this.calculateAvgForEachSkill();
+  async sortWeakestSkills(teacherId?: UserId): Promise<SkillPriorityRow[]> {
+    const skillsAndAverages = await this.calculateAvgForEachSkill(teacherId);
 
     return skillsAndAverages
       .map(
@@ -265,6 +295,231 @@ export class StatisticsService {
         }),
       )
       .sort((a, b) => a.avg - b.avg);
+  }
+
+  async getClassActionRecommendation(
+    teacherId: UserId,
+  ): Promise<ClassActionRecommendation> {
+    const [students, weakStudents, skillRows] = await Promise.all([
+      this.studentsService.getStudents(teacherId),
+      this.getWeakStudentsForTeacher(teacherId),
+      this.sortWeakestSkills(teacherId),
+    ]);
+
+    const totalStudents = students.length;
+    const weakStudentCount = weakStudents.length;
+    const focusSkill = skillRows[0];
+
+    if (!focusSkill || totalStudents === 0) {
+      return {
+        focusSkillId: null,
+        focusSkillName: null,
+        classAveragePct: 0,
+        affectedClassPct: 0,
+        affectedStudentCount: 0,
+        totalStudents,
+        weakStudentCount,
+        recentQuizAssigned: false,
+        daysSinceLastQuizForSkill: null,
+        recommendationType: 'NONE',
+        targetType: null,
+        reason: 'No class assessment data is available yet for this teacher.',
+        actionLabel: 'No immediate action',
+      };
+    }
+
+    const focusSkillName = this.getSkillName(
+      focusSkill.skillId,
+      new Map([[focusSkill.skillId, this.getSkillLabel(focusSkill.skillId)]]),
+    );
+    const affectedStudentCount = weakStudents.filter((student) =>
+      (student.weakSkills || []).some((skill) => skill.skillId === focusSkill.skillId),
+    ).length;
+    const affectedClassPct =
+      totalStudents === 0 ? 0 : Math.round((affectedStudentCount / totalStudents) * 100);
+    const recentQuizSignal = await this.getRecentQuizSignal(
+      teacherId,
+      focusSkill.skillId,
+      focusSkillName,
+    );
+
+    if (affectedStudentCount === 0) {
+      return {
+        focusSkillId: focusSkill.skillId,
+        focusSkillName,
+        classAveragePct: Math.round(focusSkill.avg),
+        affectedClassPct,
+        affectedStudentCount,
+        totalStudents,
+        weakStudentCount,
+        recentQuizAssigned: recentQuizSignal.recentQuizAssigned,
+        daysSinceLastQuizForSkill: recentQuizSignal.daysSinceLastQuizForSkill,
+        recommendationType: 'NONE',
+        targetType: null,
+        reason: `${focusSkillName} is currently the weakest class skill, but no students are below the class average in it right now.`,
+        actionLabel: 'No immediate action',
+      };
+    }
+
+    if (Math.round(focusSkill.avg) <= 45) {
+      return {
+        focusSkillId: focusSkill.skillId,
+        focusSkillName,
+        classAveragePct: Math.round(focusSkill.avg),
+        affectedClassPct,
+        affectedStudentCount,
+        totalStudents,
+        weakStudentCount,
+        recentQuizAssigned: recentQuizSignal.recentQuizAssigned,
+        daysSinceLastQuizForSkill: recentQuizSignal.daysSinceLastQuizForSkill,
+        recommendationType: 'GUIDED_PRACTICE',
+        targetType: null,
+        reason: `${focusSkillName} is still too weak across the class for a useful quiz. Build understanding with guided practice first.`,
+        actionLabel: `Start guided practice for ${focusSkillName}`,
+      };
+    }
+
+    if (recentQuizSignal.recentQuizAssigned) {
+      return {
+        focusSkillId: focusSkill.skillId,
+        focusSkillName,
+        classAveragePct: Math.round(focusSkill.avg),
+        affectedClassPct,
+        affectedStudentCount,
+        totalStudents,
+        weakStudentCount,
+        recentQuizAssigned: true,
+        daysSinceLastQuizForSkill: recentQuizSignal.daysSinceLastQuizForSkill,
+        recommendationType: 'NONE',
+        targetType: null,
+        reason: `A recent ${focusSkillName} quiz was already assigned. Review student responses before assigning another one.`,
+        actionLabel: 'No immediate action',
+      };
+    }
+
+    if (affectedClassPct >= 40) {
+      return {
+        focusSkillId: focusSkill.skillId,
+        focusSkillName,
+        classAveragePct: Math.round(focusSkill.avg),
+        affectedClassPct,
+        affectedStudentCount,
+        totalStudents,
+        weakStudentCount,
+        recentQuizAssigned: false,
+        daysSinceLastQuizForSkill: recentQuizSignal.daysSinceLastQuizForSkill,
+        recommendationType: 'CLASS_QUIZ',
+        targetType: AssignmentTargetType.WHOLE_CLASS,
+        reason: `${affectedClassPct}% of the class is below average in ${focusSkillName}. A class-wide quiz will confirm whether the gap is still broad.`,
+        actionLabel: `Assign class quiz for ${focusSkillName}`,
+      };
+    }
+
+    return {
+      focusSkillId: focusSkill.skillId,
+      focusSkillName,
+      classAveragePct: Math.round(focusSkill.avg),
+      affectedClassPct,
+      affectedStudentCount,
+      totalStudents,
+      weakStudentCount,
+      recentQuizAssigned: false,
+      daysSinceLastQuizForSkill: recentQuizSignal.daysSinceLastQuizForSkill,
+      recommendationType: 'SUPPORT_GROUP_QUIZ',
+      targetType: AssignmentTargetType.WEAK_STUDENTS,
+      reason: `${affectedStudentCount} students are below average in ${focusSkillName}. Target the weak group instead of the whole class.`,
+      actionLabel: `Assign support-group quiz for ${focusSkillName}`,
+    };
+  }
+
+  private async getRecentQuizSignal(
+    teacherId: UserId,
+    focusSkillId: SkillId,
+    focusSkillName: string,
+  ): Promise<{ recentQuizAssigned: boolean; daysSinceLastQuizForSkill: number | null }> {
+    const [assignments, quizzes] = await Promise.all([
+      this.assignmentsRepo.findByTeacherId(String(teacherId)),
+      this.quizzesRepo.findByTeacherId(String(teacherId)),
+    ]);
+    const quizMap = new Map(quizzes.map((quiz) => [quiz.quizId, quiz]));
+    const normalizedSkillName = this.normalizeSkillToken(focusSkillName);
+    const normalizedSkillId = this.normalizeSkillToken(focusSkillId);
+
+    const matchingAssignments = assignments
+      .filter((assignment) => assignment.type === AssignmentType.QUIZ)
+      .filter((assignment) => assignment.status === AssignmentStatus.PUBLISHED)
+      .filter((assignment) => assignment.sourceType === AssignmentSourceType.TEACHER_CREATED)
+      .flatMap((assignment) => {
+        const quiz = quizMap.get(assignment.sourceId);
+        if (!quiz?.skillFocus) {
+          return [];
+        }
+
+        const normalizedQuizSkill = this.normalizeSkillToken(quiz.skillFocus);
+        if (
+          normalizedQuizSkill !== normalizedSkillName &&
+          normalizedQuizSkill !== normalizedSkillId
+        ) {
+          return [];
+        }
+
+        return assignment;
+      })
+      .sort(
+        (left, right) =>
+          new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
+      );
+
+    const latestAssignment = matchingAssignments[0];
+    if (!latestAssignment) {
+      return {
+        recentQuizAssigned: false,
+        daysSinceLastQuizForSkill: null,
+      };
+    }
+
+    const millisSinceLastQuiz =
+      Date.now() - new Date(latestAssignment.createdAt).getTime();
+    const daysSinceLastQuizForSkill = Math.max(
+      0,
+      Math.floor(millisSinceLastQuiz / (1000 * 60 * 60 * 24)),
+    );
+
+    return {
+      recentQuizAssigned: daysSinceLastQuizForSkill < 7,
+      daysSinceLastQuizForSkill,
+    };
+  }
+
+  private normalizeSkillToken(value: string): string {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  private async getResultsForTeacher(
+    teacherId?: UserId,
+  ): Promise<AssesmentResult[]> {
+    const results = await this.baselineProcessingService.getAllResults();
+
+    if (!teacherId) {
+      return results;
+    }
+
+    const students = await this.studentsService.getStudents(teacherId);
+    const studentIds = new Set(students.map((student) => student.studentId));
+    return results.filter((result) => studentIds.has(result.studentId));
+  }
+
+  private getSkillLabel(skillId: SkillId): string {
+    switch (skillId) {
+      case 'skill_vocal':
+        return 'Vocal Awareness';
+      case 'skill_sounds_of_letters':
+        return 'Sounds of Letters';
+      case 'skill_writing':
+        return 'Writing';
+      default:
+        return skillId;
+    }
   }
 
   private getPriorityFromAverage(avg: number): Priority {

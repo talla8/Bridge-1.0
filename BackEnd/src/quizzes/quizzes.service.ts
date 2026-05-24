@@ -12,7 +12,25 @@ import { InMemoryAssignmentsRepo } from 'src/infrastructure/in-memory/in-memory-
 import { InMemoryQuizzesRepo } from 'src/infrastructure/in-memory/in-memory-quiz.repo';
 import { InMemoryQuizResultsRepo } from 'src/infrastructure/in-memory/in-memory-quiz-result.repo';
 import { InMemoryStudentsRepo } from 'src/infrastructure/in-memory/in-memory-student.repo';
+import { InMemorySupportProgramsRepo } from 'src/infrastructure/in-memory/in-memory-support-program.repo';
 import { CreateQuizDTO } from './DTO/create-quiz.dto';
+
+export type QuizLibraryTemplate = {
+  templateId: string;
+  title: string;
+  subjectId: string;
+  skillId: string;
+  skillName: string;
+  supportProgramId: string;
+  milestoneId: string;
+  description: string;
+  questionCount: number;
+  questions: {
+    prompt: string;
+    type: QuizQuestionType;
+    options?: { text: string; isCorrect: boolean }[];
+  }[];
+};
 
 @Injectable()
 export class QuizzesService {
@@ -21,6 +39,7 @@ export class QuizzesService {
     private readonly quizResultsRepo: InMemoryQuizResultsRepo,
     private readonly assignmentsRepo: InMemoryAssignmentsRepo,
     private readonly studentsRepo: InMemoryStudentsRepo,
+    private readonly supportProgramsRepo: InMemorySupportProgramsRepo,
   ) {}
 
   async createQuiz(teacherId: UserId, dto: CreateQuizDTO): Promise<Quiz> {
@@ -30,6 +49,7 @@ export class QuizzesService {
       quizId: `quiz_${randomUUID()}`,
       teacherId,
       subjectId: dto.subjectId,
+      skillFocus: dto.skillFocus?.trim() || undefined,
       title: dto.title,
       questions: dto.questions.map((question) => ({
         quizQuestionId: `quiz_question_${randomUUID()}`,
@@ -63,6 +83,49 @@ export class QuizzesService {
     }
 
     return quiz;
+  }
+
+  async getQuizLibraryTemplates(
+    subjectId?: string,
+    skillId?: string,
+  ): Promise<QuizLibraryTemplate[]> {
+    const supportPrograms = await this.supportProgramsRepo.findAll();
+    const normalizedSkillFilter = skillId?.trim().toLowerCase();
+
+    return supportPrograms
+      .filter((program) => !subjectId || String(program.subjectId) === String(subjectId))
+      .filter(
+        (program) =>
+          !normalizedSkillFilter ||
+          String(program.targetSkill).toLowerCase() === normalizedSkillFilter ||
+          this.getSkillLabel(program.targetSkill).toLowerCase() ===
+            normalizedSkillFilter,
+      )
+      .flatMap((program) =>
+        program.milestones.map((milestone) => ({
+          templateId: `${program.supportProgramId}:${milestone.milestoneId}`,
+          title: `${this.getSkillLabel(program.targetSkill)} - ${milestone.name}`,
+          subjectId: String(program.subjectId),
+          skillId: String(program.targetSkill),
+          skillName: this.getSkillLabel(program.targetSkill),
+          supportProgramId: program.supportProgramId,
+          milestoneId: milestone.milestoneId,
+          description: milestone.goal,
+          questionCount: milestone.items.length,
+          questions: milestone.items.map((item) => ({
+            prompt: item.name,
+            type: QuizQuestionType.ESSAY,
+            options: [],
+          })),
+        })),
+      )
+      .sort((left, right) => {
+        if (left.skillName !== right.skillName) {
+          return left.skillName.localeCompare(right.skillName);
+        }
+
+        return left.title.localeCompare(right.title);
+      });
   }
 
   async getPendingReviews(teacherId: UserId) {
@@ -276,5 +339,15 @@ export class QuizzesService {
         }
       }
     });
+  }
+
+  private getSkillLabel(skillId: string): string {
+    const labels: Record<string, string> = {
+      skill_vocal: 'Vocal Awareness',
+      skill_sounds_of_letters: 'Sounds Of Letters',
+      skill_writing: 'Writing',
+    };
+
+    return labels[skillId] ?? skillId;
   }
 }
