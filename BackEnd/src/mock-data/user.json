@@ -54,5 +54,14 @@
     "RoleId": "Teacher",
     "IsActive": true,
     "IsVerified": true
+  },
+  {
+    "UserId": 7,
+    "FullName": "Amal Hasan",
+    "Email": "parent.seed@bridge.local",
+    "Password": "Teacher123!",
+    "RoleId": "Parent",
+    "IsActive": true,
+    "IsVerified": true
   }
 ]

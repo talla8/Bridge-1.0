@@ -255,6 +255,8 @@
     "FullArabicName": "أحمد محمد علي حسن",
     "NationalId": "980000001",
     "ParentLinkCode": "BRIDGE-AHMAD-001",
+    "ParentId": 3,
+    "ParentRelation": "Mother",
     "GradeId": "Third Grade",
     "SchoolName": "Bridge School",
     "IsActive": true
