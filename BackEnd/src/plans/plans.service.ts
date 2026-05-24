@@ -19,7 +19,11 @@ import { PlanInputService } from './plan-input.service';
 import { TeacherTodoItem } from './types/teacher-todo-item';
 import { Priority } from 'src/statistics/statistics.service';
 import { StatisticsService } from 'src/statistics/statistics.service';
-import { PlanItem, PlanItemStatus } from 'src/domain/plan-item';
+import {
+  PlanItem,
+  PlanItemPriority,
+  PlanItemStatus,
+} from 'src/domain/plan-item';
 import { randomUUID } from 'crypto';
 import { InMemoryPlanItemsRepo } from 'src/infrastructure/in-memory/in-memory-plan-item.repo';
 import { InMemorySessionsRepo } from 'src/infrastructure/in-memory/in-memory-session.repo';
@@ -38,7 +42,12 @@ export const semesterTotalWeeks: Record<number, number> = {
 export type UpdatePlanItemStatusResponse = {
   item: PlanItem;
   session: Session;
-  progress: PlanProgressSummary;
+  progress: PlanMonitoringSummary;
+};
+
+export type UpdatePlanItemTimeResponse = {
+  session: Session;
+  progress: PlanMonitoringSummary;
 };
 
 export type ReplanPaceSummary = {
@@ -48,6 +57,7 @@ export type ReplanPaceSummary = {
 
 export type ReplanPlanResponse = {
   plan: Plan;
+  summary: PlanMonitoringSummary;
   pace: ReplanPaceSummary;
   planOverCapacity: boolean;
   unplacedItems: PlanItem[];
@@ -62,6 +72,44 @@ export type PlanProgressSummary = {
   progressPercentage: number;
 };
 
+export type PlanArchiveItem = {
+  planItemId: string;
+  title: string;
+  status: PlanItemStatus;
+  estimatedTime: number;
+  notes?: string;
+  sessionId: string;
+  sessionDate: Date;
+  sessionWeekNo: number;
+  day: string;
+};
+
+export type PlanReorderReason = 'PROGRESS_BEHIND' | 'SESSION_OVERFLOW';
+
+export type CompressedPlanItemSummary = {
+  planItemId: string;
+  title: string;
+  priority: PlanItemPriority;
+  oldEstimatedTime: number;
+  newEstimatedTime: number;
+};
+
+export type PlanMonitoringSummary = PlanProgressSummary & {
+  classSpeedPercentage: number;
+  expectedCompletedMinutes: number;
+  actualCompletedMinutes: number;
+  planNeedsReordering: boolean;
+  reorderReasons: PlanReorderReason[];
+  postponedItems: PlanArchiveItem[];
+  cancelledItemsArchive: PlanArchiveItem[];
+  overloadedSessions: number;
+  pace: ReplanPaceSummary;
+  bufferUsed: boolean;
+  bufferMinutesUsed: number;
+  compressionApplied: boolean;
+  compressedItems: CompressedPlanItemSummary[];
+};
+
 const DEFAULT_SESSION_DURATION_MINUTES = 40;
 const REVIEW_BUFFER_INTERVAL = 4;
 const REVIEW_BUFFER_MINUTES = 10;
@@ -72,6 +120,12 @@ const DAY_ORDER: WeekDay[] = [
   'Wednesday',
   'Thursday',
 ];
+
+const PRIORITY_COMPRESSION_ORDER: Record<PlanItemPriority, number> = {
+  [PlanItemPriority.LOW]: 0,
+  [PlanItemPriority.MID]: 1,
+  [PlanItemPriority.HIGH]: 2,
+};
 
 @Injectable()
 export class PlansService {
@@ -119,7 +173,7 @@ export class PlansService {
       orderedItems.map((item) => this.calculateEstimatedTime(item)),
     );
 
-    const sessions = this.buildSessionsFromSlots(
+    const sessions = await this.buildSessionsFromSlots(
       teacherId,
       subjectId,
       this.sortWeeklySlots(savedWeeklySlots.slots),
@@ -172,7 +226,7 @@ export class PlansService {
     planItemId: string,
     estimatedMinutes: number,
     sessionId: string,
-  ): Promise<Session> {
+  ): Promise<UpdatePlanItemTimeResponse> {
     const planItem = await this.planItemRepo.findById(planItemId);
     if (!planItem) throw new NotFoundException();
     if (planItem.planId !== planId) {
@@ -181,22 +235,21 @@ export class PlansService {
 
     const plan = await this.verifyTeacherOwnsPlan(planId, teacherId);
     const planSession = this.findSessionInPlan(plan, sessionId);
-    const item = this.findItemInSession(planSession, planItemId);
+    const item = this.findItemInSession(planSession, planItemId); //comment: why do we have this AND the plan item?
     const updatedItem: PlanItem = {
       ...item,
       estimatedTime: estimatedMinutes,
     };
 
     const session = await this.sessionRepo.findById(sessionId);
-    if (!session) throw new NotFoundException();
+    if (!session) throw new NotFoundException(); //comment:  why do we find the session twice???
 
     this.replaceItemInSession(planSession, updatedItem);
     planSession.usedDuration = this.calculateSessionUsedDuration(planSession);
-
+    // comment: we should add a max to the time
     this.replaceItemInSession(session, updatedItem);
     session.usedDuration = planSession.usedDuration;
 
-    // TODO: Repack sessions if this update pushes the session over its limit.
     await this.plansRepo.update(plan.planId, { sessions: plan.sessions });
     await this.sessionRepo.update(sessionId, {
       items: session.items,
@@ -216,7 +269,10 @@ export class PlansService {
         newEstimatedTime: estimatedMinutes,
       },
     );
-    return session;
+    return {
+      session,
+      progress: this.calculatePlanMonitoringSummary(plan),
+    };
   }
 
   async updateItemStatus(
@@ -281,16 +337,16 @@ export class PlansService {
     return {
       item: savedItem,
       session,
-      progress: this.calculatePlanProgress(plan),
+      progress: this.calculatePlanMonitoringSummary(plan),
     };
   }
 
   async getPlanProgress(
     teacherId: UserId,
     planId: string,
-  ): Promise<PlanProgressSummary> {
+  ): Promise<PlanMonitoringSummary> {
     const plan = await this.verifyTeacherOwnsPlan(planId, teacherId);
-    return this.calculatePlanProgress(plan);
+    return this.calculatePlanMonitoringSummary(plan);
   }
 
   async getPlanHistory(teacherId: UserId, planId: string): Promise<PlanLog[]> {
@@ -397,6 +453,7 @@ export class PlansService {
 
     return {
       plan: updatedPlan,
+      summary: this.calculatePlanMonitoringSummary(updatedPlan),
       pace,
       planOverCapacity: unplacedItems.length > 0,
       unplacedItems,
@@ -438,6 +495,97 @@ export class PlansService {
     sessions: Session[];
     pace: ReplanPaceSummary;
     unplacedItems: PlanItem[];
+    bufferUsed: boolean;
+    bufferMinutesUsed: number;
+    compressionApplied: boolean;
+    compressedItems: CompressedPlanItemSummary[];
+  } {
+    const normalPack = this.packFutureSessions(
+      sessions,
+      items,
+      anchorIndex,
+      'NORMAL_ONLY',
+    );
+    let replannedSessions = normalPack.sessions;
+    let unplacedItems = normalPack.unplacedItems;
+    let carriedForwardItemsByDay = normalPack.carriedForwardItemsByDay;
+    let bufferUsed = false;
+    let compressionApplied = false;
+    let compressedItems: CompressedPlanItemSummary[] = [];
+
+    if (unplacedItems.length > 0) {
+      const bufferPack = this.packFutureSessions(
+        sessions,
+        items,
+        anchorIndex,
+        'WITH_BUFFER',
+      );
+
+      if (bufferPack.unplacedItems.length < unplacedItems.length) {
+        replannedSessions = bufferPack.sessions;
+        unplacedItems = bufferPack.unplacedItems;
+        carriedForwardItemsByDay = bufferPack.carriedForwardItemsByDay;
+      }
+
+      if (bufferPack.unplacedItems.length < normalPack.unplacedItems.length) {
+        bufferUsed = true;
+      } //comment: why do we need this many cases?
+
+      if (bufferPack.unplacedItems.length > 0) {
+        const compressionPlan = this.selectivelyCompressItems(
+          items,
+          sessions,
+          anchorIndex,
+        );
+
+        if (compressionPlan.itemsChanged) {
+          const compressedPack = this.packFutureSessions(
+            sessions,
+            compressionPlan.items,
+            anchorIndex,
+            'WITH_BUFFER',
+          );
+
+          if (compressedPack.unplacedItems.length < unplacedItems.length) {
+            replannedSessions = compressedPack.sessions;
+            unplacedItems = compressedPack.unplacedItems;
+            carriedForwardItemsByDay = compressedPack.carriedForwardItemsByDay;
+            compressionApplied = compressionPlan.compressedItems.length > 0;
+            compressedItems = compressionPlan.compressedItems;
+            bufferUsed = true;
+          }
+        }
+      }
+    }
+
+    const bufferMinutesUsed =
+      this.calculateBufferMinutesUsed(replannedSessions);
+
+    return {
+      sessions: replannedSessions,
+      pace: {
+        carriedForwardItemsByDay,
+        behindPace: Object.values(carriedForwardItemsByDay).some(
+          (count) => count > 1,
+        ),
+      },
+      unplacedItems,
+      bufferUsed: bufferUsed || bufferMinutesUsed > 0,
+      bufferMinutesUsed,
+      compressionApplied,
+      compressedItems,
+    };
+  }
+
+  private packFutureSessions(
+    sessions: Session[],
+    items: PlanItem[],
+    anchorIndex: number,
+    capacityMode: 'NORMAL_ONLY' | 'WITH_BUFFER',
+  ): {
+    sessions: Session[];
+    carriedForwardItemsByDay: Record<string, number>;
+    unplacedItems: PlanItem[];
   } {
     const carriedForwardItemsByDay: Record<string, number> = {};
     let itemIndex = 0;
@@ -451,10 +599,10 @@ export class PlansService {
         items: [...fixedItems],
       };
       let usedDuration = this.calculateSessionUsedDuration(nextSession);
-      const normalAvailableMinutes =
-        nextSession.maxDuration - nextSession.reviewBufferMinutes;
-      const maxAvailableMinutes =
-        normalAvailableMinutes + nextSession.reviewBufferMinutes;
+      const maxAvailableMinutes = this.getSessionAvailableMinutes(
+        nextSession,
+        capacityMode,
+      );
 
       while (itemIndex < items.length) {
         const item = items[itemIndex];
@@ -481,18 +629,177 @@ export class PlansService {
       return nextSession;
     });
 
-    const unplacedItems = items.slice(itemIndex);
-
     return {
       sessions: replannedSessions,
-      pace: {
-        carriedForwardItemsByDay,
-        behindPace: Object.values(carriedForwardItemsByDay).some(
-          (count) => count > 1,
-        ),
-      },
-      unplacedItems,
+      carriedForwardItemsByDay,
+      unplacedItems: items.slice(itemIndex),
     };
+  }
+
+  private getSessionAvailableMinutes(
+    session: Session,
+    capacityMode: 'NORMAL_ONLY' | 'WITH_BUFFER',
+  ): number {
+    if (capacityMode === 'WITH_BUFFER') {
+      return session.maxDuration;
+    }
+
+    return Math.max(0, session.maxDuration - session.reviewBufferMinutes);
+  }
+
+  private selectivelyCompressItems(
+    items: PlanItem[],
+    sessions: Session[],
+    anchorIndex: number,
+  ): {
+    items: PlanItem[];
+    compressedItems: CompressedPlanItemSummary[];
+    itemsChanged: boolean;
+  } {
+    const workingItems = items.map((item) => ({ ...item }));
+    const compressedItems: CompressedPlanItemSummary[] = [];
+    const maxAttempts = workingItems.length * 12;
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      const packResult = this.packFutureSessions(
+        sessions,
+        workingItems,
+        anchorIndex,
+        'WITH_BUFFER',
+      );
+      if (packResult.unplacedItems.length === 0) {
+        break;
+      }
+
+      const deficit = this.calculateEstimatedMinutes(packResult.unplacedItems);
+      const candidateIndex = this.findBestCompressionCandidateIndex(
+        workingItems,
+        deficit,
+      );
+
+      if (candidateIndex === -1) {
+        break;
+      }
+
+      const candidate = workingItems[candidateIndex];
+      const oldEstimatedTime = Number(candidate.estimatedTime ?? 0);
+      const reductionStep = this.getCompressionStep(candidate);
+      const nextEstimatedTime = Math.max(
+        Number(candidate.minEstimatedTime ?? oldEstimatedTime),
+        oldEstimatedTime - reductionStep,
+      );
+
+      if (nextEstimatedTime >= oldEstimatedTime) {
+        break;
+      }
+
+      workingItems[candidateIndex] = {
+        ...candidate,
+        estimatedTime: nextEstimatedTime,
+      };
+
+      const existingSummary = compressedItems.find(
+        (item) => item.planItemId === candidate.planItemId,
+      );
+
+      if (existingSummary) {
+        existingSummary.newEstimatedTime = nextEstimatedTime;
+      } else {
+        compressedItems.push({
+          planItemId: candidate.planItemId,
+          title: candidate.title,
+          priority: candidate.priority ?? PlanItemPriority.LOW,
+          oldEstimatedTime,
+          newEstimatedTime: nextEstimatedTime,
+        });
+      }
+
+      attempts++;
+    }
+
+    return {
+      items: workingItems,
+      compressedItems,
+      itemsChanged: compressedItems.length > 0,
+    };
+  }
+
+  private findBestCompressionCandidateIndex(
+    items: PlanItem[],
+    deficit: number,
+  ): number {
+    const candidates = items
+      .map((item, index) => ({ item, index }))
+      .filter(({ item }) => this.isCompressionCandidate(item))
+      .sort((left, right) => {
+        const priorityDiff =
+          PRIORITY_COMPRESSION_ORDER[
+            left.item.priority ?? PlanItemPriority.LOW
+          ] -
+          PRIORITY_COMPRESSION_ORDER[
+            right.item.priority ?? PlanItemPriority.LOW
+          ];
+        if (priorityDiff !== 0) {
+          return priorityDiff;
+        }
+
+        const leftTime = Number(left.item.estimatedTime ?? 0);
+        const rightTime = Number(right.item.estimatedTime ?? 0);
+        const timeDiff = rightTime - leftTime;
+        if (timeDiff !== 0) {
+          return timeDiff;
+        }
+
+        const leftAvailable =
+          leftTime - Number(left.item.minEstimatedTime ?? leftTime);
+        const rightAvailable =
+          rightTime - Number(right.item.minEstimatedTime ?? rightTime);
+        const availableDiff = rightAvailable - leftAvailable;
+        if (availableDiff !== 0) {
+          return availableDiff;
+        }
+
+        const leftFit = Math.abs(leftAvailable - deficit);
+        const rightFit = Math.abs(rightAvailable - deficit);
+        return leftFit - rightFit;
+      });
+
+    return candidates[0]?.index ?? -1;
+  }
+
+  private isCompressionCandidate(item: PlanItem): boolean {
+    if (!item.isCompressible) {
+      return false;
+    }
+
+    const currentEstimatedTime = Number(item.estimatedTime ?? 0);
+    const minEstimatedTime = Number(
+      item.minEstimatedTime ?? currentEstimatedTime,
+    );
+
+    return currentEstimatedTime > minEstimatedTime;
+  }
+
+  private getCompressionStep(item: PlanItem): number {
+    return item.priority === PlanItemPriority.LOW ? 2 : 1;
+  }
+
+  private calculateEstimatedMinutes(items: PlanItem[]): number {
+    return items.reduce(
+      (total, item) => total + Number(item.estimatedTime ?? 0),
+      0,
+    );
+  }
+
+  private calculateBufferMinutesUsed(sessions: Session[]): number {
+    return sessions.reduce((total, session) => {
+      const normalCapacity = this.getSessionAvailableMinutes(
+        session,
+        'NORMAL_ONLY',
+      );
+      return total + Math.max(0, session.usedDuration - normalCapacity);
+    }, 0);
   }
 
   private applyCarryForwardMetadata(
@@ -657,7 +964,7 @@ export class PlansService {
       default:
         return PlanLogActionType.ITEM_REINSERTED;
     }
-  }
+  } //comment :  do we actually need this method?
 
   private buildPlanItemLogDescription(
     actionType: PlanLogActionType,
@@ -738,6 +1045,180 @@ export class PlansService {
     };
   }
 
+  private calculatePlanMonitoringSummary(plan: Plan): PlanMonitoringSummary {
+    //comment : we can use this one dorectly
+    const progress = this.calculatePlanProgress(plan);
+    const expectedCompletedMinutes =
+      this.calculateExpectedCompletedMinutes(plan);
+    const actualCompletedMinutes = this.calculateActualCompletedMinutes(plan);
+    const now = new Date().getTime();
+    const classSpeedPercentage =
+      expectedCompletedMinutes === 0
+        ? 100
+        : Math.round((actualCompletedMinutes / expectedCompletedMinutes) * 100);
+    const overloadedSessions = plan.sessions.filter(
+      (session) =>
+        session.usedDuration > session.maxDuration &&
+        new Date(session.sessionDate).getTime() > now,
+    ).length;
+    const reorderReasons: PlanReorderReason[] = [];
+
+    if (classSpeedPercentage < 85) {
+      reorderReasons.push('PROGRESS_BEHIND');
+    }
+    if (overloadedSessions > 0) {
+      reorderReasons.push('SESSION_OVERFLOW');
+    }
+
+    const bufferMinutesUsed = this.calculateBufferMinutesUsed(plan.sessions);
+    const compressedItems = this.collectCompressedItems(plan);
+
+    return {
+      ...progress,
+      classSpeedPercentage,
+      expectedCompletedMinutes,
+      actualCompletedMinutes,
+      planNeedsReordering: reorderReasons.length > 0,
+      reorderReasons,
+      postponedItems: this.collectArchivedItems(plan, PlanItemStatus.POSTPONED),
+      cancelledItemsArchive: this.collectArchivedItems(
+        plan,
+        PlanItemStatus.CANCELLED,
+      ),
+      overloadedSessions,
+      pace: this.calculateCurrentPace(plan),
+      bufferUsed: bufferMinutesUsed > 0,
+      bufferMinutesUsed,
+      compressionApplied: compressedItems.length > 0,
+      compressedItems,
+    };
+  }
+
+  private calculateExpectedCompletedMinutes(plan: Plan): number {
+    const progressWindow = this.getPlanProgressWindow(plan);
+    return plan.sessions
+      .filter((session) => {
+        const sessionTime = new Date(session.sessionDate).getTime();
+        return (
+          sessionTime >= progressWindow.planCreatedDayStart.getTime() &&
+          sessionTime < progressWindow.todayStart.getTime()
+        );
+      })
+      .flatMap((session) => session.items)
+      .filter((item) => item.status !== PlanItemStatus.CANCELLED)
+      .reduce(
+        (total, item) =>
+          total + Number(item.originalEstimatedTime ?? item.estimatedTime ?? 0),
+        0,
+      );
+  }
+
+  private calculateActualCompletedMinutes(plan: Plan): number {
+    const progressWindow = this.getPlanProgressWindow(plan);
+    return plan.sessions
+      .filter((session) => {
+        const sessionTime = new Date(session.sessionDate).getTime();
+        return (
+          sessionTime >= progressWindow.planCreatedDayStart.getTime() &&
+          sessionTime <= progressWindow.todayEnd.getTime()
+        );
+      })
+      .flatMap((session) => session.items)
+      .filter((item) => item.status === PlanItemStatus.COMPLETED)
+      .reduce(
+        (total, item) =>
+          total + Number(item.originalEstimatedTime ?? item.estimatedTime ?? 0),
+        0,
+      );
+  }
+
+  private getPlanProgressWindow(plan: Plan): {
+    planCreatedDayStart: Date;
+    todayStart: Date;
+    todayEnd: Date;
+  } {
+    const planCreatedAt = new Date(this.getPlanCreatedTimestamp(plan));
+    const planCreatedDayStart = new Date(planCreatedAt); //comment:  whats the diff between these 2 variables ?
+    planCreatedDayStart.setHours(0, 0, 0, 0);
+
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const todayEnd = new Date(todayStart);
+    todayEnd.setHours(23, 59, 59, 999);
+
+    return {
+      planCreatedDayStart,
+      todayStart,
+      todayEnd,
+    };
+  }
+
+  private collectArchivedItems(
+    plan: Plan,
+    status: PlanItemStatus,
+  ): PlanArchiveItem[] {
+    return plan.sessions.flatMap((session) =>
+      session.items
+        .filter((item) => item.status === status)
+        .map((item) => ({
+          planItemId: item.planItemId,
+          title: item.title,
+          status: item.status,
+          estimatedTime: Number(item.estimatedTime ?? 0),
+          notes: item.notes,
+          sessionId: session.sessionId,
+          sessionDate: session.sessionDate,
+          sessionWeekNo: session.sessionWeekNo,
+          day: session.day,
+        })),
+    );
+  }
+
+  private collectCompressedItems(plan: Plan): CompressedPlanItemSummary[] {
+    //comment: here we just check if the time now is less than before, a better mechanisim will be to label compressed items as compressed
+    return plan.sessions.flatMap((session) =>
+      session.items
+        .filter((item) => {
+          const originalEstimatedTime = Number(
+            item.originalEstimatedTime ?? item.estimatedTime ?? 0,
+          );
+          const estimatedTime = Number(item.estimatedTime ?? 0);
+          return estimatedTime < originalEstimatedTime;
+        })
+        .map((item) => ({
+          planItemId: item.planItemId,
+          title: item.title,
+          priority: item.priority ?? PlanItemPriority.LOW,
+          oldEstimatedTime: Number(
+            item.originalEstimatedTime ?? item.estimatedTime ?? 0,
+          ),
+          newEstimatedTime: Number(item.estimatedTime ?? 0),
+        })),
+    );
+  }
+
+  private calculateCurrentPace(plan: Plan): ReplanPaceSummary {
+    const carriedForwardItemsByDay: Record<string, number> = {};
+
+    plan.sessions.forEach((session) => {
+      session.items.forEach((item) => {
+        if ((item.carriedForwardCount ?? 0) > 0) {
+          const dayKey = this.toDateKey(session.sessionDate);
+          carriedForwardItemsByDay[dayKey] =
+            (carriedForwardItemsByDay[dayKey] ?? 0) + 1;
+        }
+      });
+    });
+
+    return {
+      carriedForwardItemsByDay,
+      behindPace: Object.values(carriedForwardItemsByDay).some(
+        (count) => count > 1,
+      ),
+    };
+  }
+
   private isSameDate(left: Date, right: Date): boolean {
     const leftDate = new Date(left);
     const rightDate = new Date(right);
@@ -794,6 +1275,57 @@ export class PlansService {
     return priorityPoints + difficultyPoints;
   }
 
+  private async calculatePlanItemPriority(
+    curriculumItem: CurriculumItem,
+  ): Promise<PlanItemPriority> {
+    const priorityRows = await this.statService.sortWeakestSkills();
+    const matchedSkill = priorityRows.find((row) =>
+      curriculumItem.skillsSupported.includes(row.skillId),
+    );
+
+    switch (matchedSkill?.priority) {
+      case Priority.HIGH:
+        return PlanItemPriority.HIGH;
+      case Priority.MID:
+        return PlanItemPriority.MID;
+      default:
+        return PlanItemPriority.LOW;
+    }
+  }
+
+  private getPlanItemCompressionSettings(
+    estimatedTime: number,
+    priority: PlanItemPriority,
+  ): Pick<
+    PlanItem,
+    'originalEstimatedTime' | 'minEstimatedTime' | 'priority' | 'isCompressible'
+  > {
+    if (priority === PlanItemPriority.HIGH) {
+      return {
+        originalEstimatedTime: estimatedTime,
+        minEstimatedTime: estimatedTime,
+        priority,
+        isCompressible: false,
+      };
+    }
+
+    if (priority === PlanItemPriority.MID) {
+      return {
+        originalEstimatedTime: estimatedTime,
+        minEstimatedTime: Math.max(6, estimatedTime - 3),
+        priority,
+        isCompressible: estimatedTime > 6,
+      };
+    }
+
+    return {
+      originalEstimatedTime: estimatedTime,
+      minEstimatedTime: Math.max(3, estimatedTime - 6),
+      priority,
+      isCompressible: estimatedTime > 3,
+    };
+  }
+
   private weightToMinutes(weight: number): number {
     if (weight >= 18) return 15;
     if (weight >= 14) return 12;
@@ -844,14 +1376,14 @@ export class PlansService {
     });
   }
 
-  private buildSessionsFromSlots(
+  private async buildSessionsFromSlots(
     teacherId: UserId,
     subjectId: SubjectId,
     weeklySlots: WeeklySlotDTO[],
     timedItems: CurriculumItem[],
     totalWeeks: number,
     planId: string,
-  ): Session[] {
+  ): Promise<Session[]> {
     if (weeklySlots.length === 0 || timedItems.length === 0) {
       return [];
     }
@@ -878,12 +1410,19 @@ export class PlansService {
 
         while (itemIndex < timedItems.length) {
           const currentItem = timedItems[itemIndex];
+          const planItemPriority =
+            await this.calculatePlanItemPriority(currentItem);
+          const compressionSettings = this.getPlanItemCompressionSettings(
+            Number(currentItem.estimatedTime ?? 0),
+            planItemPriority,
+          );
           const planItem: PlanItem = {
             ...currentItem,
             planId,
             sessionId,
             planItemId: `plan_item_${randomUUID()}`,
             title: currentItem.name,
+            ...compressionSettings,
             status: PlanItemStatus.PLANNED,
           };
           const itemMinutes = Number(planItem.estimatedTime ?? 0);

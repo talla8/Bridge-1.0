@@ -13,6 +13,12 @@ export enum PlanItemStatus {
   CANCELLED = 'Cancelled',
 }
 
+export enum PlanItemPriority {
+  HIGH = 'HIGH',
+  MID = 'MID',
+  LOW = 'LOW',
+}
+
 export class PlanItem {
   planItemId: PlanItemId;
   planId: PlanId;
@@ -24,6 +30,10 @@ export class PlanItem {
   lessonNo: number;
   orderInLesson: number;
   estimatedTime: number;
+  originalEstimatedTime?: number;
+  minEstimatedTime?: number;
+  priority?: PlanItemPriority;
+  isCompressible?: boolean;
   status: PlanItemStatus;
   originalSessionId?: string;
   originalSessionOrder?: number;
