@@ -46,5 +46,77 @@
         "skillId": "skill_writing",
         "totalScore": 4,
         "level": "Advanced"
+    },
+    {
+        "ResultId": "result_seed_ahmad_skill_vocal",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_1",
+        "SkillId": "skill_vocal",
+        "TotalScore": 2,
+        "Level": "Beginner"
+    },
+    {
+        "ResultId": "result_seed_ahmad_skill_sounds",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_1",
+        "SkillId": "skill_sounds_of_letters",
+        "TotalScore": 3,
+        "Level": "Beginner"
+    },
+    {
+        "ResultId": "result_seed_ahmad_skill_writing",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_1",
+        "SkillId": "skill_writing",
+        "TotalScore": 1,
+        "Level": "Beginner"
+    },
+    {
+        "ResultId": "result_seed_noor_skill_vocal",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_2",
+        "SkillId": "skill_vocal",
+        "TotalScore": 3,
+        "Level": "Intermediate"
+    },
+    {
+        "ResultId": "result_seed_noor_skill_sounds",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_2",
+        "SkillId": "skill_sounds_of_letters",
+        "TotalScore": 4,
+        "Level": "Intermediate"
+    },
+    {
+        "ResultId": "result_seed_noor_skill_writing",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_2",
+        "SkillId": "skill_writing",
+        "TotalScore": 1,
+        "Level": "Beginner"
+    },
+    {
+        "ResultId": "result_seed_sara_skill_vocal",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_3",
+        "SkillId": "skill_vocal",
+        "TotalScore": 4,
+        "Level": "Intermediate"
+    },
+    {
+        "ResultId": "result_seed_sara_skill_sounds",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_3",
+        "SkillId": "skill_sounds_of_letters",
+        "TotalScore": 5,
+        "Level": "Intermediate"
+    },
+    {
+        "ResultId": "result_seed_sara_skill_writing",
+        "UploadId": "2",
+        "StudentId": "stu_seed_grade3_3",
+        "SkillId": "skill_writing",
+        "TotalScore": 2,
+        "Level": "Intermediate"
     }
-]
+] 

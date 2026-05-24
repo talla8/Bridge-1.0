@@ -5,15 +5,18 @@
     "Email": "tala@example.com",
     "Password": "hash_tala",
     "RoleId": "Teacher",
-    "IsActive": true
+    "IsActive": true,
+    "IsVerified": true
   },
   {
     "UserId": 2,
-    "FullName": "Aseel Mohammad",
-    "Email": "aseel@example.com",
-    "Password": "hash_aseel",
+    "FullName": "Rana Normal",
+    "Email": "teacher.normal@bridge.local",
+    "Password": "Teacher123!",
+    "SchoolId": 1,
     "RoleId": "Teacher",
-    "IsActive": true
+    "IsActive": true,
+    "IsVerified": true
   },
   {
     "UserId": 3,
@@ -21,7 +24,8 @@
     "Email": "saad@example.com",
     "Password": "hash_saad",
     "RoleId": "Parent",
-    "IsActive": true
+    "IsActive": true,
+    "IsVerified": true
   },
   {
     "UserId": 4,
@@ -29,14 +33,26 @@
     "Email": "mona@example.com",
     "Password": "hash_mona",
     "RoleId": "Parent",
-    "IsActive": true
+    "IsActive": true,
+    "IsVerified": true
   },
   {
     "UserId": 5,
-    "FullName": "Nour Admin",
-    "Email": "admin@example.com",
-    "Password": "hash_admin",
-    "RoleId": "Admin",
-    "IsActive": true
+    "FullName": "Nour Institution",
+    "Email": "institution.bridge@bridge.local",
+    "Password": "Teacher123!",
+    "SchoolId": 1,
+    "RoleId": "Institution",
+    "IsActive": true,
+    "IsVerified": true
+  },
+  {
+    "UserId": 6,
+    "FullName": "Layla Compression",
+    "Email": "teacher.compression@bridge.local",
+    "Password": "Teacher123!",
+    "RoleId": "Teacher",
+    "IsActive": true,
+    "IsVerified": true
   }
 ]

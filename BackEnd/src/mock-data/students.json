@@ -248,5 +248,35 @@
     "SchoolId": "1",
     "ParentRelation": "Mother",
     "IsActive": true
+  },
+  {
+    "StudentId": "stu_seed_grade3_1",
+    "FullEnglishName": "Ahmad Mohammad Ali Hasan",
+    "FullArabicName": "أحمد محمد علي حسن",
+    "NationalId": "980000001",
+    "ParentLinkCode": "BRIDGE-AHMAD-001",
+    "GradeId": "Third Grade",
+    "SchoolName": "Bridge School",
+    "IsActive": true
+  },
+  {
+    "StudentId": "stu_seed_grade3_2",
+    "FullEnglishName": "Noor Khaled Sami",
+    "FullArabicName": "نور خالد سامي",
+    "NationalId": "980000002",
+    "ParentLinkCode": "BRIDGE-NOOR-002",
+    "GradeId": "Third Grade",
+    "SchoolName": "Bridge School",
+    "IsActive": true
+  },
+  {
+    "StudentId": "stu_seed_grade3_3",
+    "FullEnglishName": "Sara Yousef Omar",
+    "FullArabicName": "سارة يوسف عمر",
+    "NationalId": "980000003",
+    "ParentLinkCode": "BRIDGE-SARA-003",
+    "GradeId": "Third Grade",
+    "SchoolName": "Bridge School",
+    "IsActive": true
   }
 ]

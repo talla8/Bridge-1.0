@@ -10,5 +10,11 @@
     "UserId": 2,
     "SchoolId": 1,
     "GradeId": "Third Grade"
+  },
+  {
+    "TeacherId": 6,
+    "UserId": 6,
+    "SchoolId": 1,
+    "GradeId": "Third Grade"
   }
 ]

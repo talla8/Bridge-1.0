@@ -8,7 +8,9 @@
     "Name": "الدرس: استمع - الوعي الصوتي",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -21,7 +23,9 @@
     "Name": "الدرس: استمع - الكتابة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -34,7 +38,9 @@
     "Name": "الدرس: أتحدث - الوعي الصوتي",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -47,7 +53,9 @@
     "Name": "الدرس: أقرأ - الوعي الصوتي",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -60,7 +68,9 @@
     "Name": "الدرس: أقرأ - قراءة أصوات الحروف",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -73,7 +83,9 @@
     "Name": "الدرس: أقرأ - الكتابة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -86,7 +98,9 @@
     "Name": "اختيار المعنى الصحيح للكلمات",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -99,7 +113,9 @@
     "Name": "الإجابة عن أسئلة النص (اختيار من متعدد)",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -112,7 +128,9 @@
     "Name": "تعليل: لماذا غضب أبرهة؟",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 3
   },
@@ -125,7 +143,9 @@
     "Name": "تصنيف الكلمات (زمان/مكان)",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -138,7 +158,9 @@
     "Name": "ترتيب أحداث القصة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -151,7 +173,9 @@
     "Name": "اختيار جملة أعجبتني وذكر السبب",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -164,7 +188,9 @@
     "Name": "تمييز ال الشمسية والقمرية",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -177,7 +203,9 @@
     "Name": "التمييز بين الحركات (سكون / شدة)",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -190,7 +218,9 @@
     "Name": "قراءة كلمات مع التشكيل الصحيح",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -203,7 +233,9 @@
     "Name": "تمييز الأصوات داخل الكلمات",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -216,7 +248,9 @@
     "Name": "قراءة كلمات مع التشكيل",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -229,7 +263,9 @@
     "Name": "إعادة كتابة كلمات بشكل صحيح (مع الضبط)",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -242,7 +278,9 @@
     "Name": "قراءة جمل قصيرة مع تشكيل",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -255,7 +293,9 @@
     "Name": "كتابة كلمات مع ال الشمسية والقمرية",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -268,7 +308,9 @@
     "Name": "كتابة نص قصير بخط جميل",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 1
   },
@@ -281,7 +323,9 @@
     "Name": "إكمال كلمات ناقصة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -294,7 +338,9 @@
     "Name": "كتابة جمل باستخدام كلمات معطاة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -307,7 +353,9 @@
     "Name": "إعادة كتابة الجمل بخط النسخ",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 1
   },
@@ -320,7 +368,9 @@
     "Name": "كتابة جمل من صور",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -333,7 +383,9 @@
     "Name": "قراءة النص قراءة جهرية سليمة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -346,7 +398,9 @@
     "Name": "الإجابة عن أسئلة النص",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -359,7 +413,9 @@
     "Name": "ترتيب أحداث النص",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -372,7 +428,9 @@
     "Name": "استخراج المعاني الجديدة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -385,7 +443,9 @@
     "Name": "تحديد الزمان والمكان في النص",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -398,7 +458,9 @@
     "Name": "إبداء الرأي في النص",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 3
   },
@@ -411,7 +473,9 @@
     "Name": "التمييز بين ال الشمسية والقمرية",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -424,7 +488,9 @@
     "Name": "ملاحظة التشكيل (حركات، سكون، شدة)",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -437,7 +503,9 @@
     "Name": "ربط الصوت بالحرف داخل الكلمة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -450,7 +518,9 @@
     "Name": "قراءة كلمات مضبوطة بالشكل",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -463,7 +533,9 @@
     "Name": "قراءة كلمات مشكولة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -476,7 +548,9 @@
     "Name": "قراءة جمل معبرة عن المعنى",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -489,7 +563,9 @@
     "Name": "تمثيل المعنى أثناء القراءة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -502,7 +578,9 @@
     "Name": "كتابة فقرة إملائية قصيرة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -515,7 +593,9 @@
     "Name": "إعادة كتابة جمل بخط النسخ",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 1
   },
@@ -528,7 +608,9 @@
     "Name": "كتابة كلمات تحتوي ال الشمسية والقمرية",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -541,7 +623,9 @@
     "Name": "كتابة رسالة بسيطة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -554,7 +638,9 @@
     "Name": "إكمال جمل ناقصة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -567,7 +653,9 @@
     "Name": "الدرس: أكتب - الوعي الصوتي",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -580,7 +668,9 @@
     "Name": "الدرس: أكتب - قراءة أصوات الحروف",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -593,7 +683,9 @@
     "Name": "الدرس: أكتب - الكتابة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -606,7 +698,9 @@
     "Name": "الدرس: أبني لغتي - الوعي الصوتي",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_vocal"],
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -619,7 +713,9 @@
     "Name": "الدرس: أبني لغتي - قراءة أصوات الحروف",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_sounds_of_letters"],
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
   },
@@ -632,8 +728,2952 @@
     "Name": "الدرس: أبني لغتي - الكتابة",
     "GradeId": "Third Grade",
     "SubjectId": 2,
-    "SkillsSupported": ["skill_writing"],
+    "SkillsSupported": [
+      "skill_writing"
+    ],
     "EstimatedTime": "TBD",
     "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "50",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "اختر الإجابة الصحيحة (فصل القصة / ماذا وجدت آلاء)",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "51",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "آداب الاستماع (أضع إشارة صح)",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "52",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أستمع وألون الكلمات التي تحتوي حروفًا تُنطق ولا تُكتب",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "53",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 4,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة (كيف كان صوت آلاء؟)",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "54",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 5,
+    "Semester": 2,
+    "Name": "أربط الجمل بالصور",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "55",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 6,
+    "Semester": 2,
+    "Name": "أصف سلوك آلاء (إيجابي/سلبي)",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "56",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 7,
+    "Semester": 2,
+    "Name": "أرتب الأحداث حسب التسلسل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "57",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 8,
+    "Semester": 2,
+    "Name": "أعبر عن رأيي في النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "58",
+    "UnitNo": 6,
+    "LessonNo": 2,
+    "OrderInLesson": 9,
+    "Semester": 2,
+    "Name": "ماذا أفعل لو وجدت حقيبة؟",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "59",
+    "UnitNo": 6,
+    "LessonNo": 2,
+    "OrderInLesson": 10,
+    "Semester": 2,
+    "Name": "أناقش مع مجموعتي موقفًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "60",
+    "UnitNo": 6,
+    "LessonNo": 2,
+    "OrderInLesson": 11,
+    "Semester": 2,
+    "Name": "أقدم عرضًا دراميًا للقصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "61",
+    "UnitNo": 6,
+    "LessonNo": 3,
+    "OrderInLesson": 12,
+    "Semester": 2,
+    "Name": "أتوقع موضوع النص من الصورة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "62",
+    "UnitNo": 6,
+    "LessonNo": 3,
+    "OrderInLesson": 13,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة بعد القراءة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "63",
+    "UnitNo": 6,
+    "LessonNo": 3,
+    "OrderInLesson": 14,
+    "Semester": 2,
+    "Name": "أستخرج القيم وأحلل النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "64",
+    "UnitNo": 6,
+    "LessonNo": 4,
+    "OrderInLesson": 15,
+    "Semester": 2,
+    "Name": "كتابة جمل بسيطة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "65",
+    "UnitNo": 6,
+    "LessonNo": 4,
+    "OrderInLesson": 16,
+    "Semester": 2,
+    "Name": "توظيف علامات الترقيم",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "66",
+    "UnitNo": 6,
+    "LessonNo": 4,
+    "OrderInLesson": 17,
+    "Semester": 2,
+    "Name": "كتابة فقرة أو يوميات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "67",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستمع وأحدد الفكرة العامة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "68",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أضع إشارة صح أمام السلوك الصحيح",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "69",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أميز الأصوات والكلمات المتشابهة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "70",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 4,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة حول النص المسموع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "71",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 5,
+    "Semester": 2,
+    "Name": "أربط الجمل بالصور المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "72",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 6,
+    "Semester": 2,
+    "Name": "أرتب أحداث النص المسموع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "73",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 7,
+    "Semester": 2,
+    "Name": "أبدي رأيي في النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "74",
+    "UnitNo": 7,
+    "LessonNo": 2,
+    "OrderInLesson": 8,
+    "Semester": 2,
+    "Name": "أتحدث عن موقف أو تجربة شخصية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "75",
+    "UnitNo": 7,
+    "LessonNo": 2,
+    "OrderInLesson": 9,
+    "Semester": 2,
+    "Name": "أناقش فكرة مع زملائي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "76",
+    "UnitNo": 7,
+    "LessonNo": 2,
+    "OrderInLesson": 10,
+    "Semester": 2,
+    "Name": "أقدم عرضًا شفهيًا منظمًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "77",
+    "UnitNo": 7,
+    "LessonNo": 3,
+    "OrderInLesson": 11,
+    "Semester": 2,
+    "Name": "أتوقع موضوع النص من الصورة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "78",
+    "UnitNo": 7,
+    "LessonNo": 3,
+    "OrderInLesson": 12,
+    "Semester": 2,
+    "Name": "أقرأ وأجيب عن أسئلة مباشرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "79",
+    "UnitNo": 7,
+    "LessonNo": 3,
+    "OrderInLesson": 13,
+    "Semester": 2,
+    "Name": "أستخرج الأفكار الرئيسية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "80",
+    "UnitNo": 7,
+    "LessonNo": 3,
+    "OrderInLesson": 14,
+    "Semester": 2,
+    "Name": "أحدد صفات الشخصيات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "81",
+    "UnitNo": 7,
+    "LessonNo": 4,
+    "OrderInLesson": 15,
+    "Semester": 2,
+    "Name": "أكتب كلمات وجمل بسيطة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "82",
+    "UnitNo": 7,
+    "LessonNo": 4,
+    "OrderInLesson": 16,
+    "Semester": 2,
+    "Name": "أستخدم علامات الترقيم",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "83",
+    "UnitNo": 7,
+    "LessonNo": 4,
+    "OrderInLesson": 17,
+    "Semester": 2,
+    "Name": "أكتب فقرة مترابطة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "84",
+    "UnitNo": 7,
+    "LessonNo": 5,
+    "OrderInLesson": 18,
+    "Semester": 2,
+    "Name": "أميز بين همزتي الوصل والقطع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "85",
+    "UnitNo": 7,
+    "LessonNo": 5,
+    "OrderInLesson": 19,
+    "Semester": 2,
+    "Name": "أوظف القاعدة في جمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "86",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستمع وأحدد الفكرة العامة للنص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "87",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أميز بين السلوك الصحيح والخاطئ",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "88",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أستخرج كلمات تحتوي أصواتًا متشابهة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "89",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 4,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة حول النص المسموع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "90",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 5,
+    "Semester": 2,
+    "Name": "أربط الأحداث بالصور المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "91",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 6,
+    "Semester": 2,
+    "Name": "أرتب أحداث القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "92",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 7,
+    "Semester": 2,
+    "Name": "أبدي رأيي في القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "93",
+    "UnitNo": 8,
+    "LessonNo": 2,
+    "OrderInLesson": 8,
+    "Semester": 2,
+    "Name": "أتحدث عن قصة سمعتها",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "94",
+    "UnitNo": 8,
+    "LessonNo": 2,
+    "OrderInLesson": 9,
+    "Semester": 2,
+    "Name": "أناقش أحداث القصة مع زملائي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "95",
+    "UnitNo": 8,
+    "LessonNo": 2,
+    "OrderInLesson": 10,
+    "Semester": 2,
+    "Name": "أعرض القصة بأسلوب درامي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "96",
+    "UnitNo": 8,
+    "LessonNo": 3,
+    "OrderInLesson": 11,
+    "Semester": 2,
+    "Name": "أتوقع موضوع القصة من الصور",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "97",
+    "UnitNo": 8,
+    "LessonNo": 3,
+    "OrderInLesson": 12,
+    "Semester": 2,
+    "Name": "أقرأ وأجيب عن أسئلة مباشرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "98",
+    "UnitNo": 8,
+    "LessonNo": 3,
+    "OrderInLesson": 13,
+    "Semester": 2,
+    "Name": "أستخرج الفكرة الرئيسية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "99",
+    "UnitNo": 8,
+    "LessonNo": 3,
+    "OrderInLesson": 14,
+    "Semester": 2,
+    "Name": "أحدد صفات الشخصيات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "100",
+    "UnitNo": 8,
+    "LessonNo": 3,
+    "OrderInLesson": 15,
+    "Semester": 2,
+    "Name": "أستنتج القيم والعبر من القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "101",
+    "UnitNo": 8,
+    "LessonNo": 4,
+    "OrderInLesson": 16,
+    "Semester": 2,
+    "Name": "أكتب جملًا عن القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "102",
+    "UnitNo": 8,
+    "LessonNo": 4,
+    "OrderInLesson": 17,
+    "Semester": 2,
+    "Name": "أوظف علامات الترقيم",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "103",
+    "UnitNo": 8,
+    "LessonNo": 4,
+    "OrderInLesson": 18,
+    "Semester": 2,
+    "Name": "أكتب ملخصًا للقصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "104",
+    "UnitNo": 8,
+    "LessonNo": 5,
+    "OrderInLesson": 19,
+    "Semester": 2,
+    "Name": "أتعرف على همزة المد",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "105",
+    "UnitNo": 8,
+    "LessonNo": 5,
+    "OrderInLesson": 20,
+    "Semester": 2,
+    "Name": "أوظف همزة المد في كلمات وجمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "106",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستمع وأحدد الفكرة العامة للنص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "107",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أميز السلوك الصحيح أثناء الاستماع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "108",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أتعرف كلمات تحتوي أصواتًا متشابهة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "109",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 4,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة حول النص المسموع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "110",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 5,
+    "Semester": 2,
+    "Name": "أربط الجمل بالصور المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "111",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 6,
+    "Semester": 2,
+    "Name": "أرتب أحداث النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "112",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 7,
+    "Semester": 2,
+    "Name": "أبدي رأيي في النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "113",
+    "UnitNo": 9,
+    "LessonNo": 2,
+    "OrderInLesson": 8,
+    "Semester": 2,
+    "Name": "أتحدث عن الزراعة أو البيئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "114",
+    "UnitNo": 9,
+    "LessonNo": 2,
+    "OrderInLesson": 9,
+    "Semester": 2,
+    "Name": "أناقش أهمية الزراعة مع زملائي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "115",
+    "UnitNo": 9,
+    "LessonNo": 2,
+    "OrderInLesson": 10,
+    "Semester": 2,
+    "Name": "أقدم عرضًا شفهيًا عن موضوع بيئي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "116",
+    "UnitNo": 9,
+    "LessonNo": 3,
+    "OrderInLesson": 11,
+    "Semester": 2,
+    "Name": "أتوقع موضوع النص من الصورة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "117",
+    "UnitNo": 9,
+    "LessonNo": 3,
+    "OrderInLesson": 12,
+    "Semester": 2,
+    "Name": "أقرأ وأجيب عن أسئلة مباشرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "118",
+    "UnitNo": 9,
+    "LessonNo": 3,
+    "OrderInLesson": 13,
+    "Semester": 2,
+    "Name": "أستخرج الفكرة الرئيسية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "119",
+    "UnitNo": 9,
+    "LessonNo": 3,
+    "OrderInLesson": 14,
+    "Semester": 2,
+    "Name": "أحدد صفات الشخصيات أو عناصر النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "120",
+    "UnitNo": 9,
+    "LessonNo": 3,
+    "OrderInLesson": 15,
+    "Semester": 2,
+    "Name": "أستنتج القيم المرتبطة بالبيئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "121",
+    "UnitNo": 9,
+    "LessonNo": 4,
+    "OrderInLesson": 16,
+    "Semester": 2,
+    "Name": "أكتب كلمات وجمل بسيطة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "122",
+    "UnitNo": 9,
+    "LessonNo": 4,
+    "OrderInLesson": 17,
+    "Semester": 2,
+    "Name": "أوظف علامات الترقيم",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "123",
+    "UnitNo": 9,
+    "LessonNo": 4,
+    "OrderInLesson": 18,
+    "Semester": 2,
+    "Name": "أكتب فقرة عن الزراعة أو البيئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "124",
+    "UnitNo": 9,
+    "LessonNo": 5,
+    "OrderInLesson": 19,
+    "Semester": 2,
+    "Name": "أتعرف على الألف الفارقة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "125",
+    "UnitNo": 9,
+    "LessonNo": 5,
+    "OrderInLesson": 20,
+    "Semester": 2,
+    "Name": "أوظف الألف الفارقة في جمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "126",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستمع وأحدد الفكرة العامة للنص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "127",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أميز بين السلوك الصحيح والخاطئ",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "128",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أتعرف كلمات تحتوي أصواتًا متشابهة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "129",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 4,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة حول النص المسموع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "130",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 5,
+    "Semester": 2,
+    "Name": "أربط الأحداث بالصور",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "131",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 6,
+    "Semester": 2,
+    "Name": "أرتب أحداث القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "132",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 7,
+    "Semester": 2,
+    "Name": "أبدي رأيي في النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "133",
+    "UnitNo": 10,
+    "LessonNo": 2,
+    "OrderInLesson": 8,
+    "Semester": 2,
+    "Name": "أتحدث عن موقف طريف مررت به",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "134",
+    "UnitNo": 10,
+    "LessonNo": 2,
+    "OrderInLesson": 9,
+    "Semester": 2,
+    "Name": "أناقش قصة طريفة مع زملائي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "135",
+    "UnitNo": 10,
+    "LessonNo": 2,
+    "OrderInLesson": 10,
+    "Semester": 2,
+    "Name": "أقدم عرضًا شفهيًا بأسلوب مشوق",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "136",
+    "UnitNo": 10,
+    "LessonNo": 3,
+    "OrderInLesson": 11,
+    "Semester": 2,
+    "Name": "أتوقع موضوع النص من الصورة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "137",
+    "UnitNo": 10,
+    "LessonNo": 3,
+    "OrderInLesson": 12,
+    "Semester": 2,
+    "Name": "أقرأ وأجيب عن أسئلة مباشرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "138",
+    "UnitNo": 10,
+    "LessonNo": 3,
+    "OrderInLesson": 13,
+    "Semester": 2,
+    "Name": "أستخرج الفكرة الرئيسية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "139",
+    "UnitNo": 10,
+    "LessonNo": 3,
+    "OrderInLesson": 14,
+    "Semester": 2,
+    "Name": "أحدد صفات الشخصيات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "140",
+    "UnitNo": 10,
+    "LessonNo": 3,
+    "OrderInLesson": 15,
+    "Semester": 2,
+    "Name": "أستنتج القيم والعبرة من القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "141",
+    "UnitNo": 10,
+    "LessonNo": 4,
+    "OrderInLesson": 16,
+    "Semester": 2,
+    "Name": "أكتب جملًا بسيطة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "142",
+    "UnitNo": 10,
+    "LessonNo": 4,
+    "OrderInLesson": 17,
+    "Semester": 2,
+    "Name": "أوظف علامات الترقيم",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "143",
+    "UnitNo": 10,
+    "LessonNo": 4,
+    "OrderInLesson": 18,
+    "Semester": 2,
+    "Name": "أكتب قصة طريفة قصيرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "144",
+    "UnitNo": 10,
+    "LessonNo": 5,
+    "OrderInLesson": 19,
+    "Semester": 2,
+    "Name": "أراجع المهارات اللغوية السابقة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "145",
+    "UnitNo": 10,
+    "LessonNo": 5,
+    "OrderInLesson": 20,
+    "Semester": 2,
+    "Name": "أوظف القواعد اللغوية في جمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "146",
+    "UnitNo": 6,
+    "LessonNo": 5,
+    "OrderInLesson": 18,
+    "Semester": 2,
+    "Name": "أختار الكلمة المناسبة لإكمال الجملة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "147",
+    "UnitNo": 6,
+    "LessonNo": 5,
+    "OrderInLesson": 19,
+    "Semester": 2,
+    "Name": "أبحث في النص عن جمل تدل على (الندم / الصدق)",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "148",
+    "UnitNo": 6,
+    "LessonNo": 5,
+    "OrderInLesson": 20,
+    "Semester": 2,
+    "Name": "أختار أضداد الكلمات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "149",
+    "UnitNo": 6,
+    "LessonNo": 5,
+    "OrderInLesson": 21,
+    "Semester": 2,
+    "Name": "أجيب شفويًا عن أسئلة النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "150",
+    "UnitNo": 6,
+    "LessonNo": 5,
+    "OrderInLesson": 22,
+    "Semester": 2,
+    "Name": "أستدل من أقوال سلمى على صفاتها",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "151",
+    "UnitNo": 6,
+    "LessonNo": 6,
+    "OrderInLesson": 23,
+    "Semester": 2,
+    "Name": "ألون الجملة حسب الفكرة (العبرة)",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "152",
+    "UnitNo": 6,
+    "LessonNo": 6,
+    "OrderInLesson": 24,
+    "Semester": 2,
+    "Name": "أعيد سرد القصة بأسلوبي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "153",
+    "UnitNo": 6,
+    "LessonNo": 6,
+    "OrderInLesson": 25,
+    "Semester": 2,
+    "Name": "أبدي رأيي في سلوك الشخصيات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "154",
+    "UnitNo": 6,
+    "LessonNo": 6,
+    "OrderInLesson": 26,
+    "Semester": 2,
+    "Name": "أتحدث: ماذا أفعل لو كنت مكان الشخصية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "155",
+    "UnitNo": 6,
+    "LessonNo": 7,
+    "OrderInLesson": 27,
+    "Semester": 2,
+    "Name": "أختار علامة الترقيم المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "156",
+    "UnitNo": 6,
+    "LessonNo": 7,
+    "OrderInLesson": 28,
+    "Semester": 2,
+    "Name": "أستخرج جملًا من النص وأكتبها بخط جميل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "157",
+    "UnitNo": 6,
+    "LessonNo": 7,
+    "OrderInLesson": 29,
+    "Semester": 2,
+    "Name": "أملأ الفراغ بعلامات الترقيم (، ؛ :)",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "158",
+    "UnitNo": 6,
+    "LessonNo": 8,
+    "OrderInLesson": 30,
+    "Semester": 2,
+    "Name": "أعيد كتابة فقرة بخط النسخ",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "159",
+    "UnitNo": 6,
+    "LessonNo": 8,
+    "OrderInLesson": 31,
+    "Semester": 2,
+    "Name": "ألتزم بجمال الخط وتنظيم الكتابة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "160",
+    "UnitNo": 6,
+    "LessonNo": 9,
+    "OrderInLesson": 32,
+    "Semester": 2,
+    "Name": "أرتب عناصر بطاقة تهنئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "161",
+    "UnitNo": 6,
+    "LessonNo": 9,
+    "OrderInLesson": 33,
+    "Semester": 2,
+    "Name": "أكتب بطاقة تهنئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "162",
+    "UnitNo": 6,
+    "LessonNo": 10,
+    "OrderInLesson": 34,
+    "Semester": 2,
+    "Name": "أصل الصورة بالكلمة المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "163",
+    "UnitNo": 6,
+    "LessonNo": 10,
+    "OrderInLesson": 35,
+    "Semester": 2,
+    "Name": "أكمل جدول الأفعال (الماضي)",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "164",
+    "UnitNo": 6,
+    "LessonNo": 10,
+    "OrderInLesson": 36,
+    "Semester": 2,
+    "Name": "أكمل جمل باستخدام الفعل المناسب",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "165",
+    "UnitNo": 7,
+    "LessonNo": 6,
+    "OrderInLesson": 20,
+    "Semester": 2,
+    "Name": "أختار الكلمة المناسبة لإكمال الجمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "166",
+    "UnitNo": 7,
+    "LessonNo": 6,
+    "OrderInLesson": 21,
+    "Semester": 2,
+    "Name": "أبحث في النص عن معلومات محددة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "167",
+    "UnitNo": 7,
+    "LessonNo": 6,
+    "OrderInLesson": 22,
+    "Semester": 2,
+    "Name": "أستخرج الفكرة الرئيسية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "168",
+    "UnitNo": 7,
+    "LessonNo": 6,
+    "OrderInLesson": 23,
+    "Semester": 2,
+    "Name": "أميز بين معلومات صحيحة وخاطئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "169",
+    "UnitNo": 7,
+    "LessonNo": 6,
+    "OrderInLesson": 24,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة حول النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "170",
+    "UnitNo": 7,
+    "LessonNo": 7,
+    "OrderInLesson": 25,
+    "Semester": 2,
+    "Name": "أرتب أفكار النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "171",
+    "UnitNo": 7,
+    "LessonNo": 7,
+    "OrderInLesson": 26,
+    "Semester": 2,
+    "Name": "أعيد سرد النص بأسلوبي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "172",
+    "UnitNo": 7,
+    "LessonNo": 7,
+    "OrderInLesson": 27,
+    "Semester": 2,
+    "Name": "أبدي رأيي في محتوى النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "173",
+    "UnitNo": 7,
+    "LessonNo": 7,
+    "OrderInLesson": 28,
+    "Semester": 2,
+    "Name": "أتحدث عن موضوع وطني",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "174",
+    "UnitNo": 7,
+    "LessonNo": 8,
+    "OrderInLesson": 29,
+    "Semester": 2,
+    "Name": "أختار علامة الترقيم المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "175",
+    "UnitNo": 7,
+    "LessonNo": 8,
+    "OrderInLesson": 30,
+    "Semester": 2,
+    "Name": "أملأ الفراغ بعلامات الترقيم",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "176",
+    "UnitNo": 7,
+    "LessonNo": 8,
+    "OrderInLesson": 31,
+    "Semester": 2,
+    "Name": "أكتب جملًا بشكل صحيح إملائيًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "177",
+    "UnitNo": 7,
+    "LessonNo": 9,
+    "OrderInLesson": 32,
+    "Semester": 2,
+    "Name": "أعيد كتابة فقرة بخط النسخ",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "178",
+    "UnitNo": 7,
+    "LessonNo": 9,
+    "OrderInLesson": 33,
+    "Semester": 2,
+    "Name": "أراعي قواعد الكتابة المنظمة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "179",
+    "UnitNo": 7,
+    "LessonNo": 10,
+    "OrderInLesson": 34,
+    "Semester": 2,
+    "Name": "أرتب أفكار فقرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "180",
+    "UnitNo": 7,
+    "LessonNo": 10,
+    "OrderInLesson": 35,
+    "Semester": 2,
+    "Name": "أكتب فقرة عن الوطن",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "181",
+    "UnitNo": 7,
+    "LessonNo": 11,
+    "OrderInLesson": 36,
+    "Semester": 2,
+    "Name": "أميز بين همزتي الوصل والقطع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "182",
+    "UnitNo": 7,
+    "LessonNo": 11,
+    "OrderInLesson": 37,
+    "Semester": 2,
+    "Name": "أوظف القاعدة في كلمات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "183",
+    "UnitNo": 7,
+    "LessonNo": 11,
+    "OrderInLesson": 38,
+    "Semester": 2,
+    "Name": "أستخدم القاعدة في جمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "184",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 21,
+    "Semester": 2,
+    "Name": "أختار الكلمة المناسبة لإكمال الجمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "185",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 22,
+    "Semester": 2,
+    "Name": "أبحث في النص عن معلومات محددة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "186",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 23,
+    "Semester": 2,
+    "Name": "أستخرج الفكرة الرئيسية من القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "187",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 24,
+    "Semester": 2,
+    "Name": "أحدد صفات الشخصيات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "188",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 25,
+    "Semester": 2,
+    "Name": "أميز بين أحداث صحيحة وخاطئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "189",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 26,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة حول القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "190",
+    "UnitNo": 8,
+    "LessonNo": 7,
+    "OrderInLesson": 27,
+    "Semester": 2,
+    "Name": "أرتب أحداث القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "191",
+    "UnitNo": 8,
+    "LessonNo": 7,
+    "OrderInLesson": 28,
+    "Semester": 2,
+    "Name": "أعيد سرد القصة بأسلوبي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "192",
+    "UnitNo": 8,
+    "LessonNo": 7,
+    "OrderInLesson": 29,
+    "Semester": 2,
+    "Name": "أبدي رأيي في القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "193",
+    "UnitNo": 8,
+    "LessonNo": 7,
+    "OrderInLesson": 30,
+    "Semester": 2,
+    "Name": "أتحدث عن قصة أعجبتني",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "194",
+    "UnitNo": 8,
+    "LessonNo": 8,
+    "OrderInLesson": 31,
+    "Semester": 2,
+    "Name": "أختار علامة الترقيم المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "195",
+    "UnitNo": 8,
+    "LessonNo": 8,
+    "OrderInLesson": 32,
+    "Semester": 2,
+    "Name": "أملأ الفراغ بعلامات الترقيم",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "196",
+    "UnitNo": 8,
+    "LessonNo": 8,
+    "OrderInLesson": 33,
+    "Semester": 2,
+    "Name": "أكتب جملًا صحيحة إملائيًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "197",
+    "UnitNo": 8,
+    "LessonNo": 9,
+    "OrderInLesson": 34,
+    "Semester": 2,
+    "Name": "أعيد كتابة فقرة بخط النسخ",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "198",
+    "UnitNo": 8,
+    "LessonNo": 9,
+    "OrderInLesson": 35,
+    "Semester": 2,
+    "Name": "ألتزم بجمال الخط وتنظيمه",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "199",
+    "UnitNo": 8,
+    "LessonNo": 10,
+    "OrderInLesson": 36,
+    "Semester": 2,
+    "Name": "أرتب أفكار قصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "200",
+    "UnitNo": 8,
+    "LessonNo": 10,
+    "OrderInLesson": 37,
+    "Semester": 2,
+    "Name": "أكتب ملخصًا للقصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "201",
+    "UnitNo": 8,
+    "LessonNo": 11,
+    "OrderInLesson": 38,
+    "Semester": 2,
+    "Name": "أتعرف على همزة المد",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "202",
+    "UnitNo": 8,
+    "LessonNo": 11,
+    "OrderInLesson": 39,
+    "Semester": 2,
+    "Name": "أوظف همزة المد في كلمات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "203",
+    "UnitNo": 8,
+    "LessonNo": 11,
+    "OrderInLesson": 40,
+    "Semester": 2,
+    "Name": "أستخدم القاعدة في جمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "204",
+    "UnitNo": 9,
+    "LessonNo": 6,
+    "OrderInLesson": 21,
+    "Semester": 2,
+    "Name": "أختار الكلمة المناسبة لإكمال الجمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "205",
+    "UnitNo": 9,
+    "LessonNo": 6,
+    "OrderInLesson": 22,
+    "Semester": 2,
+    "Name": "أبحث في النص عن معلومات محددة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "206",
+    "UnitNo": 9,
+    "LessonNo": 6,
+    "OrderInLesson": 23,
+    "Semester": 2,
+    "Name": "أستخرج الفكرة الرئيسية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "207",
+    "UnitNo": 9,
+    "LessonNo": 6,
+    "OrderInLesson": 24,
+    "Semester": 2,
+    "Name": "أميز بين معلومات صحيحة وخاطئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "208",
+    "UnitNo": 9,
+    "LessonNo": 6,
+    "OrderInLesson": 25,
+    "Semester": 2,
+    "Name": "أجيب عن أسئلة حول النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "209",
+    "UnitNo": 9,
+    "LessonNo": 6,
+    "OrderInLesson": 26,
+    "Semester": 2,
+    "Name": "أستنتج القيم المرتبطة بالبيئة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "210",
+    "UnitNo": 9,
+    "LessonNo": 7,
+    "OrderInLesson": 27,
+    "Semester": 2,
+    "Name": "أرتب أفكار النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "211",
+    "UnitNo": 9,
+    "LessonNo": 7,
+    "OrderInLesson": 28,
+    "Semester": 2,
+    "Name": "أعيد سرد النص بأسلوبي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "212",
+    "UnitNo": 9,
+    "LessonNo": 7,
+    "OrderInLesson": 29,
+    "Semester": 2,
+    "Name": "أبدي رأيي في موضوع بيئي",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "213",
+    "UnitNo": 9,
+    "LessonNo": 7,
+    "OrderInLesson": 30,
+    "Semester": 2,
+    "Name": "أتحدث عن أهمية الزراعة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "214",
+    "UnitNo": 9,
+    "LessonNo": 8,
+    "OrderInLesson": 31,
+    "Semester": 2,
+    "Name": "أختار علامة الترقيم المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "215",
+    "UnitNo": 9,
+    "LessonNo": 8,
+    "OrderInLesson": 32,
+    "Semester": 2,
+    "Name": "أملأ الفراغ بعلامات الترقيم",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "216",
+    "UnitNo": 9,
+    "LessonNo": 8,
+    "OrderInLesson": 33,
+    "Semester": 2,
+    "Name": "أكتب جملًا صحيحة إملائيًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "217",
+    "UnitNo": 9,
+    "LessonNo": 9,
+    "OrderInLesson": 34,
+    "Semester": 2,
+    "Name": "أعيد كتابة فقرة بخط النسخ",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "218",
+    "UnitNo": 9,
+    "LessonNo": 9,
+    "OrderInLesson": 35,
+    "Semester": 2,
+    "Name": "ألتزم بجمال الخط وتنظيمه",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "219",
+    "UnitNo": 9,
+    "LessonNo": 10,
+    "OrderInLesson": 36,
+    "Semester": 2,
+    "Name": "أرتب أفكار فقرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "220",
+    "UnitNo": 9,
+    "LessonNo": 10,
+    "OrderInLesson": 37,
+    "Semester": 2,
+    "Name": "أكتب فقرة عن البيئة أو الزراعة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "221",
+    "UnitNo": 9,
+    "LessonNo": 11,
+    "OrderInLesson": 38,
+    "Semester": 2,
+    "Name": "أتعرف على الألف الفارقة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "222",
+    "UnitNo": 9,
+    "LessonNo": 11,
+    "OrderInLesson": 39,
+    "Semester": 2,
+    "Name": "أوظف الألف الفارقة في كلمات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "223",
+    "UnitNo": 9,
+    "LessonNo": 11,
+    "OrderInLesson": 40,
+    "Semester": 2,
+    "Name": "أستخدم القاعدة في جمل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "224",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 21,
+    "Semester": 2,
+    "Name": "أقرأ النص قراءة معبرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "225",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 22,
+    "Semester": 2,
+    "Name": "اختيار معاني الكلمات من النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "226",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 23,
+    "Semester": 2,
+    "Name": "استخراج أفكار أو جمل من النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "227",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 24,
+    "Semester": 2,
+    "Name": "الإجابة عن أسئلة النص",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "228",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 25,
+    "Semester": 2,
+    "Name": "تحديد الصفات والقيم المستفادة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "229",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 26,
+    "Semester": 2,
+    "Name": "تلوين العبارة الدالة على العبرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "230",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 27,
+    "Semester": 2,
+    "Name": "إعادة سرد القصة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "231",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 28,
+    "Semester": 2,
+    "Name": "إبداء الرأي في تصرفات الشخصيات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "232",
+    "UnitNo": 10,
+    "LessonNo": 7,
+    "OrderInLesson": 29,
+    "Semester": 2,
+    "Name": "اختيار الإجابة الصحيحة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "233",
+    "UnitNo": 10,
+    "LessonNo": 7,
+    "OrderInLesson": 30,
+    "Semester": 2,
+    "Name": "تصويب الأخطاء اللغوية",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "234",
+    "UnitNo": 10,
+    "LessonNo": 7,
+    "OrderInLesson": 31,
+    "Semester": 2,
+    "Name": "كتابة جمل صحيحة لغويًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "235",
+    "UnitNo": 10,
+    "LessonNo": 7,
+    "OrderInLesson": 32,
+    "Semester": 2,
+    "Name": "ترتيب كلمات لتكوين جمل مفيدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "236",
+    "UnitNo": 10,
+    "LessonNo": 7,
+    "OrderInLesson": 33,
+    "Semester": 2,
+    "Name": "إكمال الفراغات بالكلمات المناسبة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters",
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "237",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 34,
+    "Semester": 2,
+    "Name": "التمييز بين الأفعال والأسماء",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "238",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 35,
+    "Semester": 2,
+    "Name": "تحويل الجمل من المفرد إلى الجمع أو العكس",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "239",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 36,
+    "Semester": 2,
+    "Name": "كتابة كلمات بخط النسخ",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "240",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 37,
+    "Semester": 2,
+    "Name": "الإملاء والاستماع",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal",
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "241",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 38,
+    "Semester": 2,
+    "Name": "كتابة فقرة بخط جميل",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "242",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 39,
+    "Semester": 2,
+    "Name": "استخراج كلمات متشابهة في الأصوات",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_vocal"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "243",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 40,
+    "Semester": 2,
+    "Name": "قراءة الكلمات قراءة سليمة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_sounds_of_letters"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "244",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 41,
+    "Semester": 2,
+    "Name": "تكوين جمل باستخدام كلمات جديدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "245",
+    "UnitNo": 10,
+    "LessonNo": 8,
+    "OrderInLesson": 42,
+    "Semester": 2,
+    "Name": "كتابة بطاقة أو فقرة قصيرة",
+    "GradeId": "Third Grade",
+    "SubjectId": 2,
+    "SkillsSupported": [
+      "skill_writing"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
   }
 ]

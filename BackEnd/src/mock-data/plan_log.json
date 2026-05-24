@@ -1,29 +1,27 @@
 [
   {
-    "SessionId": 1,
-    "PlanId": 1,
-    "SkillId": 1,
-    "Date": "2026-02-16",
-    "ActivityType": "Practice",
-    "Status": "Completed",
-    "CurriculumItemId": 1
+    "PlanLogId": "plan_log_seed_generated_1",
+    "PlanId": "plan_2_2_1_1779267600000",
+    "ActionType": "PLAN_GENERATED",
+    "Description": "Normal seed plan generated for the third grade Arabic teacher.",
+    "CreatedAt": "2026-05-20T09:00:00.000Z",
+    "Metadata": {
+      "source": "mock-seed",
+      "sessionCount": 5,
+      "semester": 1
+    }
   },
   {
-    "SessionId": 2,
-    "PlanId": 1,
-    "SkillId": 2,
-    "Date": "2026-02-18",
-    "ActivityType": "Quiz",
-    "Status": "Pending",
-    "CurriculumItemId": 2
-  },
-  {
-    "SessionId": 3,
-    "PlanId": 2,
-    "SkillId": 3,
-    "Date": "2026-02-17",
-    "ActivityType": "Practice",
-    "Status": "Completed",
-    "CurriculumItemId": 3
+    "PlanLogId": "plan_log_seed_compression_1",
+    "PlanId": "plan_6_2_1_1779269400000",
+    "ActionType": "PLAN_GENERATED",
+    "Description": "Compression test plan generated for the dedicated reordering fixture teacher.",
+    "CreatedAt": "2026-05-20T09:30:00.000Z",
+    "Metadata": {
+      "source": "mock-seed-compression-fixture",
+      "sessionCount": 4,
+      "semester": 1,
+      "fixtureType": "compression"
+    }
   }
 ]

@@ -1,7 +1,10 @@
 [
   {
     "SchoolId": 1,
-    "SchoolName": "Bridge International School"
+    "SchoolName": "Bridge International School",
+    "AdminUserId": 5,
+    "TeacherJoinCode": "BRIDGE-INST-001",
+    "TeacherSelfRegistrationEnabled": true
   },
   {
     "SchoolId": 2,
