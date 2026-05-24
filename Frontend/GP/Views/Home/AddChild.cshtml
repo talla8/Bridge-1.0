@@ -1,0 +1,170 @@
+@{
+    ViewData["Title"] = "Add Child";
+}
+
+<style>
+    .add-child-page {
+        min-height: calc(100vh - 120px);
+        display: grid;
+        place-items: center;
+        padding: 32px 20px;
+    }
+
+    .add-child-card {
+        width: min(100%, 520px);
+        padding: 28px;
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: 0 10px 28px rgba(17,24,39,.08);
+    }
+
+    .add-child-title {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .add-child-copy {
+        margin: 10px 0 20px;
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .add-child-input {
+        width: 100%;
+        min-height: 54px;
+        padding: 0 16px;
+        border: 1px solid #d1d5db;
+        border-radius: 14px;
+        font-size: 16px;
+    }
+
+    .add-child-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+    }
+
+    .add-child-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 18px;
+        border-radius: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        border: 1px solid #d1d5db;
+        background: #fff;
+        color: #111827;
+    }
+
+    .add-child-btn-primary {
+        border-color: transparent;
+        background: linear-gradient(135deg, #8b82ff, #6d8cff);
+        color: #fff;
+    }
+
+    .add-child-error {
+        margin-top: 14px;
+        color: #b91c1c;
+        font-weight: 600;
+    }
+</style>
+
+<div class="add-child-page">
+    <div class="add-child-card">
+        <h1 class="add-child-title">Add Child</h1>
+        <p class="add-child-copy">Enter the parent student code to link another child to this parent account.</p>
+
+        <input
+            id="addChildCodeInput"
+            class="add-child-input"
+            type="text"
+            placeholder="Parent student code" />
+
+        <div class="add-child-actions">
+            <button id="addChildSubmitButton" type="button" class="add-child-btn add-child-btn-primary">Link child</button>
+            <a class="add-child-btn" href="@Url.Action("ParentDashboard", "Home")">Back to dashboard</a>
+        </div>
+
+        <div id="addChildError" class="add-child-error d-none"></div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const addChildToken = sessionStorage.getItem("bridgeAccessToken");
+    const addChildRole = sessionStorage.getItem("bridgeUserRole");
+    const addChildCodeInput = document.getElementById("addChildCodeInput");
+    const addChildSubmitButton = document.getElementById("addChildSubmitButton");
+    const addChildError = document.getElementById("addChildError");
+
+    function showAddChildError(message) {
+        addChildError.textContent = message;
+        addChildError.classList.remove("d-none");
+    }
+
+    function hideAddChildError() {
+        addChildError.classList.add("d-none");
+    }
+
+    function redirectToParentDashboard(studentId) {
+        const targetUrl = new URL('@Url.Action("ParentDashboard", "Home")', window.location.origin);
+        if (studentId) {
+            targetUrl.searchParams.set("studentId", studentId);
+        }
+        window.location.href = targetUrl.toString();
+    }
+
+    if (!addChildToken) {
+        window.location.replace('@Url.Action("Login", "Home")');
+    } else if (addChildRole && addChildRole !== "Parent") {
+        window.location.replace('@Url.Action("Teacher", "Home")');
+    }
+
+    addChildSubmitButton.addEventListener("click", async () => {
+        hideAddChildError();
+        const parentStudentCode = addChildCodeInput.value.trim();
+
+        if (!parentStudentCode) {
+            showAddChildError("Enter a parent student code first.");
+            return;
+        }
+
+        addChildSubmitButton.disabled = true;
+        addChildSubmitButton.textContent = "Linking...";
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/parents/me/students/link`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${addChildToken}`
+                },
+                body: JSON.stringify({ parentStudentCode })
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to link this child.");
+            }
+
+            const linkedStudents = Array.isArray(data?.students) ? data.students : [];
+            const matchedStudent = linkedStudents.find((student) =>
+                String(student.parentLinkCode || "").trim().toUpperCase() === parentStudentCode.toUpperCase()
+            );
+
+            redirectToParentDashboard(matchedStudent?.studentId);
+        } catch (error) {
+            showAddChildError(error.message || "Unable to link this child right now.");
+        } finally {
+            addChildSubmitButton.disabled = false;
+            addChildSubmitButton.textContent = "Link child";
+        }
+    });
+</script>

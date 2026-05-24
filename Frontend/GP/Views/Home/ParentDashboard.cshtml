@@ -396,6 +396,7 @@
     const overallProgressBar = document.getElementById("overallProgressBar");
     const parentSkillList = document.getElementById("parentSkillList");
     const overdueQuizList = document.getElementById("overdueQuizList");
+    const addChildOptionValue = "__add_child__";
 
     function parentAuthorizedHeaders() {
         return {
@@ -492,6 +493,24 @@
 
         renderStudentDashboard(data);
         parentSubtitleText.textContent = `Here is a quick update for ${data.studentName}.`;
+        sessionStorage.setItem("bridgeSelectedParentStudentId", data.studentId);
+    }
+
+    function getRequestedStudentId(students) {
+        const params = new URLSearchParams(window.location.search);
+        const requestedStudentId = params.get("studentId");
+        const storedStudentId = sessionStorage.getItem("bridgeSelectedParentStudentId");
+        const availableIds = new Set((students || []).map((student) => String(student.studentId)));
+
+        if (requestedStudentId && availableIds.has(String(requestedStudentId))) {
+            return String(requestedStudentId);
+        }
+
+        if (storedStudentId && availableIds.has(String(storedStudentId))) {
+            return String(storedStudentId);
+        }
+
+        return String(students?.[0]?.studentId || "");
     }
 
     async function loadParentDashboard() {
@@ -524,20 +543,35 @@
 
             const students = Array.isArray(profile.students) ? profile.students : [];
             if (!students.length) {
-                parentStudentSelect.innerHTML = `<option>No linked students</option>`;
+                parentStudentSelect.innerHTML = `
+                    <option value="">No linked students</option>
+                    <option value="${addChildOptionValue}">Add child</option>
+                `;
                 setEmptyParentState("No student is linked to this parent account yet.");
+                parentStudentSelect.addEventListener("change", () => {
+                    if (parentStudentSelect.value === addChildOptionValue) {
+                        window.location.href = '@Url.Action("AddChild", "Home")';
+                    }
+                });
                 return;
             }
 
+            const selectedStudentId = getRequestedStudentId(students);
             parentStudentSelect.innerHTML = students.map((student) => `
                 <option value="${student.studentId}">
                     ${student.fullEnglishName} | ${student.gradeId}
                 </option>
-            `).join("");
+            `).join("") + `<option value="${addChildOptionValue}">Add child</option>`;
 
-            await loadStudentDashboard(parentStudentSelect.value);
+            parentStudentSelect.value = selectedStudentId;
+            await loadStudentDashboard(selectedStudentId);
 
             parentStudentSelect.addEventListener("change", async () => {
+                if (parentStudentSelect.value === addChildOptionValue) {
+                    window.location.href = '@Url.Action("AddChild", "Home")';
+                    return;
+                }
+
                 try {
                     await loadStudentDashboard(parentStudentSelect.value);
                 } catch (error) {
