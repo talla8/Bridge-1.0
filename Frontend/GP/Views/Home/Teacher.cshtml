@@ -82,7 +82,65 @@
     </div>
 
 </div>
-<div class="container py-5">
+<div class="container py-5 d-none" id="planProgressSection">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="border rounded-4 shadow-sm p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                    <div>
+                        <h4 class="fw-bold mb-1">Current Plan Progress</h4>
+                        <p class="text-secondary mb-0" id="dashboardPlanSummaryText">
+                            Track how the generated plan is moving and jump back into it.
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-outline-secondary rounded-pill px-4" asp-controller="Home" asp-action="History">Plan History</a>
+                        <a class="btn btn-info rounded-pill px-4 fw-semibold" asp-controller="Home" asp-action="Analysis">Open Plan</a>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-semibold text-dark" id="dashboardPlanLabel">No generated plan</span>
+                        <span class="fw-bold text-success" id="dashboardPlanProgressValue">0%</span>
+                    </div>
+                    <div class="progress rounded-pill" style="height:18px;">
+                        <div class="progress-bar bg-success rounded-pill" id="dashboardPlanProgressBar" style="width:0%"></div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-1">
+                    <div class="col-12 col-md-3">
+                        <div class="border rounded-4 p-3 h-100">
+                            <div class="small text-secondary mb-1">Completed items</div>
+                            <div class="fw-bold fs-4" id="dashboardCompletedItems">0</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="border rounded-4 p-3 h-100">
+                            <div class="small text-secondary mb-1">Remaining items</div>
+                            <div class="fw-bold fs-4" id="dashboardRemainingItems">0</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="border rounded-4 p-3 h-100">
+                            <div class="small text-secondary mb-1">Class speed</div>
+                            <div class="fw-bold fs-4 text-primary" id="dashboardClassSpeed">100%</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <div class="border rounded-4 p-3 h-100">
+                            <div class="small text-secondary mb-1">Reorder status</div>
+                            <div class="fw-bold fs-6" id="dashboardReorderStatus">On track</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5" id="uploadAssessmentSection">
     <div class="row justify-content-center">
         <div class="col-12 col-md-8 col-lg-6">
 
@@ -115,12 +173,34 @@
 
 <script>
     const backendBaseUrl = "http://localhost:3000";
-    sessionStorage.removeItem("bridgeGeneratedPlan");
-    sessionStorage.removeItem("bridgeBaselineReady");
     const dropArea = document.getElementById("dropArea");
     const fileInput = document.getElementById("fileInput");
     const fileList = document.getElementById("fileList");
+    const uploadAssessmentSection = document.getElementById("uploadAssessmentSection");
+    const planProgressSection = document.getElementById("planProgressSection");
+    const dashboardPlanSummaryText = document.getElementById("dashboardPlanSummaryText");
+    const dashboardPlanLabel = document.getElementById("dashboardPlanLabel");
+    const dashboardPlanProgressValue = document.getElementById("dashboardPlanProgressValue");
+    const dashboardPlanProgressBar = document.getElementById("dashboardPlanProgressBar");
+    const dashboardCompletedItems = document.getElementById("dashboardCompletedItems");
+    const dashboardRemainingItems = document.getElementById("dashboardRemainingItems");
+    const dashboardClassSpeed = document.getElementById("dashboardClassSpeed");
+    const dashboardReorderStatus = document.getElementById("dashboardReorderStatus");
+    const teacherDashboardSubjectButton = document.getElementById("teacherDashboardSubjectButton");
+    const teacherDashboardSkillFilterButton = document.getElementById("teacherDashboardSkillFilterButton");
+    const teacherDashboardSkillsList = document.getElementById("teacherDashboardSkillsList");
+    const teacherDashboardSkillsEmpty = document.getElementById("teacherDashboardSkillsEmpty");
+    const teacherDashboardTasksBody = document.getElementById("teacherDashboardTasksBody");
+    const teacherDashboardTasksEmptyRow = document.getElementById("teacherDashboardTasksEmptyRow");
+    const teacherDashboardTasksPrevious = document.getElementById("teacherDashboardTasksPrevious");
+    const teacherDashboardTasksNext = document.getElementById("teacherDashboardTasksNext");
+    const teacherDashboardTasksPageText = document.getElementById("teacherDashboardTasksPageText");
     let selectedBaselineFiles = [];
+    let teacherDashboardSkillRows = [];
+    let teacherDashboardSkillSort = "lowest";
+    let teacherDashboardTasks = [];
+    let teacherDashboardTaskPage = 1;
+    const teacherDashboardTasksPageSize = 5;
 
     const teacherWelcomeText = document.getElementById("teacherWelcomeText");
     const teacherDashboardGrade = document.getElementById("teacherDashboardGrade");
@@ -189,6 +269,309 @@
     }
 
     hydrateTeacherDashboardHeader();
+
+    function setDashboardMode(hasPlan) {
+      uploadAssessmentSection?.classList.toggle("d-none", hasPlan);
+      planProgressSection?.classList.toggle("d-none", !hasPlan);
+    }
+
+    function formatSkillTitle(skillId) {
+      switch (String(skillId)) {
+        case "skill_vocal":
+          return "Vocal Awareness";
+        case "skill_sounds_of_letters":
+          return "Sounds of Letters";
+        case "skill_writing":
+          return "Writing";
+        default:
+          return String(skillId || "Skill");
+      }
+    }
+
+    function renderDashboardSkills() {
+      if (!teacherDashboardSkillsList || !teacherDashboardSkillsEmpty) {
+        return;
+      }
+
+      const rows = teacherDashboardSkillRows.slice().sort((left, right) =>
+        teacherDashboardSkillSort === "highest"
+          ? Number(right.avg ?? 0) - Number(left.avg ?? 0)
+          : Number(left.avg ?? 0) - Number(right.avg ?? 0)
+      );
+
+      teacherDashboardSkillsList.innerHTML = "";
+      if (!rows.length) {
+        teacherDashboardSkillsEmpty.classList.remove("d-none");
+        return;
+      }
+
+      teacherDashboardSkillsEmpty.classList.add("d-none");
+      rows.forEach((row) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "mb-4";
+        const pct = Math.max(0, Math.min(100, Number(row.avg ?? 0)));
+        wrapper.innerHTML = `
+          <div class="fw-semibold mb-2">${formatSkillTitle(row.skillId)}</div>
+          <div class="progress rounded-pill" style="height:16px">
+            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:${pct}%"></div>
+          </div>
+        `;
+        teacherDashboardSkillsList.appendChild(wrapper);
+      });
+    }
+
+    function formatTaskStatus(status) {
+      return String(status || "OPEN")
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    function formatTaskDate(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? "-" : date.toLocaleDateString();
+    }
+
+    function renderDashboardTasks() {
+      if (!teacherDashboardTasksBody || !teacherDashboardTasksEmptyRow) {
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(teacherDashboardTasks.length / teacherDashboardTasksPageSize));
+      teacherDashboardTaskPage = Math.min(Math.max(1, teacherDashboardTaskPage), totalPages);
+      const startIndex = (teacherDashboardTaskPage - 1) * teacherDashboardTasksPageSize;
+      const visibleRows = teacherDashboardTasks.slice(startIndex, startIndex + teacherDashboardTasksPageSize);
+
+      teacherDashboardTasksBody.innerHTML = "";
+      teacherDashboardTasksEmptyRow.classList.toggle("d-none", visibleRows.length > 0);
+
+      visibleRows.forEach((task, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="small">${String(startIndex + index + 1).padStart(2, "0")}</td>
+          <td class="small">${task.title || "-"}</td>
+          <td class="small">Institution task</td>
+          <td class="small">${formatTaskDate(task.dueDate)}</td>
+          <td class="small">
+            <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark px-3 py-2">
+              ${formatTaskStatus(task.status)}
+            </span>
+          </td>
+          <td class="text-center">
+            <a class="btn btn-link text-dark p-1" href="@Url.Action("TeacherInbox", "Home")" title="Open inbox">
+              <i class="bi bi-arrow-right-circle"></i>
+            </a>
+          </td>
+        `;
+        teacherDashboardTasksBody.appendChild(row);
+      });
+
+      if (teacherDashboardTasksPageText) {
+        teacherDashboardTasksPageText.textContent = `Page ${teacherDashboardTaskPage} of ${totalPages}`;
+      }
+
+      if (teacherDashboardTasksPrevious) {
+        teacherDashboardTasksPrevious.disabled = teacherDashboardTaskPage <= 1;
+      }
+
+      if (teacherDashboardTasksNext) {
+        teacherDashboardTasksNext.disabled = teacherDashboardTaskPage >= totalPages;
+      }
+    }
+
+    function getReorderStatusLabel(summary) {
+      if (summary?.compressionApplied) {
+        return "Compression active";
+      }
+
+      if (summary?.bufferUsed) {
+        return "Using buffer";
+      }
+
+      if (summary?.planNeedsReordering) {
+        return "Needs reorder";
+      }
+
+      return "On track";
+    }
+
+    function applyDashboardPlanSummary(plan, summary) {
+      setDashboardMode(true);
+      dashboardPlanSummaryText.textContent = `${String(plan.subjectId) === "2" ? "Arabic" : "Subject"} plan with ${Array.isArray(plan.sessions) ? plan.sessions.length : 0} generated sessions.`;
+      dashboardPlanLabel.textContent = plan.planName || "Generated plan";
+      dashboardPlanProgressValue.textContent = `${Number(summary?.progressPercentage ?? 0)}%`;
+      dashboardPlanProgressBar.style.width = `${Number(summary?.progressPercentage ?? 0)}%`;
+      dashboardCompletedItems.textContent = String(Number(summary?.completedItems ?? 0));
+      dashboardRemainingItems.textContent = String(Number(summary?.remainingItems ?? 0));
+      dashboardClassSpeed.textContent = `${Number(summary?.classSpeedPercentage ?? 100)}%`;
+      dashboardReorderStatus.textContent = getReorderStatusLabel(summary);
+    }
+
+    async function hydrateTeacherPlanState() {
+      const token = sessionStorage.getItem("bridgeAccessToken");
+      if (!token) {
+        setDashboardMode(false);
+        return;
+      }
+
+      let plan = null;
+      const storedPlan = sessionStorage.getItem("bridgeGeneratedPlan");
+
+      if (storedPlan) {
+        try {
+          plan = JSON.parse(storedPlan);
+        } catch {
+          plan = null;
+        }
+      }
+
+      try {
+        async function fetchLatestPlan() {
+          const latestPlanResponse = await fetch(`${backendBaseUrl}/plans/mine/latest`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          if (!latestPlanResponse.ok) {
+            return null;
+          }
+
+          const latestPlan = await latestPlanResponse.json().catch(() => null);
+          if (latestPlan?.planId) {
+            sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(latestPlan));
+            return latestPlan;
+          }
+
+          return null;
+        }
+
+        if (!plan?.planId) {
+          plan = await fetchLatestPlan();
+        }
+
+        if (!plan?.planId) {
+          setDashboardMode(false);
+          return;
+        }
+
+        async function fetchPlanProgress(activePlan) {
+          const progressResponse = await fetch(`${backendBaseUrl}/plans/${activePlan.planId}/progress`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          if (!progressResponse.ok) {
+            return null;
+          }
+
+          return progressResponse.json().catch(() => null);
+        }
+
+        let progress = await fetchPlanProgress(plan);
+
+        if (!progress) {
+          const latestPlan = await fetchLatestPlan();
+
+          if (!latestPlan?.planId || latestPlan.planId === plan.planId) {
+            sessionStorage.removeItem("bridgeGeneratedPlan");
+            setDashboardMode(false);
+            return;
+          }
+
+          plan = latestPlan;
+          progress = await fetchPlanProgress(plan);
+        }
+
+        if (!progress) {
+          sessionStorage.removeItem("bridgeGeneratedPlan");
+          setDashboardMode(false);
+          return;
+        }
+
+        applyDashboardPlanSummary(plan, progress);
+      } catch {
+        setDashboardMode(false);
+      }
+    }
+
+    hydrateTeacherPlanState();
+
+    async function hydrateTeacherDashboardSkillsAndTasks() {
+      const token = sessionStorage.getItem("bridgeAccessToken");
+      if (!token) {
+        teacherDashboardSkillRows = [];
+        teacherDashboardTasks = [];
+        renderDashboardSkills();
+        renderDashboardTasks();
+        return;
+      }
+
+      try {
+        const headers = {
+          Authorization: `Bearer ${token}`
+        };
+
+        const [skillsResponse, tasksResponse] = await Promise.all([
+          fetch(`${backendBaseUrl}/statistics/class/skills`, { headers }),
+          fetch(`${backendBaseUrl}/teacher-inbox/tasks`, { headers })
+        ]);
+
+        teacherDashboardSkillRows = skillsResponse.ok
+          ? await skillsResponse.json().catch(() => [])
+          : [];
+
+        teacherDashboardTasks = tasksResponse.ok
+          ? await tasksResponse.json().catch(() => [])
+          : [];
+
+        renderDashboardSkills();
+        renderDashboardTasks();
+      } catch {
+        teacherDashboardSkillRows = [];
+        teacherDashboardTasks = [];
+        renderDashboardSkills();
+        renderDashboardTasks();
+      }
+    }
+
+    hydrateTeacherDashboardSkillsAndTasks();
+
+    teacherDashboardTasksPrevious?.addEventListener("click", () => {
+      teacherDashboardTaskPage = Math.max(1, teacherDashboardTaskPage - 1);
+      renderDashboardTasks();
+    });
+
+    teacherDashboardTasksNext?.addEventListener("click", () => {
+      const totalPages = Math.max(1, Math.ceil(teacherDashboardTasks.length / teacherDashboardTasksPageSize));
+      teacherDashboardTaskPage = Math.min(totalPages, teacherDashboardTaskPage + 1);
+      renderDashboardTasks();
+    });
+
+    document.querySelectorAll("[data-skill-sort]").forEach((button) => {
+      button.addEventListener("click", () => {
+        teacherDashboardSkillSort = button.getAttribute("data-skill-sort") || "lowest";
+        if (teacherDashboardSkillFilterButton) {
+          teacherDashboardSkillFilterButton.textContent =
+            teacherDashboardSkillSort === "highest" ? "Highest first" : "Lowest first";
+        }
+        renderDashboardSkills();
+      });
+    });
+
+    document.querySelectorAll("[data-subject-dashboard]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (teacherDashboardSubjectButton) {
+          teacherDashboardSubjectButton.textContent = button.getAttribute("data-subject-dashboard") || "Subject";
+        }
+      });
+    });
+
+    if (teacherDashboardSubjectButton) {
+      teacherDashboardSubjectButton.textContent =
+        localStorage.getItem("teacherSelectedSubject") === "2" ? "Arabic" : "Subject";
+    }
 
     ["dragenter","dragover","dragleave","drop"].forEach(eventName => {
       dropArea.addEventListener(eventName, e => e.preventDefault());
@@ -345,55 +728,31 @@
         <div class="d-flex gap-3">
             <div class="dropdown">
                 <button class="btn btn-light border dropdown-toggle fw-semibold"
-                        data-bs-toggle="dropdown">
+                        data-bs-toggle="dropdown"
+                        id="teacherDashboardSubjectButton">
                     Subject
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">English</a></li>
-                    <li><a class="dropdown-item" href="#">Math</a></li>
+                    <li><button type="button" class="dropdown-item" data-subject-dashboard="Arabic">Arabic</button></li>
                 </ul>
             </div>
 
             <div class="dropdown">
                 <button class="btn btn-light border dropdown-toggle fw-semibold"
-                        data-bs-toggle="dropdown">
-                    Filter by
+                        data-bs-toggle="dropdown"
+                        id="teacherDashboardSkillFilterButton">
+                    Lowest first
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Highest</a></li>
-                    <li><a class="dropdown-item" href="#">Lowest</a></li>
+                    <li><button type="button" class="dropdown-item" data-skill-sort="lowest">Lowest first</button></li>
+                    <li><button type="button" class="dropdown-item" data-skill-sort="highest">Highest first</button></li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <div class="mb-4">
-        <div class="fw-semibold mb-2">Reading Fluency</div>
-        <div class="progress rounded-pill" style="height:16px">
-            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:92%"></div>
-        </div>
-    </div>
-
-    <div class="mb-4">
-        <div class="fw-semibold mb-2">Comprehension</div>
-        <div class="progress rounded-pill" style="height:16px">
-            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:88%"></div>
-        </div>
-    </div>
-
-    <div class="mb-4">
-        <div class="fw-semibold mb-2">Vocabulary</div>
-        <div class="progress rounded-pill" style="height:16px">
-            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:90%"></div>
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <div class="fw-semibold mb-2">Listening</div>
-        <div class="progress rounded-pill" style="height:16px">
-            <div class="progress-bar bg-primary bg-opacity-25 rounded-pill" style="width:86%"></div>
-        </div>
-    </div>
+    <div id="teacherDashboardSkillsList"></div>
+    <div class="text-secondary small d-none" id="teacherDashboardSkillsEmpty">No class skill data yet.</div>
 
     <div class="d-flex justify-content-between text-primary text-opacity-75 small mt-3">
         <span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span>
@@ -419,79 +778,18 @@
       </thead>
 
       <tbody class="text-secondary">
-        <tr>
-          <td class="small">01</td>
-          <td class="small">
-            Exercise 12<br>
-            Page 22
-          </td>
-          <td class="small">Unit 1</td>
-          <td class="small">January 2, 2024</td>
-          <td class="small">
-            <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark px-3 py-2">
-              In Progress
-            </span>
-          </td>
-          <td class="text-center">
-            <button class="btn btn-link text-dark p-1" title="Edit">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn btn-link text-dark p-1" title="Delete">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-
-        <tr>
-          <td class="small">02</td>
-          <td class="small">Revision</td>
-          <td class="small">Unit 1</td>
-          <td class="small">January 2, 2024</td>
-          <td class="small">
-            <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark px-3 py-2">
-              In Progress
-            </span>
-          </td>
-          <td class="text-center">
-            <button class="btn btn-link text-dark p-1" title="Edit">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn btn-link text-dark p-1" title="Delete">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-
-        <tr>
-          <td class="small">03</td>
-          <td class="small">
-            Exercise 3<br>
-            Page 28
-          </td>
-          <td class="small">Unit 2</td>
-          <td class="small">January 3, 2024</td>
-          <td class="small">
-            <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark px-3 py-2">
-              In Progress
-            </span>
-          </td>
-          <td class="text-center">
-            <button class="btn btn-link text-dark p-1" title="Edit">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn btn-link text-dark p-1" title="Delete">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
+        <tr id="teacherDashboardTasksEmptyRow">
+          <td class="small" colspan="6">No tasks assigned right now.</td>
         </tr>
       </tbody>
+      <tbody class="text-secondary" id="teacherDashboardTasksBody"></tbody>
     </table>
   </div>
 
   <div class="d-flex justify-content-between align-items-center mt-4">
-    <button class="btn btn-outline-secondary btn-sm px-4">Previous</button>
-    <div class="small text-secondary">Page 1 of 12</div>
-    <button class="btn btn-outline-secondary btn-sm px-4">Next</button>
+    <button class="btn btn-outline-secondary btn-sm px-4" id="teacherDashboardTasksPrevious" disabled>Previous</button>
+    <div class="small text-secondary" id="teacherDashboardTasksPageText">Page 1 of 1</div>
+    <button class="btn btn-outline-secondary btn-sm px-4" id="teacherDashboardTasksNext" disabled>Next</button>
   </div>
 
 </div>

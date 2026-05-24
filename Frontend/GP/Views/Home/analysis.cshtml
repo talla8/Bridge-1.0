@@ -8,6 +8,44 @@
         border-color: #c9c6ff !important;
         color: #1f2430 !important;
     }
+    .plan-monitor-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin-top:28px; }
+    .plan-monitor-card { border:1px solid #e5e7eb; border-radius:24px; background:#fff; padding:20px; box-shadow:0 10px 28px rgba(17,24,39,.04); }
+    .plan-monitor-card h3 { font-size:20px; font-weight:800; color:#111827; margin-bottom:12px; }
+    .plan-archive-list { display:grid; gap:12px; }
+    .plan-archive-item { border:1px solid #e5e7eb; border-radius:18px; padding:14px 16px; background:#f3f4f6; color:#6b7280; }
+    .plan-archive-item strong { color:#374151; display:block; margin-bottom:4px; }
+    .plan-archive-item small { display:block; }
+    .plan-warning-banner { margin-top:16px; border:1px solid #fde68a; background:#fffbeb; color:#92400e; border-radius:18px; padding:14px 16px; font-weight:600; display:none; }
+    .plan-warning-banner.show { display:block; }
+    .plan-speed-value { color:#7c3aed !important; }
+    .plan-speed-label { margin-top:6px; font-size:14px; font-weight:700; color:#6b7280; }
+    .plan-mode-row { margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+    .plan-mode-copy { color:#4b5563; font-size:14px; }
+    .plan-mode-toggle { display:inline-flex; align-items:center; gap:10px; font-weight:700; color:#111827; }
+    .plan-mode-toggle input { width:44px; height:24px; accent-color:#7c3aed; }
+    .plan-reason-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .plan-reason-pill { display:inline-flex; align-items:center; border-radius:999px; padding:6px 12px; font-size:13px; font-weight:700; border:1px solid #e5e7eb; background:#fff; color:#374151; }
+    .plan-reason-pill.behind { border-color:#fcd34d; background:#fffbeb; color:#92400e; }
+    .plan-reason-pill.overflow { border-color:#fca5a5; background:#fef2f2; color:#b91c1c; }
+    .plan-reason-pill.track { border-color:#bbf7d0; background:#f0fdf4; color:#166534; }
+    .plan-reason-pill.buffer { border-color:#bfdbfe; background:#eff6ff; color:#1d4ed8; }
+    .plan-reason-pill.compression { border-color:#ddd6fe; background:#f5f3ff; color:#6d28d9; }
+    .plan-details-summary { margin-top:12px; display:grid; gap:10px; }
+    .plan-details-summary-item { border:1px solid #e5e7eb; border-radius:16px; background:#f9fafb; padding:12px 14px; color:#374151; font-size:14px; }
+    .plan-details-summary-item strong { color:#111827; }
+    .plan-compression-list { display:grid; gap:10px; margin-top:12px; }
+    .plan-compression-item { border:1px solid #e5e7eb; border-radius:16px; padding:12px 14px; background:#fff; }
+    .plan-compression-item strong { display:block; color:#111827; margin-bottom:4px; }
+    .plan-compression-item small { color:#6b7280; display:block; }
+    .reorder-modal-backdrop { position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:1050; }
+    .reorder-modal { position:fixed; inset:50% auto auto 50%; transform:translate(-50%,-50%); width:min(92vw,520px); background:#fff; border-radius:24px; box-shadow:0 22px 50px rgba(15,23,42,.25); z-index:1051; padding:24px; }
+    .reorder-modal h3 { font-size:26px; font-weight:800; color:#111827; margin-bottom:10px; }
+    .reorder-modal p { color:#4b5563; margin-bottom:16px; line-height:1.6; }
+    .reorder-modal-note { margin-top:12px; color:#6b7280; font-size:14px; }
+    .reorder-modal-actions { display:flex; justify-content:flex-end; gap:12px; }
+    .reorder-modal-actions button { border-radius:14px; padding:10px 16px; font-weight:700; border:1px solid #dbe3f0; background:#fff; color:#374151; }
+    .reorder-modal-actions .primary { background:linear-gradient(135deg,#8b82ff,#6d8cff); border-color:transparent; color:#fff; }
+    @@media (max-width: 991px) { .plan-monitor-grid { grid-template-columns:1fr; } }
 </style>
 
 <div class="teacher-shell">
@@ -58,7 +96,7 @@
             </div>
 
             <div class="row g-4 mt-3">
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-3">
                     <div class="border rounded-4 p-4 h-100">
                         <div class="d-flex align-items-start gap-3">
                             <i class="bi bi-graph-up-arrow fs-2 text-secondary"></i>
@@ -70,7 +108,7 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-3">
                     <div class="border rounded-4 p-4 h-100">
                         <div class="d-flex align-items-start gap-3">
                             <i class="bi bi-journal-check fs-2 text-secondary"></i>
@@ -82,7 +120,20 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-3">
+                    <div class="border rounded-4 p-4 h-100">
+                        <div class="d-flex align-items-start gap-3">
+                            <i class="bi bi-speedometer2 fs-2 text-secondary"></i>
+                            <div>
+                                <div class="fs-2 fw-bold plan-speed-value" id="classSpeedValue">100%</div>
+                                <div class="text-secondary">Class speed</div>
+                                <div class="plan-speed-label" id="classSpeedLabel">On track</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3">
                     <div class="border rounded-4 p-4 h-100">
                         <div class="d-flex align-items-start gap-3">
                             <i class="bi bi-clipboard2-pulse fs-2 text-secondary"></i>
@@ -93,6 +144,22 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="plan-warning-banner" id="reorderBanner"></div>
+            <div class="plan-reason-row" id="reorderReasonRow"></div>
+            <div class="mt-2 d-flex justify-content-end">
+                <button type="button" class="btn btn-sm btn-light border rounded-pill d-none" id="reorderDetailsButton">More info</button>
+            </div>
+            <div class="plan-mode-row">
+                <div>
+                    <div class="fw-semibold text-dark">Reordering mode</div>
+                    <div class="plan-mode-copy" id="planModeDescription">Manual mode keeps reordering under teacher control.</div>
+                </div>
+                <label class="plan-mode-toggle">
+                    <span id="planModeLabel">Manual</span>
+                    <input id="autoReorderSwitch" type="checkbox" />
+                </label>
             </div>
         </div>
 
@@ -108,6 +175,17 @@
                         <button type="button" class="plan-secondary-btn">View Full Plan <i class="bi bi-arrow-right"></i></button>
                     </div>
                 </div>
+            </section>
+
+            <section class="plan-monitor-grid">
+                <article class="plan-monitor-card">
+                    <h3>Postponed Activities</h3>
+                    <div id="postponedArchiveList" class="plan-archive-list"></div>
+                </article>
+                <article class="plan-monitor-card">
+                    <h3>Cancelled Activities</h3>
+                    <div id="cancelledArchiveList" class="plan-archive-list"></div>
+                </article>
             </section>
         </div>
     </div>
@@ -159,6 +237,48 @@
     </div>
 </aside>
 
+<div class="reorder-modal-backdrop d-none" id="reorderPromptBackdrop"></div>
+<div class="reorder-modal d-none" id="reorderPromptModal" aria-label="Plan reorder recommendation">
+    <h3>Plan Reorder Recommended</h3>
+    <p id="reorderPromptMessage">The current class pace suggests replanning future sessions.</p>
+    <div class="reorder-modal-actions">
+        <button type="button" id="reorderPromptLaterButton">Later</button>
+        <button type="button" class="primary" id="reorderPromptNowButton">Reorder now</button>
+    </div>
+</div>
+
+<div class="reorder-modal-backdrop d-none" id="autoReorderChoiceBackdrop"></div>
+<div class="reorder-modal d-none" id="autoReorderChoiceModal" aria-label="Automatic reorder setup">
+    <h3>Automatic Reordering</h3>
+    <p>Bridge can monitor class pace and session overflow, then repack future sessions when the current plan falls behind.</p>
+    <div class="reorder-modal-note">Automatic mode only changes future sessions. Postponed items stay archived, cancelled items stay out of the active plan, and history keeps the trace.</div>
+    <div class="reorder-modal-actions">
+        <button type="button" id="autoReorderSkipButton">Skip for now</button>
+        <button type="button" class="primary" id="autoReorderEnableButton">Enable auto reordering</button>
+    </div>
+</div>
+
+<div class="reorder-modal-backdrop d-none" id="autoReorderInfoBackdrop"></div>
+<div class="reorder-modal d-none" id="autoReorderInfoModal" aria-label="Automatic reorder details">
+    <h3>Plan Reordered Automatically</h3>
+    <p id="autoReorderInfoMessage">Bridge updated the future sessions to keep the class on track.</p>
+    <div class="reorder-modal-actions">
+        <button type="button" id="autoReorderInfoMoreButton">More info</button>
+        <button type="button" id="autoReorderInfoCloseButton">Close</button>
+    </div>
+</div>
+
+<div class="reorder-modal-backdrop d-none" id="reorderDetailsBackdrop"></div>
+<div class="reorder-modal d-none" id="reorderDetailsModal" aria-label="Plan reorder details">
+    <h3>Reorder Details</h3>
+    <p id="reorderDetailsMessage">Bridge reviewed the current plan and adjusted future sessions.</p>
+    <div class="plan-details-summary" id="reorderDetailsSummary"></div>
+    <div class="plan-compression-list" id="reorderCompressionList"></div>
+    <div class="reorder-modal-actions">
+        <button type="button" id="reorderDetailsCloseButton">Close</button>
+    </div>
+</div>
+
 <script>
     const backendBaseUrl = "http://localhost:3000";
     const dayOrder = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
@@ -174,9 +294,15 @@
     const weekFilterMenu = document.getElementById("weekFilterMenu");
     const planProgressValue = document.getElementById("planProgressValue");
     const sessionCountValue = document.getElementById("sessionCountValue");
+    const classSpeedValue = document.getElementById("classSpeedValue");
+    const classSpeedLabel = document.getElementById("classSpeedLabel");
     const atRiskValue = document.getElementById("atRiskValue");
     const weeklyPlanGrid = document.getElementById("weeklyPlanGrid");
     const weekPager = document.getElementById("weekPager");
+    const reorderBanner = document.getElementById("reorderBanner");
+    const reorderReasonRow = document.getElementById("reorderReasonRow");
+    const postponedArchiveList = document.getElementById("postponedArchiveList");
+    const cancelledArchiveList = document.getElementById("cancelledArchiveList");
     const activityPanelBackdrop = document.getElementById("activityPanelBackdrop");
     const activityDetailsPanel = document.getElementById("activityDetailsPanel");
     const activityEditPanel = document.getElementById("activityEditPanel");
@@ -192,10 +318,39 @@
     const durationDecreaseButton = document.getElementById("durationDecreaseButton");
     const activitySaveButton = document.getElementById("activitySaveButton");
     const replanBtn = document.getElementById("replanBtn");
+    const reorderPromptBackdrop = document.getElementById("reorderPromptBackdrop");
+    const reorderPromptModal = document.getElementById("reorderPromptModal");
+    const reorderPromptMessage = document.getElementById("reorderPromptMessage");
+    const reorderPromptLaterButton = document.getElementById("reorderPromptLaterButton");
+    const reorderPromptNowButton = document.getElementById("reorderPromptNowButton");
+    const reorderDetailsButton = document.getElementById("reorderDetailsButton");
+    const planModeDescription = document.getElementById("planModeDescription");
+    const planModeLabel = document.getElementById("planModeLabel");
+    const autoReorderSwitch = document.getElementById("autoReorderSwitch");
+    const autoReorderChoiceBackdrop = document.getElementById("autoReorderChoiceBackdrop");
+    const autoReorderChoiceModal = document.getElementById("autoReorderChoiceModal");
+    const autoReorderEnableButton = document.getElementById("autoReorderEnableButton");
+    const autoReorderSkipButton = document.getElementById("autoReorderSkipButton");
+    const autoReorderInfoBackdrop = document.getElementById("autoReorderInfoBackdrop");
+    const autoReorderInfoModal = document.getElementById("autoReorderInfoModal");
+    const autoReorderInfoMessage = document.getElementById("autoReorderInfoMessage");
+    const autoReorderInfoMoreButton = document.getElementById("autoReorderInfoMoreButton");
+    const autoReorderInfoCloseButton = document.getElementById("autoReorderInfoCloseButton");
+    const reorderDetailsBackdrop = document.getElementById("reorderDetailsBackdrop");
+    const reorderDetailsModal = document.getElementById("reorderDetailsModal");
+    const reorderDetailsMessage = document.getElementById("reorderDetailsMessage");
+    const reorderDetailsSummary = document.getElementById("reorderDetailsSummary");
+    const reorderCompressionList = document.getElementById("reorderCompressionList");
+    const reorderDetailsCloseButton = document.getElementById("reorderDetailsCloseButton");
     let selectedActivity = null;
     let selectedAnchor = null;
     let selectedWeekNo = 1;
     let editedDurationMinutes = 0;
+    let planSummaryState = null;
+    let dismissedReorderFingerprint = null;
+    let isAutoReorderEnabled = false;
+    let isAutoReordering = false;
+    let lastAutoReorderFingerprint = null;
 
     function subjectLabel(subjectId) {
         if (String(subjectId) === "1") return "Math";
@@ -304,7 +459,7 @@
 
     function describeSession(session) {
         const items = Array.isArray(session.items)
-            ? session.items.filter((item) => normalizeStatus(item.status) !== "Cancelled")
+            ? session.items.filter((item) => !["Cancelled", "Postponed"].includes(normalizeStatus(item.status)))
             : [];
         const skillIds = Array.from(
             new Set(
@@ -339,6 +494,271 @@
         };
     }
 
+    function renderArchiveList(target, items, emptyText) {
+        if (!items?.length) {
+            target.innerHTML = `<div class="plan-archive-item"><small>${emptyText}</small></div>`;
+            return;
+        }
+
+        target.innerHTML = items.map((item) => `
+            <div class="plan-archive-item">
+                <strong>${item.title}</strong>
+                <small>${item.day} • Week ${item.sessionWeekNo} • ${item.estimatedTime} minutes</small>
+                <small>${item.notes || "No notes"}</small>
+            </div>
+        `).join("");
+    }
+
+    function getReorderFingerprint(summary) {
+        if (!summary?.planNeedsReordering) return null;
+        return `${generatedPlan?.planId || ""}:${summary.classSpeedPercentage}:${summary.reorderReasons?.join(",")}:${summary.overloadedSessions}`;
+    }
+
+    function buildReorderMessage(summary) {
+        const reasons = Array.isArray(summary?.reorderReasons) ? summary.reorderReasons : [];
+        const messages = [];
+
+        if (reasons.includes("PROGRESS_BEHIND")) {
+            messages.push(`Class pace is ${summary.classSpeedPercentage}% of expected progress.`);
+        }
+        if (reasons.includes("SESSION_OVERFLOW")) {
+            messages.push(`${summary.overloadedSessions} session(s) are over their time limit.`);
+        }
+
+        return messages.length
+            ? `${messages.join(" ")} Reorder future sessions to keep the plan on track.`
+            : "The current class pace suggests replanning future sessions.";
+    }
+
+    function getPlanModeStorageKey() {
+        return generatedPlan?.planId ? `bridgePlanReorderMode:${generatedPlan.planId}` : null;
+    }
+
+    function getStoredPlanMode() {
+        const key = getPlanModeStorageKey();
+        return key ? sessionStorage.getItem(key) : null;
+    }
+
+    function persistPlanMode(mode) {
+        const key = getPlanModeStorageKey();
+        if (!key) return;
+        sessionStorage.setItem(key, mode);
+    }
+
+    function updatePlanModeUi() {
+        autoReorderSwitch.checked = isAutoReorderEnabled;
+        planModeLabel.textContent = isAutoReorderEnabled ? "Auto" : "Manual";
+        planModeDescription.textContent = isAutoReorderEnabled
+            ? "Auto mode reorders future sessions whenever pace or timing pressure makes it necessary."
+            : "Manual mode keeps reordering under teacher control.";
+        replanBtn.disabled = isAutoReorderEnabled || isAutoReordering;
+        replanBtn.classList.toggle("opacity-50", isAutoReorderEnabled);
+        replanBtn.title = isAutoReorderEnabled
+            ? "Switch to manual mode to reorder by hand."
+            : "Reorder future sessions manually.";
+    }
+
+    function getClassSpeedState(speed) {
+        const value = Number(speed ?? 100);
+        if (value < 70) {
+            return { label: "Critical slowdown", pillClass: "behind" };
+        }
+        if (value < 85) {
+            return { label: "Behind pace", pillClass: "behind" };
+        }
+        if (value < 95) {
+            return { label: "Slightly behind", pillClass: "overflow" };
+        }
+        if (value <= 110) {
+            return { label: "On track", pillClass: "track" };
+        }
+        return { label: "Ahead of pace", pillClass: "track" };
+    }
+
+    function renderReasonPills(summary) {
+        const pills = [];
+        const speedState = getClassSpeedState(summary?.classSpeedPercentage);
+        pills.push(`<span class="plan-reason-pill ${speedState.pillClass}">${speedState.label}</span>`);
+
+        if (summary?.reorderReasons?.includes("PROGRESS_BEHIND")) {
+            pills.push(`<span class="plan-reason-pill behind">Progress trigger</span>`);
+        }
+
+        if (summary?.reorderReasons?.includes("SESSION_OVERFLOW")) {
+            pills.push(`<span class="plan-reason-pill overflow">Session overflow</span>`);
+        }
+
+        if (summary?.bufferUsed) {
+            pills.push(`<span class="plan-reason-pill buffer">Buffer used</span>`);
+        }
+
+        if (summary?.compressionApplied) {
+            pills.push(`<span class="plan-reason-pill compression">Compression applied</span>`);
+        }
+
+        reorderReasonRow.innerHTML = pills.join("");
+    }
+
+    function hideReorderPrompt() {
+        reorderPromptBackdrop.classList.add("d-none");
+        reorderPromptModal.classList.add("d-none");
+    }
+
+    function hideAutoReorderChoice() {
+        autoReorderChoiceBackdrop.classList.add("d-none");
+        autoReorderChoiceModal.classList.add("d-none");
+    }
+
+    function showAutoReorderChoice() {
+        autoReorderChoiceBackdrop.classList.remove("d-none");
+        autoReorderChoiceModal.classList.remove("d-none");
+    }
+
+    function hideAutoReorderInfo() {
+        autoReorderInfoBackdrop.classList.add("d-none");
+        autoReorderInfoModal.classList.add("d-none");
+    }
+
+    function hideReorderDetails() {
+        reorderDetailsBackdrop.classList.add("d-none");
+        reorderDetailsModal.classList.add("d-none");
+    }
+
+    function renderReorderDetails(summary = planSummaryState) {
+        if (!summary) {
+            reorderDetailsSummary.innerHTML = "";
+            reorderCompressionList.innerHTML = "";
+            return;
+        }
+
+        reorderDetailsMessage.textContent = buildReorderMessage(summary);
+        const summaryItems = [
+            `<div class="plan-details-summary-item"><strong>Class speed:</strong> ${Number(summary.classSpeedPercentage ?? 100)}%</div>`,
+            `<div class="plan-details-summary-item"><strong>Expected completed minutes:</strong> ${Number(summary.expectedCompletedMinutes ?? 0)}</div>`,
+            `<div class="plan-details-summary-item"><strong>Actual completed minutes:</strong> ${Number(summary.actualCompletedMinutes ?? 0)}</div>`,
+            `<div class="plan-details-summary-item"><strong>Buffer used:</strong> ${summary.bufferUsed ? `${Number(summary.bufferMinutesUsed ?? 0)} minute(s)` : "No"}</div>`,
+            `<div class="plan-details-summary-item"><strong>Compression applied:</strong> ${summary.compressionApplied ? "Yes" : "No"}</div>`
+        ];
+
+        reorderDetailsSummary.innerHTML = summaryItems.join("");
+
+        if (Array.isArray(summary.compressedItems) && summary.compressedItems.length > 0) {
+            reorderCompressionList.innerHTML = summary.compressedItems.map((item) => `
+                <div class="plan-compression-item">
+                    <strong>${item.title}</strong>
+                    <small>${item.priority} priority</small>
+                    <small>${Number(item.oldEstimatedTime ?? 0)} min → ${Number(item.newEstimatedTime ?? 0)} min</small>
+                </div>
+            `).join("");
+        } else {
+            reorderCompressionList.innerHTML = `<div class="plan-details-summary-item"><strong>No activities were compressed.</strong></div>`;
+        }
+    }
+
+    function showReorderDetails(summary = planSummaryState) {
+        renderReorderDetails(summary);
+        reorderDetailsBackdrop.classList.remove("d-none");
+        reorderDetailsModal.classList.remove("d-none");
+    }
+
+    function showAutoReorderInfo(summary) {
+        autoReorderInfoMessage.textContent = buildReorderMessage(summary);
+        autoReorderInfoBackdrop.classList.remove("d-none");
+        autoReorderInfoModal.classList.remove("d-none");
+    }
+
+    function showReorderPrompt(summary) {
+        if (isAutoReorderEnabled) {
+            return;
+        }
+        const fingerprint = getReorderFingerprint(summary);
+        if (!fingerprint || dismissedReorderFingerprint === fingerprint) {
+            return;
+        }
+
+        reorderPromptMessage.textContent = buildReorderMessage(summary);
+        reorderPromptBackdrop.classList.remove("d-none");
+        reorderPromptModal.classList.remove("d-none");
+    }
+
+    function applyPlanSummary(summary) {
+        planSummaryState = summary;
+        planProgressValue.textContent = `${Number(summary?.progressPercentage ?? 0)}%`;
+        classSpeedValue.textContent = `${Number(summary?.classSpeedPercentage ?? 100)}%`;
+        classSpeedLabel.textContent = getClassSpeedState(summary?.classSpeedPercentage).label;
+        renderArchiveList(
+            postponedArchiveList,
+            summary?.postponedItems ?? [],
+            "No postponed activities."
+        );
+        renderArchiveList(
+            cancelledArchiveList,
+            summary?.cancelledItemsArchive ?? [],
+            "No cancelled activities."
+        );
+        renderReasonPills(summary);
+        reorderDetailsButton.classList.toggle("d-none", !summary?.planNeedsReordering && !summary?.compressionApplied && !summary?.bufferUsed);
+
+        if (summary?.planNeedsReordering) {
+            reorderBanner.textContent = buildReorderMessage(summary);
+            reorderBanner.classList.add("show");
+            if (isAutoReorderEnabled) {
+                const fingerprint = getReorderFingerprint(summary);
+                if (fingerprint && fingerprint !== lastAutoReorderFingerprint && !isAutoReordering) {
+                    lastAutoReorderFingerprint = fingerprint;
+                    void replanSelectedWeek({
+                        silent: true,
+                        showAutoInfo: true,
+                        summary,
+                        anchorMode: "auto"
+                    });
+                }
+            } else {
+                showReorderPrompt(summary);
+            }
+        } else {
+            reorderBanner.classList.remove("show");
+            hideReorderPrompt();
+        }
+    }
+
+    function resetPlanSummaryUi() {
+        planSummaryState = null;
+        planProgressValue.textContent = "0%";
+        classSpeedValue.textContent = "100%";
+        classSpeedLabel.textContent = "On track";
+        sessionCountValue.textContent = "0";
+        atRiskValue.textContent = "0";
+        renderArchiveList(postponedArchiveList, [], "No postponed activities.");
+        renderArchiveList(cancelledArchiveList, [], "No cancelled activities.");
+        reorderReasonRow.innerHTML = `<span class="plan-reason-pill track">On track</span>`;
+        reorderDetailsButton.classList.add("d-none");
+        reorderBanner.classList.remove("show");
+        reorderBanner.textContent = "";
+        hideReorderPrompt();
+        hideAutoReorderInfo();
+        hideReorderDetails();
+    }
+
+    async function loadPlanSummary() {
+        if (!generatedPlan?.planId || !token) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/plans/${generatedPlan.planId}/progress`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok || !data) {
+                return;
+            }
+            applyPlanSummary(data);
+        } catch {
+            return;
+        }
+    }
+
     function renderBoard(sessions, selectedWeek, totalWeeks) {
         selectedWeekNo = selectedWeek;
         const weekSessions = sessions.filter(
@@ -368,16 +788,28 @@
 
             const summary = describeSession(session);
             const activityRows = summary.itemBreakdown.length
-                ? summary.itemBreakdown.map((item, index) => `
-                    <div class="activity-row">
-                        <span>${item.name}</span>
+                ? summary.itemBreakdown.map((item, index) => {
+                    const statusBadge = item.status === "Completed"
+                        ? `<span class="activity-status-badge activity-status-badge-completed">Completed</span>`
+                        : "";
+                    const rowClass = item.status === "Completed"
+                        ? "activity-row activity-row-completed"
+                        : "activity-row";
+
+                    return `
+                    <div class="${rowClass}">
+                        <div class="activity-row-main">
+                            <span class="activity-row-title">${item.name}</span>
+                            ${statusBadge}
+                        </div>
                         <div>
                             <button type="button" class="activity-icon js-edit-activity" data-day="${day}" data-index="${index}" aria-label="Edit activity"><i class="bi bi-pencil"></i></button>
                             <button type="button" class="activity-icon js-show-details" data-day="${day}" data-index="${index}" aria-label="Show details"><i class="bi bi-card-list"></i></button>
                         </div>
                         <small><i class="bi bi-clock"></i> ${item.minutes} minutes</small>
                     </div>
-                `).join("")
+                `;
+                }).join("")
                 : `<div class="activity-row activity-row-plain"><span>No activities assigned</span></div>`;
 
             column.innerHTML = `
@@ -464,7 +896,48 @@
             })[0] ?? null;
     }
 
-    function updateStoredPlanFromResponse(updatedPlan) {
+    function getFirstFutureReorderableSession() {
+        if (!generatedPlan?.sessions) return null;
+
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const cutoff = startOfToday.getTime();
+        const futureSessions = generatedPlan.sessions
+            .filter((session) => new Date(session.sessionDate).getTime() >= cutoff)
+            .sort((left, right) => {
+                const leftDate = new Date(left.sessionDate).getTime();
+                const rightDate = new Date(right.sessionDate).getTime();
+                if (leftDate !== rightDate) {
+                    return leftDate - rightDate;
+                }
+
+                const leftDay = dayOrder.indexOf(left.day);
+                const rightDay = dayOrder.indexOf(right.day);
+                if (leftDay !== rightDay) {
+                    return leftDay - rightDay;
+                }
+
+                return Number(left.slotNumber ?? 0) - Number(right.slotNumber ?? 0);
+            });
+
+        const preferredSession = futureSessions.find((session) =>
+            Array.isArray(session.items) &&
+            session.items.some((item) => normalizeStatus(item.status) === "Planned")
+        );
+
+        const selectedWeekSession = getFirstSessionForSelectedWeek();
+        if (
+            selectedWeekSession &&
+            Array.isArray(selectedWeekSession.items) &&
+            selectedWeekSession.items.some((item) => normalizeStatus(item.status) === "Planned")
+        ) {
+            return selectedWeekSession;
+        }
+
+        return preferredSession ?? futureSessions[0] ?? selectedWeekSession;
+    }
+
+    function updateStoredPlanFromResponse(updatedPlan, summary = null) {
         if (!generatedPlan || !updatedPlan) return;
 
         Object.assign(generatedPlan, updatedPlan);
@@ -475,27 +948,40 @@
         planSummaryText.textContent = `${subjectLabel(generatedPlan.subjectId)} plan with ${generatedPlan.sessions.length} generated sessions.`;
         renderWeekFilter(totalWeeks, selectedWeekNo);
         renderBoard(generatedPlan.sessions, selectedWeekNo, totalWeeks);
+        if (summary) {
+            applyPlanSummary(summary);
+        }
     }
 
-    async function replanSelectedWeek() {
+    async function replanSelectedWeek(options = {}) {
+        const { silent = false, showAutoInfo = false, summary = null, anchorMode = "selected" } = options;
         if (!generatedPlan?.planId) {
-            alert("No generated plan is available to reorder.");
+            if (!silent) {
+                alert("No generated plan is available to reorder.");
+            }
             return;
         }
 
         if (!token) {
-            alert("You need to be logged in before reordering the plan.");
+            if (!silent) {
+                alert("You need to be logged in before reordering the plan.");
+            }
             return;
         }
 
-        const anchorSession = getFirstSessionForSelectedWeek();
+        const anchorSession = anchorMode === "auto"
+            ? getFirstFutureReorderableSession()
+            : getFirstSessionForSelectedWeek();
         if (!anchorSession?.sessionId) {
-            alert("No session found in this week to reorder from.");
+            if (!silent) {
+                alert("No session found in this week to reorder from.");
+            }
             return;
         }
 
-        replanBtn.disabled = true;
-        replanBtn.textContent = "Reordering...";
+        isAutoReordering = true;
+        updatePlanModeUi();
+        replanBtn.textContent = silent ? "Auto reordering..." : "Reordering...";
 
         try {
             const response = await fetch(`${backendBaseUrl}/plans/${generatedPlan.planId}/replan`, {
@@ -515,15 +1001,23 @@
                 throw new Error(data?.message || "Unable to reorder the plan.");
             }
 
-            updateStoredPlanFromResponse(data?.plan);
+            updateStoredPlanFromResponse(data?.plan, data?.summary ?? null);
+            if (showAutoInfo) {
+                showAutoReorderInfo(data?.summary ?? summary ?? planSummaryState);
+            }
 
             if (data?.planOverCapacity) {
-                alert(`${data.unplacedItems?.length ?? 0} item(s) could not fit in the remaining sessions.`);
+                if (!silent) {
+                    alert(`${data.unplacedItems?.length ?? 0} item(s) could not fit in the remaining sessions.`);
+                }
             }
         } catch (error) {
-            alert(error.message || "Unable to reorder the plan.");
+            if (!silent) {
+                alert(error.message || "Unable to reorder the plan.");
+            }
         } finally {
-            replanBtn.disabled = false;
+            isAutoReordering = false;
+            updatePlanModeUi();
             replanBtn.textContent = "Reorder";
         }
     }
@@ -552,6 +1046,14 @@
         const selectedStatus = document.querySelector('input[name="activityStatus"]:checked')?.value ?? "Planned";
         const previousDuration = Number(selectedActivity.sourceItem.estimatedTime ?? selectedActivity.sourceItem.estimatedMinutes ?? 0);
         const previousStatus = normalizeStatus(selectedActivity.sourceItem.status);
+        const hasMaterialChange =
+            editedDurationMinutes !== previousDuration ||
+            selectedStatus !== previousStatus;
+
+        if (hasMaterialChange) {
+            lastAutoReorderFingerprint = null;
+            dismissedReorderFingerprint = null;
+        }
 
         activitySaveButton.disabled = true;
         activitySaveButton.textContent = "Saving...";
@@ -576,11 +1078,14 @@
                     throw new Error(timeData?.message || "Unable to update activity duration.");
                 }
 
-                replaceSessionInGeneratedPlan(timeData);
-                selectedActivity.session = timeData;
-                const refreshedItem = timeData.items?.find((item) => item.planItemId === selectedActivity.sourceItem.planItemId);
+                replaceSessionInGeneratedPlan(timeData?.session);
+                selectedActivity.session = timeData?.session;
+                const refreshedItem = timeData?.session?.items?.find((item) => item.planItemId === selectedActivity.sourceItem.planItemId);
                 if (refreshedItem) {
                     selectedActivity.sourceItem = refreshedItem;
+                }
+                if (timeData?.progress) {
+                    applyPlanSummary(timeData.progress);
                 }
             }
 
@@ -610,6 +1115,9 @@
                     if (refreshedItem) {
                         selectedActivity.sourceItem = refreshedItem;
                     }
+                }
+                if (statusData?.progress) {
+                    applyPlanSummary(statusData.progress);
                 }
             }
 
@@ -728,12 +1236,16 @@
     function initializePlanBoard() {
         if (!generatedPlan || !Array.isArray(generatedPlan.sessions)) {
             planSummaryText.textContent = "No generated plan was found. Go back to the teacher page and generate one first.";
+            resetPlanSummaryUi();
             renderBoard([], 1, 1);
             return;
         }
 
         const totalWeeks = Math.max(1, Number(generatedPlan.totalWeeks ?? 0));
         const initialWeek = 1;
+        const storedMode = getStoredPlanMode();
+        isAutoReorderEnabled = storedMode === "auto";
+        updatePlanModeUi();
 
         planIdButton.textContent = generatedPlan.planId
             ? `plan-ID: ${generatedPlan.planId}`
@@ -744,6 +1256,10 @@
         renderWeekFilter(totalWeeks, initialWeek);
         renderBoard(generatedPlan.sessions, initialWeek, totalWeeks);
         loadAtRiskStudents();
+        loadPlanSummary();
+        if (!storedMode) {
+            showAutoReorderChoice();
+        }
 
         weekFilterMenu.addEventListener("click", (event) => {
             const button = event.target.closest("[data-week]");
@@ -773,6 +1289,60 @@
     durationDecreaseButton.addEventListener("click", () => updateDuration(-1));
     activitySaveButton.addEventListener("click", saveActivityEdit);
     replanBtn.addEventListener("click", replanSelectedWeek);
+    autoReorderSwitch.addEventListener("change", () => {
+        isAutoReorderEnabled = autoReorderSwitch.checked;
+        persistPlanMode(isAutoReorderEnabled ? "auto" : "manual");
+        updatePlanModeUi();
+
+        if (isAutoReorderEnabled && planSummaryState?.planNeedsReordering && !isAutoReordering) {
+            void replanSelectedWeek({
+                silent: true,
+                showAutoInfo: true,
+                summary: planSummaryState,
+                anchorMode: "auto"
+            });
+        }
+    });
+    reorderPromptLaterButton.addEventListener("click", () => {
+        dismissedReorderFingerprint = getReorderFingerprint(planSummaryState);
+        hideReorderPrompt();
+    });
+    reorderPromptNowButton.addEventListener("click", async () => {
+        hideReorderPrompt();
+        dismissedReorderFingerprint = getReorderFingerprint(planSummaryState);
+        await replanSelectedWeek();
+    });
+    reorderPromptBackdrop.addEventListener("click", () => {
+        dismissedReorderFingerprint = getReorderFingerprint(planSummaryState);
+        hideReorderPrompt();
+    });
+    autoReorderEnableButton.addEventListener("click", () => {
+        isAutoReorderEnabled = true;
+        persistPlanMode("auto");
+        updatePlanModeUi();
+        hideAutoReorderChoice();
+        if (planSummaryState?.planNeedsReordering) {
+            void replanSelectedWeek({
+                silent: true,
+                showAutoInfo: true,
+                summary: planSummaryState,
+                anchorMode: "auto"
+            });
+        }
+    });
+    autoReorderSkipButton.addEventListener("click", () => {
+        isAutoReorderEnabled = false;
+        persistPlanMode("manual");
+        updatePlanModeUi();
+        hideAutoReorderChoice();
+    });
+    autoReorderChoiceBackdrop.addEventListener("click", hideAutoReorderChoice);
+    autoReorderInfoBackdrop.addEventListener("click", hideAutoReorderInfo);
+    reorderDetailsBackdrop.addEventListener("click", hideReorderDetails);
+    autoReorderInfoCloseButton.addEventListener("click", hideAutoReorderInfo);
+    autoReorderInfoMoreButton.addEventListener("click", () => showReorderDetails());
+    reorderDetailsButton.addEventListener("click", () => showReorderDetails());
+    reorderDetailsCloseButton.addEventListener("click", hideReorderDetails);
     activityPanelBackdrop.addEventListener("click", closeActivityPanels);
     document.querySelectorAll(".js-close-panels").forEach((button) => {
         button.addEventListener("click", closeActivityPanels);
