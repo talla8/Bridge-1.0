@@ -6,8 +6,10 @@ import { InMemoryCurriculumItemsRepo } from 'src/infrastructure/in-memory/in-mem
 import { InMemoryGradesRepo } from 'src/infrastructure/in-memory/in-memory-grade.repo';
 import { InMemoryParentsRepo } from 'src/infrastructure/in-memory/in-memory-parent.repo';
 import { InMemoryPlansRepo } from 'src/infrastructure/in-memory/in-memory-plan.repo';
+import { InMemoryPlanItemsRepo } from 'src/infrastructure/in-memory/in-memory-plan-item.repo';
 import { InMemoryPlanLogsRepo } from 'src/infrastructure/in-memory/in-memory-planLog.repo';
 import { InMemorySchoolsRepo } from 'src/infrastructure/in-memory/in-memory-school.repo';
+import { InMemorySessionsRepo } from 'src/infrastructure/in-memory/in-memory-session.repo';
 import { InMemorySkillsRepo } from 'src/infrastructure/in-memory/in-memory-skill.repo';
 import { InMemorySkillCurriculumItemsRepo } from 'src/infrastructure/in-memory/in-memory-skill-curriculum-item.repo';
 import { InMemoryStudentsRepo } from 'src/infrastructure/in-memory/in-memory-student.repo';
@@ -34,10 +36,12 @@ export class MockSeedBootstrapService implements OnModuleInit {
     private readonly skillsRepo: InMemorySkillsRepo,
     private readonly curriculumItemsRepo: InMemoryCurriculumItemsRepo,
     private readonly plansRepo: InMemoryPlansRepo,
+    private readonly planItemsRepo: InMemoryPlanItemsRepo,
     private readonly attendanceRepo: InMemoryAttendancesRepo,
     private readonly assessmentResultsRepo: InMemoryAssesmentResultsRepo,
     private readonly skillCurriculumItemsRepo: InMemorySkillCurriculumItemsRepo,
     private readonly planLogsRepo: InMemoryPlanLogsRepo,
+    private readonly sessionsRepo: InMemorySessionsRepo,
     private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
     private readonly supportProgramsRepo: InMemorySupportProgramsRepo,
     private readonly adminsRepo: InMemoryAdminsRepo,
@@ -69,22 +73,100 @@ export class MockSeedBootstrapService implements OnModuleInit {
             }),
           ),
       },
+      uploads: {
+        repository: this.uploadsRepo,
+        transformRows: async (rows) =>
+          rows.map((row) => ({
+            ...row,
+            createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+          })),
+      },
+      plans: {
+        repository: this.plansRepo,
+        transformRows: async (rows) =>
+          rows.map((row) => ({
+            ...row,
+            startDate: row.startDate ? new Date(String(row.startDate)) : new Date(),
+            sessions: Array.isArray(row.sessions)
+              ? row.sessions.map((session) => ({
+                  ...session,
+                  sessionDate: session.sessionDate
+                    ? new Date(String(session.sessionDate))
+                    : new Date(),
+                }))
+              : [],
+          })),
+      },
+      planLogs: {
+        repository: this.planLogsRepo,
+        transformRows: async (rows) =>
+          rows.map((row) => ({
+            ...row,
+            createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+          })),
+      },
       parents: this.parentsRepo,
       teachers: this.teachersRepo,
       schools: this.schoolsRepo,
       grades: this.gradesRepo,
       subjects: this.subjectsRepo,
       subjectOfferings: this.subjectOfferingsRepo,
-      students: this.studentsRepo,
-      uploads: this.uploadsRepo,
+      students: {
+        repository: this.studentsRepo,
+        transformRows: async (rows) => {
+          const grades = await this.gradesRepo.findAll();
+          return rows.map((row) => {
+            if (row.teacherId) {
+              return row;
+            }
+
+            const matchingGrade = grades.find((grade) => {
+              const sameGrade =
+                String(grade.gradeId) === String(row.gradeId) ||
+                String(grade.gradeName) === String(row.gradeId);
+              const sameSchool =
+                !row.schoolName ||
+                !grade.schoolName ||
+                String(grade.schoolName) === String(row.schoolName);
+
+              return sameGrade && sameSchool;
+            });
+
+            return {
+              ...row,
+              teacherId: matchingGrade?.teacherId,
+            };
+          });
+        },
+      },
       skills: this.skillsRepo,
       curriculumItems: this.curriculumItemsRepo,
-      plans: this.plansRepo,
       attendance: this.attendanceRepo,
       assessmentResults: this.assessmentResultsRepo,
       skillCurriculumItems: this.skillCurriculumItemsRepo,
       supportPrograms: this.supportProgramsRepo,
-      planLogs: this.planLogsRepo,
     });
+
+    await this.hydrateSeededPlans();
+  }
+
+  private async hydrateSeededPlans(): Promise<void> {
+    const plans = await this.plansRepo.findAll();
+
+    for (const plan of plans) {
+      for (const session of plan.sessions ?? []) {
+        const existingSession = await this.sessionsRepo.findById(session.sessionId);
+        if (!existingSession) {
+          await this.sessionsRepo.create(session);
+        }
+
+        for (const item of session.items ?? []) {
+          const existingItem = await this.planItemsRepo.findById(item.planItemId);
+          if (!existingItem) {
+            await this.planItemsRepo.create(item);
+          }
+        }
+      }
+    }
   }
 }

@@ -19,7 +19,8 @@ export class InMemoryStudentsRepo implements StudentRepository {
   async findById(id: string): Promise<Student | null> {
     return (
       this.students.find(
-        (student: Student): boolean => student.studentId === id,
+        (student: Student): boolean =>
+          String(student.studentId) === String(id),
       ) ?? null
     );
   }
@@ -41,13 +42,22 @@ export class InMemoryStudentsRepo implements StudentRepository {
 
   async findByParentId(parentId: string): Promise<Student[]> {
     return this.students.filter(
-      (student: Student): boolean => student.parentId === parentId,
+      (student: Student): boolean =>
+        String(student.parentId) === String(parentId),
+    );
+  }
+
+  async findByTeacherId(teacherId: string): Promise<Student[]> {
+    return this.students.filter(
+      (student: Student): boolean =>
+        String(student.teacherId) === String(teacherId),
     );
   }
 
   async findByGradeId(gradeId: string): Promise<Student[]> {
     return this.students.filter(
-      (student: Student): boolean => student.gradeId === gradeId,
+      (student: Student): boolean =>
+        String(student.gradeId) === String(gradeId),
     );
   }
 
@@ -57,7 +67,7 @@ export class InMemoryStudentsRepo implements StudentRepository {
 
   async update(id: string, patch: Partial<Student>): Promise<Student | null> {
     const index = this.students.findIndex(
-      (item: Student): boolean => item.studentId === id,
+      (item: Student): boolean => String(item.studentId) === String(id),
     );
     if (index === -1) {
       return null;
@@ -70,7 +80,7 @@ export class InMemoryStudentsRepo implements StudentRepository {
 
   async delete(id: string): Promise<boolean> {
     const index = this.students.findIndex(
-      (item: Student): boolean => item.studentId === id,
+      (item: Student): boolean => String(item.studentId) === String(id),
     );
     if (index === -1) return false;
 

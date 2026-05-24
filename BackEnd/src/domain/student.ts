@@ -11,6 +11,7 @@ export class Student {
   fullEnglishName: string;
   fullArabicName: string;
   nationalId: string;
+  teacherId?: UserId;
   parentId?: UserId;
   parentLinkCode: string;
   gradeId: GradeId;

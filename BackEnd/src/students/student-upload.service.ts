@@ -24,7 +24,7 @@ export class StudentUploadService {
     private readonly gradesRepo: InMemoryGradesRepo,
   ) {}
 
-  async excelParsing(
+  async excelParsing( //comment: i should remove this its not used
     file: Express.Multer.File,
   ): Promise<NormalizedStudentInfoRow[]> {
     return this.normalizeRows(file.buffer);
@@ -221,6 +221,9 @@ export class StudentUploadService {
         grade: teacherGrade.gradeId,
       }));
 
-    return this.studentService.createMany(studentsToCreate);
+    return this.studentService.createMany(studentsToCreate, {
+      teacherId,
+      schoolName: teacherGrade.schoolName ?? '',
+    });
   }
 }

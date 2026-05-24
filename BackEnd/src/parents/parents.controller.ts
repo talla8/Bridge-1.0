@@ -11,6 +11,7 @@ import {
   ParentsService,
 } from './parents.service';
 import { SubmitParentQuizDTO } from './DTO/submit-parent-quiz.dto';
+import { LinkParentStudentDTO } from './DTO/link-parent-student.dto';
 
 @Controller('parents')
 export class ParentsController {
@@ -19,6 +20,14 @@ export class ParentsController {
   @Get('me')
   getProfile(@Req() req): Promise<ParentProfileSummary> {
     return this.parentsService.getProfile(req.user.sub);
+  }
+
+  @Post('me/students/link')
+  linkStudent(
+    @Req() req,
+    @Body() dto: LinkParentStudentDTO,
+  ): Promise<ParentProfileSummary> {
+    return this.parentsService.linkStudentByCode(req.user.sub, dto);
   }
 
   @Get('me/students/:studentId/dashboard')

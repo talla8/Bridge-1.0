@@ -8,6 +8,7 @@ export interface StudentRepository {
   findByArabicName(name: string): Promise<Student[]>;
   findAll(): Promise<Student[]>;
   findByParentId(parentId: string): Promise<Student[]>;
+  findByTeacherId(teacherId: string): Promise<Student[]>;
   findByGradeId(gradeId: string): Promise<Student[]>;
   update(id: string, patch: Partial<Student>): Promise<Student | null>;
   delete(id: string): Promise<boolean>;

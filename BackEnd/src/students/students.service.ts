@@ -20,7 +20,10 @@ export class StudentsService {
     private readonly inMemoryGradeRepo: InMemoryGradesRepo,
   ) {}
 
-  async createMany(students: CreateStudentDTO[]): Promise<Student[]> {
+  async createMany(
+    students: CreateStudentDTO[],
+    owner?: { teacherId?: UserId; schoolName?: string | null },
+  ): Promise<Student[]> {
     const createdAt = Date.now(); //we dont have a createdAt filed in students we are creating this only for the id
     const mappedStudents: Student[] = students.map(
       (student: CreateStudentDTO, index: number): Student => ({
@@ -28,11 +31,12 @@ export class StudentsService {
         fullEnglishName: student.fullEnglishName,
         fullArabicName: student.fullArabicName,
         nationalId: student.nationalId,
+        teacherId: owner?.teacherId,
         // Temporary defaults for MVP while DTO is minimal.
         parentId: undefined,
         parentLinkCode: this.generateParentLinkCode(),
         gradeId: student.grade,
-        schoolName: '', //must be associated with the teacher
+        schoolName: owner?.schoolName ?? '', //must be associated with the teacher
         parentRelation: ParentRelation.GUARDIAN, //Default //see a way to chnge it while creating a parents account
         isActive: true,
       }),
@@ -49,9 +53,25 @@ export class StudentsService {
     if (user?.roleId === RoleId.PARENT) {
       return this.inMemoryStudentsRepo.findByParentId(userId);
     } else if (user?.roleId === RoleId.TEACHER) {
+      const ownedStudents = await this.inMemoryStudentsRepo.findByTeacherId(userId);
+      if (ownedStudents.length > 0) {
+        return ownedStudents;
+      }
+
       const grade = await this.inMemoryGradeRepo.findByTeacherId(userId);
       if (!grade) return [];
-      return this.inMemoryStudentsRepo.findByGradeId(grade?.gradeId);
+      const gradeStudents = await this.inMemoryStudentsRepo.findByGradeId(grade?.gradeId);
+      return gradeStudents.filter((student) => {
+        if (student.teacherId) {
+          return String(student.teacherId) === String(userId);
+        }
+
+        if (grade.schoolName && student.schoolName) {
+          return String(student.schoolName) === String(grade.schoolName);
+        }
+
+        return false;
+      });
     } else {
       throw new UnauthorizedException();
     }

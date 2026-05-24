@@ -29,6 +29,7 @@ import { BaselineProcessingServiceService } from 'src/baseline/baseline-processi
 import { StudentsService } from 'src/students/students.service';
 import { randomUUID } from 'crypto';
 import { SubmitParentQuizDTO } from './DTO/submit-parent-quiz.dto';
+import { LinkParentStudentDTO } from './DTO/link-parent-student.dto';
 
 export type ParentProfileSummary = {
   parentId: UserId;
@@ -80,6 +81,12 @@ export type ParentStudentDashboard = {
     skillName: string;
     progress: number;
   }[];
+};
+
+type ParentPlanProgressSummary = {
+  totalItems: number;
+  completedItems: number;
+  progressPercentage: number;
 };
 
 export type ParentQuizDetails = {
@@ -192,6 +199,48 @@ export class ParentsService {
     };
   }
 
+  async linkStudentByCode(
+    parentId: UserId,
+    dto: LinkParentStudentDTO,
+  ): Promise<ParentProfileSummary> {
+    const parent = await this.usersService.findById(parentId);
+    if (!parent) {
+      throw new NotFoundException('Parent not found.');
+    }
+
+    const normalizedCode = String(dto.parentStudentCode || '').trim();
+    if (!normalizedCode) {
+      throw new BadRequestException('Parent student code is required.');
+    }
+
+    const student = await this.studentsService.findAll().then((students) =>
+      students.find(
+        (item) =>
+          String(item.parentLinkCode || '')
+            .trim()
+            .toUpperCase() === normalizedCode.toUpperCase(),
+      ),
+    );
+
+    if (!student) {
+      throw new NotFoundException('Parent student code is invalid.');
+    }
+
+    if (student.parentId && String(student.parentId) !== String(parentId)) {
+      throw new BadRequestException(
+        'This student is already linked to another parent account.',
+      );
+    }
+
+    if (String(student.parentId) !== String(parentId)) {
+      await this.studentsService.updateStudent(student.studentId, {
+        parentId,
+      });
+    }
+
+    return this.getProfile(parentId);
+  }
+
   async getStudentDashboard(
     parentId: UserId,
     studentId: StudentId,
@@ -217,7 +266,9 @@ export class ParentsService {
 
     const grade = gradeResult.status === 'fulfilled' ? gradeResult.value : null;
     const skillProgress =
-      skillProgressResult.status === 'fulfilled' ? skillProgressResult.value : [];
+      skillProgressResult.status === 'fulfilled'
+        ? skillProgressResult.value
+        : [];
     const overdueQuizzes =
       overdueQuizzesResult.status === 'fulfilled'
         ? overdueQuizzesResult.value
@@ -228,18 +279,21 @@ export class ParentsService {
         : [];
     const sessions =
       sessionsResult.status === 'fulfilled' ? sessionsResult.value : [];
+    const planProgress = this.calculatePlanProgressFromSessions(sessions);
 
     const activeSupportProgram = supportPrograms.find(
       (program) => !program.isProgramCompleted,
     );
-    const overallProgress = this.calculateOverallProgress(
-      activeSupportProgram,
+    const overallProgress = this.calculateOverallProgress( //comment: we already have this method in the static service
+      planProgress,
       skillProgress,
     );
     const todayLearning = this.buildSessionCard(
       this.findClosestSession(sessions, 0),
     );
-    const nextLesson = this.buildSessionCard(this.findClosestSession(sessions, 1));
+    const nextLesson = this.buildSessionCard(
+      this.findClosestSession(sessions, 1),
+    );
 
     return {
       studentId: student.studentId,
@@ -316,13 +370,17 @@ export class ParentsService {
     }
 
     const answers = dto.answers ?? [];
-    const answerMap = new Map(answers.map((answer) => [answer.questionId, answer]));
+    const answerMap = new Map(
+      answers.map((answer) => [answer.questionId, answer]),
+    );
 
     const gradedAnswers: QuizResultAnswer[] = quiz.questions.map((question) => {
       const answer = answerMap.get(question.quizQuestionId);
 
       if (question.type === QuizQuestionType.MULTIPLE_CHOICE) {
-        const correctOption = question.options.find((option) => option.isCorrect);
+        const correctOption = question.options.find(
+          (option) => option.isCorrect,
+        );
         return {
           questionId: question.quizQuestionId,
           selectedOptionId: answer?.selectedOptionId,
@@ -384,7 +442,9 @@ export class ParentsService {
     const students = await this.studentsService.getStudents(parentId);
     const listItems = await Promise.all(
       students.map(async (student) => {
-        const assignments = await this.assignmentsRepo.findByStudentId(student.studentId);
+        const assignments = await this.assignmentsRepo.findByStudentId(
+          student.studentId,
+        );
         const quizAssignments = assignments.filter(
           (assignment) =>
             assignment.type === AssignmentType.QUIZ &&
@@ -428,16 +488,20 @@ export class ParentsService {
       .flat()
       .sort(
         (left, right) =>
-          (left.dueDate ? new Date(left.dueDate).getTime() : Number.MAX_SAFE_INTEGER) -
-          (right.dueDate ? new Date(right.dueDate).getTime() : Number.MAX_SAFE_INTEGER),
+          (left.dueDate
+            ? new Date(left.dueDate).getTime()
+            : Number.MAX_SAFE_INTEGER) -
+          (right.dueDate
+            ? new Date(right.dueDate).getTime()
+            : Number.MAX_SAFE_INTEGER),
       );
   }
 
-  async getQuizResults(
-    parentId: UserId,
-  ): Promise<ParentQuizResultListItem[]> {
+  async getQuizResults(parentId: UserId): Promise<ParentQuizResultListItem[]> {
     const students = await this.studentsService.getStudents(parentId);
-    const studentMap = new Map(students.map((student) => [student.studentId, student]));
+    const studentMap = new Map(
+      students.map((student) => [student.studentId, student]),
+    );
     const studentIds = new Set(students.map((student) => student.studentId));
     const allResults = await this.quizResultsRepo.findAll();
 
@@ -516,7 +580,9 @@ export class ParentsService {
         const selectedOption = question.options.find(
           (option) => option.quizOptionId === answer?.selectedOptionId,
         );
-        const correctOption = question.options.find((option) => option.isCorrect);
+        const correctOption = question.options.find(
+          (option) => option.isCorrect,
+        );
 
         return {
           questionId: question.quizQuestionId,
@@ -581,7 +647,8 @@ export class ParentsService {
       )
       .sort(
         (left, right) =>
-          new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime(),
+          new Date(left.createdAt).getTime() -
+          new Date(right.createdAt).getTime(),
       )
       .map((assignment) => ({
         assignmentId: assignment.assignmentId,
@@ -612,7 +679,9 @@ export class ParentsService {
     }
 
     if (!assignment.targetStudentIds.includes(student.studentId)) {
-      throw new ForbiddenException('Assignment does not belong to this student.');
+      throw new ForbiddenException(
+        'Assignment does not belong to this student.',
+      );
     }
 
     if (
@@ -623,7 +692,9 @@ export class ParentsService {
     }
 
     if (assignment.sourceType !== AssignmentSourceType.TEACHER_CREATED) {
-      throw new BadRequestException('Only teacher-created quizzes are supported here.');
+      throw new BadRequestException(
+        'Only teacher-created quizzes are supported here.',
+      );
     }
 
     const quiz = await this.quizzesRepo.findById(assignment.sourceId);
@@ -646,7 +717,9 @@ export class ParentsService {
 
     return plans
       .flatMap((plan) => plan.sessions ?? [])
-      .filter((session): session is Session => this.isSchedulableSession(session))
+      .filter((session): session is Session =>
+        this.isSchedulableSession(session),
+      )
       .sort(
         (left, right) =>
           new Date(left.sessionDate).getTime() -
@@ -707,7 +780,9 @@ export class ParentsService {
       this.baselineProcessingService.findByStudentId(studentId),
       this.skillsRepo.findAll(),
     ]);
-    const skillNameMap = new Map(skills.map((skill) => [skill.skillId, skill.title]));
+    const skillNameMap = new Map(
+      skills.map((skill) => [skill.skillId, skill.title]),
+    );
 
     return results.map((result) => ({
       skillId: result.skillId,
@@ -717,18 +792,11 @@ export class ParentsService {
   }
 
   private calculateOverallProgress(
-    activeSupportProgram:
-      | Awaited<ReturnType<SupportProgramsService['getStudentProgress']>>[number]
-      | undefined,
+    planProgress: ParentPlanProgressSummary,
     skillProgress: { progress: number }[],
   ): number {
-    if (activeSupportProgram) {
-      const totalMilestones = activeSupportProgram.milestones.length;
-      if (totalMilestones === 0) return 0;
-      const completedMilestones = activeSupportProgram.milestones.filter(
-        (milestone) => milestone.isCompleted,
-      ).length;
-      return Math.round((completedMilestones / totalMilestones) * 100);
+    if (planProgress.totalItems > 0) {
+      return planProgress.progressPercentage;
     }
 
     if (!skillProgress.length) return 0;
@@ -738,7 +806,35 @@ export class ParentsService {
     );
   }
 
-  private isSchedulableSession(session: Session | null | undefined): session is Session {
+  private calculatePlanProgressFromSessions(
+    sessions: Session[],
+  ): ParentPlanProgressSummary {
+    const items = sessions
+      .flatMap((session) => session.items ?? [])
+      .filter((item) => item.status !== PlanItemStatus.CANCELLED);
+
+    if (!items.length) {
+      return {
+        totalItems: 0,
+        completedItems: 0,
+        progressPercentage: 0,
+      };
+    }
+
+    const completedItems = items.filter(
+      (item) => item.status === PlanItemStatus.COMPLETED,
+    ).length;
+
+    return {
+      totalItems: items.length,
+      completedItems,
+      progressPercentage: Math.round((completedItems / items.length) * 100),
+    };
+  }
+
+  private isSchedulableSession(
+    session: Session | null | undefined,
+  ): session is Session {
     if (!session) return false;
 
     const sessionDate = new Date(session.sessionDate);
