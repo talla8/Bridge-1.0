@@ -284,6 +284,20 @@
 
         if (targetTypeSelect.value === "WEAK_STUDENTS") {
             state.selectedStudentIds = new Set([...state.weakStudentIds]);
+            return;
+        }
+
+        if (
+            targetTypeSelect.value === "SELECTED_STUDENTS" &&
+            Array.isArray(publishDraft?.recommendedTargetStudentIds) &&
+            publishDraft.recommendedTargetStudentIds.length &&
+            state.selectedStudentIds.size === 0
+        ) {
+            state.selectedStudentIds = new Set(
+                publishDraft.recommendedTargetStudentIds.filter((studentId) =>
+                    state.students.some((student) => student.studentId === studentId)
+                )
+            );
         }
     }
 
@@ -339,6 +353,13 @@
             missingDraftState.classList.remove("d-none");
             publishContent.classList.add("d-none");
             return;
+        }
+
+        if (publishDraft.recommendedTargetType) {
+            const allowedTargetTypes = ["WEAK_STUDENTS", "WHOLE_CLASS", "SELECTED_STUDENTS"];
+            if (allowedTargetTypes.includes(publishDraft.recommendedTargetType)) {
+                targetTypeSelect.value = publishDraft.recommendedTargetType;
+            }
         }
 
         renderSummary();
@@ -400,6 +421,7 @@
                 }),
                 body: JSON.stringify({
                     subjectId: publishDraft.subjectId,
+                    skillFocus: publishDraft.skill,
                     title: publishDraft.title,
                     questions: publishDraft.questions
                 })

@@ -138,6 +138,65 @@
         font-size: 13px;
     }
 
+    .quiz-source-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .quiz-source-btn {
+        border: 1px solid #dbe3f0;
+        border-radius: 14px;
+        padding: 12px 16px;
+        background: #fff;
+        color: #374151;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .quiz-source-btn.active {
+        background: #eef2ff;
+        color: #4f46e5;
+        border-color: #c7d2fe;
+    }
+
+    .quiz-library-panel {
+        margin-top: 18px;
+        border-top: 1px solid #eef2f7;
+        padding-top: 18px;
+    }
+
+    .quiz-library-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    .quiz-library-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        padding: 16px;
+        background: #fff;
+    }
+
+    .quiz-library-card h4 {
+        font-size: 18px;
+        font-weight: 800;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .quiz-library-meta {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .quiz-library-card p {
+        color: #4b5563;
+        margin-bottom: 14px;
+    }
+
     .quiz-error {
         margin-top: 14px;
         color: #dc2626;
@@ -153,6 +212,11 @@
                 <div class="quiz-page-title">Create Quiz</div>
                 <div class="quiz-page-subtitle">Build questions first, then move to publishing and choose who should receive the quiz.</div>
 
+                <div class="quiz-source-row">
+                    <button id="manualSourceBtn" class="quiz-source-btn active" type="button">Build manually</button>
+                    <button id="librarySourceBtn" class="quiz-source-btn" type="button">Choose from our library</button>
+                </div>
+
                 <div class="quiz-grid">
                     <div>
                         <label class="quiz-label" for="quizTitleInput">Quiz title</label>
@@ -163,6 +227,13 @@
                         <label class="quiz-label" for="quizSkillInput">Skill focus</label>
                         <input id="quizSkillInput" class="quiz-input" type="text" placeholder="Example: Writing" />
                     </div>
+                </div>
+
+                <div id="libraryPanel" class="quiz-library-panel d-none">
+                    <div class="quiz-label">Quiz library</div>
+                    <div class="quiz-helper" style="margin-bottom:12px;">Library templates load as editable drafts. Add multiple-choice options if you want auto-grading.</div>
+                    <div id="libraryState" class="quiz-helper">Loading templates...</div>
+                    <div id="libraryTemplates" class="quiz-library-grid"></div>
                 </div>
             </div>
 
@@ -187,12 +258,30 @@
     const quizError = document.getElementById("quizError");
     const quizTitleInput = document.getElementById("quizTitleInput");
     const quizSkillInput = document.getElementById("quizSkillInput");
-    const subjectId = localStorage.getItem("teacherSelectedSubject") || "subject_arabic";
+    const manualSourceBtn = document.getElementById("manualSourceBtn");
+    const librarySourceBtn = document.getElementById("librarySourceBtn");
+    const libraryPanel = document.getElementById("libraryPanel");
+    const libraryState = document.getElementById("libraryState");
+    const libraryTemplates = document.getElementById("libraryTemplates");
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const subjectId = localStorage.getItem("teacherSelectedSubject") || "2";
     let questionIndex = 0;
+    let libraryLoaded = false;
+    let libraryTemplatesState = [];
 
     function getSkillFromQuery() {
         const params = new URLSearchParams(window.location.search);
         return params.get("skill") || "";
+    }
+
+    function getTargetTypeFromQuery() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get("targetType") || "";
+    }
+
+    function getSelectedStudentIdsFromQuery() {
+        const params = new URLSearchParams(window.location.search);
+        return params.getAll("studentId").filter(Boolean);
     }
 
     function showQuizError(message) {
@@ -202,6 +291,17 @@
 
     function hideQuizError() {
         quizError.classList.add("d-none");
+    }
+
+    function setSourceMode(mode) {
+        const isLibrary = mode === "library";
+        manualSourceBtn.classList.toggle("active", !isLibrary);
+        librarySourceBtn.classList.toggle("active", isLibrary);
+        libraryPanel.classList.toggle("d-none", !isLibrary);
+
+        if (isLibrary && !libraryLoaded) {
+            loadLibraryTemplates();
+        }
     }
 
     function createOptionRow(questionId, optionIndex, optionText = "", isCorrect = false) {
@@ -294,6 +394,96 @@
         questionsContainer.appendChild(card);
     }
 
+    function resetQuestions() {
+        questionsContainer.innerHTML = "";
+        questionIndex = 0;
+    }
+
+    function loadTemplateIntoBuilder(template) {
+        if (!template) return;
+
+        quizTitleInput.value = template.title;
+        quizSkillInput.value = template.skillName;
+        resetQuestions();
+
+        (template.questions || []).forEach((question) => {
+            addQuestionCard({
+                prompt: question.prompt,
+                type: question.type,
+                options: question.options || []
+            });
+        });
+
+        if (!template.questions?.length) {
+            addQuestionCard();
+        }
+
+        hideQuizError();
+        setSourceMode("manual");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderLibraryTemplates() {
+        if (!libraryTemplatesState.length) {
+            libraryState.textContent = "No library templates match the current skill.";
+            libraryTemplates.innerHTML = "";
+            return;
+        }
+
+        libraryState.textContent = `${libraryTemplatesState.length} template(s) available.`;
+        libraryTemplates.innerHTML = libraryTemplatesState.map((template) => `
+            <article class="quiz-library-card">
+                <h4>${template.title}</h4>
+                <div class="quiz-library-meta">${template.skillName} • ${template.questionCount} questions</div>
+                <p>${template.description || "Prepared support-program template."}</p>
+                <button class="quiz-btn quiz-btn-soft js-use-template" type="button" data-template-id="${template.templateId}">Use this template</button>
+            </article>
+        `).join("");
+
+        libraryTemplates.querySelectorAll(".js-use-template").forEach((button) => {
+            button.addEventListener("click", () => {
+                const template = libraryTemplatesState.find((entry) => entry.templateId === button.dataset.templateId);
+                loadTemplateIntoBuilder(template);
+            });
+        });
+    }
+
+    async function loadLibraryTemplates() {
+        if (!token) {
+            libraryState.textContent = "You need to be logged in to load the quiz library.";
+            return;
+        }
+
+        libraryState.textContent = "Loading templates...";
+        libraryTemplates.innerHTML = "";
+
+        try {
+            const params = new URLSearchParams({ subjectId });
+            const skill = getSkillFromQuery();
+            if (skill) {
+                params.set("skillId", skill);
+            }
+
+            const response = await fetch(`${backendBaseUrl}/quizzes/library?${params.toString()}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await response.json().catch(() => []);
+
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to load quiz library.");
+            }
+
+            libraryTemplatesState = Array.isArray(data) ? data : [];
+            libraryLoaded = true;
+            renderLibraryTemplates();
+        } catch (error) {
+            libraryState.textContent = error.message || "Unable to load quiz library.";
+            libraryTemplates.innerHTML = "";
+        }
+    }
+
     function collectDraft() {
         const title = quizTitleInput.value.trim();
         const skill = quizSkillInput.value.trim();
@@ -349,11 +539,15 @@
             title,
             skill,
             subjectId,
+            recommendedTargetType: getTargetTypeFromQuery() || undefined,
+            recommendedTargetStudentIds: getSelectedStudentIdsFromQuery(),
             questions
         };
     }
 
     addQuestionBtn.addEventListener("click", () => addQuestionCard());
+    manualSourceBtn.addEventListener("click", () => setSourceMode("manual"));
+    librarySourceBtn.addEventListener("click", () => setSourceMode("library"));
 
     nextToPublishBtn.addEventListener("click", () => {
         hideQuizError();
