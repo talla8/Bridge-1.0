@@ -15,6 +15,11 @@ A web application that helps early-grade teachers analyze student performance, g
 - Database: PostgreSQL or MySQL
 - Auth: JWT
 
+## Status 
+This project is currently under active development. Core features and documentation are being added progressively.
+
+
+
 ## How to Run
 ```bash
 npm install
