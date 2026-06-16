@@ -1,11 +1,19 @@
-import { IsArray, IsDateString, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateInstitutionTaskDTO {
   @IsString()
+  @MaxLength(120)
   title: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(1000)
   description?: string;
 
   @IsOptional()
@@ -15,6 +23,10 @@ export class CreateInstitutionTaskDTO {
   @IsOptional()
   @IsArray()
   assignedTeacherEmails?: string[];
+
+  @IsOptional()
+  @IsArray()
+  attachments?: string[];
 
   @IsOptional()
   @IsDateString()

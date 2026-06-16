@@ -7,16 +7,19 @@ import {
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
+import { SqliteInstitutionNotificationsRepo } from 'src/database/sqlite-institution-notification.repo';
+import { SqliteInstitutionTasksRepo } from 'src/database/sqlite-institution-task.repo';
+import { SqliteGradesRepo } from 'src/database/sqlite-grade.repo';
+import { SqlitePlansRepo } from 'src/database/sqlite-plan.repo';
+import { SqlitePlanLogsRepo } from 'src/database/sqlite-plan-log.repo';
+import { SqliteSubjectOfferingsRepo } from 'src/database/sqlite-subject-offering.repo';
 import { Grade } from 'src/domain/grade';
 import { UserId } from 'src/domain/ids';
 import { SubjectOffering } from 'src/domain/subjectOffering';
 import { RoleId, User } from 'src/domain/user';
-import { InMemoryGradesRepo } from 'src/infrastructure/in-memory/in-memory-grade.repo';
-import { InMemoryPlanLogsRepo } from 'src/infrastructure/in-memory/in-memory-planLog.repo';
-import { InMemoryPlansRepo } from 'src/infrastructure/in-memory/in-memory-plan.repo';
 import { InMemorySchoolsRepo } from 'src/infrastructure/in-memory/in-memory-school.repo';
-import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
 import { InMemorySubjectsRepo } from 'src/infrastructure/in-memory/in-memory-subject.repo';
+import { PlansService } from 'src/plans/plans.service';
 import { StatisticsService } from 'src/statistics/statistics.service';
 import { StudentsService } from 'src/students/students.service';
 import { UsersService } from 'src/users/users.service';
@@ -24,7 +27,16 @@ import { CreateInstitutionNotificationDTO } from './DTO/create-notification.dto'
 import { CreateInstitutionTaskDTO } from './DTO/create-task.dto';
 import { CreateInstitutionTeacherDTO } from './DTO/create-teacher.dto';
 import { InstitutionNotification } from './domain/institution-notification';
-import { InstitutionTask, InstitutionTaskStatus } from './domain/institution-task';
+import {
+  InstitutionNotificationSenderRole,
+} from './domain/institution-notification';
+import {
+  InstitutionTask,
+  InstitutionTaskStatus,
+  InstitutionTaskSubmission,
+} from './domain/institution-task';
+import { CreateTeacherMessageDTO } from './DTO/create-teacher-message.dto';
+import { SubmitInstitutionTaskDTO } from './DTO/submit-task.dto';
 
 type TeacherSchoolSummary = {
   userId: string;
@@ -41,24 +53,53 @@ type TeacherSchoolSummary = {
   weakStudentCount: number | null;
   hasGeneratedPlan: boolean;
   progressPercentage: number | null;
+  classSpeedPercentage: number | null;
+  behindPace: boolean;
   latestActivityAt: Date | null;
+};
+
+type TeacherSubjectDetailSummary = {
+  subjectId: string;
+  subjectName: string;
+  studentCount: number | null;
+  classAverage: number | null;
+  weakStudentCount: number | null;
+  hasGeneratedPlan: boolean;
+  progressPercentage: number | null;
+  classSpeedPercentage: number | null;
+  behindPace: boolean;
+};
+
+type TeacherOverviewSubjectRow = {
+  teacherUserId: string;
+  fullName: string;
+  email: string;
+  grade: string | null;
+  section: string | null;
+  subjectName: string;
+  isRegisteredForSubject: boolean;
+  studentCount: number | null;
+  classAverage: number | null;
+  weakStudentCount: number | null;
+  hasGeneratedPlan: boolean;
+  progressPercentage: number | null;
 };
 
 @Injectable()
 export class InstitutionsService {
-  private readonly notifications: InstitutionNotification[] = [];
-  private readonly tasks: InstitutionTask[] = [];
-
   constructor(
     private readonly usersService: UsersService,
     private readonly schoolsRepo: InMemorySchoolsRepo,
-    private readonly gradesRepo: InMemoryGradesRepo,
-    private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
+    private readonly gradesRepo: SqliteGradesRepo,
+    private readonly subjectOfferingsRepo: SqliteSubjectOfferingsRepo,
     private readonly subjectsRepo: InMemorySubjectsRepo,
     private readonly studentsService: StudentsService,
     private readonly statisticsService: StatisticsService,
-    private readonly plansRepo: InMemoryPlansRepo,
-    private readonly planLogsRepo: InMemoryPlanLogsRepo,
+    private readonly plansService: PlansService,
+    private readonly plansRepo: SqlitePlansRepo,
+    private readonly planLogsRepo: SqlitePlanLogsRepo,
+    private readonly institutionNotificationsRepo: SqliteInstitutionNotificationsRepo,
+    private readonly institutionTasksRepo: SqliteInstitutionTasksRepo,
   ) {}
 
   async getInstitutionProfile(adminUserId: UserId) {
@@ -80,30 +121,59 @@ export class InstitutionsService {
     const { school } = await this.getInstitutionContext(adminUserId);
     const teachers = await this.getSchoolTeachersBySchoolId(school.schoolId);
     const teacherSummaries = await Promise.all(
-      teachers.map((teacher) => this.buildTeacherSummary(teacher, school.schoolId)),
+      teachers.map(async (teacher) => ({
+        summary: await this.buildTeacherSummary(teacher, school.schoolId),
+        subjectDetails: await this.buildTeacherSubjectDetails(
+          teacher,
+          school.schoolId,
+        ),
+      })),
     );
 
-    const activeTeachers = teacherSummaries.filter((teacher) => teacher.isActive).length;
-    const teachersWithPlans = teacherSummaries.filter((teacher) => teacher.hasGeneratedPlan).length;
-    const teachersWithoutPlans = teacherSummaries.length - teachersWithPlans;
-    const behindPaceClasses = teacherSummaries.filter(
-      (teacher) =>
-        teacher.hasGeneratedPlan &&
-        teacher.progressPercentage !== null &&
-        teacher.progressPercentage < 100,
+    const teacherSummaryRows = teacherSummaries.map((item) => item.summary);
+
+    const activeTeachers = teacherSummaryRows.filter((teacher) => teacher.isActive).length;
+    const teachersWithPlans = teacherSummaryRows.filter((teacher) => teacher.hasGeneratedPlan).length;
+    const teachersWithoutPlans = teacherSummaryRows.length - teachersWithPlans;
+    const behindPaceClasses = teacherSummaryRows.filter(
+      (teacher) => teacher.behindPace,
     ).length;
 
-    const averageClassScore = teacherSummaries.length
+    const overviewSubjects = ['Arabic', 'Mathematics'];
+    const teacherOverviewRows = teacherSummaries.flatMap(({ summary, subjectDetails }) =>
+      overviewSubjects.map((subjectName) => {
+        const subjectDetail =
+          subjectDetails.find((item) => item.subjectName === subjectName) ?? null;
+
+        return {
+          teacherUserId: String(summary.userId),
+          fullName: summary.fullName,
+          email: summary.email,
+          grade: summary.grade,
+          section: summary.section,
+          subjectName,
+          isRegisteredForSubject: Boolean(subjectDetail),
+          studentCount: subjectDetail?.studentCount ?? null,
+          classAverage: subjectDetail?.classAverage ?? null,
+          weakStudentCount: subjectDetail?.weakStudentCount ?? null,
+          hasGeneratedPlan: Boolean(subjectDetail?.hasGeneratedPlan),
+          progressPercentage: subjectDetail?.progressPercentage ?? null,
+        } as TeacherOverviewSubjectRow;
+      }),
+    );
+
+    const classAverageValues = teacherOverviewRows
+      .filter((row) => row.isRegisteredForSubject)
+      .map((row) => row.classAverage)
+      .filter((value): value is number => value !== null);
+    const averageClassScore = classAverageValues.length
       ? Math.round(
-          teacherSummaries.reduce(
-            (sum, teacher) => sum + (teacher.classAverage ?? 0),
-            0,
-          ) /
-            teacherSummaries.length,
+          classAverageValues.reduce((sum, value) => sum + value, 0) /
+            classAverageValues.length,
         )
       : 0;
 
-    const weakStudents = teacherSummaries.reduce(
+    const weakStudents = teacherSummaryRows.reduce(
       (sum, teacher) => sum + (teacher.weakStudentCount ?? 0),
       0,
     );
@@ -111,18 +181,23 @@ export class InstitutionsService {
     return {
       schoolId: school.schoolId,
       schoolName: school.schoolName,
-      totalTeachers: teacherSummaries.length,
+      totalTeachers: teacherSummaryRows.length,
       activeTeachers,
       teachersWithPlans,
       teachersWithoutPlans,
       averageClassScore,
       weakStudents,
       behindPaceClasses,
-      recentNotifications: this.notifications
+      recentNotifications: (await this.institutionNotificationsRepo.findAll())
         .filter((item) => String(item.schoolId) === String(school.schoolId))
+        .filter(
+          (item) =>
+            item.senderRole === InstitutionNotificationSenderRole.TEACHER,
+        )
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
         .slice(0, 5),
-      openTasks: this.tasks
+      openTasks: (await this.institutionTasksRepo.findAll())
+        .map((item) => this.withEffectiveTaskStatus(item))
         .filter(
           (item) =>
             String(item.schoolId) === String(school.schoolId) &&
@@ -130,7 +205,9 @@ export class InstitutionsService {
         )
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
         .slice(0, 5),
-      teachers: teacherSummaries,
+      overviewSubjects,
+      teacherOverviewRows,
+      teachers: teacherSummaryRows,
     };
   }
 
@@ -146,6 +223,10 @@ export class InstitutionsService {
     const { school } = await this.getInstitutionContext(adminUserId);
     const teacher = await this.getTeacherInSchool(school.schoolId, teacherUserId);
     const summary = await this.buildTeacherSummary(teacher, school.schoolId);
+    const subjectDetails = await this.buildTeacherSubjectDetails(
+      teacher,
+      school.schoolId,
+    );
     const teacherPlans = (await this.plansRepo.findAll()).filter(
       (plan) => String(plan.teacherId) === String(teacher.userId),
     );
@@ -155,16 +236,14 @@ export class InstitutionsService {
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, 10);
 
-    const notifications = this.notifications.filter(
+    const notifications = (await this.institutionNotificationsRepo.findAll()).filter(
       (item) =>
         String(item.schoolId) === String(school.schoolId) &&
-        (!item.recipientTeacherUserIds?.length ||
-          item.recipientTeacherUserIds.some(
-            (candidate) => String(candidate) === String(teacherUserId),
-          )),
+        item.senderRole === InstitutionNotificationSenderRole.TEACHER &&
+        String(item.createdByUserId) === String(teacherUserId),
     );
 
-    const tasks = this.tasks.filter(
+    const tasks = (await this.institutionTasksRepo.findAll()).filter(
       (item) =>
         String(item.schoolId) === String(school.schoolId) &&
         item.assignedTeacherUserIds.some(
@@ -177,8 +256,9 @@ export class InstitutionsService {
       schoolId: school.schoolId,
       schoolName: school.schoolName,
       recentActivity: activity,
+      subjectDetails,
       notifications,
-      tasks,
+      tasks: tasks.map((item) => this.withEffectiveTaskStatus(item)),
     };
   }
 
@@ -289,7 +369,7 @@ export class InstitutionsService {
 
   async getNotifications(adminUserId: UserId) {
     const { school } = await this.getInstitutionContext(adminUserId);
-    return this.notifications
+    return (await this.institutionNotificationsRepo.findAll())
       .filter((item) => String(item.schoolId) === String(school.schoolId))
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
@@ -299,7 +379,14 @@ export class InstitutionsService {
     dto: CreateInstitutionNotificationDTO,
   ) {
     const { school } = await this.getInstitutionContext(adminUserId);
-    await this.assertTeachersBelongToSchool(school.schoolId, dto.recipientTeacherUserIds ?? []);
+    const recipientTeacherUserIds = dto.recipientTeacherEmails?.length
+      ? await this.resolveTeacherUserIdsByEmails(
+          school.schoolId,
+          dto.recipientTeacherEmails,
+        )
+      : (dto.recipientTeacherUserIds ?? []).map(String);
+
+    await this.assertTeachersBelongToSchool(school.schoolId, recipientTeacherUserIds);
 
     const notification: InstitutionNotification = {
       notificationId: `notification_${randomUUID()}`,
@@ -307,17 +394,21 @@ export class InstitutionsService {
       createdByUserId: adminUserId,
       title: dto.title.trim(),
       message: dto.message.trim(),
-      recipientTeacherUserIds: dto.recipientTeacherUserIds?.map(String) ?? [],
+      recipientTeacherUserIds,
+      senderRole: InstitutionNotificationSenderRole.INSTITUTION,
+      attachments: (dto.attachments ?? [])
+        .map((item) => String(item).trim())
+        .filter(Boolean),
       createdAt: new Date(),
     };
-    this.notifications.push(notification);
-    return notification;
+    return this.institutionNotificationsRepo.create(notification);
   }
 
   async getTasks(adminUserId: UserId) {
     const { school } = await this.getInstitutionContext(adminUserId);
-    return this.tasks
+    return (await this.institutionTasksRepo.findAll())
       .filter((item) => String(item.schoolId) === String(school.schoolId))
+      .map((item) => this.withEffectiveTaskStatus(item))
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
@@ -343,12 +434,59 @@ export class InstitutionsService {
       title: dto.title.trim(),
       description: dto.description?.trim() || undefined,
       assignedTeacherUserIds,
+      attachments: (dto.attachments ?? [])
+        .map((item) => String(item).trim())
+        .filter(Boolean),
       dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
       status: InstitutionTaskStatus.OPEN,
+      isHidden: false,
+      submissions: [],
       createdAt: new Date(),
     };
-    this.tasks.push(task);
-    return task;
+    return this.institutionTasksRepo.create(task);
+  }
+
+  async updateTaskStatus(
+    adminUserId: UserId,
+    taskId: string,
+    status: InstitutionTaskStatus,
+  ) {
+    const { school } = await this.getInstitutionContext(adminUserId);
+    const task = await this.institutionTasksRepo.findById(taskId);
+    if (!task || String(task.schoolId) !== String(school.schoolId)) {
+      throw new NotFoundException('Task not found.');
+    }
+
+    const patch: Partial<InstitutionTask> = { status };
+    if (status === InstitutionTaskStatus.OPEN) {
+      patch.submissions = [];
+    }
+
+    const updated = await this.institutionTasksRepo.update(taskId, patch);
+    if (!updated) {
+      throw new NotFoundException('Task not found.');
+    }
+    return updated;
+  }
+
+  async updateTaskVisibility(
+    adminUserId: UserId,
+    taskId: string,
+    isHidden: boolean,
+  ) {
+    const { school } = await this.getInstitutionContext(adminUserId);
+    const task = await this.institutionTasksRepo.findById(taskId);
+    if (!task || String(task.schoolId) !== String(school.schoolId)) {
+      throw new NotFoundException('Task not found.');
+    }
+
+    const updated = await this.institutionTasksRepo.update(taskId, {
+      isHidden,
+    });
+    if (!updated) {
+      throw new NotFoundException('Task not found.');
+    }
+    return this.withEffectiveTaskStatus(updated);
   }
 
   async getTeacherNotifications(teacherUserId: UserId) {
@@ -357,7 +495,7 @@ export class InstitutionsService {
       throw new ForbiddenException('Teacher institution inbox is unavailable');
     }
 
-    return this.notifications
+    return (await this.institutionNotificationsRepo.findAll())
       .filter(
         (item) =>
           String(item.schoolId) === String(teacher.schoolId) &&
@@ -375,15 +513,138 @@ export class InstitutionsService {
       throw new ForbiddenException('Teacher institution inbox is unavailable');
     }
 
-    return this.tasks
+    return (await this.institutionTasksRepo.findAll())
       .filter(
         (item) =>
           String(item.schoolId) === String(teacher.schoolId) &&
+          !item.isHidden &&
           item.assignedTeacherUserIds.some(
             (candidate) => String(candidate) === String(teacherUserId),
           ),
       )
+      .map((item) => this.withEffectiveTaskStatus(item))
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  }
+
+  async createTeacherMessage(teacherUserId: UserId, dto: CreateTeacherMessageDTO) {
+    const teacher = await this.usersService.findById(teacherUserId);
+    if (!teacher || teacher.roleId !== RoleId.TEACHER || !teacher.schoolId) {
+      throw new ForbiddenException('Teacher institution inbox is unavailable');
+    }
+
+    const notification: InstitutionNotification = {
+      notificationId: `notification_${randomUUID()}`,
+      schoolId: teacher.schoolId,
+      createdByUserId: teacherUserId,
+      title: dto.title.trim(),
+      message: dto.message.trim(),
+      recipientTeacherUserIds: [],
+      senderRole: InstitutionNotificationSenderRole.TEACHER,
+      attachments: (dto.attachments ?? [])
+        .map((item) => String(item).trim())
+        .filter(Boolean),
+      createdAt: new Date(),
+    };
+    return this.institutionNotificationsRepo.create(notification);
+  }
+
+  async submitTeacherTask(
+    teacherUserId: UserId,
+    taskId: string,
+    dto: SubmitInstitutionTaskDTO,
+  ) {
+    return this.upsertTeacherTaskSubmission(
+      teacherUserId,
+      taskId,
+      dto,
+      false,
+    );
+  }
+
+  async resubmitTeacherTask(
+    teacherUserId: UserId,
+    taskId: string,
+    dto: SubmitInstitutionTaskDTO,
+  ) {
+    return this.upsertTeacherTaskSubmission(
+      teacherUserId,
+      taskId,
+      dto,
+      true,
+    );
+  }
+
+  private async upsertTeacherTaskSubmission(
+    teacherUserId: UserId,
+    taskId: string,
+    dto: SubmitInstitutionTaskDTO,
+    requireExistingSubmission: boolean,
+  ) {
+    const teacher = await this.usersService.findById(teacherUserId);
+    if (!teacher || teacher.roleId !== RoleId.TEACHER || !teacher.schoolId) {
+      throw new ForbiddenException('Teacher institution inbox is unavailable');
+    }
+
+    const task = await this.institutionTasksRepo.findById(taskId);
+    if (!task || String(task.schoolId) !== String(teacher.schoolId)) {
+      throw new NotFoundException('Task not found.');
+    }
+
+    if (
+      !task.assignedTeacherUserIds.some(
+        (candidate) => String(candidate) === String(teacherUserId),
+      )
+    ) {
+      throw new ForbiddenException('Task is not assigned to this teacher.');
+    }
+
+    const effectiveTask = this.withEffectiveTaskStatus(task);
+    if (effectiveTask.status !== InstitutionTaskStatus.OPEN) {
+      throw new BadRequestException('Task is closed.');
+    }
+
+    const nextSubmission: InstitutionTaskSubmission = {
+      teacherUserId,
+      submittedAt: new Date(),
+      message: dto.message?.trim() || undefined,
+      attachments: (dto.attachments ?? [])
+        .map((item) => String(item).trim())
+        .filter(Boolean),
+    };
+    const existingSubmissions = Array.isArray(task.submissions)
+      ? task.submissions
+      : [];
+    const existingSubmission = existingSubmissions.find(
+      (submission) =>
+        String(submission.teacherUserId) === String(teacherUserId),
+    );
+
+    if (requireExistingSubmission && !existingSubmission) {
+      throw new BadRequestException(
+        'You cannot resubmit a task that has not been submitted yet.',
+      );
+    }
+
+    if (!requireExistingSubmission && existingSubmission) {
+      throw new BadRequestException(
+        'You have already submitted this task. Use resubmit instead.',
+      );
+    }
+
+    const filteredSubmissions = existingSubmissions.filter(
+      (submission) =>
+        String(submission.teacherUserId) !== String(teacherUserId),
+    );
+
+    const updated = await this.institutionTasksRepo.update(taskId, {
+      status: InstitutionTaskStatus.OPEN,
+      submissions: [...filteredSubmissions, nextSubmission],
+    });
+    if (!updated) {
+      throw new NotFoundException('Task not found.');
+    }
+
+    return updated;
   }
 
   private async getInstitutionContext(adminUserId: UserId) {
@@ -398,6 +659,40 @@ export class InstitutionsService {
     }
 
     return { user, school };
+  }
+
+  private withEffectiveTaskStatus(task: InstitutionTask): InstitutionTask {
+    const normalizedStatus = this.getEffectiveTaskStatus(task);
+    return {
+      ...task,
+      status: normalizedStatus,
+    };
+  }
+
+  private getEffectiveTaskStatus(task: InstitutionTask): InstitutionTaskStatus {
+    if (this.isTaskClosedByStoredStatus(task.status)) {
+      return InstitutionTaskStatus.CLOSED;
+    }
+
+    if (this.isTaskPastDue(task)) {
+      return InstitutionTaskStatus.CLOSED;
+    }
+
+    return InstitutionTaskStatus.OPEN;
+  }
+
+  private isTaskClosedByStoredStatus(status: InstitutionTaskStatus | string): boolean {
+    return String(status) !== String(InstitutionTaskStatus.OPEN);
+  }
+
+  private isTaskPastDue(task: InstitutionTask): boolean {
+    if (!task.dueDate) {
+      return false;
+    }
+
+    const dueDateEnd = new Date(task.dueDate);
+    dueDateEnd.setHours(23, 59, 59, 999);
+    return Date.now() > dueDateEnd.getTime();
   }
 
   private async getSchoolTeachersBySchoolId(schoolId: string): Promise<User[]> {
@@ -489,6 +784,11 @@ export class InstitutionsService {
       )[0];
     const latestActivityAt = await this.getLatestActivityForTeacherPlans(teacherPlans);
     const progress = latestPlan ? this.buildPlanProgressSummary(latestPlan) : null;
+    const monitoring = latestPlan
+      ? await this.plansService
+          .getPlanProgress(teacher.userId, latestPlan.planId)
+          .catch(() => null)
+      : null;
     const canShowClassStats = teacher.isVerified;
 
     let studentCount: number | null = null;
@@ -522,8 +822,101 @@ export class InstitutionsService {
       weakStudentCount,
       hasGeneratedPlan: Boolean(latestPlan),
       progressPercentage: progress?.progressPercentage ?? null,
+      classSpeedPercentage: monitoring?.classSpeedPercentage ?? null,
+      behindPace: Boolean(
+        monitoring?.reorderReasons?.includes('PROGRESS_BEHIND'),
+      ),
       latestActivityAt,
     };
+  }
+
+  private async buildTeacherSubjectDetails(
+    teacher: User,
+    schoolId: string,
+  ): Promise<TeacherSubjectDetailSummary[]> {
+    const [offerings, subjects, plans, students] = await Promise.all([
+      this.subjectOfferingsRepo.findAll(),
+      this.subjectsRepo.findAll(),
+      this.plansRepo.findAll(),
+      teacher.isVerified
+        ? this.studentsService.getStudents(teacher.userId).catch(() => [])
+        : Promise.resolve([]),
+    ]);
+
+    const teacherOfferings = offerings.filter(
+      (item) =>
+        String(item.teacherId) === String(teacher.userId) &&
+        String(item.schoolId) === String(schoolId),
+    );
+
+    const uniqueSubjectIds = [...new Set(teacherOfferings.map((item) => String(item.subjectId)))];
+
+    const details = await Promise.all(
+      uniqueSubjectIds.map(async (subjectId) => {
+        const subjectName =
+          subjects.find((item) => String(item.subjectId) === String(subjectId))
+            ?.subjectName ?? subjectId;
+
+        const teacherSubjectPlans = plans
+          .filter(
+            (plan) =>
+              String(plan.teacherId) === String(teacher.userId) &&
+              String(plan.subjectId) === String(subjectId),
+          )
+          .sort(
+            (left, right) =>
+              new Date(right.startDate).getTime() -
+              new Date(left.startDate).getTime(),
+          );
+
+        const latestPlan = teacherSubjectPlans[0];
+        const progress = latestPlan
+          ? this.buildPlanProgressSummary(latestPlan)
+          : null;
+        const monitoring = latestPlan
+          ? await this.plansService
+              .getPlanProgress(teacher.userId, latestPlan.planId)
+              .catch(() => null)
+          : null;
+
+        const studentCount = teacher.isVerified ? students.length : null;
+        const classAverage = teacher.isVerified
+          ? Math.round(
+              await this.statisticsService
+                .classAverage(teacher.userId, subjectId)
+                .catch(() => 0),
+            )
+          : null;
+        const weakStudentCount = teacher.isVerified
+          ? (
+              await this.statisticsService
+                .getWeakStudentsForTeacher(teacher.userId, subjectId)
+                .catch(() => [])
+            ).length
+          : null;
+
+        return {
+          subjectId,
+          subjectName,
+          studentCount,
+          classAverage,
+          weakStudentCount,
+          hasGeneratedPlan: Boolean(latestPlan),
+          progressPercentage: progress?.progressPercentage ?? null,
+          classSpeedPercentage: monitoring?.classSpeedPercentage ?? null,
+          behindPace: Boolean(
+            monitoring?.reorderReasons?.includes('PROGRESS_BEHIND'),
+          ),
+        };
+      }),
+    );
+
+    return details.sort((left, right) => {
+      const leftRank = left.subjectName === 'Arabic' ? 0 : left.subjectName === 'Math' || left.subjectName === 'Mathematics' ? 1 : 2;
+      const rightRank = right.subjectName === 'Arabic' ? 0 : right.subjectName === 'Math' || right.subjectName === 'Mathematics' ? 1 : 2;
+      if (leftRank !== rightRank) return leftRank - rightRank;
+      return left.subjectName.localeCompare(right.subjectName);
+    });
   }
 
   private async getLatestActivityForTeacherPlans(plans: { planId: string }[]) {
