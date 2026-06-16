@@ -17,6 +17,7 @@ export class QuizResultAnswer {
   questionId: string;
   selectedOptionId?: string;
   essayAnswer?: string;
+  essayAttachments?: string[];
   isCorrect?: boolean;
 }
 

@@ -5,13 +5,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { SqliteAssignmentsRepo } from 'src/database/sqlite-assignment.repo';
 import {
   Assignment,
   AssignmentStatus,
   AssignmentTargetType,
 } from 'src/domain/assignment';
 import { StudentId, UserId } from 'src/domain/ids';
-import { InMemoryAssignmentsRepo } from 'src/infrastructure/in-memory/in-memory-assignment.repo';
 import { StatisticsService } from 'src/statistics/statistics.service';
 import { StudentsService } from 'src/students/students.service';
 import { PublishAssignmentDTO } from './DTO/publish-assignment.dto';
@@ -28,7 +28,7 @@ export type AssignmentPublishSummary = {
 @Injectable()
 export class AssignmentsService {
   constructor(
-    private readonly assignmentsRepo: InMemoryAssignmentsRepo,
+    private readonly assignmentsRepo: SqliteAssignmentsRepo,
     private readonly studentsService: StudentsService,
     private readonly statisticsService: StatisticsService,
   ) {}

@@ -1,5 +1,20 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import type { StudentId } from 'src/domain/ids';
+import {
+  quizAttachmentMulterOptions,
+  uploadedQuizFilesByField,
+} from 'src/quizzes/attachment-upload';
 import {
   ParentAssignedQuizListItem,
   ParentProfileSummary,
@@ -70,17 +85,35 @@ export class ParentsController {
   }
 
   @Post('me/students/:studentId/quizzes/:assignmentId/submit')
+  @UseInterceptors(AnyFilesInterceptor(quizAttachmentMulterOptions))
   submitAssignedQuiz(
     @Req() req,
     @Param('studentId') studentId: StudentId,
     @Param('assignmentId') assignmentId: string,
-    @Body() dto: SubmitParentQuizDTO,
+    @Body() body: any,
+    @UploadedFiles() files: Express.Multer.File[],
   ): Promise<ParentQuizSubmissionResult> {
+    const dto = this.parseSubmitQuizBody(body);
     return this.parentsService.submitAssignedQuiz(
       req.user.sub,
       studentId,
       assignmentId,
       dto,
+      uploadedQuizFilesByField(files),
     );
+  }
+
+  private parseSubmitQuizBody(body: any): SubmitParentQuizDTO {
+    if (body?.answers && typeof body.answers === 'string') {
+      try {
+        return {
+          answers: JSON.parse(body.answers),
+        };
+      } catch (_error) {
+        throw new BadRequestException('Invalid quiz answers payload.');
+      }
+    }
+
+    return body as SubmitParentQuizDTO;
   }
 }

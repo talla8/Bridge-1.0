@@ -19,11 +19,14 @@ export enum QuizQuestionType {
   ESSAY = 'ESSAY',
 }
 
+export const ESSAY_ANSWER_MAX_CHARACTERS = 500;
+
 export class QuizQuestion {
   quizQuestionId: QuizQuestionId;
   prompt: string;
   type: QuizQuestionType;
   options: QuizOption[];
+  attachments?: string[];
 }
 
 export class Quiz {

@@ -5,14 +5,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { SqliteAssignmentsRepo } from 'src/database/sqlite-assignment.repo';
+import { SqliteQuizResultsRepo } from 'src/database/sqlite-quiz-result.repo';
+import { SqliteQuizzesRepo } from 'src/database/sqlite-quiz.repo';
 import { Quiz, QuizQuestionType } from 'src/domain/quiz';
 import { SubmissionStatus } from 'src/domain/quiz-result';
 import type { UserId } from 'src/domain/ids';
-import { InMemoryAssignmentsRepo } from 'src/infrastructure/in-memory/in-memory-assignment.repo';
-import { InMemoryQuizzesRepo } from 'src/infrastructure/in-memory/in-memory-quiz.repo';
-import { InMemoryQuizResultsRepo } from 'src/infrastructure/in-memory/in-memory-quiz-result.repo';
-import { InMemoryStudentsRepo } from 'src/infrastructure/in-memory/in-memory-student.repo';
+import { InMemoryCurriculumItemsRepo } from 'src/infrastructure/in-memory/in-memory-curriculum-item.repo';
 import { InMemorySupportProgramsRepo } from 'src/infrastructure/in-memory/in-memory-support-program.repo';
+import { StudentsService } from 'src/students/students.service';
 import { CreateQuizDTO } from './DTO/create-quiz.dto';
 
 export type QuizLibraryTemplate = {
@@ -21,10 +22,19 @@ export type QuizLibraryTemplate = {
   subjectId: string;
   skillId: string;
   skillName: string;
-  supportProgramId: string;
-  milestoneId: string;
+  supportedSkills?: string[];
+  difficulty?: number;
+  supportProgramId?: string;
+  milestoneId?: string;
   description: string;
   questionCount: number;
+  exercises?: {
+    curriculumItemId: string;
+    title: string;
+    supportedSkills: string[];
+    difficulty: number;
+    estimatedTime: string | number;
+  }[];
   questions: {
     prompt: string;
     type: QuizQuestionType;
@@ -32,17 +42,32 @@ export type QuizLibraryTemplate = {
   }[];
 };
 
+export type TeacherQuizSummary = {
+  quizId: string;
+  title: string;
+  subjectId: string;
+  subjectName: string;
+  skillFocus: string | null;
+  questionCount: number;
+  createdAt: Date;
+};
+
 @Injectable()
 export class QuizzesService {
   constructor(
-    private readonly quizzesRepo: InMemoryQuizzesRepo,
-    private readonly quizResultsRepo: InMemoryQuizResultsRepo,
-    private readonly assignmentsRepo: InMemoryAssignmentsRepo,
-    private readonly studentsRepo: InMemoryStudentsRepo,
+    private readonly quizzesRepo: SqliteQuizzesRepo,
+    private readonly quizResultsRepo: SqliteQuizResultsRepo,
+    private readonly assignmentsRepo: SqliteAssignmentsRepo,
+    private readonly studentsService: StudentsService,
     private readonly supportProgramsRepo: InMemorySupportProgramsRepo,
+    private readonly curriculumItemsRepo: InMemoryCurriculumItemsRepo,
   ) {}
 
-  async createQuiz(teacherId: UserId, dto: CreateQuizDTO): Promise<Quiz> {
+  async createQuiz(
+    teacherId: UserId,
+    dto: CreateQuizDTO,
+    attachmentsByField: Map<string, string[]> = new Map(),
+  ): Promise<Quiz> {
     this.validateQuiz(dto);
 
     return this.quizzesRepo.create({
@@ -51,19 +76,34 @@ export class QuizzesService {
       subjectId: dto.subjectId,
       skillFocus: dto.skillFocus?.trim() || undefined,
       title: dto.title,
-      questions: dto.questions.map((question) => ({
-        quizQuestionId: `quiz_question_${randomUUID()}`,
-        prompt: question.prompt,
-        type: question.type,
-        options:
-          question.type === QuizQuestionType.MULTIPLE_CHOICE
-            ? (question.options ?? []).map((option) => ({
-                quizOptionId: `quiz_option_${randomUUID()}`,
-                text: option.text,
-                isCorrect: Boolean(option.isCorrect),
-              }))
-            : [],
-      })),
+      questions: dto.questions.map((question) => {
+        const attachmentKey = String(
+          question.attachmentFieldKey ?? '',
+        ).trim();
+
+        return {
+          quizQuestionId: `quiz_question_${randomUUID()}`,
+          prompt: question.prompt,
+          type: question.type,
+          attachments:
+            question.type === QuizQuestionType.ESSAY
+              ? [
+                  ...(question.attachments ?? []),
+                  ...(attachmentKey
+                    ? attachmentsByField.get(attachmentKey) ?? []
+                    : []),
+                ]
+              : [],
+          options:
+            question.type === QuizQuestionType.MULTIPLE_CHOICE
+              ? (question.options ?? []).map((option) => ({
+                  quizOptionId: `quiz_option_${randomUUID()}`,
+                  text: option.text,
+                  isCorrect: Boolean(option.isCorrect),
+                }))
+              : [],
+        };
+      }),
       createdAt: new Date(),
     });
   }
@@ -85,14 +125,39 @@ export class QuizzesService {
     return quiz;
   }
 
+  async getTeacherQuizzes(teacherId: UserId): Promise<TeacherQuizSummary[]> {
+    const quizzes = await this.quizzesRepo.findByTeacherId(teacherId);
+
+    return quizzes
+      .map((quiz) => ({
+        quizId: String(quiz.quizId),
+        title: quiz.title,
+        subjectId: String(quiz.subjectId ?? ''),
+        subjectName: quiz.subjectId
+          ? this.getSubjectLabel(String(quiz.subjectId))
+          : 'Unknown Subject',
+        skillFocus: quiz.skillFocus?.trim() || null,
+        questionCount: Array.isArray(quiz.questions) ? quiz.questions.length : 0,
+        createdAt: quiz.createdAt,
+      }))
+      .sort(
+        (left, right) =>
+          new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime(),
+      );
+  }
+
   async getQuizLibraryTemplates(
     subjectId?: string,
     skillId?: string,
   ): Promise<QuizLibraryTemplate[]> {
+    const curriculumTemplates = await this.getCurriculumLibraryTemplates(
+      subjectId,
+      skillId,
+    );
     const supportPrograms = await this.supportProgramsRepo.findAll();
     const normalizedSkillFilter = skillId?.trim().toLowerCase();
 
-    return supportPrograms
+    const supportProgramTemplates = supportPrograms
       .filter((program) => !subjectId || String(program.subjectId) === String(subjectId))
       .filter(
         (program) =>
@@ -108,10 +173,19 @@ export class QuizzesService {
           subjectId: String(program.subjectId),
           skillId: String(program.targetSkill),
           skillName: this.getSkillLabel(program.targetSkill),
+          supportedSkills: [this.getSkillLabel(program.targetSkill)],
+          difficulty: 2,
           supportProgramId: program.supportProgramId,
           milestoneId: milestone.milestoneId,
           description: milestone.goal,
           questionCount: milestone.items.length,
+          exercises: milestone.items.map((item, index) => ({
+            curriculumItemId: `${program.supportProgramId}:${milestone.milestoneId}:${index + 1}`,
+            title: item.name,
+            supportedSkills: [this.getSkillLabel(program.targetSkill)],
+            difficulty: 2,
+            estimatedTime: 'TBD',
+          })),
           questions: milestone.items.map((item) => ({
             prompt: item.name,
             type: QuizQuestionType.ESSAY,
@@ -126,6 +200,20 @@ export class QuizzesService {
 
         return left.title.localeCompare(right.title);
       });
+
+    return [...curriculumTemplates, ...supportProgramTemplates].sort(
+      (left, right) => {
+        if (left.subjectId !== right.subjectId) {
+          return Number(left.subjectId) - Number(right.subjectId);
+        }
+
+        if (left.skillName !== right.skillName) {
+          return left.skillName.localeCompare(right.skillName);
+        }
+
+        return left.title.localeCompare(right.title);
+      },
+    );
   }
 
   async getPendingReviews(teacherId: UserId) {
@@ -142,7 +230,9 @@ export class QuizzesService {
         )
         .map(async (result) => {
           const quiz = quizMap.get(result.quizId);
-          const student = await this.studentsRepo.findById(result.studentId);
+          const student = await this.studentsService.findByIdOrNull(
+            result.studentId,
+          );
           const assignment = result.assignmentId
             ? await this.assignmentsRepo.findById(result.assignmentId)
             : null;
@@ -189,7 +279,9 @@ export class QuizzesService {
         )
         .map(async (result) => {
           const quiz = quizMap.get(result.quizId);
-          const student = await this.studentsRepo.findById(result.studentId);
+          const student = await this.studentsService.findByIdOrNull(
+            result.studentId,
+          );
           const assignment = result.assignmentId
             ? await this.assignmentsRepo.findById(result.assignmentId)
             : null;
@@ -241,7 +333,7 @@ export class QuizzesService {
       throw new ForbiddenException('Teacher does not own this quiz result.');
     }
 
-    const student = await this.studentsRepo.findById(quizResult.studentId);
+    const student = await this.studentsService.getById(quizResult.studentId);
     if (!student) {
       throw new NotFoundException('Student not found.');
     }
@@ -275,9 +367,11 @@ export class QuizzesService {
           questionId: question.quizQuestionId,
           prompt: question.prompt,
           type: question.type,
+          questionAttachments: question.attachments ?? [],
           selectedOptionText: selectedOption?.text,
           correctOptionText: correctOption?.text,
           essayAnswer: answer?.essayAnswer,
+          essayAttachments: answer?.essayAttachments ?? [],
           isCorrect: answer?.isCorrect,
         };
       }),
@@ -338,16 +432,119 @@ export class QuizzesService {
           );
         }
       }
+
+      if (
+        question.type === QuizQuestionType.ESSAY &&
+        question.prompt.trim().length > 1000
+      ) {
+        throw new BadRequestException(
+          `Question ${index + 1} exceeds the prompt limit.`,
+        );
+      }
     });
   }
 
   private getSkillLabel(skillId: string): string {
     const labels: Record<string, string> = {
+      skill_counting: 'Counting Skills',
+      skill_number_manipulation: 'Number Manipulation',
+      skill_problem_solving: 'Problem Solving',
       skill_vocal: 'Vocal Awareness',
       skill_sounds_of_letters: 'Sounds Of Letters',
       skill_writing: 'Writing',
     };
 
     return labels[skillId] ?? skillId;
+  }
+
+  private getSubjectLabel(subjectId: string): string {
+    const labels: Record<string, string> = {
+      '1': 'Mathematics',
+      '2': 'Arabic',
+    };
+
+    return labels[String(subjectId)] ?? `Subject ${subjectId}`;
+  }
+
+  private async getCurriculumLibraryTemplates(
+    subjectId?: string,
+    skillId?: string,
+  ): Promise<QuizLibraryTemplate[]> {
+    const normalizedSkillFilter = skillId?.trim().toLowerCase();
+    const curriculumItems = await this.curriculumItemsRepo.findAll();
+
+    const filteredItems = curriculumItems.filter((item) => {
+      const subjectMatch = !subjectId || String(item.subjectId) === String(subjectId);
+      const skillMatch =
+        !normalizedSkillFilter ||
+        (item.skillsSupported ?? []).some(
+          (supportedSkill) =>
+            String(supportedSkill).toLowerCase() === normalizedSkillFilter ||
+            this.getSkillLabel(String(supportedSkill)).toLowerCase() ===
+              normalizedSkillFilter,
+        );
+
+      return subjectMatch && skillMatch;
+    });
+
+    const lessonGroups = new Map<string, typeof filteredItems>();
+
+    filteredItems.forEach((item) => {
+      const key = `${item.subjectId}:${item.unitNo}:${item.lessonNo}`;
+      const group = lessonGroups.get(key) ?? [];
+      group.push(item);
+      lessonGroups.set(key, group);
+    });
+
+    return Array.from(lessonGroups.values())
+      .map((group) => {
+        const sortedGroup = [...group].sort(
+          (left, right) => Number(left.orderInLesson ?? 0) - Number(right.orderInLesson ?? 0),
+        );
+        const firstItem = sortedGroup[0];
+        const dominantSkillId =
+          sortedGroup.flatMap((item) => item.skillsSupported ?? [])[0] ?? 'general_skill';
+        const supportedSkills = Array.from(
+          new Set(
+            sortedGroup.flatMap((item) => item.skillsSupported ?? []).map((skill) =>
+              this.getSkillLabel(String(skill)),
+            ),
+          ),
+        );
+        const averageDifficulty = Math.round(
+          sortedGroup.reduce(
+            (sum, item) => sum + Number(item.difficulity ?? 0),
+            0,
+          ) / Math.max(sortedGroup.length, 1),
+        );
+        const questions = sortedGroup.slice(0, 5).map((item) => ({
+          prompt: item.name,
+          type: QuizQuestionType.ESSAY,
+          options: [],
+        }));
+
+        return {
+          templateId: `curriculum:${firstItem.subjectId}:${firstItem.unitNo}:${firstItem.lessonNo}`,
+          title: `${this.getSubjectLabel(String(firstItem.subjectId))} - Unit ${firstItem.unitNo} Lesson ${firstItem.lessonNo}`,
+          subjectId: String(firstItem.subjectId),
+          skillId: String(dominantSkillId),
+          skillName: this.getSkillLabel(String(dominantSkillId)),
+          supportedSkills,
+          difficulty: averageDifficulty,
+          description: `Curriculum-based practice built from Unit ${firstItem.unitNo}, Lesson ${firstItem.lessonNo}.`,
+          questionCount: questions.length,
+          exercises: sortedGroup.map((item) => ({
+            curriculumItemId: String(item.curriculumItemId),
+            title: item.name,
+            supportedSkills: (item.skillsSupported ?? []).map((skill) =>
+              this.getSkillLabel(String(skill)),
+            ),
+            difficulty: Number(item.difficulity ?? 0),
+            estimatedTime: item.estimatedTime ?? 'TBD',
+          })),
+          questions,
+        };
+      })
+      .filter((template) => template.questionCount > 0);
   }
 }

@@ -12,8 +12,8 @@ import {
   SupportProgram,
   SupportProgramMilestone,
 } from 'src/domain/support-program';
-import { InMemoryQuizzesRepo } from 'src/infrastructure/in-memory/in-memory-quiz.repo';
-import { InMemoryQuizResultsRepo } from 'src/infrastructure/in-memory/in-memory-quiz-result.repo';
+import { SqliteQuizResultsRepo } from 'src/database/sqlite-quiz-result.repo';
+import { SqliteQuizzesRepo } from 'src/database/sqlite-quiz.repo';
 import { InMemoryExerciseResultsRepo } from 'src/infrastructure/in-memory/in-memory-exercise-result.repo';
 import { InMemorySupportProgramsRepo } from 'src/infrastructure/in-memory/in-memory-support-program.repo';
 import { MilestoneProgressSummary } from './types/milestone-progress-summary';
@@ -68,8 +68,8 @@ export class SupportProgramsService {
 
   constructor(
     private readonly supportProgramsRepo: InMemorySupportProgramsRepo,
-    private readonly quizzesRepo: InMemoryQuizzesRepo,
-    private readonly quizResultsRepo: InMemoryQuizResultsRepo,
+    private readonly quizzesRepo: SqliteQuizzesRepo,
+    private readonly quizResultsRepo: SqliteQuizResultsRepo,
     private readonly exerciseResultsRepo: InMemoryExerciseResultsRepo,
   ) {}
 

@@ -12,16 +12,20 @@ import {
 import { PlanItemStatus } from 'src/domain/plan-item';
 import { GradeId, StudentId, UserId } from 'src/domain/ids';
 import { Plan } from 'src/domain/plan';
-import { QuizQuestionType } from 'src/domain/quiz';
+import {
+  ESSAY_ANSWER_MAX_CHARACTERS,
+  QuizQuestionType,
+} from 'src/domain/quiz';
 import { QuizResultAnswer, SubmissionStatus } from 'src/domain/quiz-result';
 import { Session } from 'src/domain/session';
 import { Student } from 'src/domain/student';
 import { InMemoryAssignmentsRepo } from 'src/infrastructure/in-memory/in-memory-assignment.repo';
 import { InMemoryAttendancesRepo } from 'src/infrastructure/in-memory/in-memory-attendance.repo';
-import { InMemoryGradesRepo } from 'src/infrastructure/in-memory/in-memory-grade.repo';
-import { InMemoryPlansRepo } from 'src/infrastructure/in-memory/in-memory-plan.repo';
-import { InMemoryQuizzesRepo } from 'src/infrastructure/in-memory/in-memory-quiz.repo';
-import { InMemoryQuizResultsRepo } from 'src/infrastructure/in-memory/in-memory-quiz-result.repo';
+import { SqliteAssignmentsRepo } from 'src/database/sqlite-assignment.repo';
+import { SqliteGradesRepo } from 'src/database/sqlite-grade.repo';
+import { SqlitePlansRepo } from 'src/database/sqlite-plan.repo';
+import { SqliteQuizResultsRepo } from 'src/database/sqlite-quiz-result.repo';
+import { SqliteQuizzesRepo } from 'src/database/sqlite-quiz.repo';
 import { InMemorySkillsRepo } from 'src/infrastructure/in-memory/in-memory-skill.repo';
 import { SupportProgramsService } from 'src/support-programs/support-programs.service';
 import { UsersService } from 'src/users/users.service';
@@ -99,6 +103,8 @@ export type ParentQuizDetails = {
     questionId: string;
     prompt: string;
     type: QuizQuestionType;
+    attachments?: string[];
+    essayCharacterLimit?: number;
     options: {
       optionId: string;
       text: string;
@@ -120,6 +126,8 @@ export type ParentAssignedQuizListItem = {
   studentId: StudentId;
   studentName: string;
   title: string;
+  subjectId: string | null;
+  subjectName: string | null;
   dueDate: Date | null;
   dueLabel: string | null;
   isSubmitted: boolean;
@@ -133,6 +141,8 @@ export type ParentQuizResultListItem = {
   studentId: StudentId;
   studentName: string;
   title: string;
+  subjectId: string | null;
+  subjectName: string | null;
   submittedAt: Date;
   score: number;
   status: SubmissionStatus;
@@ -144,6 +154,8 @@ export type ParentQuizResultDetail = {
   studentId: StudentId;
   studentName: string;
   title: string;
+  subjectId: string | null;
+  subjectName: string | null;
   submittedAt: Date;
   reviewedAt?: Date;
   score: number;
@@ -153,9 +165,11 @@ export type ParentQuizResultDetail = {
     questionId: string;
     prompt: string;
     type: QuizQuestionType;
+    questionAttachments?: string[];
     selectedOptionText?: string;
     correctOptionText?: string;
     essayAnswer?: string;
+    essayAttachments?: string[];
     isCorrect?: boolean;
   }[];
 };
@@ -165,12 +179,12 @@ export class ParentsService {
   constructor(
     private readonly usersService: UsersService,
     private readonly studentsService: StudentsService,
-    private readonly assignmentsRepo: InMemoryAssignmentsRepo,
+    private readonly assignmentsRepo: SqliteAssignmentsRepo,
     private readonly attendanceRepo: InMemoryAttendancesRepo,
-    private readonly gradesRepo: InMemoryGradesRepo,
-    private readonly plansRepo: InMemoryPlansRepo,
-    private readonly quizzesRepo: InMemoryQuizzesRepo,
-    private readonly quizResultsRepo: InMemoryQuizResultsRepo,
+    private readonly gradesRepo: SqliteGradesRepo,
+    private readonly plansRepo: SqlitePlansRepo,
+    private readonly quizzesRepo: SqliteQuizzesRepo,
+    private readonly quizResultsRepo: SqliteQuizResultsRepo,
     private readonly skillsRepo: InMemorySkillsRepo,
     private readonly baselineProcessingService: BaselineProcessingServiceService,
     private readonly supportProgramsService: SupportProgramsService,
@@ -340,6 +354,11 @@ export class ParentsService {
         questionId: question.quizQuestionId,
         prompt: question.prompt,
         type: question.type,
+        attachments: question.attachments ?? [],
+        essayCharacterLimit:
+          question.type === QuizQuestionType.ESSAY
+            ? ESSAY_ANSWER_MAX_CHARACTERS
+            : undefined,
         options: question.options.map((option) => ({
           optionId: option.quizOptionId,
           text: option.text,
@@ -354,6 +373,7 @@ export class ParentsService {
     studentId: StudentId,
     assignmentId: string,
     dto: SubmitParentQuizDTO,
+    attachmentsByField: Map<string, string[]> = new Map(),
   ): Promise<ParentQuizSubmissionResult> {
     const { student, assignment, quiz } = await this.resolveAssignedQuiz(
       parentId,
@@ -391,9 +411,23 @@ export class ParentsService {
         };
       }
 
+      const trimmedEssayAnswer = answer?.essayAnswer?.trim() || '';
+      if (trimmedEssayAnswer.length > ESSAY_ANSWER_MAX_CHARACTERS) {
+        throw new BadRequestException(
+          `Essay answers cannot exceed ${ESSAY_ANSWER_MAX_CHARACTERS} characters.`,
+        );
+      }
+
+      const essayAttachmentFieldKey = String(
+        answer?.essayAttachmentFieldKey ?? '',
+      ).trim();
+
       return {
         questionId: question.quizQuestionId,
-        essayAnswer: answer?.essayAnswer?.trim() || '',
+        essayAnswer: trimmedEssayAnswer,
+        essayAttachments: essayAttachmentFieldKey
+          ? attachmentsByField.get(essayAttachmentFieldKey) ?? []
+          : [],
       };
     });
 
@@ -453,6 +487,7 @@ export class ParentsService {
 
         return Promise.all(
           quizAssignments.map(async (assignment) => {
+            const quiz = await this.quizzesRepo.findById(assignment.sourceId);
             const results = await this.quizResultsRepo.findByStudentAndQuiz(
               student.studentId,
               assignment.sourceId,
@@ -468,6 +503,10 @@ export class ParentsService {
               studentId: student.studentId,
               studentName: student.fullEnglishName,
               title: assignment.title,
+              subjectId: quiz?.subjectId ? String(quiz.subjectId) : null,
+              subjectName: quiz?.subjectId
+                ? this.getSubjectLabel(String(quiz.subjectId))
+                : null,
               dueDate: assignment.dueDate ?? null,
               dueLabel: assignment.dueDate
                 ? new Intl.DateTimeFormat('en-US', {
@@ -512,8 +551,9 @@ export class ParentsService {
           const assignment = result.assignmentId
             ? await this.assignmentsRepo.findById(result.assignmentId)
             : null;
+          const quiz = await this.quizzesRepo.findById(result.quizId);
           const student = studentMap.get(result.studentId);
-          if (!assignment || !student) {
+          if (!assignment || !student || !quiz) {
             return null;
           }
 
@@ -523,6 +563,10 @@ export class ParentsService {
             studentId: student.studentId,
             studentName: student.fullEnglishName,
             title: assignment.title,
+            subjectId: quiz.subjectId ? String(quiz.subjectId) : null,
+            subjectName: quiz.subjectId
+              ? this.getSubjectLabel(String(quiz.subjectId))
+              : null,
             submittedAt: result.submittedAt,
             score: result.score,
             status: result.status,
@@ -568,6 +612,10 @@ export class ParentsService {
       studentId: student.studentId,
       studentName: student.fullEnglishName,
       title: assignment?.title ?? quiz.title,
+      subjectId: quiz.subjectId ? String(quiz.subjectId) : null,
+      subjectName: quiz.subjectId
+        ? this.getSubjectLabel(String(quiz.subjectId))
+        : null,
       submittedAt: quizResult.submittedAt,
       reviewedAt: quizResult.reviewedAt,
       score: quizResult.score,
@@ -588,9 +636,11 @@ export class ParentsService {
           questionId: question.quizQuestionId,
           prompt: question.prompt,
           type: question.type,
+          questionAttachments: question.attachments ?? [],
           selectedOptionText: selectedOption?.text,
           correctOptionText: correctOption?.text,
           essayAnswer: answer?.essayAnswer,
+          essayAttachments: answer?.essayAttachments ?? [],
           isCorrect: answer?.isCorrect,
         };
       }),
@@ -657,10 +707,19 @@ export class ParentsService {
           ? new Intl.DateTimeFormat('en-US', {
               month: 'short',
               day: 'numeric',
-            }).format(new Date(assignment.dueDate))
+          }).format(new Date(assignment.dueDate))
           : null,
         status: assignment.status,
       }));
+  }
+
+  private getSubjectLabel(subjectId: string): string {
+    const labels: Record<string, string> = {
+      '1': 'Mathematics',
+      '2': 'Arabic',
+    };
+
+    return labels[String(subjectId)] ?? `Subject ${subjectId}`;
   }
 
   private async resolveAssignedQuiz(

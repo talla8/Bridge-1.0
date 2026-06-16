@@ -3,6 +3,7 @@ import {
   IsArray,
   IsEnum,
   IsNotEmpty,
+  MaxLength,
   IsOptional,
   IsString,
   ValidateIf,
@@ -22,6 +23,7 @@ class CreateQuizOptionDTO {
 class CreateQuizQuestionDTO {
   @IsString()
   @IsNotEmpty()
+  @MaxLength(1000)
   prompt: string;
 
   @IsEnum(QuizQuestionType)
@@ -37,6 +39,13 @@ class CreateQuizQuestionDTO {
   @Type(() => CreateQuizOptionDTO)
   options?: CreateQuizOptionDTO[];
 
+  @IsOptional()
+  @IsArray()
+  attachments?: string[];
+
+  @IsOptional()
+  @IsString()
+  attachmentFieldKey?: string;
 }
 
 export class CreateQuizDTO {

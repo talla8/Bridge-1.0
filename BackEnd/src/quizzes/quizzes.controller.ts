@@ -1,15 +1,41 @@
-import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { CreateQuizDTO } from './DTO/create-quiz.dto';
 import { ReviewQuizResultDTO } from './DTO/review-quiz-result.dto';
 import { QuizzesService } from './quizzes.service';
+import {
+  quizAttachmentMulterOptions,
+  uploadedQuizFilesByField,
+} from './attachment-upload';
 
 @Controller('quizzes')
 export class QuizzesController {
   constructor(private readonly quizzesService: QuizzesService) {}
 
   @Post()
-  createQuiz(@Req() req, @Body() dto: CreateQuizDTO) {
-    return this.quizzesService.createQuiz(req.user.sub, dto);
+  @UseInterceptors(AnyFilesInterceptor(quizAttachmentMulterOptions))
+  createQuiz(
+    @Req() req,
+    @Body() body: any,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    const dto = this.parseCreateQuizBody(body);
+    return this.quizzesService.createQuiz(
+      req.user.sub,
+      dto,
+      uploadedQuizFilesByField(files),
+    );
   }
 
   @Get('library')
@@ -18,6 +44,11 @@ export class QuizzesController {
     @Query('skillId') skillId?: string,
   ) {
     return this.quizzesService.getQuizLibraryTemplates(subjectId, skillId);
+  }
+
+  @Get('mine')
+  getTeacherQuizzes(@Req() req) {
+    return this.quizzesService.getTeacherQuizzes(req.user.sub);
   }
 
   @Get(':quizId')
@@ -55,5 +86,17 @@ export class QuizzesController {
       Number(dto.score),
       dto.feedback,
     );
+  }
+
+  private parseCreateQuizBody(body: any): CreateQuizDTO {
+    if (body?.draft) {
+      try {
+        return JSON.parse(String(body.draft));
+      } catch (_error) {
+        throw new BadRequestException('Invalid quiz draft payload.');
+      }
+    }
+
+    return body as CreateQuizDTO;
   }
 }
