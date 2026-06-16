@@ -19,7 +19,7 @@
     .parent-page-title {
         font-size: 34px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
         margin-bottom: 6px;
     }
 
@@ -33,7 +33,7 @@
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 24px;
-        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+        box-shadow: 0 10px 28px rgba(17,30,39,.06);
     }
 
     .parent-hero-card {
@@ -81,7 +81,7 @@
     .parent-summary-value {
         font-size: 26px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
     }
 
     .parent-summary-subvalue {
@@ -98,8 +98,8 @@
         padding: 8px 14px;
         font-size: 13px;
         font-weight: 700;
-        background: #fde68a;
-        color: #111827;
+        background: #FDE48A;
+        color: #111E27;
         margin-top: 10px;
     }
 
@@ -131,7 +131,7 @@
     .parent-learning-title {
         font-size: 18px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
         margin-bottom: 8px;
     }
 
@@ -153,7 +153,7 @@
     .parent-progress-value {
         font-size: 40px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
         line-height: 1;
     }
 
@@ -175,7 +175,7 @@
     .parent-progress-bar {
         height: 100%;
         border-radius: 999px;
-        background: linear-gradient(90deg,#a59bff,#c9c6ff);
+        background: linear-gradient(90deg,#9BD5FF,#c9c6ff);
     }
 
     .parent-skill-list {
@@ -192,7 +192,7 @@
         border-radius: 18px;
         padding: 14px 18px;
         font-size: 18px;
-        color: #111827;
+        color: #111E27;
     }
 
     .parent-skill-percent {
@@ -212,7 +212,7 @@
     .parent-side-title {
         font-size: 28px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
         margin-bottom: 12px;
     }
 
@@ -233,7 +233,7 @@
         font-weight: 700;
         text-decoration: none;
         background: rgba(255,255,255,.86);
-        color: #4f46e5;
+        color: #46A3E5;
         border: 1px solid #d1d5db;
     }
 
@@ -250,7 +250,7 @@
         background: rgba(255,255,255,.72);
         border-radius: 18px;
         padding: 14px;
-        color: #111827;
+        color: #111E27;
     }
 
     .parent-quiz-action {
@@ -260,7 +260,7 @@
         font-size: 13px;
         font-weight: 700;
         background: #fff;
-        color: #4f46e5;
+        color: #46A3E5;
         text-decoration: none;
         border: 1px solid #d1d5db;
         white-space: nowrap;
@@ -312,10 +312,6 @@
                     <div class="parent-summary-card">
                         <div class="parent-summary-label">Grade / Section</div>
                         <div class="parent-summary-value" id="studentGradeSectionValue">-</div>
-                    </div>
-                    <div class="parent-summary-card">
-                        <div class="parent-summary-label">Attendance</div>
-                        <div class="parent-summary-value" id="studentAttendanceValue">0%</div>
                     </div>
                     <div class="parent-summary-card">
                         <div class="parent-summary-label">Overall Progress</div>
@@ -382,7 +378,6 @@
     const parentSubtitleText = document.getElementById("parentSubtitleText");
     const parentStudentSelect = document.getElementById("parentStudentSelect");
     const studentGradeSectionValue = document.getElementById("studentGradeSectionValue");
-    const studentAttendanceValue = document.getElementById("studentAttendanceValue");
     const studentOverallProgressValue = document.getElementById("studentOverallProgressValue");
     const supportPlanTitle = document.getElementById("supportPlanTitle");
     const supportPlanText = document.getElementById("supportPlanText");
@@ -407,7 +402,6 @@
     function setEmptyParentState(message) {
         parentSubtitleText.textContent = message;
         studentGradeSectionValue.textContent = "-";
-        studentAttendanceValue.textContent = "0%";
         studentOverallProgressValue.textContent = "0%";
         supportPlanTitle.textContent = "Support plan is inactive.";
         supportPlanText.textContent = "No active support plan is assigned right now.";
@@ -461,7 +455,6 @@
         studentGradeSectionValue.textContent = dashboard.section
             ? `${dashboard.grade} ${dashboard.section}`
             : dashboard.grade;
-        studentAttendanceValue.textContent = `${dashboard.attendanceAverage}%`;
         studentOverallProgressValue.textContent = `${dashboard.overallProgress}%`;
         supportPlanTitle.textContent = dashboard.isInSupportPlan
             ? `${dashboard.studentName} is part of the support plan.`

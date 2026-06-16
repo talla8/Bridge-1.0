@@ -4,8 +4,65 @@
 
 <style>
     .institution-comm-page { padding: 1.5rem 0 3rem; }
-    .institution-comm-card { padding: 1.35rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1.2rem; background: #fff; box-shadow: 0 12px 28px rgba(23,50,77,.08); height: 100%; }
-    .institution-comm-item { padding: 1rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1rem; background: #fafbfd; margin-top: .85rem; }
+    .institution-comm-card { padding: 1.35rem; border: 1px solid rgba(23,55,77,.12); border-radius: 1.2rem; background: #fff; box-shadow: 0 12px 28px rgba(23,55,77,.08); height: 100%; }
+    .institution-comm-item { padding: 1rem; border: 1px solid rgba(23,55,77,.12); border-radius: 1rem; background: #fafbfd; margin-top: .85rem; }
+    .institution-comm-actions { display:flex; gap:.65rem; flex-wrap:wrap; margin-top:.85rem; }
+    .institution-picker-trigger { display:flex; justify-content:space-between; align-items:center; gap:.75rem; width:100%; padding:1rem; border:1px solid rgba(23,55,77,.12); border-radius:1rem; background:#fff; color:#111E27; text-align:left; }
+    .institution-picker-meta { color:#5f6675; font-size:.95rem; }
+    .institution-chip-row { display:flex; gap:.5rem; flex-wrap:wrap; margin:.75rem 0 1rem; }
+    .institution-chip { padding:.35rem .7rem; border-radius:999px; background:#f1efff; color:#5f46d8; font-weight:600; font-size:.9rem; }
+    .institution-modal-backdrop { position:fixed; inset:0; background:rgba(15,25,32,.42); display:none; align-items:center; justify-content:center; z-index:1060; padding:1rem; }
+    .institution-modal-backdrop.is-open { display:flex; }
+    .institution-modal-panel { width:min(620px, 100%); max-height:88vh; overflow:auto; padding:1.25rem; border-radius:1.2rem; background:#fff; box-shadow:0 24px 48px rgba(15,25,32,.22); }
+    .institution-modal-list { display:grid; gap:.75rem; margin-top:1rem; }
+    .institution-modal-row { display:flex; gap:.85rem; align-items:flex-start; padding:.9rem 1rem; border:1px solid rgba(23,55,77,.12); border-radius:1rem; background:#fafbfd; }
+    .institution-modal-row strong { display:block; }
+    .institution-modal-row small { color:#5f6675; }
+    .institution-collapsible {
+        margin-top: 1.25rem;
+        border: 1px solid rgba(23,55,77,.12);
+        border-radius: 1rem;
+        background: #fff;
+        overflow: hidden;
+    }
+    .institution-collapsible-toggle {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1rem 1.1rem;
+        border: 0;
+        background: #fff;
+        color: #111E27;
+        text-align: left;
+    }
+    .institution-collapsible-toggle strong {
+        font-size: 1.05rem;
+    }
+    .institution-collapsible-toggle small {
+        color: #5f6675;
+    }
+    .institution-collapsible-toggle i {
+        font-size: 1rem;
+        transition: transform .18s ease;
+    }
+    .institution-collapsible-toggle[aria-expanded="true"] i {
+        transform: rotate(90deg);
+    }
+    .institution-collapsible-body {
+        padding: 0 1rem 1rem;
+        display: none;
+    }
+    .institution-collapsible-body.is-open {
+        display: block;
+    }
+    .institution-counter {
+        margin: -.5rem 0 1rem;
+        color: #5f6675;
+        font-size: .85rem;
+        text-align: right;
+    }
 </style>
 
 <div class="teacher-shell">
@@ -18,8 +75,19 @@
                         <h1 class="h3 fw-bold">Notifications</h1>
                         <div id="institutionNotificationError" class="alert alert-danger d-none mt-3"></div>
                         <form id="institutionNotificationForm" class="mt-3">
-                            <input class="form-control p-3 mb-3" id="institutionNotificationTitle" type="text" placeholder="Title" />
-                            <textarea class="form-control p-3 mb-3" id="institutionNotificationMessage" rows="4" placeholder="Message"></textarea>
+                            <input class="form-control p-3 mb-3" id="institutionNotificationTitle" type="text" maxlength="120" placeholder="Title" />
+                            <div class="institution-counter" data-counter-for="institutionNotificationTitle">0 / 120</div>
+                            <textarea class="form-control p-3 mb-3" id="institutionNotificationMessage" rows="4" maxlength="1000" placeholder="Message"></textarea>
+                            <div class="institution-counter" data-counter-for="institutionNotificationMessage">0 / 1000</div>
+                            <button class="institution-picker-trigger mb-2" id="notificationTeacherPickerBtn" type="button">
+                                <span>
+                                    <strong>Select teachers</strong>
+                                    <span class="institution-picker-meta d-block" id="notificationTeacherPickerMeta">Broadcast to all teachers</span>
+                                </span>
+                                <span class="btn btn-outline-secondary rounded-pill px-3">Choose</span>
+                            </button>
+                            <div class="institution-chip-row" id="notificationTeacherChips"></div>
+                            <input class="form-control p-3 mb-3" id="institutionNotificationAttachments" type="file" multiple />
                             <button class="btn btn-info rounded-pill px-4 fw-semibold" id="institutionNotificationBtn" type="submit">Send Notification</button>
                         </form>
                         <div id="institutionNotificationsList" class="mt-4"></div>
@@ -30,16 +98,62 @@
                         <h1 class="h3 fw-bold">Tasks</h1>
                         <div id="institutionTaskError" class="alert alert-danger d-none mt-3"></div>
                         <form id="institutionTaskForm" class="mt-3">
-                            <input class="form-control p-3 mb-3" id="institutionTaskTitle" type="text" placeholder="Task Title" />
-                            <textarea class="form-control p-3 mb-3" id="institutionTaskDescription" rows="4" placeholder="Description"></textarea>
-                            <input class="form-control p-3 mb-3" id="institutionTaskTeacherEmails" type="text" placeholder="Teacher emails (comma separated)" />
+                            <input class="form-control p-3 mb-3" id="institutionTaskTitle" type="text" maxlength="120" placeholder="Task Title" />
+                            <div class="institution-counter" data-counter-for="institutionTaskTitle">0 / 120</div>
+                            <textarea class="form-control p-3 mb-3" id="institutionTaskDescription" rows="4" maxlength="1000" placeholder="Description"></textarea>
+                            <div class="institution-counter" data-counter-for="institutionTaskDescription">0 / 1000</div>
+                            <button class="institution-picker-trigger mb-2" id="taskTeacherPickerBtn" type="button">
+                                <span>
+                                    <strong>Select teachers</strong>
+                                    <span class="institution-picker-meta d-block" id="taskTeacherPickerMeta">No teachers selected</span>
+                                </span>
+                                <span class="btn btn-outline-secondary rounded-pill px-3">Choose</span>
+                            </button>
+                            <div class="institution-chip-row" id="taskTeacherChips"></div>
+                            <input class="form-control p-3 mb-3" id="institutionTaskAttachments" type="file" multiple />
                             <input class="form-control p-3 mb-3" id="institutionTaskDueDate" type="date" />
                             <button class="btn btn-info rounded-pill px-4 fw-semibold" id="institutionTaskBtn" type="submit">Create Task</button>
                         </form>
                         <div id="institutionTasksList" class="mt-4"></div>
+                        <div class="institution-collapsible">
+                            <button type="button"
+                                    class="institution-collapsible-toggle"
+                                    id="institutionHiddenTasksToggle"
+                                    aria-expanded="false"
+                                    aria-controls="institutionHiddenTasksPanel">
+                                <span>
+                                    <strong>Hidden tasks</strong>
+                                    <small id="institutionHiddenTasksMeta">No hidden tasks</small>
+                                </span>
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                            <div id="institutionHiddenTasksPanel" class="institution-collapsible-body">
+                                <div id="institutionHiddenTasksList"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="institutionTeacherPickerModal" class="institution-modal-backdrop" aria-hidden="true">
+    <div class="institution-modal-panel">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+                <h2 id="institutionTeacherPickerTitle" class="h4 fw-bold mb-1">Select teachers</h2>
+                <div id="institutionTeacherPickerCopy" class="text-secondary">Choose the teachers who should receive this item.</div>
+            </div>
+            <button id="institutionTeacherPickerClose" type="button" class="btn btn-outline-secondary rounded-pill px-3">Close</button>
+        </div>
+        <div class="d-flex gap-2 flex-wrap mt-3">
+            <button id="institutionTeacherPickerClear" type="button" class="btn btn-outline-secondary rounded-pill px-3">Clear</button>
+            <button id="institutionTeacherPickerBroadcast" type="button" class="btn btn-outline-secondary rounded-pill px-3">Broadcast to all</button>
+        </div>
+        <div id="institutionTeacherPickerList" class="institution-modal-list"></div>
+        <div class="d-flex justify-content-end mt-3">
+            <button id="institutionTeacherPickerApply" type="button" class="btn btn-info rounded-pill px-4 fw-semibold">Apply</button>
         </div>
     </div>
 </div>
@@ -60,8 +174,27 @@
 
         const notificationsList = document.getElementById("institutionNotificationsList");
         const tasksList = document.getElementById("institutionTasksList");
+        const hiddenTasksList = document.getElementById("institutionHiddenTasksList");
+        const hiddenTasksToggle = document.getElementById("institutionHiddenTasksToggle");
+        const hiddenTasksPanel = document.getElementById("institutionHiddenTasksPanel");
+        const hiddenTasksMeta = document.getElementById("institutionHiddenTasksMeta");
         const notificationError = document.getElementById("institutionNotificationError");
         const taskError = document.getElementById("institutionTaskError");
+        const notificationTeacherPickerMeta = document.getElementById("notificationTeacherPickerMeta");
+        const taskTeacherPickerMeta = document.getElementById("taskTeacherPickerMeta");
+        const notificationTeacherChips = document.getElementById("notificationTeacherChips");
+        const taskTeacherChips = document.getElementById("taskTeacherChips");
+        const teacherPickerModal = document.getElementById("institutionTeacherPickerModal");
+        const teacherPickerTitle = document.getElementById("institutionTeacherPickerTitle");
+        const teacherPickerCopy = document.getElementById("institutionTeacherPickerCopy");
+        const teacherPickerList = document.getElementById("institutionTeacherPickerList");
+
+        let schoolTeachers = [];
+        const selectionState = {
+            notification: { broadcast: true, selectedTeacherIds: [] },
+            task: { broadcast: false, selectedTeacherIds: [] }
+        };
+        let activePickerType = "notification";
 
         function authHeaders(includeJson = false) {
             return includeJson
@@ -69,14 +202,142 @@
                 : { Authorization: `Bearer ${token}` };
         }
 
+        function attachCounter(inputId) {
+            const input = document.getElementById(inputId);
+            const counter = document.querySelector(`[data-counter-for="${inputId}"]`);
+            if (!input || !counter) {
+                return;
+            }
+
+            const maxLength = Number(input.getAttribute("maxlength") || "0");
+            const sync = () => {
+                counter.textContent = `${input.value.length} / ${maxLength}`;
+            };
+
+            input.addEventListener("input", sync);
+            sync();
+        }
+
+        function getTeacherName(teacherId) {
+            return schoolTeachers.find((teacher) => String(teacher.userId) === String(teacherId))?.fullName || teacherId;
+        }
+
+        function renderTeacherNames(teacherIds) {
+            if (!teacherIds?.length) {
+                return "All teachers";
+            }
+
+            return teacherIds.map((teacherId) => getTeacherName(teacherId)).join(", ");
+        }
+
+        function renderSubmissionNames(submissions) {
+            if (!submissions?.length) {
+                return "";
+            }
+
+            return submissions
+                .map((submission) => getTeacherName(submission.teacherUserId))
+                .join(", ");
+        }
+
+        function renderSelectionSummary(type) {
+            const state = selectionState[type];
+            const metaTarget = type === "notification" ? notificationTeacherPickerMeta : taskTeacherPickerMeta;
+            const chipsTarget = type === "notification" ? notificationTeacherChips : taskTeacherChips;
+
+            if (state.broadcast) {
+                metaTarget.textContent = "Broadcast to all teachers";
+                chipsTarget.innerHTML = `<span class="institution-chip">Broadcast</span>`;
+                return;
+            }
+
+            if (!state.selectedTeacherIds.length) {
+                metaTarget.textContent = "No teachers selected";
+                chipsTarget.innerHTML = "";
+                return;
+            }
+
+            metaTarget.textContent = `${state.selectedTeacherIds.length} teacher(s) selected`;
+            chipsTarget.innerHTML = state.selectedTeacherIds
+                .map((teacherId) => `<span class="institution-chip">${getTeacherName(teacherId)}</span>`)
+                .join("");
+        }
+
+        function renderTeacherPicker() {
+            const state = selectionState[activePickerType];
+            teacherPickerList.innerHTML = schoolTeachers.length
+                ? schoolTeachers.map((teacher) => `
+                    <label class="institution-modal-row">
+                        <input
+                            class="form-check-input mt-1 js-picker-teacher"
+                            type="checkbox"
+                            value="${teacher.userId}"
+                            ${state.selectedTeacherIds.includes(String(teacher.userId)) ? "checked" : ""}
+                            ${state.broadcast ? "disabled" : ""}
+                        />
+                        <span>
+                            <strong>${teacher.fullName}</strong>
+                            <small>${teacher.email}</small>
+                        </span>
+                    </label>
+                `).join("")
+                : `<div class="text-secondary">No teachers are linked to this school yet.</div>`;
+
+            document.querySelectorAll(".js-picker-teacher").forEach((input) => {
+                input.addEventListener("change", () => {
+                    const nextSelected = Array.from(document.querySelectorAll(".js-picker-teacher:checked"))
+                        .map((checkbox) => checkbox.value);
+                    selectionState[activePickerType].selectedTeacherIds = nextSelected;
+                });
+            });
+        }
+
+        function openTeacherPicker(type) {
+            activePickerType = type;
+            teacherPickerTitle.textContent = type === "notification" ? "Select notification audience" : "Select task recipients";
+            teacherPickerCopy.textContent = type === "notification"
+                ? "Choose specific teachers or broadcast the notification to everyone."
+                : "Choose the teachers who should receive this task.";
+            renderTeacherPicker();
+            teacherPickerModal.classList.add("is-open");
+            teacherPickerModal.setAttribute("aria-hidden", "false");
+        }
+
+        function closeTeacherPicker() {
+            teacherPickerModal.classList.remove("is-open");
+            teacherPickerModal.setAttribute("aria-hidden", "true");
+        }
+
         function renderCollection(container, rows, copyBuilder) {
             container.innerHTML = "";
+            if (!rows?.length) {
+                container.innerHTML = `<div class="text-secondary">Nothing here right now.</div>`;
+                return;
+            }
             (rows || []).forEach((row) => {
                 const item = document.createElement("div");
                 item.className = "institution-comm-item";
                 item.innerHTML = `<div class="fw-bold">${row.title}</div><div class="text-secondary mt-2">${copyBuilder(row)}</div>`;
                 container.appendChild(item);
             });
+        }
+
+        function renderAttachments(attachments) {
+            if (!attachments?.length) {
+                return "";
+            }
+
+            return `<div class="mt-2"><strong>Attachments:</strong> ${attachments
+                .map((item) => {
+                    const label = String(item).split("/").pop() || String(item);
+                    return `<a href="${item}" target="_blank" rel="noreferrer">${label}</a>`;
+                })
+                .join(", ")}</div>`;
+        }
+
+        function setHiddenTasksExpanded(isExpanded) {
+            hiddenTasksToggle?.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+            hiddenTasksPanel?.classList.toggle("is-open", isExpanded);
         }
 
         async function loadCommunications() {
@@ -87,28 +348,144 @@
 
             const notifications = notificationsResponse.ok ? await notificationsResponse.json() : [];
             const tasks = tasksResponse.ok ? await tasksResponse.json() : [];
+            const activeTasks = (tasks || []).filter((row) => !row.isHidden);
+            const hiddenTasks = (tasks || []).filter((row) => row.isHidden);
+            if (hiddenTasksMeta) {
+                hiddenTasksMeta.textContent = hiddenTasks.length
+                    ? `${hiddenTasks.length} hidden task${hiddenTasks.length === 1 ? "" : "s"}`
+                    : "No hidden tasks";
+            }
 
-            renderCollection(notificationsList, notifications, (row) => row.message || "No message");
-            renderCollection(tasksList, tasks, (row) => `${row.description || "No description"}${row.dueDate ? `<br>Due: ${new Date(row.dueDate).toLocaleDateString()}` : ""}`);
+            renderCollection(
+                notificationsList,
+                notifications,
+                (row) => `
+                    <div>${row.message || "No message"}</div>
+                    <div class="mt-2"><strong>Sender:</strong> ${row.senderRole === "TEACHER" ? getTeacherName(row.createdByUserId) : "Institution"}</div>
+                    ${row.recipientTeacherUserIds?.length
+                        ? `<div class="mt-2"><strong>Targeted:</strong> ${renderTeacherNames(row.recipientTeacherUserIds)}</div>`
+                        : `<div class="mt-2"><strong>Audience:</strong> All teachers</div>`}
+                    ${renderAttachments(row.attachments)}
+                `,
+            );
+            renderCollection(
+                tasksList,
+                activeTasks,
+                (row) => `
+                    <div>${row.description || "No description"}</div>
+                    ${row.dueDate ? `<div class="mt-2"><strong>Due:</strong> ${new Date(row.dueDate).toLocaleDateString()}</div>` : ""}
+                    <div class="mt-2"><strong>Status:</strong> ${row.status}</div>
+                    <div class="mt-2"><strong>Assigned to:</strong> ${renderTeacherNames(row.assignedTeacherUserIds)}</div>
+                    ${renderAttachments(row.attachments)}
+                    ${row.submissions?.length ? `<div class="mt-2"><strong>Submitted by:</strong> ${renderSubmissionNames(row.submissions)}</div>` : ""}
+                    <div class="institution-comm-actions">
+                        ${row.status === "OPEN"
+                            ? `<button class="btn btn-outline-success rounded-pill px-3 js-task-status" data-task-id="${row.taskId}" data-status="CLOSED">Close task</button>`
+                            : `<button class="btn btn-outline-secondary rounded-pill px-3 js-task-status" data-task-id="${row.taskId}" data-status="OPEN">Open task</button>`}
+                        <button class="btn btn-outline-secondary rounded-pill px-3 js-task-visibility" data-task-id="${row.taskId}" data-hidden="true">Hide task</button>
+                    </div>
+                `,
+            );
+            renderCollection(
+                hiddenTasksList,
+                hiddenTasks,
+                (row) => `
+                    <div>${row.description || "No description"}</div>
+                    ${row.dueDate ? `<div class="mt-2"><strong>Due:</strong> ${new Date(row.dueDate).toLocaleDateString()}</div>` : ""}
+                    <div class="mt-2"><strong>Status:</strong> ${row.status}</div>
+                    <div class="mt-2"><strong>Assigned to:</strong> ${renderTeacherNames(row.assignedTeacherUserIds)}</div>
+                    ${renderAttachments(row.attachments)}
+                    ${row.submissions?.length ? `<div class="mt-2"><strong>Submitted by:</strong> ${renderSubmissionNames(row.submissions)}</div>` : ""}
+                    <div class="institution-comm-actions">
+                        <button class="btn btn-outline-secondary rounded-pill px-3 js-task-visibility" data-task-id="${row.taskId}" data-hidden="false">Show task</button>
+                    </div>
+                `,
+            );
+
+            document.querySelectorAll(".js-task-status").forEach((button) => {
+                button.addEventListener("click", async () => {
+                    taskError.classList.add("d-none");
+                    try {
+                        const response = await fetch(`${backendBaseUrl}/institutions/me/tasks/${encodeURIComponent(button.dataset.taskId)}/status`, {
+                            method: "PATCH",
+                            headers: authHeaders(true),
+                            body: JSON.stringify({ status: button.dataset.status })
+                        });
+                        const data = await response.json().catch(() => null);
+                        if (!response.ok) {
+                            throw new Error(data?.message || "Unable to update task status.");
+                        }
+                        await loadCommunications();
+                    } catch (error) {
+                        taskError.textContent = error.message || "Unable to update task status.";
+                        taskError.classList.remove("d-none");
+                    }
+                });
+            });
+
+            document.querySelectorAll(".js-task-visibility").forEach((button) => {
+                button.addEventListener("click", async () => {
+                    taskError.classList.add("d-none");
+                    try {
+                        const response = await fetch(`${backendBaseUrl}/institutions/me/tasks/${encodeURIComponent(button.dataset.taskId)}/visibility`, {
+                            method: "PATCH",
+                            headers: authHeaders(true),
+                            body: JSON.stringify({ isHidden: button.dataset.hidden === "true" })
+                        });
+                        const data = await response.json().catch(() => null);
+                        if (!response.ok) {
+                            throw new Error(data?.message || "Unable to update task visibility.");
+                        }
+                        await loadCommunications();
+                    } catch (error) {
+                        taskError.textContent = error.message || "Unable to update task visibility.";
+                        taskError.classList.remove("d-none");
+                    }
+                });
+            });
+        }
+
+        async function loadSchoolTeachers() {
+            const response = await fetch(`${backendBaseUrl}/institutions/me/teachers`, {
+                headers: authHeaders()
+            });
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to load school teachers.");
+            }
+            schoolTeachers = Array.isArray(data) ? data : [];
+            renderSelectionSummary("notification");
+            renderSelectionSummary("task");
         }
 
         document.getElementById("institutionNotificationForm").addEventListener("submit", async (event) => {
             event.preventDefault();
             notificationError.classList.add("d-none");
             try {
+                const formData = new FormData();
+                formData.append("title", document.getElementById("institutionNotificationTitle").value.trim());
+                formData.append("message", document.getElementById("institutionNotificationMessage").value.trim());
+                if (!selectionState.notification.broadcast) {
+                    selectionState.notification.selectedTeacherIds.forEach((teacherId) => {
+                        formData.append("recipientTeacherUserIds", teacherId);
+                    });
+                }
+                Array.from(document.getElementById("institutionNotificationAttachments").files || []).forEach((file) => {
+                    formData.append("attachments", file);
+                });
+
                 const response = await fetch(`${backendBaseUrl}/institutions/me/notifications`, {
                     method: "POST",
-                    headers: authHeaders(true),
-                    body: JSON.stringify({
-                        title: document.getElementById("institutionNotificationTitle").value.trim(),
-                        message: document.getElementById("institutionNotificationMessage").value.trim()
-                    })
+                    headers: authHeaders(),
+                    body: formData
                 });
                 const data = await response.json().catch(() => null);
                 if (!response.ok) {
                     throw new Error(data?.message || "Unable to send notification.");
                 }
                 event.target.reset();
+                selectionState.notification = { broadcast: true, selectedTeacherIds: [] };
+                renderSelectionSummary("notification");
                 await loadCommunications();
             } catch (error) {
                 notificationError.textContent = error.message || "Unable to send notification.";
@@ -120,25 +497,38 @@
             event.preventDefault();
             taskError.classList.add("d-none");
             try {
-                const teacherEmails = document.getElementById("institutionTaskTeacherEmails").value
-                    .split(",")
-                    .map((value) => value.trim())
-                    .filter(Boolean);
+                if (!selectionState.task.selectedTeacherIds.length) {
+                    throw new Error("Select at least one teacher.");
+                }
+                const formData = new FormData();
+                formData.append("title", document.getElementById("institutionTaskTitle").value.trim());
+                const description = document.getElementById("institutionTaskDescription").value.trim();
+                if (description) {
+                    formData.append("description", description);
+                }
+                selectionState.task.selectedTeacherIds.forEach((teacherId) => {
+                    formData.append("assignedTeacherUserIds", teacherId);
+                });
+                Array.from(document.getElementById("institutionTaskAttachments").files || []).forEach((file) => {
+                    formData.append("attachments", file);
+                });
+                const dueDate = document.getElementById("institutionTaskDueDate").value || "";
+                if (dueDate) {
+                    formData.append("dueDate", dueDate);
+                }
+
                 const response = await fetch(`${backendBaseUrl}/institutions/me/tasks`, {
                     method: "POST",
-                    headers: authHeaders(true),
-                    body: JSON.stringify({
-                        title: document.getElementById("institutionTaskTitle").value.trim(),
-                        description: document.getElementById("institutionTaskDescription").value.trim() || undefined,
-                        assignedTeacherEmails: teacherEmails,
-                        dueDate: document.getElementById("institutionTaskDueDate").value || undefined
-                    })
+                    headers: authHeaders(),
+                    body: formData
                 });
                 const data = await response.json().catch(() => null);
                 if (!response.ok) {
                     throw new Error(Array.isArray(data?.message) ? data.message.join(", ") : (data?.message || "Unable to create task."));
                 }
                 event.target.reset();
+                selectionState.task = { broadcast: false, selectedTeacherIds: [] };
+                renderSelectionSummary("task");
                 await loadCommunications();
             } catch (error) {
                 taskError.textContent = error.message || "Unable to create task.";
@@ -146,6 +536,50 @@
             }
         });
 
-        loadCommunications();
+        document.getElementById("notificationTeacherPickerBtn").addEventListener("click", () => openTeacherPicker("notification"));
+        document.getElementById("taskTeacherPickerBtn").addEventListener("click", () => openTeacherPicker("task"));
+        document.getElementById("institutionTeacherPickerClose").addEventListener("click", closeTeacherPicker);
+        document.getElementById("institutionTeacherPickerApply").addEventListener("click", () => {
+            renderSelectionSummary(activePickerType);
+            closeTeacherPicker();
+        });
+        document.getElementById("institutionTeacherPickerClear").addEventListener("click", () => {
+            selectionState[activePickerType].broadcast = false;
+            selectionState[activePickerType].selectedTeacherIds = [];
+            renderTeacherPicker();
+        });
+        document.getElementById("institutionTeacherPickerBroadcast").addEventListener("click", () => {
+            if (activePickerType !== "notification") {
+                selectionState.task.selectedTeacherIds = schoolTeachers.map((teacher) => String(teacher.userId));
+                renderTeacherPicker();
+                return;
+            }
+            selectionState.notification.broadcast = true;
+            selectionState.notification.selectedTeacherIds = [];
+            renderTeacherPicker();
+        });
+        teacherPickerModal.addEventListener("click", (event) => {
+            if (event.target === teacherPickerModal) {
+                closeTeacherPicker();
+            }
+        });
+        hiddenTasksToggle?.addEventListener("click", () => {
+            const isExpanded = hiddenTasksToggle.getAttribute("aria-expanded") === "true";
+            setHiddenTasksExpanded(!isExpanded);
+        });
+
+        [
+            "institutionNotificationTitle",
+            "institutionNotificationMessage",
+            "institutionTaskTitle",
+            "institutionTaskDescription"
+        ].forEach(attachCounter);
+
+        setHiddenTasksExpanded(false);
+
+        Promise.all([loadSchoolTeachers(), loadCommunications()]).catch(() => {
+            renderSelectionSummary("notification");
+            renderSelectionSummary("task");
+        });
     })();
 </script>

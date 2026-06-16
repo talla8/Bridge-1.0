@@ -13,20 +13,39 @@
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 24px;
-        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+        box-shadow: 0 10px 28px rgba(17,30,39,.06);
         padding: 24px;
     }
 
     .parent-results-title {
         font-size: 34px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
         margin-bottom: 8px;
     }
 
     .parent-results-subtitle {
         color: #6b7280;
         margin-bottom: 18px;
+    }
+
+    .parent-results-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .parent-results-filter,
+    .parent-results-sort {
+        min-width: 220px;
+        border: 1px solid #dbe3f0;
+        border-radius: 14px;
+        padding: 10px 12px;
+        font-size: 14px;
+        background: #fff;
+        color: #374151;
     }
 
     .parent-results-grid {
@@ -36,7 +55,7 @@
 
     .parent-results-row {
         display: grid;
-        grid-template-columns: 1.3fr 1fr .9fr .7fr .8fr auto;
+        grid-template-columns: 1.2fr .9fr 1fr .9fr .7fr .8fr auto;
         gap: 14px;
         align-items: center;
         border: 1px solid #eef2f7;
@@ -59,13 +78,13 @@
         font-size: 12px;
         font-weight: 700;
         background: #eef2ff;
-        color: #4f46e5;
+        color: #46A3E5;
         width: fit-content;
     }
 
     .parent-results-score {
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
     }
 
     .parent-results-empty {
@@ -89,6 +108,21 @@
     <div class="parent-results-card">
         <div class="parent-results-title">Quiz Results</div>
         <div class="parent-results-subtitle">Submitted quizzes and their current grading status.</div>
+        <div class="parent-results-toolbar">
+            <select id="parentQuizResultsSubjectFilter" class="parent-results-filter">
+                <option value="all">All subjects</option>
+            </select>
+            <select id="parentQuizResultsSort" class="parent-results-sort">
+                <option value="submitted_desc">Submitted: newest first</option>
+                <option value="submitted_asc">Submitted: oldest first</option>
+                <option value="score_desc">Score: highest first</option>
+                <option value="score_asc">Score: lowest first</option>
+                <option value="student_asc">Student name: A to Z</option>
+                <option value="student_desc">Student name: Z to A</option>
+                <option value="title_asc">Quiz title: A to Z</option>
+                <option value="title_desc">Quiz title: Z to A</option>
+            </select>
+        </div>
 
         <div id="parentQuizResultsList" class="parent-results-grid"></div>
     </div>
@@ -99,6 +133,73 @@
     const token = sessionStorage.getItem("bridgeAccessToken");
     const role = sessionStorage.getItem("bridgeUserRole");
     const parentQuizResultsList = document.getElementById("parentQuizResultsList");
+    const parentQuizResultsSort = document.getElementById("parentQuizResultsSort");
+    const parentQuizResultsSubjectFilter = document.getElementById("parentQuizResultsSubjectFilter");
+    let parentQuizResultsState = [];
+
+    function compareResultsText(left, right) {
+        return String(left || "").localeCompare(String(right || ""));
+    }
+
+    function sortParentQuizResults(items) {
+        const sortMode = parentQuizResultsSort?.value || "submitted_desc";
+        const sorted = [...items];
+
+        sorted.sort((left, right) => {
+            switch (sortMode) {
+                case "submitted_asc":
+                    return new Date(left.submittedAt).getTime() - new Date(right.submittedAt).getTime();
+                case "score_desc":
+                    return Number(right.score ?? 0) - Number(left.score ?? 0);
+                case "score_asc":
+                    return Number(left.score ?? 0) - Number(right.score ?? 0);
+                case "student_asc":
+                    return compareResultsText(left.studentName, right.studentName);
+                case "student_desc":
+                    return compareResultsText(right.studentName, left.studentName);
+                case "title_asc":
+                    return compareResultsText(left.title, right.title);
+                case "title_desc":
+                    return compareResultsText(right.title, left.title);
+                case "submitted_desc":
+                default:
+                    return new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime();
+            }
+        });
+
+        return sorted;
+    }
+
+    function filterParentQuizResults(items) {
+        const selectedSubject = parentQuizResultsSubjectFilter?.value || "all";
+        if (selectedSubject === "all") {
+            return [...items];
+        }
+
+        return items.filter((item) => String(item.subjectId || "") === selectedSubject);
+    }
+
+    function renderParentQuizResultsSubjectFilter(items) {
+        if (!parentQuizResultsSubjectFilter) return;
+
+        const options = Array.from(
+            new Map(
+                items
+                    .filter((item) => item.subjectId && item.subjectName)
+                    .map((item) => [String(item.subjectId), item.subjectName])
+            ).entries()
+        );
+
+        const currentValue = parentQuizResultsSubjectFilter.value || "all";
+        parentQuizResultsSubjectFilter.innerHTML = `
+            <option value="all">All subjects</option>
+            ${options.map(([subjectId, subjectName]) => `<option value="${subjectId}">${subjectName}</option>`).join("")}
+        `;
+
+        if ([...parentQuizResultsSubjectFilter.options].some((option) => option.value === currentValue)) {
+            parentQuizResultsSubjectFilter.value = currentValue;
+        }
+    }
 
     function renderParentQuizResults(items) {
         if (!items.length) {
@@ -109,6 +210,7 @@
         parentQuizResultsList.innerHTML = `
             <div class="parent-results-row parent-results-head">
                 <div>Quiz</div>
+                <div>Subject</div>
                 <div>Student</div>
                 <div>Submitted</div>
                 <div>Score</div>
@@ -118,6 +220,7 @@
             ${items.map((item) => `
                 <div class="parent-results-row">
                     <div><strong>${item.title}</strong></div>
+                    <div>${item.subjectName || "-"}</div>
                     <div>${item.studentName}</div>
                     <div>${new Date(item.submittedAt).toLocaleDateString()}</div>
                     <div class="parent-results-score">${item.score}%</div>
@@ -150,10 +253,20 @@
             throw new Error(data?.message || "Unable to load quiz results.");
         }
 
-        renderParentQuizResults(Array.isArray(data) ? data : []);
+        parentQuizResultsState = Array.isArray(data) ? data : [];
+        renderParentQuizResultsSubjectFilter(parentQuizResultsState);
+        renderParentQuizResults(sortParentQuizResults(filterParentQuizResults(parentQuizResultsState)));
     }
 
     loadParentQuizResults().catch((error) => {
         parentQuizResultsList.innerHTML = `<div class="parent-results-empty">${error.message || "Unable to load quiz results."}</div>`;
+    });
+
+    parentQuizResultsSort?.addEventListener("change", () => {
+        renderParentQuizResults(sortParentQuizResults(filterParentQuizResults(parentQuizResultsState)));
+    });
+
+    parentQuizResultsSubjectFilter?.addEventListener("change", () => {
+        renderParentQuizResults(sortParentQuizResults(filterParentQuizResults(parentQuizResultsState)));
     });
 </script>

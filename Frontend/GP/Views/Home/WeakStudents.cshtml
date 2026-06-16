@@ -7,7 +7,7 @@
       max-width:1280px;
       margin:0 auto;
       padding:28px;
-      color:#111827;
+      color:#111E27;
     }
     .weak-header{
       display:flex;
@@ -35,12 +35,12 @@
       cursor:pointer;
     }
     .weak-btn-primary{
-      background:linear-gradient(135deg,#8b82ff,#6d8cff);
+      background:linear-gradient(135deg,#82CBFF,#6DC2FF);
       color:#fff;
     }
     .weak-btn-soft{
       background:#eef2ff;
-      color:#4f46e5;
+      color:#46A3E5;
     }
     .weak-btn-outline{
       background:#fff;
@@ -58,7 +58,7 @@
       background:#fff;
       border:1px solid #e5e7eb;
       border-radius:22px;
-      box-shadow:0 10px 28px rgba(17,24,39,.05);
+      box-shadow:0 10px 28px rgba(17,30,39,.05);
     }
     .weak-summary-grid{
       display:grid;
@@ -75,7 +75,7 @@
       align-items:center;
     }
     .weak-focus-kicker{
-      color:#6366f1;
+      color:#63B6F1;
       font-size:13px;
       font-weight:800;
       margin-bottom:8px;
@@ -175,8 +175,8 @@
     }
     .weak-toggle button.active{
       background:#fff;
-      color:#111827;
-      box-shadow:0 2px 8px rgba(17,24,39,.08);
+      color:#111E27;
+      box-shadow:0 2px 8px rgba(17,30,39,.08);
     }
     .weak-state{
       padding:40px 24px;
@@ -341,7 +341,6 @@
                     <div class="weak-focus-action-title" id="focusActionTitle">Create targeted support work</div>
                     <div class="weak-focus-actions">
                         <button id="createQuizBtn" class="weak-btn weak-btn-primary" type="button">Create quiz</button>
-                        <button class="weak-btn weak-btn-soft weak-btn-disabled" type="button" disabled>Publish practice</button>
                     </div>
                 </div>
             </div>
@@ -417,6 +416,7 @@
 <script>
     const backendBaseUrl = "http://localhost:3000";
     const token = sessionStorage.getItem("bridgeAccessToken");
+    const selectedSubjectId = localStorage.getItem("teacherSelectedSubject") || "2";
 
     const state = {
       weakStudents: [],
@@ -623,7 +623,6 @@
 
           <div class="weak-row-actions">
             <a class="weak-btn weak-btn-soft" href="/Home/StudentProfile?studentId=${encodeURIComponent(student.studentId)}">View Student Profile</a>
-            <button class="weak-btn weak-btn-primary weak-btn-disabled" type="button" disabled>Create a practice</button>
           </div>
         </article>
       `).join('');
@@ -640,8 +639,7 @@
             ${skill.students.map((student) => `<span class="weak-tag">${student.fullEnglishName}</span>`).join('')}
           </div>
           <div class="weak-row-actions">
-            <button class="weak-btn weak-btn-primary weak-btn-disabled" type="button" disabled>Create quiz</button>
-            <button class="weak-btn weak-btn-soft weak-btn-disabled" type="button" disabled>Publish practice</button>
+            <a class="weak-btn weak-btn-primary" href="${new URL('@Url.Action("CreateQuiz", "Home")', window.location.origin).toString()}?skill=${encodeURIComponent(skill.skillName)}&targetType=WEAK_STUDENTS">Create quiz</a>
           </div>
         </article>
       `).join('');
@@ -687,7 +685,7 @@
       setVisibility(dom.errorState, false);
 
       try {
-        const response = await fetch(`${backendBaseUrl}/statistics/weak-students`, {
+        const response = await fetch(`${backendBaseUrl}/statistics/weak-students?subjectId=${encodeURIComponent(selectedSubjectId)}`, {
           headers: authorizedHeaders()
         });
         const data = await response.json().catch(() => []);

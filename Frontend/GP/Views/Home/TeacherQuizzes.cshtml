@@ -1,0 +1,228 @@
+@{
+    ViewData["Title"] = "Quizzes";
+}
+
+<style>
+    .teacher-quiz-hub-page { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    .teacher-quiz-hub-card { background:#fff; border:1px solid #e5e7eb; border-radius:24px; box-shadow:0 10px 28px rgba(17,30,39,.06); padding:24px; }
+    .teacher-quiz-hub-title { font-size:34px; font-weight:800; color:#111E27; margin-bottom:8px; }
+    .teacher-quiz-hub-subtitle { color:#6b7280; margin-bottom:18px; }
+    .teacher-quiz-hub-tabs { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+    .teacher-quiz-hub-tab { display:inline-flex; align-items:center; justify-content:center; padding:10px 16px; border-radius:999px; border:1px solid #dbe3f0; background:#fff; color:#374151; text-decoration:none; font-weight:700; cursor:pointer; }
+    .teacher-quiz-hub-tab.active { background:linear-gradient(135deg,#82CBFF,#6DC2FF); border-color:transparent; color:#fff; }
+    .teacher-quiz-hub-panel { display:none; }
+    .teacher-quiz-hub-panel.active { display:block; }
+    .teacher-quiz-toolbar { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
+    .teacher-quiz-action-btn { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:10px 16px; text-decoration:none; font-weight:700; background:#068FD4; color:#111E27; }
+    .teacher-quiz-grid { display:grid; gap:12px; }
+    .teacher-quiz-row { display:grid; gap:14px; align-items:center; border:1px solid #eef2f7; border-radius:18px; padding:16px; }
+    .teacher-quiz-row.all { grid-template-columns:1.6fr .9fr .9fr .8fr .9fr; }
+    .teacher-quiz-row.pending { grid-template-columns:1.4fr 1.1fr .8fr .8fr auto; }
+    .teacher-quiz-row.reviewed { grid-template-columns:1.4fr 1fr .8fr .8fr .9fr 1fr auto; }
+    .teacher-quiz-head { background:#f8fafc; font-weight:800; color:#374151; }
+    .teacher-quiz-badge { display:inline-flex; align-items:center; justify-content:center; border-radius:999px; padding:8px 12px; font-size:12px; font-weight:700; width:fit-content; }
+    .teacher-quiz-badge-warning { background:#fff7db; color:#a16207; }
+    .teacher-quiz-badge-info { background:#eef2ff; color:#46A3E5; }
+    .teacher-quiz-badge-neutral { background:#ecfeff; color:#0F5476; }
+    .teacher-quiz-btn { border:1px solid #d1d5db; border-radius:999px; padding:9px 14px; font-size:13px; font-weight:700; text-decoration:none; color:#46A3E5; background:#fff; white-space:nowrap; }
+    .teacher-quiz-empty { color:#6b7280; text-align:center; padding:28px; }
+    @@media (max-width:1100px) {
+        .teacher-quiz-row.all,
+        .teacher-quiz-row.pending,
+        .teacher-quiz-row.reviewed { grid-template-columns:1fr; }
+        .teacher-quiz-head { display:none; }
+    }
+</style>
+
+<div class="teacher-shell">
+    <partial name="_TeacherSidebar" />
+    <div class="teacher-shell-content">
+        <div class="teacher-quiz-hub-page">
+            <div class="teacher-quiz-hub-card">
+                <div class="teacher-quiz-hub-title">Quizzes</div>
+                <div class="teacher-quiz-hub-subtitle">Browse your quiz bank, review pending submissions, and reopen reviewed results from one place.</div>
+
+                <div class="teacher-quiz-toolbar">
+                    <div class="teacher-quiz-hub-tabs">
+                        <button type="button" class="teacher-quiz-hub-tab active" data-quiz-tab="all">All Quizzes</button>
+                        <button type="button" class="teacher-quiz-hub-tab" data-quiz-tab="pending">Pending Reviews</button>
+                        <button type="button" class="teacher-quiz-hub-tab" data-quiz-tab="reviewed">Reviewed History</button>
+                    </div>
+                    <a class="teacher-quiz-action-btn" href="@Url.Action("CreateQuiz", "Home")">Create Quiz</a>
+                </div>
+
+                <section class="teacher-quiz-hub-panel active" data-quiz-panel="all">
+                    <div id="teacherQuizAllList" class="teacher-quiz-grid"></div>
+                </section>
+
+                <section class="teacher-quiz-hub-panel" data-quiz-panel="pending">
+                    <div id="teacherQuizPendingList" class="teacher-quiz-grid"></div>
+                </section>
+
+                <section class="teacher-quiz-hub-panel" data-quiz-panel="reviewed">
+                    <div id="teacherQuizReviewedList" class="teacher-quiz-grid"></div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const backendBaseUrl = "http://localhost:3000";
+    const token = sessionStorage.getItem("bridgeAccessToken");
+    const role = sessionStorage.getItem("bridgeUserRole");
+    const allList = document.getElementById("teacherQuizAllList");
+    const pendingList = document.getElementById("teacherQuizPendingList");
+    const reviewedList = document.getElementById("teacherQuizReviewedList");
+    const tabButtons = Array.from(document.querySelectorAll("[data-quiz-tab]"));
+    const tabPanels = Array.from(document.querySelectorAll("[data-quiz-panel]"));
+
+    function setActiveQuizTab(tabKey) {
+        tabButtons.forEach((button) => {
+            button.classList.toggle("active", button.getAttribute("data-quiz-tab") === tabKey);
+        });
+        tabPanels.forEach((panel) => {
+            panel.classList.toggle("active", panel.getAttribute("data-quiz-panel") === tabKey);
+        });
+    }
+
+    function renderAllQuizzes(items) {
+        if (!allList) return;
+        if (!items.length) {
+            allList.innerHTML = `<div class="teacher-quiz-empty">No quizzes created yet. Use Create Quiz to build your first one.</div>`;
+            return;
+        }
+
+        allList.innerHTML = `
+            <div class="teacher-quiz-row teacher-quiz-head all">
+                <div>Quiz</div>
+                <div>Subject</div>
+                <div>Skill Focus</div>
+                <div>Questions</div>
+                <div>Created</div>
+            </div>
+            ${items.map((item) => `
+                <div class="teacher-quiz-row all">
+                    <div><strong>${item.title}</strong></div>
+                    <div><span class="teacher-quiz-badge teacher-quiz-badge-neutral">${item.subjectName}</span></div>
+                    <div>${item.skillFocus || "-"}</div>
+                    <div>${Number(item.questionCount ?? 0)}</div>
+                    <div>${item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "-"}</div>
+                </div>
+            `).join("")}
+        `;
+    }
+
+    function renderPendingReviews(items) {
+        if (!pendingList) return;
+        if (!items.length) {
+            pendingList.innerHTML = `<div class="teacher-quiz-empty">No pending quiz reviews.</div>`;
+            return;
+        }
+
+        pendingList.innerHTML = `
+            <div class="teacher-quiz-row teacher-quiz-head pending">
+                <div>Quiz</div>
+                <div>Student</div>
+                <div>Submitted</div>
+                <div>Essay questions</div>
+                <div>Action</div>
+            </div>
+            ${items.map((item) => `
+                <div class="teacher-quiz-row pending">
+                    <div><strong>${item.title}</strong></div>
+                    <div>${item.studentName}</div>
+                    <div>${new Date(item.submittedAt).toLocaleDateString()}</div>
+                    <div><span class="teacher-quiz-badge teacher-quiz-badge-warning">${item.pendingEssayCount} pending</span></div>
+                    <div><a class="teacher-quiz-btn" href="@Url.Action("TeacherQuizReviewDetail", "Home")?quizResultId=${encodeURIComponent(item.quizResultId)}">Review</a></div>
+                </div>
+            `).join("")}
+        `;
+    }
+
+    function renderReviewedHistory(items) {
+        if (!reviewedList) return;
+        if (!items.length) {
+            reviewedList.innerHTML = `<div class="teacher-quiz-empty">No completed quiz submissions yet.</div>`;
+            return;
+        }
+
+        reviewedList.innerHTML = `
+            <div class="teacher-quiz-row teacher-quiz-head reviewed">
+                <div>Quiz</div>
+                <div>Student</div>
+                <div>Submitted</div>
+                <div>Reviewed</div>
+                <div>Status</div>
+                <div>Score</div>
+                <div>Action</div>
+            </div>
+            ${items.map((item) => `
+                <div class="teacher-quiz-row reviewed">
+                    <div><strong>${item.title}</strong></div>
+                    <div>${item.studentName}</div>
+                    <div>${new Date(item.submittedAt).toLocaleDateString()}</div>
+                    <div>${item.reviewedAt ? new Date(item.reviewedAt).toLocaleDateString() : "-"}</div>
+                    <div><span class="teacher-quiz-badge teacher-quiz-badge-info">${item.status === "AUTO_GRADED" ? "Auto graded" : "Reviewed"}</span></div>
+                    <div><span class="teacher-quiz-badge teacher-quiz-badge-info">${Number(item.score ?? 0)}%</span></div>
+                    <div><a class="teacher-quiz-btn" href="@Url.Action("TeacherQuizReviewDetail", "Home")?quizResultId=${encodeURIComponent(item.quizResultId)}">Open</a></div>
+                </div>
+            `).join("")}
+        `;
+    }
+
+    async function loadTeacherQuizzesHub() {
+        if (!token) { window.location.replace('@Url.Action("Login", "Home")'); return; }
+        if (role && role !== "Teacher") { window.location.replace('@Url.Action("ParentDashboard", "Home")'); return; }
+
+        const headers = { Authorization: `Bearer ${token}` };
+        const [allResponse, pendingResponse, reviewedResponse] = await Promise.all([
+            fetch(`${backendBaseUrl}/quizzes/mine`, { headers }),
+            fetch(`${backendBaseUrl}/quizzes/review/pending`, { headers }),
+            fetch(`${backendBaseUrl}/quizzes/review/reviewed`, { headers })
+        ]);
+
+        const allData = allResponse.ok ? await allResponse.json().catch(() => []) : [];
+        const pendingData = pendingResponse.ok ? await pendingResponse.json().catch(() => []) : [];
+        const reviewedData = reviewedResponse.ok ? await reviewedResponse.json().catch(() => []) : [];
+
+        if (!allResponse.ok) {
+            throw new Error(allData?.message || "Unable to load quizzes.");
+        }
+
+        if (!pendingResponse.ok) {
+            throw new Error(pendingData?.message || "Unable to load pending quiz reviews.");
+        }
+
+        if (!reviewedResponse.ok) {
+            throw new Error(reviewedData?.message || "Unable to load reviewed quizzes.");
+        }
+
+        renderAllQuizzes(Array.isArray(allData) ? allData : []);
+        renderPendingReviews(Array.isArray(pendingData) ? pendingData : []);
+        renderReviewedHistory(Array.isArray(reviewedData) ? reviewedData : []);
+    }
+
+    const initialTab = new URLSearchParams(window.location.search).get("tab") || "all";
+    setActiveQuizTab(initialTab);
+
+    tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const tabKey = button.getAttribute("data-quiz-tab") || "create";
+            setActiveQuizTab(tabKey);
+            const url = new URL(window.location.href);
+            url.searchParams.set("tab", tabKey);
+            window.history.replaceState({}, "", url);
+        });
+    });
+
+    loadTeacherQuizzesHub().catch((error) => {
+        const message = error.message || "Unable to load quizzes.";
+        renderAllQuizzes([]);
+        renderPendingReviews([]);
+        renderReviewedHistory([]);
+        if (allList) {
+            allList.innerHTML = `<div class="teacher-quiz-empty">${message}</div>`;
+        }
+    });
+</script>

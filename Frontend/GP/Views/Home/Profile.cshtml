@@ -13,7 +13,7 @@
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 20px;
-        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+        box-shadow: 0 10px 28px rgba(17,30,39,.06);
     }
 
     .profile-hero {
@@ -32,7 +32,7 @@
         display: grid;
         place-items: center;
         background: #c9c6ff;
-        color: #534ab7;
+        color: #4A8AB7;
         font-size: 34px;
         font-weight: 800;
     }
@@ -41,7 +41,7 @@
         margin: 0;
         font-size: 2rem;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
     }
 
     .profile-subtitle {
@@ -74,6 +74,28 @@
         background: #e7f7f0;
         border-color: #9fe1cb;
         color: #0f6e56;
+    }
+
+    .profile-tag-unverified {
+        background: #fff7db;
+        border-color: #F3D770;
+        color: #8A6C00;
+    }
+
+    .profile-verification-banner {
+        margin-top: 18px;
+        padding: 16px 18px;
+        border: 1px solid #F3D770;
+        border-radius: 16px;
+        background: #fff9e8;
+        color: #7A6000;
+    }
+
+    .profile-verification-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
     }
 
     .profile-section {
@@ -121,7 +143,7 @@
     }
 
     .profile-field-value {
-        color: #111827;
+        color: #111E27;
         font-size: 16px;
         font-weight: 700;
         overflow-wrap: anywhere;
@@ -163,13 +185,13 @@
         border-radius: 999px;
         border: 1px solid #d1d5db;
         background: #fff;
-        color: #111827;
+        color: #111E27;
         font-weight: 700;
     }
 
     .profile-btn-primary {
         border-color: transparent;
-        background: #0dcaf0;
+        background: #0DA4F0;
         color: #fff;
     }
 
@@ -218,6 +240,15 @@
                         <span class="profile-tag"><i class="bi bi-translate"></i> <span id="profileSubjectTag">-</span></span>
                         <span class="profile-tag"><i class="bi bi-people"></i> <span id="profileStudentCountTag">0 Students</span></span>
                         <span id="profileVerifiedTag" class="profile-tag profile-tag-verified"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                        <span id="profileUnverifiedTag" class="profile-tag profile-tag-unverified d-none"><i class="bi bi-exclamation-circle"></i> Not verified</span>
+                    </div>
+                    <div id="profileVerificationBanner" class="profile-verification-banner d-none">
+                        <div>Your email is still not verified.</div>
+                        <div class="profile-verification-actions">
+                            <a asp-controller="Home" asp-action="Verification" id="profileVerifyNowButton" class="profile-btn profile-btn-primary">Verify now</a>
+                            <button type="button" id="profileResendVerificationButton" class="profile-btn">Resend code</button>
+                        </div>
+                        <div id="profileVerificationStatus" class="profile-status mt-2 d-none"></div>
                     </div>
                 </div>
             </div>
@@ -347,6 +378,11 @@
     const profileSubjectTag = document.getElementById("profileSubjectTag");
     const profileStudentCountTag = document.getElementById("profileStudentCountTag");
     const profileVerifiedTag = document.getElementById("profileVerifiedTag");
+    const profileUnverifiedTag = document.getElementById("profileUnverifiedTag");
+    const profileVerificationBanner = document.getElementById("profileVerificationBanner");
+    const profileVerifyNowButton = document.getElementById("profileVerifyNowButton");
+    const profileResendVerificationButton = document.getElementById("profileResendVerificationButton");
+    const profileVerificationStatus = document.getElementById("profileVerificationStatus");
     const schoolDisplay = document.getElementById("schoolDisplay");
     const gradeDisplay = document.getElementById("gradeDisplay");
     const sectionDisplay = document.getElementById("sectionDisplay");
@@ -428,6 +464,7 @@
         const subject = profile.subject || "-";
         const studentCount = Number(profile.studentCount || 0);
         const verified = Boolean(profile.isVerified);
+        sessionStorage.setItem("bridgeUserVerified", verified ? "true" : "false");
 
         profileAvatar.textContent = getInitials(profile.fullName);
         profileHeaderName.textContent = profile.fullName || "Profile";
@@ -436,6 +473,8 @@
         profileSubjectTag.textContent = subject;
         profileStudentCountTag.textContent = `${studentCount} Students`;
         profileVerifiedTag.classList.toggle("d-none", !verified);
+        profileUnverifiedTag.classList.toggle("d-none", verified);
+        profileVerificationBanner.classList.toggle("d-none", verified);
         schoolDisplay.textContent = profile.school || "-";
         schoolDisplay.classList.toggle("profile-field-value-muted", !profile.school);
         gradeDisplay.textContent = grade;
@@ -473,6 +512,13 @@
         }
 
         renderProfile(data);
+    }
+
+    function showVerificationStatus(message, isError = false) {
+        profileVerificationStatus.textContent = message;
+        profileVerificationStatus.classList.remove("d-none");
+        profileVerificationStatus.classList.toggle("profile-status-error", isError);
+        profileVerificationStatus.classList.toggle("profile-status-success", !isError);
     }
 
     async function saveProfile() {
@@ -575,6 +621,33 @@
 
     saveProfileButton.addEventListener("click", saveProfile);
     changePasswordButton.addEventListener("click", changePassword);
+    profileVerifyNowButton?.addEventListener("click", () => {
+        const role = sessionStorage.getItem("bridgeUserRole") || "teacher";
+        sessionStorage.setItem("bridgeVerificationRole", String(role).toLowerCase());
+    });
+    profileResendVerificationButton?.addEventListener("click", async () => {
+        hideStatus(profileVerificationStatus);
+        profileResendVerificationButton.disabled = true;
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/auth/resend-verification`, {
+                method: "POST",
+                headers: authorizedHeaders()
+            });
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to resend verification code.");
+            }
+
+            showVerificationStatus(data?.message || "Verification code sent.");
+        } catch (error) {
+            showVerificationStatus(error.message || "Unable to resend verification code.", true);
+        } finally {
+            profileResendVerificationButton.disabled = false;
+        }
+    });
 
     loadProfile().catch((error) => {
         showStatus(saveProfileStatus, error.message || "Unable to load profile.", true);

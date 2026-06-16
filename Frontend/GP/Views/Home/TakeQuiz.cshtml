@@ -15,7 +15,7 @@
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 24px;
-        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+        box-shadow: 0 10px 28px rgba(17,30,39,.06);
         padding: 26px;
         margin-bottom: 18px;
     }
@@ -23,7 +23,7 @@
     .parent-quiz-title {
         font-size: 34px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
         margin-bottom: 8px;
     }
 
@@ -42,7 +42,7 @@
     .parent-quiz-question-head {
         font-size: 20px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
         margin-bottom: 10px;
     }
 
@@ -76,6 +76,29 @@
         outline: none;
     }
 
+    .parent-quiz-file {
+        width: 100%;
+        border: 1px solid #dbe3f0;
+        border-radius: 16px;
+        padding: 12px 14px;
+        background: #fff;
+        margin-top: 12px;
+    }
+
+    .parent-quiz-counter,
+    .parent-quiz-attachments {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 8px;
+    }
+
+    .parent-quiz-attachments a {
+        color: #388DCA;
+        font-weight: 600;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+
     .parent-quiz-actions {
         display: flex;
         justify-content: space-between;
@@ -98,7 +121,7 @@
     }
 
     .parent-quiz-btn-primary {
-        background: linear-gradient(135deg,#8b82ff,#6d8cff);
+        background: linear-gradient(135deg,#82CBFF,#6DC2FF);
         color: #fff;
     }
 
@@ -115,7 +138,7 @@
     }
 
     .parent-quiz-note {
-        color: #4f46e5;
+        color: #46A3E5;
     }
 
     .parent-quiz-error {
@@ -174,6 +197,12 @@
             <div class="parent-quiz-question" data-question-id="${question.questionId}" data-question-type="${question.type}">
                 <div class="parent-quiz-question-head">Question ${index + 1}</div>
                 <div class="parent-quiz-prompt">${question.prompt}</div>
+                ${Array.isArray(question.attachments) && question.attachments.length
+                    ? `<div class="parent-quiz-attachments"><strong>Question attachments:</strong> ${question.attachments.map((attachment) => {
+                        const label = String(attachment).split("/").pop() || String(attachment);
+                        return `<a href="${attachment}" target="_blank" rel="noreferrer">${label}</a>`;
+                    }).join("")}</div>`
+                    : ""}
                 ${question.type === "MULTIPLE_CHOICE"
                     ? `<div class="parent-quiz-options">
                         ${question.options.map((option) => `
@@ -183,9 +212,30 @@
                             </label>
                         `).join("")}
                     </div>`
-                    : `<textarea class="parent-quiz-textarea" placeholder="Write your answer here..."></textarea>`}
+                    : `
+                        <textarea
+                            class="parent-quiz-textarea"
+                            maxlength="${question.essayCharacterLimit || 500}"
+                            placeholder="Write your answer here..."></textarea>
+                        <div class="parent-quiz-counter">0 / ${question.essayCharacterLimit || 500}</div>
+                        <input class="parent-quiz-file" type="file" multiple />
+                        <div class="parent-quiz-counter">Attach files for the answer if needed.</div>
+                    `}
             </div>
         `).join("");
+
+        takeQuizQuestions.querySelectorAll('.parent-quiz-question[data-question-type="ESSAY"]').forEach((block) => {
+            const textarea = block.querySelector("textarea");
+            const counter = block.querySelector(".parent-quiz-counter");
+            const maxLength = Number(textarea?.getAttribute("maxlength") || "500");
+
+            const syncCounter = () => {
+                counter.textContent = `${textarea.value.length} / ${maxLength}`;
+            };
+
+            textarea?.addEventListener("input", syncCounter);
+            syncCounter();
+        });
     }
 
     function collectAnswers() {
@@ -201,7 +251,8 @@
 
             return {
                 questionId: question.questionId,
-                essayAnswer: block.querySelector("textarea")?.value?.trim() || ""
+                essayAnswer: block.querySelector("textarea")?.value?.trim() || "",
+                essayAttachmentFieldKey: `essayAttachments_${question.questionId}`
             };
         });
     }
@@ -255,15 +306,25 @@
         submitParentQuizBtn.textContent = "Submitting...";
 
         try {
+            const formData = new FormData();
+            formData.append("answers", JSON.stringify(collectAnswers()));
+
+            quizState.questions
+                .filter((question) => question.type === "ESSAY")
+                .forEach((question) => {
+                    const block = takeQuizQuestions.querySelector(`[data-question-id="${question.questionId}"]`);
+                    const fileInput = block?.querySelector('input[type="file"]');
+                    Array.from(fileInput?.files || []).forEach((file) => {
+                        formData.append(`essayAttachments_${question.questionId}`, file);
+                    });
+                });
+
             const response = await fetch(`${backendBaseUrl}/parents/me/students/${encodeURIComponent(studentId)}/quizzes/${encodeURIComponent(assignmentId)}/submit`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    answers: collectAnswers()
-                })
+                body: formData
             });
             const data = await response.json().catch(() => null);
 

@@ -10,10 +10,10 @@
 
     .bridge-slots-frame {
         padding: 2rem;
-        border: 1px solid rgba(123, 116, 216, 0.14);
+        border: 1px solid rgba(116,174,216, 0.14);
         border-radius: 2rem;
         background: rgba(255, 255, 255, 0.88);
-        box-shadow: 0 24px 60px rgba(45, 39, 120, 0.1);
+        box-shadow: 0 24px 60px rgba(39,86,120, 0.1);
     }
 
     .bridge-slots-step {
@@ -24,7 +24,7 @@
         padding: 0.65rem 1rem;
         border-radius: 999px;
         background: #f0edff;
-        color: #7b74d8;
+        color: #74AED8;
         font-weight: 700;
     }
 
@@ -57,8 +57,8 @@
     }
 
     .bridge-slots-select:focus {
-        border-color: #8f84ff;
-        box-shadow: 0 0 0 0.2rem rgba(143, 132, 255, 0.16);
+        border-color: #84CCFF;
+        box-shadow: 0 0 0 0.2rem rgba(132,204,255, 0.16);
     }
 
     .bridge-slots-grid {
@@ -102,7 +102,7 @@
         border: 1px solid #d8d3ff;
         border-radius: 999px;
         background: #fff;
-        color: #7b74d8;
+        color: #74AED8;
         font-size: 1.3rem;
         line-height: 1;
     }
@@ -145,7 +145,7 @@
         padding: 0 1rem;
         border-radius: 999px;
         background: #e8e4ff;
-        color: #7b74d8;
+        color: #74AED8;
         font-size: 1.1rem;
         font-weight: 800;
     }
@@ -174,12 +174,12 @@
     .bridge-slots-outline {
         border: 1px solid #d8d3ff;
         background: #fff;
-        color: #7b74d8;
+        color: #74AED8;
     }
 
     .bridge-slots-primary {
         border: 0;
-        background: linear-gradient(135deg, #8e84ff, #b4abff);
+        background: linear-gradient(135deg, #84CCFF, #ABDCFF);
         color: #fff;
     }
 
@@ -226,7 +226,7 @@
             <div class="bridge-slots-total">
                 <div>
                     <strong>Total weekly slots</strong>
-                    <p>Minimum 1, maximum 7 per day.</p>
+                    <p id="weeklySlotsHint">Minimum 1 total slot, maximum 7 per day.</p>
                 </div>
                 <span class="bridge-slots-badge" id="totalSlotsBadge">0</span>
             </div>
@@ -247,11 +247,28 @@
     const finishSetupBtn = document.getElementById("finishSetupBtn");
     const subjectSelect = document.getElementById("subjectSelect");
     const semesterSelect = document.getElementById("semesterSelect");
+    const weeklySlotsHint = document.getElementById("weeklySlotsHint");
     const slotCounts = Object.fromEntries(days.map((day) => [day, 0]));
+
+    function getMinimumWeeklySlots(subjectId) {
+        if (String(subjectId) === "2") {
+            return 7;
+        }
+
+        if (String(subjectId) === "1") {
+            return 5;
+        }
+
+        return 1;
+    }
 
     function updateTotalSlots() {
         const total = Object.values(slotCounts).reduce((sum, value) => sum + value, 0);
         totalSlotsBadge.textContent = total;
+        if (weeklySlotsHint) {
+            const minimumWeeklySlots = getMinimumWeeklySlots(subjectSelect.value);
+            weeklySlotsHint.textContent = `Minimum ${minimumWeeklySlots} total slots, maximum 7 per day.`;
+        }
         return total;
     }
 
@@ -313,8 +330,10 @@
             return;
         }
 
-        if (updateTotalSlots() < 1) {
-            alert("Please add at least one weekly slot.");
+        const minimumWeeklySlots = getMinimumWeeklySlots(subjectSelect.value);
+        if (updateTotalSlots() < minimumWeeklySlots) {
+            const subjectLabel = subjectSelect.options[subjectSelect.selectedIndex]?.text || "This subject";
+            alert(`${subjectLabel} needs at least ${minimumWeeklySlots} weekly slots.`);
             return;
         }
 
@@ -366,6 +385,7 @@
         }
     });
 
+    subjectSelect.addEventListener("change", updateTotalSlots);
     buildSlotsGrid();
     updateTotalSlots();
 </script>

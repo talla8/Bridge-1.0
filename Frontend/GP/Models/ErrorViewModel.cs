@@ -1,6 +1,6 @@
 namespace GP.Models
 {
-    public class ErrorViewModel
+    public class ErrorViewModel : BaseEntity
     {
         public string? RequestId { get; set; }
 

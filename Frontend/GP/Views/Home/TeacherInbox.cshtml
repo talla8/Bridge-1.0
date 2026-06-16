@@ -5,10 +5,19 @@
 <style>
     .teacher-inbox-page { padding: 1.5rem 0 3rem; }
     .teacher-inbox-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem; }
-    .teacher-inbox-card { padding:1.35rem; border:1px solid rgba(23,50,77,.12); border-radius:1.2rem; background:#fff; box-shadow:0 12px 28px rgba(23,50,77,.08); }
-    .teacher-inbox-item { padding:1rem; border:1px solid rgba(23,50,77,.12); border-radius:1rem; background:#fafbfd; margin-top:.85rem; }
+    .teacher-inbox-card { padding:1.35rem; border:1px solid rgba(23,55,77,.12); border-radius:1.2rem; background:#fff; box-shadow:0 12px 28px rgba(23,55,77,.08); }
+    .teacher-inbox-item { padding:1rem; border:1px solid rgba(23,55,77,.12); border-radius:1rem; background:#fafbfd; margin-top:.85rem; }
     .teacher-inbox-item small { color:#6b7280; display:block; margin-top:.35rem; }
     .teacher-inbox-empty { color:#6b7280; margin-top:1rem; }
+    .teacher-inbox-form input,
+    .teacher-inbox-form textarea { width:100%; border:1px solid rgba(23,55,77,.14); border-radius:.9rem; padding:.9rem 1rem; margin-top:.85rem; background:#fff; }
+    .teacher-inbox-form input[type="file"] { padding:.75rem 1rem; }
+    .teacher-inbox-btn { margin-top:.85rem; border:none; border-radius:999px; padding:.8rem 1.2rem; font-weight:700; background:#25A9EB; color:#082E49; }
+    .teacher-inbox-attachments { margin-top:.5rem; display:flex; gap:.4rem; flex-wrap:wrap; }
+    .teacher-inbox-attachment { display:inline-flex; padding:.35rem .65rem; border-radius:999px; background:#eef2ff; color:#388DCA; font-size:.8rem; font-weight:700; }
+    .teacher-inbox-section-title { margin-top:1.5rem; font-size:1rem; font-weight:800; }
+    .teacher-inbox-file-note { margin-top:.5rem; color:#6b7280; font-size:.85rem; }
+    .teacher-inbox-counter { margin-top:.4rem; color:#6b7280; font-size:.85rem; text-align:right; }
     @@media (max-width: 991px) { .teacher-inbox-grid { grid-template-columns:1fr; } }
 </style>
 
@@ -24,6 +33,17 @@
                     <h2 class="h4 fw-bold mb-0">Notifications</h2>
                     <div id="teacherNotificationsList"></div>
                     <div id="teacherNotificationsEmpty" class="teacher-inbox-empty d-none">No notifications right now.</div>
+                    <div class="teacher-inbox-section-title">Send message to institution</div>
+                    <div id="teacherMessageError" class="alert alert-danger d-none mt-3"></div>
+                    <form id="teacherMessageForm" class="teacher-inbox-form">
+                        <input id="teacherMessageTitle" type="text" maxlength="120" placeholder="Message title" />
+                        <div class="teacher-inbox-counter" data-counter-for="teacherMessageTitle">0 / 120</div>
+                        <textarea id="teacherMessageBody" rows="4" maxlength="1000" placeholder="Write your message"></textarea>
+                        <div class="teacher-inbox-counter" data-counter-for="teacherMessageBody">0 / 1000</div>
+                        <input id="teacherMessageAttachments" type="file" multiple />
+                        <div class="teacher-inbox-file-note">Attach files from your computer.</div>
+                        <button class="teacher-inbox-btn" id="teacherMessageBtn" type="submit">Send message</button>
+                    </form>
                 </section>
 
                 <section class="teacher-inbox-card">
@@ -56,6 +76,24 @@
         const notificationsEmpty = document.getElementById("teacherNotificationsEmpty");
         const tasksList = document.getElementById("teacherTasksList");
         const tasksEmpty = document.getElementById("teacherTasksEmpty");
+        const teacherMessageForm = document.getElementById("teacherMessageForm");
+        const teacherMessageError = document.getElementById("teacherMessageError");
+
+        function attachCounter(inputId) {
+            const input = document.getElementById(inputId);
+            const counter = document.querySelector(`[data-counter-for="${inputId}"]`);
+            if (!input || !counter) {
+                return;
+            }
+
+            const maxLength = Number(input.getAttribute("maxlength") || "0");
+            const sync = () => {
+                counter.textContent = `${input.value.length} / ${maxLength}`;
+            };
+
+            input.addEventListener("input", sync);
+            sync();
+        }
 
         function renderList(container, emptyNode, rows, builder) {
             container.innerHTML = "";
@@ -73,6 +111,19 @@
             });
         }
 
+        function renderAttachments(attachments) {
+            if (!attachments?.length) {
+                return "";
+            }
+
+            return `<div class="teacher-inbox-attachments">${attachments
+                .map((item) => {
+                    const label = String(item).split("/").pop() || String(item);
+                    return `<a class="teacher-inbox-attachment" href="${item}" target="_blank" rel="noreferrer">${label}</a>`;
+                })
+                .join("")}</div>`;
+        }
+
         async function loadInbox() {
             const headers = { Authorization: `Bearer ${token}` };
             const [notificationsResponse, tasksResponse] = await Promise.all([
@@ -86,16 +137,102 @@
             renderList(notificationsList, notificationsEmpty, notifications, (row) => `
                 <div class="fw-bold">${row.title}</div>
                 <div class="text-secondary mt-2">${row.message || ""}</div>
+                ${renderAttachments(row.attachments)}
                 <small>${new Date(row.createdAt).toLocaleString()}</small>
             `);
 
             renderList(tasksList, tasksEmpty, tasks, (row) => `
                 <div class="fw-bold">${row.title}</div>
                 <div class="text-secondary mt-2">${row.description || "No description"}</div>
+                ${renderAttachments(row.attachments)}
                 <small>Status: ${row.status}${row.dueDate ? ` · Due ${new Date(row.dueDate).toLocaleDateString()}` : ""}</small>
+                ${row.submissionMessage ? `<small>Submission note: ${row.submissionMessage}</small>` : ""}
+                ${renderAttachments(row.submissionAttachments)}
+                ${row.status === "OPEN" ? `
+                    <form class="teacher-task-submit-form mt-3" data-task-id="${row.taskId}">
+                        <textarea class="form-control mb-2 js-task-message" rows="3" maxlength="1000" placeholder="Submission message"></textarea>
+                        <div class="teacher-inbox-counter mb-2">0 / 1000</div>
+                        <input class="form-control mb-2" type="file" multiple />
+                        <button class="teacher-inbox-btn mt-0" type="submit">Submit task</button>
+                    </form>
+                ` : ""}
             `);
+
+            document.querySelectorAll(".teacher-task-submit-form").forEach((form) => {
+                const messageField = form.querySelector(".js-task-message");
+                const counter = form.querySelector(".teacher-inbox-counter");
+                const syncCounter = () => {
+                    counter.textContent = `${messageField.value.length} / 1000`;
+                };
+                messageField?.addEventListener("input", syncCounter);
+                syncCounter();
+
+                form.addEventListener("submit", async (event) => {
+                    event.preventDefault();
+                    const taskId = form.dataset.taskId;
+                    const fields = form.querySelectorAll("textarea, input");
+                    const [messageField, attachmentsField] = fields;
+                    const formData = new FormData();
+                    if (messageField.value.trim()) {
+                        formData.append("message", messageField.value.trim());
+                    }
+                    Array.from(attachmentsField.files || []).forEach((file) => {
+                        formData.append("attachments", file);
+                    });
+
+                    const response = await fetch(`${backendBaseUrl}/teacher-inbox/tasks/${encodeURIComponent(taskId)}/submit`, {
+                        method: "PATCH",
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json().catch(() => null);
+                    if (!response.ok) {
+                        alert(data?.message || "Unable to submit task.");
+                        return;
+                    }
+
+                    await loadInbox();
+                });
+            });
         }
 
+        teacherMessageForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            teacherMessageError.classList.add("d-none");
+
+            try {
+                const formData = new FormData();
+                formData.append("title", document.getElementById("teacherMessageTitle").value.trim());
+                formData.append("message", document.getElementById("teacherMessageBody").value.trim());
+                Array.from(document.getElementById("teacherMessageAttachments").files || []).forEach((file) => {
+                    formData.append("attachments", file);
+                });
+
+                const response = await fetch(`${backendBaseUrl}/teacher-inbox/messages`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json().catch(() => null);
+                if (!response.ok) {
+                    throw new Error(data?.message || "Unable to send message.");
+                }
+
+                teacherMessageForm.reset();
+                await loadInbox();
+            } catch (error) {
+                teacherMessageError.textContent = error.message || "Unable to send message.";
+                teacherMessageError.classList.remove("d-none");
+            }
+        });
+
+        ["teacherMessageTitle", "teacherMessageBody"].forEach(attachCounter);
         loadInbox();
     })();
 </script>

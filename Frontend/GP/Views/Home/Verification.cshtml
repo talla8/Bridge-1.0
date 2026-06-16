@@ -13,10 +13,10 @@
     .verification-card {
         width: min(100%, 33rem);
         padding: 2.2rem;
-        border: 1px solid rgba(123, 116, 216, 0.18);
+        border: 1px solid rgba(116,174,216, 0.18);
         border-radius: 1.6rem;
         background: rgba(255, 255, 255, 0.94);
-        box-shadow: 0 24px 60px rgba(43, 36, 112, 0.12);
+        box-shadow: 0 24px 60px rgba(36,80,112, 0.12);
     }
 
     .verification-title {
@@ -60,8 +60,8 @@
     }
 
     .otp-input:focus {
-        border-color: #8f84ff;
-        box-shadow: 0 0 0 0.22rem rgba(143, 132, 255, 0.18);
+        border-color: #84CCFF;
+        box-shadow: 0 0 0 0.22rem rgba(132,204,255, 0.18);
         transform: translateY(-1px);
     }
 
@@ -70,7 +70,7 @@
         min-height: 3.3rem;
         border: 0;
         border-radius: 999px;
-        background: linear-gradient(135deg, #8e84ff, #b4abff);
+        background: linear-gradient(135deg, #84CCFF, #ABDCFF);
         color: #fff;
         font-size: 1.1rem;
         font-weight: 700;
@@ -87,6 +87,22 @@
     .verification-button:disabled {
         opacity: 0.7;
         transform: none;
+    }
+
+    .verification-actions {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .verification-secondary-button {
+        width: 100%;
+        min-height: 3rem;
+        border: 1px solid #d7d2ff;
+        border-radius: 999px;
+        background: #fff;
+        color: #63A8D9;
+        font-size: 1rem;
+        font-weight: 700;
     }
 
     @@media (max-width: 575.98px) {
@@ -123,7 +139,10 @@
             <input type="text" maxlength="1" class="otp-input" inputmode="numeric">
         </div>
 
-        <button class="verification-button" id="verifyCodeButton">Verify</button>
+        <div class="verification-actions">
+            <button class="verification-button" id="verifyCodeButton">Verify</button>
+            <button class="verification-secondary-button" id="resendCodeButton" type="button">Resend code</button>
+        </div>
     </div>
 </div>
 
@@ -131,6 +150,7 @@
     const backendBaseUrl = "http://localhost:3000";
     const inputs = document.querySelectorAll('.otp-input');
     const verifyCodeButton = document.getElementById("verifyCodeButton");
+    const resendCodeButton = document.getElementById("resendCodeButton");
     const verificationErrorBox = document.getElementById("verificationErrorBox");
     const verificationSuccessBox = document.getElementById("verificationSuccessBox");
 
@@ -146,9 +166,33 @@
         verificationSuccessBox.classList.remove("d-none");
     }
 
+    function distributeOtpValue(rawValue, startIndex = 0) {
+        const digits = String(rawValue || "").replace(/\D/g, "").slice(0, inputs.length - startIndex).split("");
+        if (!digits.length) {
+            return;
+        }
+
+        digits.forEach((digit, offset) => {
+            const target = inputs[startIndex + offset];
+            if (target) {
+                target.value = digit;
+            }
+        });
+
+        const nextIndex = Math.min(startIndex + digits.length, inputs.length - 1);
+        inputs[nextIndex]?.focus();
+    }
+
     inputs.forEach((input, index) => {
         input.addEventListener('input', () => {
-            input.value = input.value.replace(/[^0-9]/g, "").slice(0, 1);
+            const sanitized = input.value.replace(/[^0-9]/g, "");
+            if (sanitized.length > 1) {
+                input.value = "";
+                distributeOtpValue(sanitized, index);
+                return;
+            }
+
+            input.value = sanitized.slice(0, 1);
             if (input.value.length === 1 && index < inputs.length - 1) {
                 inputs[index + 1].focus();
             }
@@ -164,6 +208,11 @@
             if (!/[0-9]/.test(e.key)) {
                 e.preventDefault();
             }
+        });
+
+        input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            distributeOtpValue(e.clipboardData?.getData('text') || "", index);
         });
     });
 
@@ -197,6 +246,7 @@
             }
 
             showVerificationSuccess(data?.message || "Email has been verified successfully.");
+            sessionStorage.setItem("bridgeUserVerified", "true");
             setTimeout(() => {
                 sessionStorage.removeItem("bridgeVerificationRole");
 
@@ -216,6 +266,38 @@
             showVerificationError(error.message || "Unable to connect to the server.");
         } finally {
             verifyCodeButton.disabled = false;
+        }
+    });
+
+    resendCodeButton?.addEventListener("click", async () => {
+        const token = sessionStorage.getItem("bridgeAccessToken");
+
+        if (!token) {
+            showVerificationError("Sign in again before requesting a new verification code.");
+            return;
+        }
+
+        resendCodeButton.disabled = true;
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/auth/resend-verification`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                throw new Error(message || "Unable to resend the verification code.");
+            }
+
+            showVerificationSuccess(data?.message || "Verification code sent successfully.");
+        } catch (error) {
+            showVerificationError(error.message || "Unable to resend the verification code.");
+        } finally {
+            resendCodeButton.disabled = false;
         }
     });
 </script>

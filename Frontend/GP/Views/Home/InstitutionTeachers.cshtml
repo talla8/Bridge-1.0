@@ -4,18 +4,28 @@
 
 <style>
     .institution-simple-page { padding: 1.5rem 0 3rem; }
-    .institution-simple-title { margin: 0; color: #0f1020; font-size: clamp(2rem, 3vw, 3rem); font-weight: 800; }
-    .institution-card { padding: 1.35rem; border: 1px solid rgba(23,50,77,.12); border-radius: 1.2rem; background: #fff; box-shadow: 0 12px 28px rgba(23,50,77,.08); }
-    .institution-join-card { margin-top: 1.25rem; padding: 1rem 1.1rem; border:1px solid rgba(99,102,241,.18); border-radius:1rem; background:#f8f8ff; }
+    .institution-simple-title { margin: 0; color: #0F1920; font-size: clamp(2rem, 3vw, 3rem); font-weight: 800; }
+    .institution-card { padding: 1.35rem; border: 1px solid rgba(23,55,77,.12); border-radius: 1.2rem; background: #fff; box-shadow: 0 12px 28px rgba(23,55,77,.08); }
+    .institution-join-card { margin-top: 1.25rem; padding: 1rem 1.1rem; border:1px solid rgba(99,182,241,.18); border-radius:1rem; background:#f8f8ff; }
     .institution-join-label { color:#5f6675; font-size:.92rem; margin-bottom:.35rem; }
-    .institution-join-code { font-size:1.2rem; font-weight:800; color:#111827; letter-spacing:.05em; }
+    .institution-join-code { font-size:1.2rem; font-weight:800; color:#111E27; letter-spacing:.05em; }
     .institution-teachers-grid { display:grid; gap:1rem; margin-top:1.25rem; }
-    .institution-teacher-card { padding: 1rem; border:1px solid rgba(23,50,77,.12); border-radius:1rem; background:#fafbfd; }
+    .institution-teacher-card { padding: 1rem; border:1px solid rgba(23,55,77,.12); border-radius:1rem; background:#fafbfd; }
     .institution-teacher-head { display:flex; justify-content:space-between; gap:1rem; align-items:flex-start; }
-    .institution-teacher-name { font-weight:800; color:#111827; }
+    .institution-teacher-name { font-weight:800; color:#111E27; }
     .institution-teacher-meta { color:#5f6675; font-size:.94rem; }
     .institution-invite-copy { color:#5f6675; font-size:.97rem; line-height:1.7; }
     .institution-invite-actions { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:1rem; }
+    .institution-detail-overlay { position:fixed; inset:0; background:rgba(15,25,32,.42); display:none; align-items:center; justify-content:center; z-index:1060; padding:1rem; }
+    .institution-detail-overlay.is-open { display:flex; }
+    .institution-detail-panel { width:min(860px, 100%); max-height:88vh; overflow:auto; padding:1.35rem; border-radius:1.25rem; background:#fff; box-shadow:0 24px 48px rgba(15,25,32,.22); }
+    .institution-detail-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.85rem; margin-top:1rem; }
+    .institution-detail-box { padding:.9rem 1rem; border:1px solid rgba(23,55,77,.12); border-radius:1rem; background:#fafbfd; }
+    .institution-detail-section { margin-top:1rem; }
+    .institution-detail-list-item { padding:.8rem .95rem; border:1px solid rgba(23,55,77,.12); border-radius:1rem; background:#fff; margin-top:.65rem; }
+    .institution-subject-tabs { display:flex; gap:.65rem; flex-wrap:wrap; margin-top:1rem; }
+    .institution-subject-tab { padding:.55rem 1rem; border:1px solid rgba(23,55,77,.14); border-radius:999px; background:#fff; color:#111E27; font-weight:700; }
+    .institution-subject-tab.is-active { background:#f1efff; color:#5f46d8; border-color:#c9c1ff; }
 </style>
 
 <div class="teacher-shell">
@@ -56,6 +66,32 @@
     </div>
 </div>
 
+<div id="institutionTeacherDetailOverlay" class="institution-detail-overlay" aria-hidden="true">
+    <div class="institution-detail-panel">
+        <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+                <h2 id="institutionTeacherDetailName" class="h3 fw-bold mb-1">Teacher</h2>
+                <div id="institutionTeacherDetailMeta" class="text-secondary"></div>
+            </div>
+            <button id="institutionTeacherDetailClose" type="button" class="btn btn-outline-secondary rounded-pill px-3">Close</button>
+        </div>
+        <div id="institutionTeacherDetailSubjects" class="institution-subject-tabs d-none"></div>
+        <div id="institutionTeacherDetailGrid" class="institution-detail-grid"></div>
+        <div class="institution-detail-section">
+            <h3 class="h5 fw-bold mb-2">Notifications</h3>
+            <div id="institutionTeacherDetailNotifications" class="text-secondary">No notifications.</div>
+        </div>
+        <div class="institution-detail-section">
+            <h3 class="h5 fw-bold mb-2">Tasks</h3>
+            <div id="institutionTeacherDetailTasks" class="text-secondary">No tasks.</div>
+        </div>
+        <div class="institution-detail-section">
+            <h3 class="h5 fw-bold mb-2">Recent Activity</h3>
+            <div id="institutionTeacherDetailActivity" class="text-secondary">No recent activity.</div>
+        </div>
+    </div>
+</div>
+
 <script>
     (() => {
         const backendBaseUrl = "http://localhost:3000";
@@ -74,11 +110,98 @@
         const teachersList = document.getElementById("institutionTeachersList");
         const teachersListEmpty = document.getElementById("institutionTeachersListEmpty");
         const joinCodeElement = document.getElementById("institutionTeachersJoinCode");
+        const detailOverlay = document.getElementById("institutionTeacherDetailOverlay");
+        const detailClose = document.getElementById("institutionTeacherDetailClose");
+        const detailSubjects = document.getElementById("institutionTeacherDetailSubjects");
 
         function authHeaders(includeJson = false) {
             return includeJson
                 ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }
                 : { Authorization: `Bearer ${token}` };
+        }
+
+        function renderDetailList(container, rows, renderer, emptyCopy) {
+            if (!rows?.length) {
+                container.innerHTML = `<div class="text-secondary">${emptyCopy}</div>`;
+                return;
+            }
+            container.innerHTML = rows.map((row) => `<div class="institution-detail-list-item">${renderer(row)}</div>`).join("");
+        }
+
+        function renderTeacherDetailBoxes(data, subjectDetail) {
+            document.getElementById("institutionTeacherDetailMeta").textContent =
+                `${data.email || "-"}${subjectDetail?.subjectName ? ` · ${subjectDetail.subjectName}` : ""}`;
+
+            document.getElementById("institutionTeacherDetailGrid").innerHTML = [
+                ["Verification", data.isVerified ? "Verified" : "Pending"],
+                ["Grade", data.grade || "-"],
+                ["Section", data.section || "-"],
+                ["Students", subjectDetail?.studentCount ?? data.studentCount ?? "—"],
+                ["Class average", subjectDetail?.classAverage !== null && subjectDetail?.classAverage !== undefined ? `${subjectDetail.classAverage}%` : "—"],
+                ["Weak students", subjectDetail?.weakStudentCount ?? "—"],
+                ["Plan progress", subjectDetail?.hasGeneratedPlan ? `${subjectDetail.progressPercentage ?? 0}%` : "No plan"],
+                ["Class speed", subjectDetail?.classSpeedPercentage !== null && subjectDetail?.classSpeedPercentage !== undefined ? `${subjectDetail.classSpeedPercentage}%` : "—"]
+            ].map(([label, value]) => `<div class="institution-detail-box"><div class="text-secondary small">${label}</div><div class="fw-semibold mt-1">${value}</div></div>`).join("");
+        }
+
+        function openTeacherDetail(data) {
+            document.getElementById("institutionTeacherDetailName").textContent = data.fullName || "Teacher";
+            const subjectRows = Array.isArray(data.subjectDetails) ? data.subjectDetails : [];
+            const defaultSubject =
+                subjectRows.find((row) => row.hasGeneratedPlan) ||
+                subjectRows[0] ||
+                null;
+
+            if (subjectRows.length > 1) {
+                detailSubjects.classList.remove("d-none");
+                detailSubjects.innerHTML = subjectRows
+                    .map((row, index) => `
+                        <button
+                            type="button"
+                            class="institution-subject-tab ${defaultSubject && row.subjectId === defaultSubject.subjectId ? "is-active" : ""} js-teacher-subject-tab"
+                            data-subject-id="${row.subjectId}"
+                        >${row.subjectName}</button>
+                    `)
+                    .join("");
+            } else {
+                detailSubjects.classList.add("d-none");
+                detailSubjects.innerHTML = "";
+            }
+
+            renderTeacherDetailBoxes(data, defaultSubject);
+
+            document.querySelectorAll(".js-teacher-subject-tab").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const subjectId = button.dataset.subjectId;
+                    const subjectDetail = subjectRows.find((row) => String(row.subjectId) === String(subjectId)) || null;
+                    document.querySelectorAll(".js-teacher-subject-tab").forEach((tab) => {
+                        tab.classList.toggle("is-active", tab === button);
+                    });
+                    renderTeacherDetailBoxes(data, subjectDetail);
+                });
+            });
+
+            renderDetailList(
+                document.getElementById("institutionTeacherDetailNotifications"),
+                data.notifications || [],
+                (row) => `<div class="fw-semibold">${row.title}</div><div class="text-secondary mt-1">${row.message || "No message"}</div>`,
+                "No notifications."
+            );
+            renderDetailList(
+                document.getElementById("institutionTeacherDetailTasks"),
+                data.tasks || [],
+                (row) => `<div class="fw-semibold">${row.title}</div><div class="text-secondary mt-1">${row.description || "No description"}</div><div class="mt-2"><strong>Status:</strong> ${row.status}</div>`,
+                "No tasks."
+            );
+            renderDetailList(
+                document.getElementById("institutionTeacherDetailActivity"),
+                data.recentActivity || [],
+                (row) => `<div class="fw-semibold">${row.description || row.actionType || "Activity"}</div><div class="text-secondary mt-1">${row.createdAt ? new Date(row.createdAt).toLocaleString() : ""}</div>`,
+                "No recent activity."
+            );
+
+            detailOverlay.classList.add("is-open");
+            detailOverlay.setAttribute("aria-hidden", "false");
         }
 
         function renderTeacherStats(teacher) {
@@ -125,13 +248,21 @@
                         alert(data?.message || "Unable to load teacher details.");
                         return;
                     }
-                    const statsLine = data.isVerified
-                        ? `Students: ${data.studentCount ?? 0}\nClass Average: ${data.classAverage ?? 0}%`
-                        : `Teacher has not verified the account yet.\nClass metrics will appear after setup.`;
-                    alert(`${data.fullName}\n${data.grade || "-"} ${data.section || ""}\n${data.subject || "Arabic, Mathematics"}\n${statsLine}\nRecent activity items: ${Array.isArray(data.recentActivity) ? data.recentActivity.length : 0}`);
+                    openTeacherDetail(data);
                 });
             });
         }
+
+        detailClose.addEventListener("click", () => {
+            detailOverlay.classList.remove("is-open");
+            detailOverlay.setAttribute("aria-hidden", "true");
+        });
+        detailOverlay.addEventListener("click", (event) => {
+            if (event.target === detailOverlay) {
+                detailOverlay.classList.remove("is-open");
+                detailOverlay.setAttribute("aria-hidden", "true");
+            }
+        });
 
         async function loadJoinCode() {
             const response = await fetch(`${backendBaseUrl}/institutions/me/join-code`, {

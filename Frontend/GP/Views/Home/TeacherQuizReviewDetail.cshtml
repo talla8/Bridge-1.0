@@ -5,25 +5,26 @@
 
 <style>
     .review-detail-page { max-width: 980px; margin: 0 auto; padding: 28px; }
-    .review-detail-card { background:#fff; border:1px solid #e5e7eb; border-radius:24px; box-shadow:0 10px 28px rgba(17,24,39,.06); padding:26px; margin-bottom:18px; }
+    .review-detail-card { background:#fff; border:1px solid #e5e7eb; border-radius:24px; box-shadow:0 10px 28px rgba(17,30,39,.06); padding:26px; margin-bottom:18px; }
     .review-detail-nav { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
     .review-detail-tab { display:inline-flex; align-items:center; justify-content:center; padding:10px 16px; border-radius:999px; border:1px solid #dbe3f0; background:#fff; color:#374151; text-decoration:none; font-weight:700; }
-    .review-detail-tab.active { background:linear-gradient(135deg,#8b82ff,#6d8cff); border-color:transparent; color:#fff; }
-    .review-detail-title { font-size:34px; font-weight:800; color:#111827; margin-bottom:8px; }
+    .review-detail-tab.active { background:linear-gradient(135deg,#82CBFF,#6DC2FF); border-color:transparent; color:#fff; }
+    .review-detail-title { font-size:34px; font-weight:800; color:#111E27; margin-bottom:8px; }
     .review-detail-subtitle { color:#6b7280; margin-bottom:18px; }
     .review-answer-card { border:1px solid #e8edf5; border-radius:18px; padding:18px; margin-bottom:14px; }
-    .review-answer-head { font-size:20px; font-weight:800; color:#111827; margin-bottom:10px; }
+    .review-answer-head { font-size:20px; font-weight:800; color:#111E27; margin-bottom:10px; }
     .review-answer-prompt { color:#374151; margin-bottom:14px; line-height:1.6; }
     .review-answer-meta { color:#6b7280; line-height:1.8; }
     .review-input, .review-textarea { width:100%; border:1px solid #dbe3f0; border-radius:16px; padding:14px; outline:none; }
     .review-textarea { min-height:120px; resize:vertical; }
     .review-actions { display:flex; justify-content:space-between; gap:12px; margin-top:20px; flex-wrap:wrap; }
     .review-btn { border:none; border-radius:14px; padding:12px 18px; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
-    .review-btn-primary { background:linear-gradient(135deg,#8b82ff,#6d8cff); color:#fff; }
+    .review-btn-primary { background:linear-gradient(135deg,#82CBFF,#6DC2FF); color:#fff; }
     .review-btn-outline { background:#fff; border:1px solid #dbe3f0; color:#374151; }
     .review-note,.review-error { margin-top:14px; font-weight:600; }
-    .review-note { color:#4f46e5; }
+    .review-note { color:#46A3E5; }
     .review-error { color:#dc2626; }
+    .review-attachment-list a { color:#388DCA; font-weight:600; text-decoration:none; margin-right:10px; }
 </style>
 
 <div class="teacher-shell">
@@ -32,8 +33,8 @@
         <div class="review-detail-page">
             <div class="review-detail-card">
                 <div class="review-detail-nav">
-                    <a class="review-detail-tab" href="@Url.Action("TeacherQuizReviews", "Home")">Pending Reviews</a>
-                    <a class="review-detail-tab" href="@Url.Action("TeacherQuizReviewed", "Home")">Reviewed History</a>
+                    <a class="review-detail-tab" href="@Url.Action("TeacherQuizzes", "Home")?tab=pending">Pending Reviews</a>
+                    <a class="review-detail-tab" href="@Url.Action("TeacherQuizzes", "Home")?tab=reviewed">Reviewed History</a>
                     <span class="review-detail-tab active">Review Detail</span>
                 </div>
                 <div class="review-detail-title" id="reviewDetailTitle">Review Quiz</div>
@@ -52,8 +53,8 @@
                 <div id="reviewNote" class="review-note d-none"></div>
                 <div id="reviewError" class="review-error d-none"></div>
                 <div class="review-actions">
-                    <a class="review-btn review-btn-outline" href="@Url.Action("TeacherQuizReviews", "Home")">Back</a>
-                    <a class="review-btn review-btn-outline" href="@Url.Action("TeacherQuizReviewed", "Home")">Reviewed history</a>
+                    <a class="review-btn review-btn-outline" href="@Url.Action("TeacherQuizzes", "Home")?tab=pending">Back</a>
+                    <a class="review-btn review-btn-outline" href="@Url.Action("TeacherQuizzes", "Home")?tab=reviewed">Reviewed history</a>
                     <button id="submitReviewBtn" class="review-btn review-btn-primary" type="button">Save review</button>
                 </div>
             </div>
@@ -93,11 +94,23 @@
                 <div class="review-answer-head">Question ${index + 1}</div>
                 <div class="review-answer-prompt">${answer.prompt}</div>
                 <div class="review-answer-meta">
+                    ${Array.isArray(answer.questionAttachments) && answer.questionAttachments.length
+                        ? `<div class="review-attachment-list"><strong>Question attachments:</strong> ${answer.questionAttachments.map((attachment) => {
+                            const label = String(attachment).split("/").pop() || String(attachment);
+                            return `<a href="${attachment}" target="_blank" rel="noreferrer">${label}</a>`;
+                        }).join("")}</div>`
+                        : ""}
                     ${answer.type === "MULTIPLE_CHOICE"
                         ? `<div><strong>Student answer:</strong> ${answer.selectedOptionText || "-"}</div>
                            <div><strong>Correct answer:</strong> ${answer.correctOptionText || "-"}</div>
                            <div><strong>Auto-graded:</strong> ${answer.isCorrect ? "Correct" : "Incorrect"}</div>`
-                        : `<div><strong>Essay answer:</strong></div><div>${answer.essayAnswer || "-"}</div>`}
+                        : `<div><strong>Essay answer:</strong></div><div>${answer.essayAnswer || "-"}</div>
+                           ${Array.isArray(answer.essayAttachments) && answer.essayAttachments.length
+                                ? `<div class="review-attachment-list mt-2"><strong>Answer attachments:</strong> ${answer.essayAttachments.map((attachment) => {
+                                    const label = String(attachment).split("/").pop() || String(attachment);
+                                    return `<a href="${attachment}" target="_blank" rel="noreferrer">${label}</a>`;
+                                }).join("")}</div>`
+                                : ""}`}
                 </div>
             </div>
         `).join("");
@@ -141,7 +154,7 @@
             showReviewNote("Quiz review saved.");
             submitReviewBtn.textContent = "Saved";
             setTimeout(() => {
-                window.location.href = '@Url.Action("TeacherQuizReviewed", "Home")';
+                window.location.href = '@Url.Action("TeacherQuizzes", "Home")?tab=reviewed';
             }, 700);
         } catch (error) {
             showReviewError(error.message || "Unable to save quiz review.");

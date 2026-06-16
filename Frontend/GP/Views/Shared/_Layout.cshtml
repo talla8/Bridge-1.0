@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+@{
+    var currentAction = (ViewContext.RouteData.Values["action"]?.ToString() ?? "").ToLowerInvariant();
+    var hideVerificationBanner = currentAction is "verification" or "verifyotp" or "nextverification" or "afterverification";
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -14,8 +18,10 @@
     
 
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg bg-white border-bottom" style="height:5rem">
+<body class="bridge-polished-page">
+    <div class="bridge-ambient-bg" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="bridge-cursor-dot" aria-hidden="true"></div>
+    <nav class="navbar navbar-expand-lg bridge-navbar" style="height:5rem">
         <div class="container">
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
                 <img src="~/img/logo.png" alt="BRIDGE" class="img-fluid" style="position: absolute;top: -7px;height: 5em;width: 7rem, left: 7rem;">
@@ -38,13 +44,19 @@
                     </li>
 
                 </ul>
-                <div class="d-flex align-items-center ms-lg-4 pe-2">
+                <div class="d-flex align-items-center ms-lg-4 pe-2 gap-2">
                     <a asp-controller="Home"
                        asp-action="Login"
                        id="mainLoginButton"
                        class="btn btn-info rounded-pill px-4 fw-semibold">
                         Login
                     </a>
+
+                    <button type="button"
+                            id="mainLogoutButton"
+                            class="btn btn-outline-secondary rounded-pill px-4 fw-semibold d-none">
+                        Logout
+                    </button>
                 </div>
 
 
@@ -56,6 +68,25 @@
 
         </div>
     </nav>
+    <div id="verificationBanner" class="verification-banner @(hideVerificationBanner ? "d-none" : "")">
+        <div class="container">
+            <div class="verification-banner-inner">
+                <div class="verification-banner-copy">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span>Your account is not verified yet. Verify it to avoid interruptions.</span>
+                </div>
+                <div class="verification-banner-actions">
+                    <span id="verificationBannerStatus" class="verification-banner-status d-none"></span>
+                    <a asp-controller="Home" asp-action="Verification" id="verificationBannerVerify" class="verification-banner-btn verification-banner-btn-primary">
+                        Verify now
+                    </a>
+                    <button type="button" id="verificationBannerResend" class="verification-banner-btn">
+                        Resend code
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     @* <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -139,12 +170,46 @@
         (() => {
             const role = sessionStorage.getItem("bridgeUserRole");
             const token = sessionStorage.getItem("bridgeAccessToken");
+            const backendBaseUrl = "http://localhost:3000";
             const loginButton = document.getElementById("mainLoginButton");
+            const logoutButton = document.getElementById("mainLogoutButton");
             const profileButton = document.getElementById("mainProfileButton");
+            const verificationBanner = document.getElementById("verificationBanner");
+            const suppressVerificationBanner = @hideVerificationBanner.ToString().ToLowerInvariant();
+            const verificationBannerVerify = document.getElementById("verificationBannerVerify");
+            const verificationBannerResend = document.getElementById("verificationBannerResend");
+            const verificationBannerStatus = document.getElementById("verificationBannerStatus");
 
             if (token && loginButton) {
                 loginButton.classList.add("d-none");
             }
+
+            if (token && logoutButton) {
+                logoutButton.classList.remove("d-none");
+            }
+
+            if (!token && profileButton) {
+                profileButton.classList.add("d-none");
+            }
+
+            logoutButton?.addEventListener("click", () => {
+                const keysToRemove = [
+                    "bridgeAccessToken",
+                    "bridgeUserRole",
+                    "bridgeUserName",
+                    "bridgeTeacherGrade",
+                    "bridgeInstitutionSchoolName",
+                    "bridgeInstitutionTeacherJoinCode",
+                    "bridgeUserVerified",
+                    "bridgeVerificationRole",
+                    "bridgeTeacherSidebarOpen",
+                    "bridgeInstitutionSidebarOpen",
+                ];
+
+                keysToRemove.forEach((key) => sessionStorage.removeItem(key));
+                localStorage.removeItem("teacherSelectedSubject");
+                window.location.replace('@Url.Action("Login", "Home")');
+            });
 
             if (!profileButton) {
                 return;
@@ -157,6 +222,112 @@
             } else {
                 profileButton.href = '@Url.Action("Profile", "Home")';
             }
+
+            function showVerificationStatus(message, isError = false) {
+                if (!verificationBannerStatus) {
+                    return;
+                }
+
+                verificationBannerStatus.textContent = message;
+                verificationBannerStatus.classList.remove("d-none");
+                verificationBannerStatus.style.color = isError ? "#b91c1c" : "#7A6000";
+            }
+
+            if (verificationBannerVerify && role) {
+                verificationBannerVerify.addEventListener("click", async (event) => {
+                    sessionStorage.setItem("bridgeVerificationRole", role.toLowerCase());
+
+                    if (!token) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    verificationBannerVerify.classList.add("disabled");
+                    verificationBannerVerify.style.pointerEvents = "none";
+                    showVerificationStatus("Sending code...");
+
+                    try {
+                        const response = await fetch(`${backendBaseUrl}/auth/resend-verification`, {
+                            method: "POST",
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
+                        });
+                        const data = await response.json().catch(() => null);
+
+                        if (!response.ok) {
+                            const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                            throw new Error(message || "Unable to resend verification code.");
+                        }
+
+                        showVerificationStatus(data?.message || "Verification code sent.");
+                    } catch (error) {
+                        showVerificationStatus(error.message || "Unable to resend verification code.", true);
+                    } finally {
+                        verificationBannerVerify.classList.remove("disabled");
+                        verificationBannerVerify.style.pointerEvents = "";
+                        window.location.href = verificationBannerVerify.href;
+                    }
+                });
+            }
+
+            verificationBannerResend?.addEventListener("click", async () => {
+                if (!token) {
+                    return;
+                }
+
+                verificationBannerResend.disabled = true;
+                showVerificationStatus("Sending code...");
+
+                try {
+                    const response = await fetch(`${backendBaseUrl}/auth/resend-verification`, {
+                        method: "POST",
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json().catch(() => null);
+
+                    if (!response.ok) {
+                        const message = Array.isArray(data?.message) ? data.message.join(", ") : data?.message;
+                        throw new Error(message || "Unable to resend verification code.");
+                    }
+
+                    showVerificationStatus(data?.message || "Verification code sent.");
+                } catch (error) {
+                    showVerificationStatus(error.message || "Unable to resend verification code.", true);
+                } finally {
+                    verificationBannerResend.disabled = false;
+                }
+            });
+
+            if (!token || !verificationBanner || suppressVerificationBanner) {
+                return;
+            }
+
+            fetch(`${backendBaseUrl}/auth/profile`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+                .then((response) => response.ok ? response.json() : null)
+                .then((profile) => {
+                    if (!profile) {
+                        return;
+                    }
+
+                    sessionStorage.setItem("bridgeUserRole", profile.roleId || role || "");
+                    sessionStorage.setItem("bridgeUserVerified", profile.isVerified ? "true" : "false");
+
+                    if (!profile.isVerified) {
+                        verificationBanner.classList.add("show");
+                    } else {
+                        verificationBanner.classList.remove("show");
+                    }
+                })
+                .catch(() => {
+                    return;
+                });
         })();
     </script>
     @await RenderSectionAsync("Scripts", required: false)

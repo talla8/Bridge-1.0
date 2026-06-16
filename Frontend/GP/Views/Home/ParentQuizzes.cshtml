@@ -13,20 +13,39 @@
         background: #fff;
         border: 1px solid #e5e7eb;
         border-radius: 24px;
-        box-shadow: 0 10px 28px rgba(17,24,39,.06);
+        box-shadow: 0 10px 28px rgba(17,30,39,.06);
         padding: 24px;
     }
 
     .parent-list-title {
         font-size: 34px;
         font-weight: 800;
-        color: #111827;
+        color: #111E27;
         margin-bottom: 8px;
     }
 
     .parent-list-subtitle {
         color: #6b7280;
         margin-bottom: 18px;
+    }
+
+    .parent-list-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .parent-list-filter,
+    .parent-list-sort {
+        min-width: 220px;
+        border: 1px solid #dbe3f0;
+        border-radius: 14px;
+        padding: 10px 12px;
+        font-size: 14px;
+        background: #fff;
+        color: #374151;
     }
 
     .parent-list-grid {
@@ -36,7 +55,7 @@
 
     .parent-list-row {
         display: grid;
-        grid-template-columns: 1.5fr 1.2fr .9fr .9fr auto;
+        grid-template-columns: 1.3fr .9fr 1.1fr .9fr .9fr auto;
         gap: 14px;
         align-items: center;
         border: 1px solid #eef2f7;
@@ -65,7 +84,7 @@
         font-size: 12px;
         font-weight: 700;
         background: #eef2ff;
-        color: #4f46e5;
+        color: #46A3E5;
         width: fit-content;
     }
 
@@ -76,7 +95,7 @@
         font-size: 13px;
         font-weight: 700;
         text-decoration: none;
-        color: #4f46e5;
+        color: #46A3E5;
         background: #fff;
         white-space: nowrap;
     }
@@ -102,6 +121,21 @@
     <div class="parent-list-card">
         <div class="parent-list-title">My Quizzes</div>
         <div class="parent-list-subtitle">Assigned quizzes for all linked students.</div>
+        <div class="parent-list-toolbar">
+            <select id="parentQuizzesSubjectFilter" class="parent-list-filter">
+                <option value="all">All subjects</option>
+            </select>
+            <select id="parentQuizzesSort" class="parent-list-sort">
+                <option value="due_asc">Due date: earliest first</option>
+                <option value="due_desc">Due date: latest first</option>
+                <option value="student_asc">Student name: A to Z</option>
+                <option value="student_desc">Student name: Z to A</option>
+                <option value="title_asc">Quiz title: A to Z</option>
+                <option value="title_desc">Quiz title: Z to A</option>
+                <option value="status_asc">Status: assigned first</option>
+                <option value="status_desc">Status: submitted first</option>
+            </select>
+        </div>
 
         <div id="parentQuizzesList" class="parent-list-grid"></div>
     </div>
@@ -112,6 +146,77 @@
     const token = sessionStorage.getItem("bridgeAccessToken");
     const role = sessionStorage.getItem("bridgeUserRole");
     const parentQuizzesList = document.getElementById("parentQuizzesList");
+    const parentQuizzesSort = document.getElementById("parentQuizzesSort");
+    const parentQuizzesSubjectFilter = document.getElementById("parentQuizzesSubjectFilter");
+    let parentQuizzesState = [];
+
+    function quizDueTime(item) {
+        return item?.dueDate ? new Date(item.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
+    }
+
+    function compareText(left, right) {
+        return String(left || "").localeCompare(String(right || ""));
+    }
+
+    function sortParentQuizzes(items) {
+        const sortMode = parentQuizzesSort?.value || "due_asc";
+        const sorted = [...items];
+
+        sorted.sort((left, right) => {
+            switch (sortMode) {
+                case "due_desc":
+                    return quizDueTime(right) - quizDueTime(left);
+                case "student_asc":
+                    return compareText(left.studentName, right.studentName);
+                case "student_desc":
+                    return compareText(right.studentName, left.studentName);
+                case "title_asc":
+                    return compareText(left.title, right.title);
+                case "title_desc":
+                    return compareText(right.title, left.title);
+                case "status_asc":
+                    return Number(Boolean(left.isSubmitted)) - Number(Boolean(right.isSubmitted));
+                case "status_desc":
+                    return Number(Boolean(right.isSubmitted)) - Number(Boolean(left.isSubmitted));
+                case "due_asc":
+                default:
+                    return quizDueTime(left) - quizDueTime(right);
+            }
+        });
+
+        return sorted;
+    }
+
+    function filterParentQuizzes(items) {
+        const selectedSubject = parentQuizzesSubjectFilter?.value || "all";
+        if (selectedSubject === "all") {
+            return [...items];
+        }
+
+        return items.filter((item) => String(item.subjectId || "") === selectedSubject);
+    }
+
+    function renderParentQuizSubjectFilter(items) {
+        if (!parentQuizzesSubjectFilter) return;
+
+        const options = Array.from(
+            new Map(
+                items
+                    .filter((item) => item.subjectId && item.subjectName)
+                    .map((item) => [String(item.subjectId), item.subjectName])
+            ).entries()
+        );
+
+        const currentValue = parentQuizzesSubjectFilter.value || "all";
+        parentQuizzesSubjectFilter.innerHTML = `
+            <option value="all">All subjects</option>
+            ${options.map(([subjectId, subjectName]) => `<option value="${subjectId}">${subjectName}</option>`).join("")}
+        `;
+
+        if ([...parentQuizzesSubjectFilter.options].some((option) => option.value === currentValue)) {
+            parentQuizzesSubjectFilter.value = currentValue;
+        }
+    }
 
     function renderParentQuizList(items) {
         if (!items.length) {
@@ -122,6 +227,7 @@
         parentQuizzesList.innerHTML = `
             <div class="parent-list-row parent-list-head">
                 <div>Quiz</div>
+                <div>Subject</div>
                 <div>Student</div>
                 <div>Due</div>
                 <div>Status</div>
@@ -132,6 +238,7 @@
                     <div>
                         <div><strong>${item.title}</strong></div>
                     </div>
+                    <div>${item.subjectName || "-"}</div>
                     <div>${item.studentName}</div>
                     <div>${item.dueLabel || "-"}</div>
                     <div><span class="parent-list-badge">${item.isSubmitted ? (item.submissionStatus || "Submitted") : "Assigned"}</span></div>
@@ -167,10 +274,20 @@
             throw new Error(data?.message || "Unable to load quizzes.");
         }
 
-        renderParentQuizList(Array.isArray(data) ? data : []);
+        parentQuizzesState = Array.isArray(data) ? data : [];
+        renderParentQuizSubjectFilter(parentQuizzesState);
+        renderParentQuizList(sortParentQuizzes(filterParentQuizzes(parentQuizzesState)));
     }
 
     loadParentQuizzes().catch((error) => {
         parentQuizzesList.innerHTML = `<div class="parent-list-empty">${error.message || "Unable to load quizzes."}</div>`;
+    });
+
+    parentQuizzesSort?.addEventListener("change", () => {
+        renderParentQuizList(sortParentQuizzes(filterParentQuizzes(parentQuizzesState)));
+    });
+
+    parentQuizzesSubjectFilter?.addEventListener("change", () => {
+        renderParentQuizList(sortParentQuizzes(filterParentQuizzes(parentQuizzesState)));
     });
 </script>

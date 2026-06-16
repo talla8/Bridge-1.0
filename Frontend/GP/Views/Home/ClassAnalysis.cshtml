@@ -9,24 +9,24 @@
 
     .class-analysis-title {
         margin: 0;
-        color: #0f1020;
+        color: #0F1920;
         font-size: clamp(2.3rem, 4vw, 3.5rem);
         font-weight: 800;
     }
 
     .class-analysis-subtitle {
         margin: 0.45rem 0 0;
-        color: #7b74d8;
+        color: #74AED8;
         font-size: 1.1rem;
     }
 
     .class-analysis-card {
         height: 100%;
         padding: 1.2rem 1.25rem;
-        border: 1px solid rgba(23, 50, 77, 0.12);
+        border: 1px solid rgba(23,55,77, 0.12);
         border-radius: 1.2rem;
         background: #fff;
-        box-shadow: 0 12px 28px rgba(23, 50, 77, 0.08);
+        box-shadow: 0 12px 28px rgba(23,55,77, 0.08);
     }
 
     .class-analysis-card-label {
@@ -50,13 +50,13 @@
         padding: 0.75rem 1.35rem;
         border-radius: 999px;
         background: #efedff;
-        color: #b6b1ff;
+        color: #B1DEFF;
         font-weight: 700;
     }
 
     .class-analysis-pill-warning {
         background: #fff7da;
-        color: #f5c542;
+        color: #F5CE42;
     }
 
     .class-analysis-top-skills {
@@ -78,10 +78,10 @@
     .class-analysis-table-card,
     .class-analysis-insight-card {
         padding: 1.45rem;
-        border: 1px solid rgba(23, 50, 77, 0.12);
+        border: 1px solid rgba(23,55,77, 0.12);
         border-radius: 1.4rem;
         background: #fff;
-        box-shadow: 0 12px 28px rgba(23, 50, 77, 0.08);
+        box-shadow: 0 12px 28px rgba(23,55,77, 0.08);
     }
 
     .class-analysis-table-head,
@@ -101,7 +101,7 @@
     .class-analysis-table-row {
         margin-top: 0.85rem;
         padding: 1rem;
-        border: 1px solid rgba(23, 50, 77, 0.12);
+        border: 1px solid rgba(23,55,77, 0.12);
         border-radius: 1rem;
         background: #fff;
     }
@@ -120,11 +120,25 @@
         overflow: hidden;
     }
 
+    .class-analysis-progress-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
     .class-analysis-progress span {
         display: block;
         height: 100%;
         border-radius: inherit;
         background: #c8c5ff;
+    }
+
+    .class-analysis-progress-value {
+        min-width: 3rem;
+        color: #232530;
+        font-size: 0.92rem;
+        font-weight: 700;
+        text-align: end;
     }
 
     .class-analysis-priority {
@@ -182,14 +196,14 @@
     .class-analysis-action-card {
         margin-top: 1.75rem;
         padding: 1.45rem;
-        border: 1px solid rgba(23, 50, 77, 0.12);
+        border: 1px solid rgba(23,55,77, 0.12);
         border-radius: 1.4rem;
         background: #fff;
-        box-shadow: 0 12px 28px rgba(23, 50, 77, 0.08);
+        box-shadow: 0 12px 28px rgba(23,55,77, 0.08);
     }
 
     .class-analysis-action-kicker {
-        color: #7b74d8;
+        color: #74AED8;
         font-size: 0.82rem;
         font-weight: 800;
         letter-spacing: 0.04em;
@@ -198,7 +212,7 @@
 
     .class-analysis-action-title {
         margin: 0.55rem 0 0;
-        color: #111827;
+        color: #111E27;
         font-size: 1.7rem;
         font-weight: 800;
     }
@@ -225,7 +239,7 @@
         border-radius: 999px;
         padding: 0.55rem 0.9rem;
         background: #f5f3ff;
-        color: #5b50d6;
+        color: #509ED6;
         font-size: 0.88rem;
         font-weight: 700;
     }
@@ -251,7 +265,7 @@
     }
 
     .class-analysis-action-btn-primary {
-        background: linear-gradient(135deg, #8b82ff, #6d8cff);
+        background: linear-gradient(135deg, #82CBFF, #6DC2FF);
         color: #fff;
     }
 
@@ -302,14 +316,6 @@
                         <div class="class-analysis-card-label">Students Needing Support</div>
                         <div class="class-analysis-card-value" id="needSupportValue">0</div>
                         <div class="class-analysis-pill class-analysis-pill-warning" id="needSupportPct">0% Of Class</div>
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-xl-3">
-                    <div class="class-analysis-card">
-                        <div class="class-analysis-card-label">Attendance Average</div>
-                        <div class="class-analysis-card-value" id="attendanceValue">--</div>
-                        <div class="class-analysis-pill">Coming Soon</div>
                     </div>
                 </div>
 
@@ -389,8 +395,12 @@
     const actionRecommendationRecentQuiz = document.getElementById("actionRecommendationRecentQuiz");
     const actionRecommendationPrimary = document.getElementById("actionRecommendationPrimary");
     const actionRecommendationSecondary = document.getElementById("actionRecommendationSecondary");
+    const selectedSubjectId = localStorage.getItem("teacherSelectedSubject") || "2";
 
     const skillNameMap = {
+        skill_counting: "Counting Skills",
+        skill_number_manipulation: "Number Manipulation",
+        skill_problem_solving: "Problem Solving",
         skill_vocal: "Vocal Awareness",
         skill_sounds_of_letters: "Sounds of Letters",
         skill_writing: "Writing"
@@ -483,11 +493,11 @@
 
         try {
             const [classAverageResponse, weakStudentsResponse, classSkillsResponse, studentsResponse, recommendationResponse] = await Promise.all([
-                fetch(`${backendBaseUrl}/statistics/class`, { headers: authorizedHeaders() }),
-                fetch(`${backendBaseUrl}/statistics/weak-students`, { headers: authorizedHeaders() }),
-                fetch(`${backendBaseUrl}/statistics/class/skills`, { headers: authorizedHeaders() }),
+                fetch(`${backendBaseUrl}/statistics/class?subjectId=${encodeURIComponent(selectedSubjectId)}`, { headers: authorizedHeaders() }),
+                fetch(`${backendBaseUrl}/statistics/weak-students?subjectId=${encodeURIComponent(selectedSubjectId)}`, { headers: authorizedHeaders() }),
+                fetch(`${backendBaseUrl}/statistics/class/skills?subjectId=${encodeURIComponent(selectedSubjectId)}`, { headers: authorizedHeaders() }),
                 fetch(`${backendBaseUrl}/students/myStudents`, { headers: authorizedHeaders() }),
-                fetch(`${backendBaseUrl}/statistics/class/recommendation`, { headers: authorizedHeaders() })
+                fetch(`${backendBaseUrl}/statistics/class/recommendation?subjectId=${encodeURIComponent(selectedSubjectId)}`, { headers: authorizedHeaders() })
             ]);
 
             const classAverage = await classAverageResponse.json().catch(() => 0);
@@ -539,7 +549,12 @@
                         <div class="class-analysis-skill-name">${skillLabel(row.skillId)}</div>
                         <div>${belowAveragePct}%</div>
                         <div>
-                            <div class="class-analysis-progress"><span style="width:${classAvg}%"></span></div>
+                            <div class="class-analysis-progress-wrap">
+                                <div class="class-analysis-progress">
+                                    <span style="width:${classAvg}%" title="${classAvg}%"></span>
+                                </div>
+                                <span class="class-analysis-progress-value">${classAvg}%</span>
+                            </div>
                         </div>
                         <div class="class-analysis-priority">${priorityLabel(row.priority)}</div>
                     </div>

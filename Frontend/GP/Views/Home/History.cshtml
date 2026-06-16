@@ -120,10 +120,10 @@
     }
 
     .history-green { background: #e7f8ee; color: #15803d; }
-    .history-blue { background: #e8f1ff; color: #2563eb; }
+    .history-blue { background: #e8f1ff; color: #2599EB; }
     .history-yellow { background: #fff7db; color: #a16207; }
     .history-red { background: #feecec; color: #dc2626; }
-    .history-purple { background: #f3e8ff; color: #7c3aed; }
+    .history-purple { background: #f3e8ff; color: #3AA2ED; }
     .history-gray { background: #eef2f7; color: #475569; }
 
     .history-time {
@@ -230,12 +230,12 @@
 
     function color(type){
       if(type === "ITEM_COMPLETED") return "#22c55e";
-      if(type === "PLAN_GENERATED") return "#3b82f6";
+      if(type === "PLAN_GENERATED") return "#3BA8F6";
       if(type === "ITEM_POSTPONED") return "#f59e0b";
       if(type === "ITEM_CANCELLED") return "#ef4444";
-      if(type === "ITEM_TIME_UPDATED") return "#8b5cf6";
-      if(type === "PLAN_REGENERATED") return "#6366f1";
-      if(type === "ITEM_REINSERTED") return "#14b8a6";
+      if(type === "ITEM_TIME_UPDATED") return "#5CB6F6";
+      if(type === "PLAN_REGENERATED") return "#63B6F1";
+      if(type === "ITEM_REINSERTED") return "#1481B8";
       return "#64748b";
     }
 
@@ -256,6 +256,25 @@
 
     function formatAction(type) {
       return String(type || "UNKNOWN").replaceAll("_", " ");
+    }
+
+    function buildSearchText(item) {
+      const metadataValues = Object.values(item?.metadata || {})
+        .filter((value) => value !== null && value !== undefined)
+        .join(" ");
+
+      return [
+        item?.description,
+        item?.actionType,
+        formatAction(item?.actionType),
+        item?.sessionId,
+        item?.planItemId,
+        item?.createdAt,
+        metadataValues
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
     }
 
     function buildMeta(item){
@@ -324,12 +343,12 @@
     }
 
     function filter(){
-      const search = historySearch.value.toLowerCase();
+      const search = historySearch.value.trim().toLowerCase();
       const type = historyFilter.value;
 
       const filtered = historyLogs.filter((item) => {
         const matchType = type === "ALL" || item.actionType === type;
-        const searchableText = `${item.description ?? ""} ${item.actionType ?? ""}`.toLowerCase();
+        const searchableText = buildSearchText(item);
         const matchSearch = searchableText.includes(search);
         return matchType && matchSearch;
       });
@@ -364,7 +383,7 @@
         }
 
         historyLogs = Array.isArray(data) ? data : [];
-        render(historyLogs);
+        filter();
       } catch (error) {
         historyTimeline.innerHTML = `<div class="history-empty">${error.message || "Unable to load plan history."}</div>`;
       }

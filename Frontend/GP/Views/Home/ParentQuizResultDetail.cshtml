@@ -5,14 +5,15 @@
 
 <style>
     .parent-result-detail-page { max-width: 980px; margin: 0 auto; padding: 28px; }
-    .parent-result-detail-card { background:#fff; border:1px solid #e5e7eb; border-radius:24px; box-shadow:0 10px 28px rgba(17,24,39,.06); padding:26px; margin-bottom:18px; }
-    .parent-result-detail-title { font-size:34px; font-weight:800; color:#111827; margin-bottom:8px; }
+    .parent-result-detail-card { background:#fff; border:1px solid #e5e7eb; border-radius:24px; box-shadow:0 10px 28px rgba(17,30,39,.06); padding:26px; margin-bottom:18px; }
+    .parent-result-detail-title { font-size:34px; font-weight:800; color:#111E27; margin-bottom:8px; }
     .parent-result-detail-subtitle { color:#6b7280; margin-bottom:18px; }
     .parent-result-answer-card { border:1px solid #e8edf5; border-radius:18px; padding:18px; margin-bottom:14px; }
-    .parent-result-answer-head { font-size:20px; font-weight:800; color:#111827; margin-bottom:10px; }
+    .parent-result-answer-head { font-size:20px; font-weight:800; color:#111E27; margin-bottom:10px; }
     .parent-result-answer-prompt { color:#374151; margin-bottom:14px; line-height:1.6; }
     .parent-result-answer-meta { color:#6b7280; line-height:1.8; }
     .parent-result-summary { display:flex; gap:24px; flex-wrap:wrap; margin-bottom:18px; color:#374151; font-weight:600; }
+    .parent-result-attachments a { color:#388DCA; font-weight:600; text-decoration:none; margin-right:10px; }
 </style>
 
 <div class="parent-result-detail-page">
@@ -51,11 +52,23 @@
                 <div class="parent-result-answer-head">Question ${index + 1}</div>
                 <div class="parent-result-answer-prompt">${answer.prompt}</div>
                 <div class="parent-result-answer-meta">
+                    ${Array.isArray(answer.questionAttachments) && answer.questionAttachments.length
+                        ? `<div class="parent-result-attachments"><strong>Question attachments:</strong> ${answer.questionAttachments.map((attachment) => {
+                            const label = String(attachment).split("/").pop() || String(attachment);
+                            return `<a href="${attachment}" target="_blank" rel="noreferrer">${label}</a>`;
+                        }).join("")}</div>`
+                        : ""}
                     ${answer.type === "MULTIPLE_CHOICE"
                         ? `<div><strong>Student answer:</strong> ${answer.selectedOptionText || "-"}</div>
                            <div><strong>Correct answer:</strong> ${answer.correctOptionText || "-"}</div>
                            <div><strong>Result:</strong> ${answer.isCorrect ? "Correct" : "Incorrect"}</div>`
-                        : `<div><strong>Essay answer:</strong></div><div>${answer.essayAnswer || "-"}</div>`}
+                        : `<div><strong>Essay answer:</strong></div><div>${answer.essayAnswer || "-"}</div>
+                           ${Array.isArray(answer.essayAttachments) && answer.essayAttachments.length
+                                ? `<div class="parent-result-attachments mt-2"><strong>Answer attachments:</strong> ${answer.essayAttachments.map((attachment) => {
+                                    const label = String(attachment).split("/").pop() || String(attachment);
+                                    return `<a href="${attachment}" target="_blank" rel="noreferrer">${label}</a>`;
+                                }).join("")}</div>`
+                                : ""}`}
                 </div>
             </div>
         `).join("");

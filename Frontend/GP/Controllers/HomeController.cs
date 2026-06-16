@@ -63,6 +63,11 @@ namespace GP.Controllers
             return View();
         }
 
+        public IActionResult TeacherQuizzes()
+        {
+            return View();
+        }
+
         public IActionResult TeacherQuizReviews()
         {
             return View();

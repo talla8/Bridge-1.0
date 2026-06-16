@@ -2,6 +2,408 @@
     ViewData["Title"] = "Teacher";
 }
 
+<style>
+    .teacher-setup-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: 0 10px 28px rgba(17,30,39,.04);
+        padding: 24px;
+    }
+
+    .teacher-setup-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+    }
+
+    .teacher-setup-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,31,42, .45);
+        z-index: 1050;
+    }
+
+    .teacher-setup-modal {
+        position: fixed;
+        inset: 50% auto auto 50%;
+        transform: translate(-50%, -50%);
+        width: min(92vw, 760px);
+        max-height: calc(100vh - 72px);
+        overflow: auto;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 22px 50px rgba(15,31,42,.25);
+        z-index: 1051;
+        padding: 24px;
+    }
+
+    .teacher-setup-modal h3 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #111E27;
+        margin-bottom: 8px;
+    }
+
+    .teacher-setup-modal p {
+        color: #6b7280;
+        margin-bottom: 16px;
+    }
+
+    .teacher-setup-section {
+        padding: 18px;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        background: #fff;
+        margin-top: 16px;
+        overflow: hidden;
+    }
+
+    .teacher-setup-section.is-disabled {
+        opacity: .5;
+        background: #f8fafc;
+    }
+
+    .teacher-setup-section.is-disabled .teacher-setup-dropzone,
+    .teacher-setup-section.is-disabled .teacher-setup-modal-actions,
+    .teacher-setup-section.is-disabled .teacher-setup-grid,
+    .teacher-setup-section.is-disabled .teacher-slots-grid,
+    .teacher-setup-section.is-disabled .teacher-setup-total {
+        pointer-events: none;
+    }
+
+    .teacher-setup-flow-note {
+        margin: 0;
+        padding: 14px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        background: #f8fafc;
+        color: #4b5563;
+        line-height: 1.7;
+    }
+
+    .teacher-setup-flow-note strong {
+        color: #111E27;
+    }
+
+    .teacher-setup-step-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .teacher-setup-step-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 800;
+        color: #111E27;
+    }
+
+    .teacher-setup-step-copy {
+        margin: 6px 0 0;
+        color: #6b7280;
+        line-height: 1.6;
+    }
+
+    .teacher-setup-step-badge {
+        flex-shrink: 0;
+        min-width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1efff;
+        color: #5f46d8;
+        font-weight: 800;
+    }
+
+    .teacher-setup-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .teacher-setup-label {
+        display: block;
+        font-weight: 700;
+        color: #111E27;
+        margin-bottom: 8px;
+    }
+
+    .teacher-setup-select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 14px;
+        background: #fff;
+        color: #111E27;
+        font-weight: 600;
+    }
+
+    .teacher-slots-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .teacher-slot-card {
+        padding: 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        background: #faf9ff;
+    }
+
+    .teacher-slot-card h4 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        font-weight: 800;
+        color: #111E27;
+    }
+
+    .teacher-slot-card p {
+        margin: 0 0 12px;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .teacher-slot-counter {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .teacher-slot-counter button {
+        width: 36px;
+        height: 36px;
+        border: 1px solid #d1d5db;
+        border-radius: 999px;
+        background: #fff;
+        font-weight: 800;
+        color: #111E27;
+    }
+
+    .teacher-slot-counter span {
+        min-width: 28px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 800;
+        color: #111E27;
+    }
+
+    .teacher-setup-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: #f8fafc;
+    }
+
+    .teacher-setup-total-badge {
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: #f1efff;
+        color: #5f46d8;
+        font-weight: 800;
+    }
+
+    .teacher-setup-dropzone {
+        border: 2px dashed #cec8ff;
+        border-radius: 20px;
+        background: #faf9ff;
+        padding: 32px;
+        text-align: center;
+    }
+
+    .teacher-setup-file-summary {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        background: #fff;
+        color: #374151;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        text-align: left;
+        word-break: break-word;
+    }
+
+    .teacher-setup-file-summary strong {
+        flex: 1 1 260px;
+        min-width: 0;
+    }
+
+    .teacher-setup-file-summary .text-secondary {
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+
+    .teacher-setup-inline-error {
+        display: none;
+        margin-top: 14px;
+        padding: 12px 14px;
+        border: 1px solid #fecaca;
+        border-radius: 16px;
+        background: #fef2f2;
+        color: #b91c1c;
+        text-align: left;
+        line-height: 1.6;
+    }
+
+    .teacher-setup-inline-error.show {
+        display: block;
+    }
+
+    .teacher-setup-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .teacher-setup-status {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        background: #f8fafc;
+        color: #374151;
+        line-height: 1.6;
+    }
+
+    .teacher-setup-status strong {
+        color: #111E27;
+    }
+
+    .teacher-setup-progress {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 18px 0;
+    }
+
+    .teacher-setup-progress-step {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 18px;
+        background: #fff;
+        color: #6b7280;
+    }
+
+    .teacher-setup-progress-step.is-active {
+        border-color: #c7bfff;
+        background: #faf9ff;
+        color: #111E27;
+    }
+
+    .teacher-setup-progress-step.is-complete {
+        border-color: #bbf7d0;
+        background: #f0fdf4;
+        color: #166534;
+    }
+
+    .teacher-setup-progress-badge {
+        flex-shrink: 0;
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1efff;
+        color: #5f46d8;
+        font-weight: 800;
+    }
+
+    .teacher-setup-progress-step.is-complete .teacher-setup-progress-badge {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .teacher-setup-progress-text strong {
+        display: block;
+        font-size: 15px;
+        font-weight: 800;
+        color: inherit;
+    }
+
+    .teacher-setup-progress-text span {
+        display: block;
+        font-size: 12px;
+        line-height: 1.5;
+        color: inherit;
+        opacity: .9;
+    }
+
+    .teacher-setup-page {
+        display: none;
+    }
+
+    .teacher-setup-page.is-active {
+        display: block;
+    }
+
+    .teacher-setup-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .teacher-setup-footer-copy {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .teacher-setup-card-badge-ready {
+        background: #f0fdf4;
+        color: #166534;
+        border-color: #bbf7d0 !important;
+    }
+
+    @@media (max-width: 991.98px) {
+        .teacher-setup-grid,
+        .teacher-slots-grid,
+        .teacher-setup-progress {
+            grid-template-columns: 1fr;
+        }
+
+        .teacher-setup-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .teacher-setup-modal {
+            width: min(96vw, 760px);
+            max-height: calc(100vh - 32px);
+            padding: 18px;
+        }
+
+        .teacher-setup-dropzone {
+            padding: 24px 18px;
+        }
+    }
+</style>
+
 <div class="teacher-shell">
     <partial name="_TeacherSidebar" />
     <div class="teacher-shell-content">
@@ -46,16 +448,8 @@
 
                 <div class="col-6">
                     <div class="p-3 border rounded-4 h-100">
-                        <i class="bi bi-people fs-4"></i>
-                        <h5 class="fw-bold mt-2 mb-1">--</h5>
-                        <p class="text-secondary mb-0">attendance</p>
-                    </div>
-                </div>
-
-                <div class="col-6">
-                    <div class="p-3 border rounded-4 h-100">
                         <i class="bi bi-mortarboard fs-4"></i>
-                        <h5 class="fw-bold mt-2 mb-1">0%</h5>
+                        <h5 class="fw-bold mt-2 mb-1" id="teacherDashboardOverallProgressValue">0%</h5>
                         <p class="text-secondary mb-0">overall progress</p>
                     </div>
                 </div>
@@ -63,7 +457,7 @@
                 <div class="col-6">
                     <div class="p-3 border rounded-4 h-100">
                         <i class="bi bi-journal-check fs-4"></i>
-                        <h5 class="fw-bold mt-2 mb-1">100</h5>
+                        <h5 class="fw-bold mt-2 mb-1" id="teacherDashboardClassesRemainingValue">0</h5>
                         <p class="text-secondary mb-0">classes remaining</p>
                     </div>
                 </div>
@@ -71,7 +465,7 @@
                 <div class="col-6">
                     <div class="p-3 border rounded-4 h-100">
                         <i class="bi bi-exclamation-triangle fs-4"></i>
-                        <h5 class="fw-bold mt-2 mb-1">--</h5>
+                        <h5 class="fw-bold mt-2 mb-1" id="teacherDashboardAtRiskValue">0</h5>
                         <p class="text-secondary mb-0">at risk students</p>
                     </div>
                 </div>
@@ -81,6 +475,19 @@
 
     </div>
 
+</div>
+<div class="container pb-2">
+    <div class="d-flex justify-content-end">
+        <div class="dropdown">
+            <button class="btn btn-light border dropdown-toggle fw-semibold"
+                    data-bs-toggle="dropdown"
+                    data-dashboard-subject-label>
+                Subject
+            </button>
+            <ul class="dropdown-menu" data-dashboard-subject-menu>
+            </ul>
+        </div>
+    </div>
 </div>
 <div class="container py-5 d-none" id="planProgressSection">
     <div class="row justify-content-center">
@@ -142,40 +549,189 @@
 
 <div class="container py-5" id="uploadAssessmentSection">
     <div class="row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-6">
-
-            <h4 class="text-center fw-semibold mb-4">Upload</h4>
-
-            <div id="dropArea"
-                 class="border border-2 border-primary border-opacity-25 rounded-4 p-5 text-center bg-primary bg-opacity-10">
-
-                <i class="bi bi-cloud-arrow-up fs-1 text-primary mb-3 d-block"></i>
-
-                <div class="fw-semibold mb-1">
-                    Drag &amp; drop files or
-                    <label for="fileInput" class="text-primary text-decoration-underline ms-1" role="button">
-                        Browse
-                    </label>
+        <div class="col-12 col-xl-10">
+            <div class="teacher-setup-card">
+                <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                    <div>
+                        <h4 class="fw-bold mb-2" id="dashboardSetupTitle">Set up Arabic</h4>
+                        <p class="text-secondary mb-0" id="dashboardGenerateSubjectText">
+                            Start with the students file, then save the semester and weekly slots, then upload the baseline and generate the plan.
+                        </p>
+                    </div>
+                    <span id="dashboardSetupStatusBadge" class="badge rounded-pill text-bg-light border px-3 py-2">Setup needed</span>
                 </div>
 
-                <div class="small text-secondary mb-3">
-                    Supported formats: JPEG, PNG, GIF, MP4, PDF, PSD, AI, Word, PPT
+                <div class="teacher-setup-actions">
+                    <button type="button"
+                            class="btn btn-info rounded-pill px-4 fw-semibold"
+                            id="openSetupModalButton">
+                        Set up subject
+                    </button>
                 </div>
-
-                <input id="fileInput" type="file" class="d-none" multiple>
-
-                <ul id="fileList" class="list-group list-group-flush text-start d-none"></ul>
             </div>
-
         </div>
     </div>
 </div>
 
+<div id="teacherSetupModalBackdrop" class="teacher-setup-modal-backdrop d-none"></div>
+<div id="teacherSetupModal" class="teacher-setup-modal d-none" aria-label="Set up subject plan">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+        <div>
+            <h3 id="teacherSetupModalTitle">Set up Arabic</h3>
+            <p id="teacherSetupModalCopy">Complete the setup in order: students first, then weekly slots, then baseline upload and plan generation.</p>
+        </div>
+        <button type="button" class="btn btn-light border rounded-pill px-3" id="closeSetupModalButton">Close</button>
+    </div>
+
+    <div class="teacher-setup-flow-note">
+        <strong>Setup order:</strong> upload students first, then save semester and weekly slots, then upload the baseline and generate the plan.
+    </div>
+
+    <div class="teacher-setup-progress">
+        <div class="teacher-setup-progress-step" data-setup-progress-step="1">
+            <span class="teacher-setup-progress-badge">1</span>
+            <div class="teacher-setup-progress-text">
+                <strong>Students</strong>
+                <span>Set up the class student list.</span>
+            </div>
+        </div>
+        <div class="teacher-setup-progress-step" data-setup-progress-step="2">
+            <span class="teacher-setup-progress-badge">2</span>
+            <div class="teacher-setup-progress-text">
+                <strong>Weekly slots</strong>
+                <span>Choose semester and weekly teaching slots.</span>
+            </div>
+        </div>
+        <div class="teacher-setup-progress-step" data-setup-progress-step="3">
+            <span class="teacher-setup-progress-badge">3</span>
+            <div class="teacher-setup-progress-text">
+                <strong>Baseline</strong>
+                <span>Upload the baseline and generate the plan.</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="studentsSetupPage" class="teacher-setup-page">
+        <div class="teacher-setup-section mt-0">
+            <div class="teacher-setup-step-head">
+                <div>
+                    <h4 class="teacher-setup-step-title">Upload students</h4>
+                    <p class="teacher-setup-step-copy">
+                        Start with the student file for this class. Once it is uploaded, the setup continues to weekly slots.
+                    </p>
+                </div>
+                <span class="teacher-setup-step-badge">1</span>
+            </div>
+
+            <div class="teacher-setup-dropzone">
+                <i class="bi bi-people fs-1 text-primary mb-3 d-block"></i>
+                <div class="fw-semibold mb-2">Upload students Excel</div>
+                <div class="text-secondary mb-3">Choose the class student file first. The saved students are used later when matching the baseline.</div>
+                <label for="studentsSetupFileInput" class="btn btn-light border rounded-pill px-4 fw-semibold">Choose file</label>
+                <input id="studentsSetupFileInput" type="file" class="d-none" accept=".xlsx">
+                <div class="small text-secondary mt-3">Only `.xlsx` files are accepted for student setup.</div>
+                <div id="studentsSetupFileError" class="teacher-setup-inline-error"></div>
+                <div id="studentsSetupFileSummary" class="teacher-setup-file-summary d-none"></div>
+            </div>
+
+            <div class="teacher-setup-modal-actions">
+                <button type="button" class="btn btn-info rounded-pill px-4 fw-semibold" id="uploadStudentsSetupButton">
+                    Upload students and continue
+                </button>
+            </div>
+
+            <div id="studentsSetupStatus" class="teacher-setup-status">
+                <strong>Students are required before plan setup.</strong>
+                <div class="small text-secondary mt-1" id="studentsSetupStatusText">No students are set up for this teacher yet.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="weeklySlotsPage" class="teacher-setup-page">
+        <div id="weeklySlotsSection" class="teacher-setup-section mt-0">
+            <div class="teacher-setup-step-head">
+                <div>
+                    <h4 class="teacher-setup-step-title">Set semester and weekly slots</h4>
+                    <p class="teacher-setup-step-copy">
+                        Choose the semester and define the weekly teaching slots for this subject before baseline upload.
+                    </p>
+                </div>
+                <span class="teacher-setup-step-badge">2</span>
+            </div>
+
+            <div class="teacher-setup-grid">
+                <div>
+                    <label class="teacher-setup-label">Subject</label>
+                    <input id="setupSubjectDisplay" type="text" class="teacher-setup-select" readonly />
+                </div>
+                <div>
+                    <label for="setupSemesterSelect" class="teacher-setup-label">Semester</label>
+                    <select id="setupSemesterSelect" class="teacher-setup-select">
+                        <option value="">Select semester</option>
+                        <option value="1">1st semester</option>
+                        <option value="2">2nd semester</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="setupSlotsGrid" class="teacher-slots-grid"></div>
+
+            <div class="teacher-setup-total">
+                <div>
+                    <strong>Total weekly slots</strong>
+                    <div class="text-secondary small" id="setupWeeklySlotsHint">Save weekly slots before uploading the baseline.</div>
+                </div>
+                <span id="setupTotalSlotsBadge" class="teacher-setup-total-badge">0</span>
+            </div>
+
+            <div class="teacher-setup-modal-actions">
+                <button type="button" class="btn btn-light border rounded-pill px-4 fw-semibold" id="saveWeeklySlotsButton">
+                    Save weekly slots and continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="baselineSetupPage" class="teacher-setup-page">
+        <div id="baselineUploadSection" class="teacher-setup-section mt-0">
+            <div class="teacher-setup-step-head">
+                <div>
+                    <h4 class="teacher-setup-step-title">Upload baseline and generate plan</h4>
+                    <p class="teacher-setup-step-copy">
+                        Students and weekly slots are ready. Upload the baseline file for this subject and generate the plan.
+                    </p>
+                </div>
+                <span class="teacher-setup-step-badge">3</span>
+            </div>
+
+            <div class="teacher-setup-dropzone" id="setupDropArea">
+                <i class="bi bi-cloud-arrow-up fs-1 text-primary mb-3 d-block"></i>
+                <div class="fw-semibold mb-2">Upload baseline Excel</div>
+                <div class="text-secondary mb-3">Drag and drop the completed `.xlsx` file here or choose it manually.</div>
+                <label for="setupFileInput" class="btn btn-light border rounded-pill px-4 fw-semibold">Choose file</label>
+                <input id="setupFileInput" type="file" class="d-none" accept=".xlsx" disabled>
+                <div class="small text-secondary mt-3">Only `.xlsx` files are accepted for this subject setup.</div>
+                <div id="setupFileError" class="teacher-setup-inline-error"></div>
+                <div id="setupFileSummary" class="teacher-setup-file-summary d-none"></div>
+            </div>
+
+            <div class="teacher-setup-modal-actions">
+                <button type="button" class="btn btn-info rounded-pill px-4 fw-semibold" id="generatePlanButton">
+                    Generate plan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="teacher-setup-footer">
+        <p id="teacherSetupFooterCopy" class="teacher-setup-footer-copy">Step 1 of 3: upload students for this teacher.</p>
+        <button type="button" class="btn btn-light border rounded-pill px-4 d-none" id="setupBackButton">Back</button>
+    </div>
+</div>
+
 <script>
+document.addEventListener("DOMContentLoaded", () => {
     const backendBaseUrl = "http://localhost:3000";
-    const dropArea = document.getElementById("dropArea");
-    const fileInput = document.getElementById("fileInput");
-    const fileList = document.getElementById("fileList");
     const uploadAssessmentSection = document.getElementById("uploadAssessmentSection");
     const planProgressSection = document.getElementById("planProgressSection");
     const dashboardPlanSummaryText = document.getElementById("dashboardPlanSummaryText");
@@ -186,7 +742,8 @@
     const dashboardRemainingItems = document.getElementById("dashboardRemainingItems");
     const dashboardClassSpeed = document.getElementById("dashboardClassSpeed");
     const dashboardReorderStatus = document.getElementById("dashboardReorderStatus");
-    const teacherDashboardSubjectButton = document.getElementById("teacherDashboardSubjectButton");
+    const teacherDashboardSubjectLabels = Array.from(document.querySelectorAll("[data-dashboard-subject-label]"));
+    const teacherDashboardSubjectMenus = Array.from(document.querySelectorAll("[data-dashboard-subject-menu]"));
     const teacherDashboardSkillFilterButton = document.getElementById("teacherDashboardSkillFilterButton");
     const teacherDashboardSkillsList = document.getElementById("teacherDashboardSkillsList");
     const teacherDashboardSkillsEmpty = document.getElementById("teacherDashboardSkillsEmpty");
@@ -195,17 +752,74 @@
     const teacherDashboardTasksPrevious = document.getElementById("teacherDashboardTasksPrevious");
     const teacherDashboardTasksNext = document.getElementById("teacherDashboardTasksNext");
     const teacherDashboardTasksPageText = document.getElementById("teacherDashboardTasksPageText");
+    let currentDashboardSubjectId = localStorage.getItem("teacherSelectedSubject") || "2";
     let selectedBaselineFiles = [];
     let teacherDashboardSkillRows = [];
     let teacherDashboardSkillSort = "lowest";
     let teacherDashboardTasks = [];
     let teacherDashboardTaskPage = 1;
     const teacherDashboardTasksPageSize = 5;
+    let teacherDashboardPlanSubjects = [];
+    const teacherDashboardCoreSubjects = ["2", "1"];
 
     const teacherWelcomeText = document.getElementById("teacherWelcomeText");
     const teacherDashboardGrade = document.getElementById("teacherDashboardGrade");
     const teacherDashboardSection = document.getElementById("teacherDashboardSection");
     const teacherDashboardStudentCount = document.getElementById("teacherDashboardStudentCount");
+    const teacherDashboardOverallProgressValue = document.getElementById("teacherDashboardOverallProgressValue");
+    const teacherDashboardClassesRemainingValue = document.getElementById("teacherDashboardClassesRemainingValue");
+    const teacherDashboardAtRiskValue = document.getElementById("teacherDashboardAtRiskValue");
+    const dashboardGenerateSubjectText = document.getElementById("dashboardGenerateSubjectText");
+    const dashboardSetupTitle = document.getElementById("dashboardSetupTitle");
+    const dashboardSetupStatusBadge = document.getElementById("dashboardSetupStatusBadge");
+    const openSetupModalButton = document.getElementById("openSetupModalButton");
+    const teacherSetupModal = document.getElementById("teacherSetupModal");
+    const teacherSetupModalBackdrop = document.getElementById("teacherSetupModalBackdrop");
+    const closeSetupModalButton = document.getElementById("closeSetupModalButton");
+    const teacherSetupModalTitle = document.getElementById("teacherSetupModalTitle");
+    const teacherSetupModalCopy = document.getElementById("teacherSetupModalCopy");
+    const teacherSetupProgressSteps = Array.from(document.querySelectorAll("[data-setup-progress-step]"));
+    const studentsSetupPage = document.getElementById("studentsSetupPage");
+    const weeklySlotsPage = document.getElementById("weeklySlotsPage");
+    const baselineSetupPage = document.getElementById("baselineSetupPage");
+    const teacherSetupFooterCopy = document.getElementById("teacherSetupFooterCopy");
+    const setupBackButton = document.getElementById("setupBackButton");
+    const setupDropArea = document.getElementById("setupDropArea");
+    const setupFileInput = document.getElementById("setupFileInput");
+    const setupFileSummary = document.getElementById("setupFileSummary");
+    const setupFileError = document.getElementById("setupFileError");
+    const studentsSetupFileInput = document.getElementById("studentsSetupFileInput");
+    const studentsSetupFileSummary = document.getElementById("studentsSetupFileSummary");
+    const studentsSetupFileError = document.getElementById("studentsSetupFileError");
+    const uploadStudentsSetupButton = document.getElementById("uploadStudentsSetupButton");
+    const studentsSetupStatusText = document.getElementById("studentsSetupStatusText");
+    const weeklySlotsSection = document.getElementById("weeklySlotsSection");
+    const setupSubjectDisplay = document.getElementById("setupSubjectDisplay");
+    const setupSemesterSelect = document.getElementById("setupSemesterSelect");
+    const setupSlotsGrid = document.getElementById("setupSlotsGrid");
+    const setupTotalSlotsBadge = document.getElementById("setupTotalSlotsBadge");
+    const setupWeeklySlotsHint = document.getElementById("setupWeeklySlotsHint");
+    const saveWeeklySlotsButton = document.getElementById("saveWeeklySlotsButton");
+    const baselineUploadSection = document.getElementById("baselineUploadSection");
+    const generatePlanButton = document.getElementById("generatePlanButton");
+    const weeklySlotDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
+    let setupSlotCounts = Object.fromEntries(weeklySlotDays.map((day) => [day, 0]));
+    let setupWeeklySlotsSaved = false;
+    let setupStudentsReady = false;
+    let selectedStudentsSetupFile = null;
+    let currentSetupStep = 1;
+
+    function getMinimumWeeklySlots(subjectId) {
+      if (String(subjectId) === "2") {
+        return 7;
+      }
+
+      if (String(subjectId) === "1") {
+        return 5;
+      }
+
+      return 1;
+    }
 
     function setTeacherDashboardHeader(profile, studentCount) {
       const fullName = profile?.fullName || sessionStorage.getItem("bridgeUserName") || "Teacher";
@@ -226,6 +840,24 @@
 
       if (teacherDashboardStudentCount) {
         teacherDashboardStudentCount.innerHTML = `<i class="bi bi-people me-1"></i> Total of ${studentCount} Students`;
+      }
+    }
+
+    function setTeacherDashboardTopMetrics({
+      overallProgress = 0,
+      classesRemaining = 0,
+      atRiskStudents = 0
+    } = {}) {
+      if (teacherDashboardOverallProgressValue) {
+        teacherDashboardOverallProgressValue.textContent = `${Math.max(0, Number(overallProgress) || 0)}%`;
+      }
+
+      if (teacherDashboardClassesRemainingValue) {
+        teacherDashboardClassesRemainingValue.textContent = String(Math.max(0, Number(classesRemaining) || 0));
+      }
+
+      if (teacherDashboardAtRiskValue) {
+        teacherDashboardAtRiskValue.textContent = String(Math.max(0, Number(atRiskStudents) || 0));
       }
     }
 
@@ -275,8 +907,452 @@
       planProgressSection?.classList.toggle("d-none", !hasPlan);
     }
 
+    function getSubjectName(subjectId) {
+      return String(subjectId) === "1" ? "Math" : String(subjectId) === "2" ? "Arabic" : "Subject";
+    }
+
+    function getTaskContextLabel(task) {
+      if (task?.description?.trim()) {
+        return task.description.trim();
+      }
+
+      if (task?.item?.notes?.trim()) {
+        return task.item.notes.trim();
+      }
+
+      if (task?.day && task?.slotNumber) {
+        return `${task.day} • Slot ${task.slotNumber}`;
+      }
+
+      return "-";
+    }
+
+    function getSubjectPlanStorageKey(subjectId) {
+      return `bridgeGeneratedPlan:${subjectId}`;
+    }
+
+    function getSubjectSemesterStorageKey(subjectId) {
+      return `teacherSelectedSemester:${subjectId}`;
+    }
+
+    function getSubjectWeeklySlotsStorageKey(subjectId) {
+      return `teacherWeeklySlots:${subjectId}`;
+    }
+
+    function renderTeacherDashboardSubjectMenus() {
+      const subjectIds = teacherDashboardPlanSubjects.length
+        ? teacherDashboardPlanSubjects
+        : teacherDashboardCoreSubjects;
+
+      teacherDashboardSubjectMenus.forEach((menu) => {
+        menu.innerHTML = subjectIds
+          .map((subjectId) => `
+            <li>
+              <button
+                type="button"
+                class="dropdown-item ${String(subjectId) === String(currentDashboardSubjectId) ? "active" : ""}"
+                data-subject-dashboard-id="${subjectId}">
+                ${getSubjectName(subjectId)}
+              </button>
+            </li>
+          `)
+          .join("");
+      });
+
+      document.querySelectorAll("[data-subject-dashboard-id]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const subjectId = button.getAttribute("data-subject-dashboard-id") || currentDashboardSubjectId;
+          currentDashboardSubjectId = subjectId;
+          localStorage.setItem("teacherSelectedSubject", subjectId);
+          setTeacherDashboardSubjectLabels(getSubjectName(subjectId));
+          renderTeacherDashboardSubjectMenus();
+          initializeSetupFormForSubject();
+          hydrateTeacherPlanState();
+          hydrateTeacherDashboardSkillsAndTasks();
+        });
+      });
+    }
+
+    async function hydrateTeacherDashboardSubjects() {
+      const token = sessionStorage.getItem("bridgeAccessToken");
+
+      if (!token) {
+        teacherDashboardPlanSubjects = [...teacherDashboardCoreSubjects];
+        renderTeacherDashboardSubjectMenus();
+        return;
+      }
+
+      try {
+        const response = await fetch(`${backendBaseUrl}/plans/mine`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const plans = response.ok ? await response.json().catch(() => []) : [];
+        const subjectIds = Array.from(
+          new Set(
+            [...teacherDashboardCoreSubjects, ...(Array.isArray(plans) ? plans : [])
+              .map((plan) => String(plan?.subjectId || "").trim())
+              .filter(Boolean)]
+          )
+        );
+
+        teacherDashboardPlanSubjects = subjectIds.length ? subjectIds : [...teacherDashboardCoreSubjects];
+
+        if (!teacherDashboardPlanSubjects.includes(String(currentDashboardSubjectId))) {
+          currentDashboardSubjectId = teacherDashboardPlanSubjects[0];
+          localStorage.setItem("teacherSelectedSubject", currentDashboardSubjectId);
+        }
+
+        setTeacherDashboardSubjectLabels(getSubjectName(currentDashboardSubjectId));
+        renderTeacherDashboardSubjectMenus();
+      } catch {
+        teacherDashboardPlanSubjects = [...teacherDashboardCoreSubjects];
+        renderTeacherDashboardSubjectMenus();
+      }
+    }
+
+    function setTeacherDashboardSubjectLabels(label) {
+      teacherDashboardSubjectLabels.forEach((button) => {
+        button.textContent = label;
+      });
+
+      if (dashboardSetupTitle) {
+        dashboardSetupTitle.textContent = `Set up ${label}`;
+      }
+
+      if (teacherSetupModalTitle) {
+        teacherSetupModalTitle.textContent = `Set up ${label}`;
+      }
+
+      if (teacherSetupModalCopy) {
+        teacherSetupModalCopy.textContent = `Finish the ${label} setup in order: upload students, save semester and weekly slots, then upload the baseline and generate the plan.`;
+      }
+
+      if (setupSubjectDisplay) {
+        setupSubjectDisplay.value = label;
+      }
+    }
+
+    function determineSetupStep() {
+      if (!setupStudentsReady) {
+        return 1;
+      }
+
+      if (!setupWeeklySlotsSaved) {
+        return 2;
+      }
+
+      return 3;
+    }
+
+    function updateDashboardSetupState() {
+      const label = getSubjectName(currentDashboardSubjectId);
+      const needsStudents = !setupStudentsReady;
+      const needsSlots = !setupWeeklySlotsSaved;
+      const baselineReady = !needsStudents && !needsSlots;
+
+      if (dashboardSetupTitle) {
+        dashboardSetupTitle.textContent = baselineReady
+          ? `${label} baseline`
+          : `Set up ${label}`;
+      }
+
+      if (dashboardGenerateSubjectText) {
+        if (needsStudents) {
+          dashboardGenerateSubjectText.textContent = `${label} still needs student setup before you can continue with weekly slots and baseline upload.`;
+        } else if (needsSlots) {
+          dashboardGenerateSubjectText.textContent = `${label} students are ready. Save the semester and weekly slots to unlock the baseline upload.`;
+        } else {
+          dashboardGenerateSubjectText.textContent = `${label} is ready for baseline upload. Open the setup and upload the baseline file to generate the plan.`;
+        }
+      }
+
+      if (dashboardSetupStatusBadge) {
+        dashboardSetupStatusBadge.textContent = baselineReady ? "Baseline ready" : "Setup needed";
+        dashboardSetupStatusBadge.classList.toggle("teacher-setup-card-badge-ready", baselineReady);
+      }
+
+      if (openSetupModalButton) {
+        openSetupModalButton.textContent = baselineReady
+          ? `Upload ${label} baseline`
+          : `Set up ${label}`;
+      }
+    }
+
+    function setSetupPage(step) {
+      currentSetupStep = step;
+      studentsSetupPage?.classList.toggle("is-active", step === 1);
+      weeklySlotsPage?.classList.toggle("is-active", step === 2);
+      baselineSetupPage?.classList.toggle("is-active", step === 3);
+
+      teacherSetupProgressSteps.forEach((item) => {
+        const itemStep = Number(item.getAttribute("data-setup-progress-step") || "0");
+        item.classList.toggle("is-active", itemStep === step);
+        item.classList.toggle("is-complete", itemStep < step);
+      });
+
+      if (teacherSetupFooterCopy) {
+        if (step === 1) {
+          teacherSetupFooterCopy.textContent = "Step 1 of 3: upload the class student file first.";
+        } else if (step === 2) {
+          teacherSetupFooterCopy.textContent = "Step 2 of 3: choose the semester and save the weekly teaching slots.";
+        } else {
+          teacherSetupFooterCopy.textContent = "Step 3 of 3: upload the baseline file and generate the subject plan.";
+        }
+      }
+
+      if (setupBackButton) {
+        const showBack = (step === 2 && setupStudentsReady) || step === 3;
+        setupBackButton.classList.toggle("d-none", !showBack);
+      }
+    }
+
+    function openSetupModal() {
+      initializeSetupFormForSubject().finally(() => {
+        teacherSetupModal?.classList.remove("d-none");
+        teacherSetupModalBackdrop?.classList.remove("d-none");
+      });
+    }
+
+    function closeSetupModal() {
+      teacherSetupModal?.classList.add("d-none");
+      teacherSetupModalBackdrop?.classList.add("d-none");
+    }
+
+    function updateSetupTotalSlots() {
+      const total = Object.values(setupSlotCounts).reduce((sum, value) => sum + value, 0);
+      if (setupTotalSlotsBadge) {
+        setupTotalSlotsBadge.textContent = String(total);
+      }
+      if (setupWeeklySlotsHint) {
+        const minimumWeeklySlots = getMinimumWeeklySlots(currentDashboardSubjectId);
+        setupWeeklySlotsHint.textContent = `Minimum ${minimumWeeklySlots} weekly slots for ${getSubjectName(currentDashboardSubjectId)}. Save weekly slots before uploading the baseline.`;
+      }
+      return total;
+    }
+
+    function renderStudentsSetupFile(file) {
+      if (!studentsSetupFileSummary) {
+        return;
+      }
+
+      if (!file) {
+        studentsSetupFileSummary.classList.add("d-none");
+        studentsSetupFileSummary.innerHTML = "";
+        return;
+      }
+
+      studentsSetupFileSummary.classList.remove("d-none");
+      studentsSetupFileSummary.innerHTML = `
+        <strong>${file.name}</strong>
+        <span class="text-secondary">(${(file.size / 1024).toFixed(1)} KB)</span>
+      `;
+    }
+
+    function showFileError(target, message) {
+      if (!target) {
+        return;
+      }
+
+      target.textContent = message;
+      target.classList.add("show");
+    }
+
+    function hideFileError(target) {
+      if (!target) {
+        return;
+      }
+
+      target.textContent = "";
+      target.classList.remove("show");
+    }
+
+    function isAcceptedExcelFile(file) {
+      if (!file?.name) {
+        return false;
+      }
+
+      return file.name.toLowerCase().endsWith(".xlsx");
+    }
+
+    function setWeeklySlotsEnabled(enabled) {
+      weeklySlotsSection?.classList.toggle("is-disabled", !enabled);
+      if (setupSemesterSelect) {
+        setupSemesterSelect.disabled = !enabled;
+      }
+      setupSlotsGrid?.querySelectorAll("button").forEach((button) => {
+        button.disabled = !enabled;
+      });
+      if (saveWeeklySlotsButton) {
+        saveWeeklySlotsButton.disabled = !enabled;
+      }
+    }
+
+    function updateSetupCountDisplay(day) {
+      const target = document.getElementById(`setup-count-${day}`);
+      if (target) {
+        target.textContent = String(setupSlotCounts[day]);
+      }
+    }
+
+    function buildSetupSlotsGrid() {
+      if (!setupSlotsGrid) {
+        return;
+      }
+
+      setupSlotsGrid.innerHTML = "";
+      weeklySlotDays.forEach((day) => {
+        const card = document.createElement("div");
+        card.className = "teacher-slot-card";
+        card.innerHTML = `
+          <h4>${day}</h4>
+          <p>Available teaching slots.</p>
+          <div class="teacher-slot-counter">
+            <button type="button" data-setup-day="${day}" data-setup-action="decrease">-</button>
+            <span id="setup-count-${day}">${setupSlotCounts[day]}</span>
+            <button type="button" data-setup-day="${day}" data-setup-action="increase">+</button>
+          </div>
+        `;
+        setupSlotsGrid.appendChild(card);
+      });
+    }
+
+    function setBaselineUploadEnabled(enabled) {
+      baselineUploadSection?.classList.toggle("is-disabled", !enabled);
+      if (setupFileInput) {
+        setupFileInput.disabled = !enabled;
+      }
+      setGenerateButtonEnabled(enabled && Boolean(selectedBaselineFiles[0]));
+    }
+
+    function setGenerateButtonEnabled(enabled) {
+      if (!generatePlanButton) {
+        return;
+      }
+
+      generatePlanButton.disabled = !enabled;
+      generatePlanButton.classList.toggle("opacity-50", !enabled);
+    }
+
+    async function initializeSetupFormForSubject() {
+      const token = sessionStorage.getItem("bridgeAccessToken");
+      const subjectId = currentDashboardSubjectId;
+      const storedSemester = localStorage.getItem(getSubjectSemesterStorageKey(subjectId))
+        || localStorage.getItem("teacherSelectedSemester")
+        || "";
+      const storedSlotCounts = localStorage.getItem(getSubjectWeeklySlotsStorageKey(subjectId));
+
+      setupWeeklySlotsSaved = false;
+      setupStudentsReady = false;
+      selectedStudentsSetupFile = null;
+      selectedBaselineFiles = [];
+      setupSemesterSelect.value = storedSemester;
+      setupSlotCounts = Object.fromEntries(weeklySlotDays.map((day) => [day, 0]));
+
+      if (storedSlotCounts) {
+        try {
+          const parsed = JSON.parse(storedSlotCounts);
+          weeklySlotDays.forEach((day) => {
+            setupSlotCounts[day] = Number(parsed?.[day] ?? 0);
+          });
+        } catch {}
+      }
+
+      if (token) {
+        try {
+          const studentsResponse = await fetch(`${backendBaseUrl}/students/myStudents`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const students = studentsResponse.ok ? await studentsResponse.json().catch(() => []) : [];
+          const studentsCount = Array.isArray(students) ? students.length : 0;
+          setupStudentsReady = studentsCount > 0;
+
+          if (studentsSetupStatusText) {
+            studentsSetupStatusText.textContent = setupStudentsReady
+              ? `${studentsCount} student(s) are already set up for this teacher. You can upload another file to add more students if needed.`
+              : "No students are set up for this teacher yet.";
+          }
+
+          const response = await fetch(`${backendBaseUrl}/plans/weekly-slots/${encodeURIComponent(subjectId)}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+
+          const data = response.ok ? await response.json().catch(() => null) : null;
+          if (data?.slots?.length) {
+            setupSlotCounts = Object.fromEntries(weeklySlotDays.map((day) => [day, 0]));
+            data.slots.forEach((slot) => {
+              const day = String(slot?.day || "");
+              if (day in setupSlotCounts) {
+                setupSlotCounts[day] += 1;
+              }
+            });
+            setupWeeklySlotsSaved = Boolean(storedSemester);
+          }
+        } catch {}
+      }
+
+      buildSetupSlotsGrid();
+      updateSetupTotalSlots();
+      renderStudentsSetupFile(null);
+      renderSelectedFile(null);
+      hideFileError(studentsSetupFileError);
+      hideFileError(setupFileError);
+      setWeeklySlotsEnabled(setupStudentsReady);
+      setBaselineUploadEnabled(setupStudentsReady && setupWeeklySlotsSaved);
+      updateDashboardSetupState();
+      setSetupPage(determineSetupStep());
+    }
+
+    setupSlotsGrid?.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-setup-day]");
+      if (!button) {
+        return;
+      }
+
+      const day = button.getAttribute("data-setup-day");
+      const action = button.getAttribute("data-setup-action");
+      const currentValue = setupSlotCounts[day];
+
+      if (action === "increase" && currentValue < 7) {
+        setupSlotCounts[day] = currentValue + 1;
+      }
+
+      if (action === "decrease" && currentValue > 0) {
+        setupSlotCounts[day] = currentValue - 1;
+      }
+
+      setupWeeklySlotsSaved = false;
+      updateSetupCountDisplay(day);
+      updateSetupTotalSlots();
+      setBaselineUploadEnabled(false);
+    });
+
+    studentsSetupFileInput?.addEventListener("change", (event) => {
+      const selectedFile = event.target.files?.[0] ?? null;
+
+      if (selectedFile && !isAcceptedExcelFile(selectedFile)) {
+        selectedStudentsSetupFile = null;
+        renderStudentsSetupFile(null);
+        studentsSetupFileInput.value = "";
+        showFileError(studentsSetupFileError, "Only .xlsx files are accepted here. Please choose the Excel template file.");
+        return;
+      }
+
+      hideFileError(studentsSetupFileError);
+      selectedStudentsSetupFile = selectedFile;
+      renderStudentsSetupFile(selectedStudentsSetupFile);
+    });
+
     function formatSkillTitle(skillId) {
       switch (String(skillId)) {
+        case "skill_counting":
+          return "Counting Skills";
+        case "skill_number_manipulation":
+          return "Number Manipulation";
+        case "skill_problem_solving":
+          return "Problem Solving";
         case "skill_vocal":
           return "Vocal Awareness";
         case "skill_sounds_of_letters":
@@ -332,6 +1408,14 @@
       return Number.isNaN(date.getTime()) ? "-" : date.toLocaleDateString();
     }
 
+    function getTaskTitle(task) {
+      return task?.title || task?.item?.title || "-";
+    }
+
+    function getTaskStatus(task) {
+      return task?.status || task?.item?.status || "OPEN";
+    }
+
     function renderDashboardTasks() {
       if (!teacherDashboardTasksBody || !teacherDashboardTasksEmptyRow) {
         return;
@@ -349,16 +1433,16 @@
         const row = document.createElement("tr");
         row.innerHTML = `
           <td class="small">${String(startIndex + index + 1).padStart(2, "0")}</td>
-          <td class="small">${task.title || "-"}</td>
-          <td class="small">Institution task</td>
-          <td class="small">${formatTaskDate(task.dueDate)}</td>
+          <td class="small">${getTaskTitle(task)}</td>
+          <td class="small">${getTaskContextLabel(task)}</td>
+          <td class="small">${formatTaskDate(task.dueDate || task.sessionDate || task.createdAt)}</td>
           <td class="small">
             <span class="badge rounded-pill bg-warning bg-opacity-25 text-dark px-3 py-2">
-              ${formatTaskStatus(task.status)}
+              ${formatTaskStatus(getTaskStatus(task))}
             </span>
           </td>
           <td class="text-center">
-            <a class="btn btn-link text-dark p-1" href="@Url.Action("TeacherInbox", "Home")" title="Open inbox">
+            <a class="btn btn-link text-dark p-1" href="@Url.Action("Analysis", "Home")" title="Open plan">
               <i class="bi bi-arrow-right-circle"></i>
             </a>
           </td>
@@ -397,7 +1481,7 @@
 
     function applyDashboardPlanSummary(plan, summary) {
       setDashboardMode(true);
-      dashboardPlanSummaryText.textContent = `${String(plan.subjectId) === "2" ? "Arabic" : "Subject"} plan with ${Array.isArray(plan.sessions) ? plan.sessions.length : 0} generated sessions.`;
+      dashboardPlanSummaryText.textContent = `${getSubjectName(plan.subjectId)} plan with ${Array.isArray(plan.sessions) ? plan.sessions.length : 0} generated sessions.`;
       dashboardPlanLabel.textContent = plan.planName || "Generated plan";
       dashboardPlanProgressValue.textContent = `${Number(summary?.progressPercentage ?? 0)}%`;
       dashboardPlanProgressBar.style.width = `${Number(summary?.progressPercentage ?? 0)}%`;
@@ -405,17 +1489,30 @@
       dashboardRemainingItems.textContent = String(Number(summary?.remainingItems ?? 0));
       dashboardClassSpeed.textContent = `${Number(summary?.classSpeedPercentage ?? 100)}%`;
       dashboardReorderStatus.textContent = getReorderStatusLabel(summary);
+      const remainingSessions = Array.isArray(plan?.sessions)
+        ? plan.sessions.filter((session) =>
+            Array.isArray(session?.items) &&
+            session.items.some((item) => String(item?.status || "").toUpperCase() !== "COMPLETED")
+          ).length
+        : 0;
+
+      setTeacherDashboardTopMetrics({
+        overallProgress: Number(summary?.progressPercentage ?? 0),
+        classesRemaining: remainingSessions
+      });
     }
 
     async function hydrateTeacherPlanState() {
       const token = sessionStorage.getItem("bridgeAccessToken");
+      const subjectId = currentDashboardSubjectId;
       if (!token) {
         setDashboardMode(false);
+        setTeacherDashboardTopMetrics();
         return;
       }
 
       let plan = null;
-      const storedPlan = sessionStorage.getItem("bridgeGeneratedPlan");
+      const storedPlan = sessionStorage.getItem(getSubjectPlanStorageKey(subjectId));
 
       if (storedPlan) {
         try {
@@ -426,19 +1523,29 @@
       }
 
       try {
-        async function fetchLatestPlan() {
-          const latestPlanResponse = await fetch(`${backendBaseUrl}/plans/mine/latest`, {
+        async function fetchLatestPlanForSubject() {
+          const plansResponse = await fetch(`${backendBaseUrl}/plans/mine`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
 
-          if (!latestPlanResponse.ok) {
+          if (!plansResponse.ok) {
             return null;
           }
 
-          const latestPlan = await latestPlanResponse.json().catch(() => null);
+          const plans = await plansResponse.json().catch(() => []);
+          if (!Array.isArray(plans) || !plans.length) {
+            return null;
+          }
+
+          const subjectPlans = plans
+            .filter((entry) => String(entry?.subjectId) === String(subjectId))
+            .sort((left, right) => new Date(right?.startDate || 0).getTime() - new Date(left?.startDate || 0).getTime());
+
+          const latestPlan = subjectPlans[0] || null;
           if (latestPlan?.planId) {
+            sessionStorage.setItem(getSubjectPlanStorageKey(subjectId), JSON.stringify(latestPlan));
             sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(latestPlan));
             return latestPlan;
           }
@@ -447,11 +1554,12 @@
         }
 
         if (!plan?.planId) {
-          plan = await fetchLatestPlan();
+          plan = await fetchLatestPlanForSubject();
         }
 
         if (!plan?.planId) {
           setDashboardMode(false);
+          setTeacherDashboardTopMetrics();
           return;
         }
 
@@ -472,11 +1580,12 @@
         let progress = await fetchPlanProgress(plan);
 
         if (!progress) {
-          const latestPlan = await fetchLatestPlan();
+          const latestPlan = await fetchLatestPlanForSubject();
 
           if (!latestPlan?.planId || latestPlan.planId === plan.planId) {
-            sessionStorage.removeItem("bridgeGeneratedPlan");
+            sessionStorage.removeItem(getSubjectPlanStorageKey(subjectId));
             setDashboardMode(false);
+            setTeacherDashboardTopMetrics();
             return;
           }
 
@@ -485,21 +1594,23 @@
         }
 
         if (!progress) {
-          sessionStorage.removeItem("bridgeGeneratedPlan");
+          sessionStorage.removeItem(getSubjectPlanStorageKey(subjectId));
           setDashboardMode(false);
+          setTeacherDashboardTopMetrics();
           return;
         }
 
+        sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(plan));
         applyDashboardPlanSummary(plan, progress);
       } catch {
         setDashboardMode(false);
+        setTeacherDashboardTopMetrics();
       }
     }
 
-    hydrateTeacherPlanState();
-
     async function hydrateTeacherDashboardSkillsAndTasks() {
       const token = sessionStorage.getItem("bridgeAccessToken");
+      const subjectId = currentDashboardSubjectId;
       if (!token) {
         teacherDashboardSkillRows = [];
         teacherDashboardTasks = [];
@@ -513,30 +1624,49 @@
           Authorization: `Bearer ${token}`
         };
 
-        const [skillsResponse, tasksResponse] = await Promise.all([
-          fetch(`${backendBaseUrl}/statistics/class/skills`, { headers }),
-          fetch(`${backendBaseUrl}/teacher-inbox/tasks`, { headers })
+        const [skillsResponse, tasksResponse, weakStudentsResponse] = await Promise.all([
+          fetch(`${backendBaseUrl}/statistics/class/skills?subjectId=${encodeURIComponent(subjectId)}`, { headers }),
+          fetch(`${backendBaseUrl}/plans/todo/today`, { headers }),
+          fetch(`${backendBaseUrl}/statistics/weak-students?subjectId=${encodeURIComponent(subjectId)}`, { headers })
         ]);
 
         teacherDashboardSkillRows = skillsResponse.ok
           ? await skillsResponse.json().catch(() => [])
           : [];
 
-        teacherDashboardTasks = tasksResponse.ok
+        const tasks = tasksResponse.ok
           ? await tasksResponse.json().catch(() => [])
           : [];
 
+        teacherDashboardTasks = Array.isArray(tasks)
+          ? tasks.filter((task) => String(task?.subjectId || "") === String(subjectId))
+          : [];
+
+        const atRiskStudents = weakStudentsResponse?.ok
+          ? await weakStudentsResponse.json().catch(() => [])
+          : [];
+
+        setTeacherDashboardTopMetrics({
+          overallProgress: teacherDashboardOverallProgressValue?.textContent?.replace("%", "") || 0,
+          classesRemaining: teacherDashboardClassesRemainingValue?.textContent || 0,
+          atRiskStudents: Array.isArray(atRiskStudents) ? atRiskStudents.length : 0
+        });
+
+        teacherDashboardTaskPage = 1;
         renderDashboardSkills();
         renderDashboardTasks();
       } catch {
         teacherDashboardSkillRows = [];
         teacherDashboardTasks = [];
+        setTeacherDashboardTopMetrics({
+          overallProgress: teacherDashboardOverallProgressValue?.textContent?.replace("%", "") || 0,
+          classesRemaining: teacherDashboardClassesRemainingValue?.textContent || 0,
+          atRiskStudents: 0
+        });
         renderDashboardSkills();
         renderDashboardTasks();
       }
     }
-
-    hydrateTeacherDashboardSkillsAndTasks();
 
     teacherDashboardTasksPrevious?.addEventListener("click", () => {
       teacherDashboardTaskPage = Math.max(1, teacherDashboardTaskPage - 1);
@@ -560,53 +1690,195 @@
       });
     });
 
-    document.querySelectorAll("[data-subject-dashboard]").forEach((button) => {
-      button.addEventListener("click", () => {
-        if (teacherDashboardSubjectButton) {
-          teacherDashboardSubjectButton.textContent = button.getAttribute("data-subject-dashboard") || "Subject";
-        }
-      });
+    setTeacherDashboardSubjectLabels(getSubjectName(currentDashboardSubjectId));
+    renderTeacherDashboardSubjectMenus();
+    hydrateTeacherDashboardSubjects().then(() => {
+      initializeSetupFormForSubject();
+      hydrateTeacherPlanState();
+      hydrateTeacherDashboardSkillsAndTasks();
     });
 
-    if (teacherDashboardSubjectButton) {
-      teacherDashboardSubjectButton.textContent =
-        localStorage.getItem("teacherSelectedSubject") === "2" ? "Arabic" : "Subject";
+    function renderSelectedFile(file) {
+      if (!setupFileSummary) {
+        return;
+      }
+
+      if (!file) {
+        setupFileSummary.classList.add("d-none");
+        setupFileSummary.innerHTML = "";
+        return;
+      }
+
+      setupFileSummary.classList.remove("d-none");
+      setupFileSummary.innerHTML = `
+        <strong>${file.name}</strong>
+        <span class="text-secondary">(${(file.size / 1024).toFixed(1)} KB)</span>
+      `;
     }
 
     ["dragenter","dragover","dragleave","drop"].forEach(eventName => {
-      dropArea.addEventListener(eventName, e => e.preventDefault());
+      setupDropArea?.addEventListener(eventName, e => e.preventDefault());
     });
 
-    
-    dropArea.addEventListener("drop", e => {
+    setupDropArea?.addEventListener("drop", e => {
       handleFiles(e.dataTransfer.files);
     });
 
-   
-    fileInput.addEventListener("change", e => {
+    setupFileInput?.addEventListener("change", e => {
       handleFiles(e.target.files);
     });
 
     function handleFiles(files) {
-      selectedBaselineFiles = Array.from(files);
-      fileList.innerHTML = "";
-      fileList.classList.remove("d-none");
+      if (setupFileInput?.disabled) {
+        return;
+      }
+      const selectedFile = Array.from(files || [])[0] ?? null;
 
-      selectedBaselineFiles.forEach(file => {
-        const li = document.createElement("li");
-        li.className = "list-group-item d-flex justify-content-between align-items-center";
-        li.innerHTML = `
-          <span>${file.name}</span>
-          <span class="badge bg-secondary">${(file.size / 1024).toFixed(1)} KB</span>
-        `;
-        fileList.appendChild(li);
-      });
+      if (selectedFile && !isAcceptedExcelFile(selectedFile)) {
+        selectedBaselineFiles = [];
+        renderSelectedFile(null);
+        if (setupFileInput) {
+          setupFileInput.value = "";
+        }
+        showFileError(setupFileError, "Only .xlsx files are accepted for baseline upload. Please choose the completed Excel file.");
+        setGenerateButtonEnabled(false);
+        return;
+      }
+
+      hideFileError(setupFileError);
+      selectedBaselineFiles = selectedFile ? [selectedFile] : [];
+      renderSelectedFile(selectedFile);
+      setGenerateButtonEnabled(setupStudentsReady && setupWeeklySlotsSaved && Boolean(selectedBaselineFiles[0]));
+    }
+
+    async function uploadStudentsForSetup() {
+      const token = sessionStorage.getItem("bridgeAccessToken");
+
+      if (!token) {
+        alert("You need to sign in again before uploading students.");
+        return;
+      }
+
+      if (!selectedStudentsSetupFile) {
+        alert("Choose the students Excel file first.");
+        return;
+      }
+
+      uploadStudentsSetupButton.disabled = true;
+
+      try {
+        const formData = new FormData();
+        formData.append("file", selectedStudentsSetupFile);
+
+        const response = await fetch(`${backendBaseUrl}/students/import-template`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const data = await response.json().catch(() => null);
+        if (!response.ok || !Array.isArray(data)) {
+          const message = Array.isArray(data?.message)
+            ? data.message.join(", ")
+            : data?.message;
+          throw new Error(message || "Unable to upload students.");
+        }
+
+        const studentsCount = data.length;
+        setupStudentsReady = studentsCount > 0;
+        if (studentsSetupStatusText) {
+          studentsSetupStatusText.textContent = `${studentsCount} student(s) were uploaded successfully for this teacher.`;
+        }
+
+        setWeeklySlotsEnabled(setupStudentsReady);
+        setBaselineUploadEnabled(setupStudentsReady && setupWeeklySlotsSaved);
+        updateDashboardSetupState();
+        setSetupPage(2);
+        renderStudentsSetupFile(null);
+        selectedStudentsSetupFile = null;
+        if (studentsSetupFileInput) {
+          studentsSetupFileInput.value = "";
+        }
+        await hydrateTeacherDashboardHeader();
+      } catch (error) {
+        alert(error.message || "Unable to upload students.");
+      } finally {
+        uploadStudentsSetupButton.disabled = false;
+      }
+    }
+
+    async function saveWeeklySlotsForSetup() {
+      const token = sessionStorage.getItem("bridgeAccessToken");
+      const subjectId = currentDashboardSubjectId;
+      const semester = setupSemesterSelect?.value || "";
+
+      if (!token) {
+        alert("You need to sign in again before saving weekly slots.");
+        return;
+      }
+
+      if (!semester) {
+        alert("Please choose the semester first.");
+        return;
+      }
+
+      const minimumWeeklySlots = getMinimumWeeklySlots(subjectId);
+      if (updateSetupTotalSlots() < minimumWeeklySlots) {
+        alert(`${getSubjectName(subjectId)} needs at least ${minimumWeeklySlots} weekly slots.`);
+        return;
+      }
+
+      const slots = weeklySlotDays.flatMap((day) =>
+        Array.from({ length: setupSlotCounts[day] }, (_, index) => ({
+          day,
+          slotNumber: index + 1
+        }))
+      );
+
+      saveWeeklySlotsButton.disabled = true;
+
+      try {
+        const response = await fetch(`${backendBaseUrl}/plans/weekly-slots`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            subjectId,
+            slots
+          })
+        });
+
+        const data = await response.json().catch(() => null);
+        if (!response.ok) {
+          const message = Array.isArray(data?.message)
+            ? data.message.join(", ")
+            : data?.message;
+          throw new Error(message || "Unable to save weekly slots.");
+        }
+
+        localStorage.setItem("teacherSelectedSubject", subjectId);
+        localStorage.setItem("teacherSelectedSemester", semester);
+        localStorage.setItem(getSubjectSemesterStorageKey(subjectId), semester);
+        localStorage.setItem(getSubjectWeeklySlotsStorageKey(subjectId), JSON.stringify(setupSlotCounts));
+        setupWeeklySlotsSaved = true;
+        setBaselineUploadEnabled(setupStudentsReady);
+        updateDashboardSetupState();
+        setSetupPage(3);
+      } catch (error) {
+        alert(error.message || "Unable to save weekly slots.");
+      } finally {
+        saveWeeklySlotsButton.disabled = false;
+      }
     }
 
     async function generatePlanFromBaseline() {
       const token = sessionStorage.getItem("bridgeAccessToken");
       const selectedFile = selectedBaselineFiles[0];
-      const subjectId = localStorage.getItem("teacherSelectedSubject");
+      const subjectId = currentDashboardSubjectId;
       const semester = Number(localStorage.getItem("teacherSelectedSemester") || "1");
 
       if (!token) {
@@ -619,21 +1891,31 @@
         return;
       }
 
+      if (!setupStudentsReady) {
+        alert("Upload the students file first.");
+        return;
+      }
+
+      if (!setupWeeklySlotsSaved) {
+        alert("Save the semester and weekly slots before uploading the baseline.");
+        return;
+      }
+
       if (!subjectId) {
         alert("Weekly slots are missing a selected subject. Go back to setup and save them again.");
         return;
       }
 
-      const generateButton = document.getElementById("generatePlanButton");
-      generateButton.classList.add("disabled");
-      generateButton.textContent = "Generating...";
-      generateButton.style.pointerEvents = "none";
+      generatePlanButton.classList.add("disabled");
+      generatePlanButton.textContent = "Generating...";
+      generatePlanButton.style.pointerEvents = "none";
+      generatePlanButton.disabled = true;
 
       try {
         const formData = new FormData();
         formData.append("file", selectedFile);
 
-        const normalizationResponse = await fetch(`${backendBaseUrl}/baseline/normalization`, {
+        const normalizationResponse = await fetch(`${backendBaseUrl}/baseline/normalization?subjectId=${encodeURIComponent(subjectId)}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`
@@ -658,7 +1940,7 @@
           throw new Error(matchedRows?.message || "Unable to match baseline rows to students.");
         }
 
-        const saveResponse = await fetch(`${backendBaseUrl}/baseline/save`, {
+        const saveResponse = await fetch(`${backendBaseUrl}/baseline/save?subjectId=${encodeURIComponent(subjectId)}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -689,36 +1971,54 @@
           throw new Error(generatedPlan?.message || "Unable to generate plan.");
         }
 
+        sessionStorage.setItem(getSubjectPlanStorageKey(subjectId), JSON.stringify(generatedPlan));
         sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(generatedPlan));
-        window.location.href = '@Url.Action("Analysis", "Home")';
+        selectedBaselineFiles = [];
+        renderSelectedFile(null);
+        setGenerateButtonEnabled(false);
+        closeSetupModal();
+        await hydrateTeacherPlanState();
+        await hydrateTeacherDashboardSkillsAndTasks();
       } catch (error) {
         alert(error.message || "Unable to generate the learning plan.");
       } finally {
-        generateButton.classList.remove("disabled");
-        generateButton.textContent = "Generate";
-        generateButton.style.pointerEvents = "";
+        generatePlanButton.classList.remove("disabled");
+        generatePlanButton.textContent = "Generate plan";
+        generatePlanButton.style.pointerEvents = "";
+        setGenerateButtonEnabled(setupStudentsReady && setupWeeklySlotsSaved && Boolean(selectedBaselineFiles[0]));
       }
     }
-</script>
-<!-- Generate Button -->
-<div class="text-center mt-4">
 
-    <a class="rounded-pill px-5 fw-semibold btn btn-info rounded-pill px-4 py-2 fw-semibold"
-       href="#"
-       id="generatePlanButton">
-        Generate
-    </a>
- 
-</div>
-</div>
-</div>
+    openSetupModalButton?.addEventListener("click", openSetupModal);
+    closeSetupModalButton?.addEventListener("click", closeSetupModal);
+    teacherSetupModalBackdrop?.addEventListener("click", closeSetupModal);
+    setupBackButton?.addEventListener("click", () => {
+      if (currentSetupStep === 3) {
+        setSetupPage(2);
+        return;
+      }
 
-<script>
+      if (currentSetupStep === 2) {
+        setSetupPage(1);
+      }
+    });
+    uploadStudentsSetupButton?.addEventListener("click", (event) => {
+      event.preventDefault();
+      uploadStudentsForSetup();
+    });
+    saveWeeklySlotsButton?.addEventListener("click", (event) => {
+      event.preventDefault();
+      saveWeeklySlotsForSetup();
+    });
     document.getElementById("generatePlanButton")?.addEventListener("click", (event) => {
       event.preventDefault();
       generatePlanFromBaseline();
     });
+});
 </script>
+
+</div>
+</div>
 
 <div class="container py-5">
 
@@ -729,11 +2029,10 @@
             <div class="dropdown">
                 <button class="btn btn-light border dropdown-toggle fw-semibold"
                         data-bs-toggle="dropdown"
-                        id="teacherDashboardSubjectButton">
+                        data-dashboard-subject-label>
                     Subject
                 </button>
-                <ul class="dropdown-menu">
-                    <li><button type="button" class="dropdown-item" data-subject-dashboard="Arabic">Arabic</button></li>
+                <ul class="dropdown-menu" data-dashboard-subject-menu>
                 </ul>
             </div>
 
@@ -770,7 +2069,7 @@
         <tr class="text-secondary fw-semibold">
           <th scope="col" class="text-uppercase small">NO</th>
           <th scope="col" class="text-uppercase small">Task</th>
-          <th scope="col" class="text-uppercase small">Lesson</th>
+          <th scope="col" class="text-uppercase small">Details</th>
           <th scope="col" class="text-uppercase small">Due Date</th>
           <th scope="col" class="text-uppercase small">Status</th>
           <th scope="col" class="text-uppercase small text-center">Action</th>
@@ -793,4 +2092,3 @@
   </div>
 
 </div>
-

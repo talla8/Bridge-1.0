@@ -1,9 +1,10 @@
 @{
     var currentAction = (ViewContext.RouteData.Values["action"]?.ToString() ?? "").ToLowerInvariant();
-    var studentsOpen = currentAction is "studentslist" or "weakstudents" or "studentprofile" or "teacherquizreviews" or "teacherquizreviewdetail" or "teacherquizreviewed";
+    var studentsOpen = currentAction is "studentslist" or "weakstudents" or "studentprofile";
     var planOpen = currentAction is "analysis" or "history";
     var classOpen = currentAction is "classanalysis" or "classscores";
     var communicationOpen = currentAction is "teacherinbox";
+    var quizzesOpen = currentAction is "teacherquizzes" or "createquiz" or "teacherquizreviews" or "teacherquizreviewdetail" or "teacherquizreviewed";
 }
 
 <button type="button" class="teacher-sidebar-toggle-button" id="teacherSidebarToggle" aria-controls="teacherSidebar" aria-expanded="false" aria-label="Open sidebar">
@@ -55,15 +56,25 @@
                    class="teacher-sidebar-sublink @(currentAction == "weakstudents" ? "active" : "")">
                     Weak Students
                 </a>
+            </div>
+        </details>
+
+        <details class="teacher-sidebar-group" @(quizzesOpen ? "open" : null)>
+            <summary class="teacher-sidebar-summary">
+                <span class="teacher-sidebar-summary-arrow"><i class="bi bi-chevron-right"></i></span>
+                <span class="teacher-sidebar-summary-icon"><i class="bi bi-patch-question"></i></span>
+                <span>Quizzes</span>
+            </summary>
+            <div class="teacher-sidebar-submenu">
                 <a asp-controller="Home"
-                   asp-action="TeacherQuizReviews"
-                   class="teacher-sidebar-sublink @(currentAction is "teacherquizreviews" or "teacherquizreviewdetail" ? "active" : "")">
-                    Pending Reviews
+                   asp-action="TeacherQuizzes"
+                   class="teacher-sidebar-sublink @(currentAction == "teacherquizzes" ? "active" : "")">
+                    All Quizzes
                 </a>
                 <a asp-controller="Home"
-                   asp-action="TeacherQuizReviewed"
-                   class="teacher-sidebar-sublink @(currentAction == "teacherquizreviewed" ? "active" : "")">
-                    Reviewed Quizzes
+                   asp-action="CreateQuiz"
+                   class="teacher-sidebar-sublink @(currentAction == "createquiz" ? "active" : "")">
+                    Create Quiz
                 </a>
             </div>
         </details>
@@ -100,7 +111,6 @@
                    class="teacher-sidebar-sublink @(currentAction == "classanalysis" ? "active" : "")">
                     Class Analysis
                 </a>
-                <span class="teacher-sidebar-disabled">Class Scores</span>
             </div>
         </details>
 

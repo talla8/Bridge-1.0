@@ -9,42 +9,94 @@
         color: #1f2430 !important;
     }
     .plan-monitor-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; margin-top:28px; }
-    .plan-monitor-card { border:1px solid #e5e7eb; border-radius:24px; background:#fff; padding:20px; box-shadow:0 10px 28px rgba(17,24,39,.04); }
-    .plan-monitor-card h3 { font-size:20px; font-weight:800; color:#111827; margin-bottom:12px; }
+    .plan-monitor-card { border:1px solid #e5e7eb; border-radius:24px; background:#fff; padding:20px; box-shadow:0 10px 28px rgba(17,30,39,.04); }
+    .plan-monitor-card h3 { font-size:20px; font-weight:800; color:#111E27; margin-bottom:12px; }
     .plan-archive-list { display:grid; gap:12px; }
     .plan-archive-item { border:1px solid #e5e7eb; border-radius:18px; padding:14px 16px; background:#f3f4f6; color:#6b7280; }
     .plan-archive-item strong { color:#374151; display:block; margin-bottom:4px; }
     .plan-archive-item small { display:block; }
-    .plan-warning-banner { margin-top:16px; border:1px solid #fde68a; background:#fffbeb; color:#92400e; border-radius:18px; padding:14px 16px; font-weight:600; display:none; }
+    .plan-archive-item-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+    .plan-archive-action { border:1px solid #dbe3f0; background:#fff; color:#374151; border-radius:999px; padding:6px 12px; font-size:13px; font-weight:700; white-space:nowrap; }
+    .activity-quick-status {
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        width:30px;
+        height:30px;
+        border-radius:999px;
+        border:1px solid #cbd5e1;
+        background:#fff;
+        color:#475569;
+        margin-inline-end:10px;
+        flex-shrink:0;
+    }
+    .activity-quick-status.completed {
+        border-color:#86efac;
+        background:#dcfce7;
+        color:#166534;
+    }
+    .plan-warning-banner { margin-top:16px; border:1px solid #FDE48A; background:#fffbeb; color:#92400e; border-radius:18px; padding:14px 16px; font-weight:600; display:none; }
     .plan-warning-banner.show { display:block; }
-    .plan-speed-value { color:#7c3aed !important; }
+    .plan-speed-value { color:#3AA2ED !important; }
     .plan-speed-label { margin-top:6px; font-size:14px; font-weight:700; color:#6b7280; }
     .plan-mode-row { margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
     .plan-mode-copy { color:#4b5563; font-size:14px; }
-    .plan-mode-toggle { display:inline-flex; align-items:center; gap:10px; font-weight:700; color:#111827; }
-    .plan-mode-toggle input { width:44px; height:24px; accent-color:#7c3aed; }
+    .plan-mode-toggle { display:inline-flex; align-items:center; gap:10px; font-weight:700; color:#111E27; }
+    .plan-mode-toggle input { width:44px; height:24px; accent-color:#3AA2ED; }
     .plan-reason-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
     .plan-reason-pill { display:inline-flex; align-items:center; border-radius:999px; padding:6px 12px; font-size:13px; font-weight:700; border:1px solid #e5e7eb; background:#fff; color:#374151; }
-    .plan-reason-pill.behind { border-color:#fcd34d; background:#fffbeb; color:#92400e; }
+    .plan-reason-pill.behind { border-color:#FCD64D; background:#fffbeb; color:#92400e; }
     .plan-reason-pill.overflow { border-color:#fca5a5; background:#fef2f2; color:#b91c1c; }
     .plan-reason-pill.track { border-color:#bbf7d0; background:#f0fdf4; color:#166534; }
-    .plan-reason-pill.buffer { border-color:#bfdbfe; background:#eff6ff; color:#1d4ed8; }
-    .plan-reason-pill.compression { border-color:#ddd6fe; background:#f5f3ff; color:#6d28d9; }
+    .plan-reason-pill.buffer { border-color:#bfdbfe; background:#eff6ff; color:#1D8AD8; }
+    .plan-reason-pill.compression { border-color:#ddd6fe; background:#f5f3ff; color:#288FD9; }
     .plan-details-summary { margin-top:12px; display:grid; gap:10px; }
     .plan-details-summary-item { border:1px solid #e5e7eb; border-radius:16px; background:#f9fafb; padding:12px 14px; color:#374151; font-size:14px; }
-    .plan-details-summary-item strong { color:#111827; }
+    .plan-details-summary-item strong { color:#111E27; }
     .plan-compression-list { display:grid; gap:10px; margin-top:12px; }
     .plan-compression-item { border:1px solid #e5e7eb; border-radius:16px; padding:12px 14px; background:#fff; }
-    .plan-compression-item strong { display:block; color:#111827; margin-bottom:4px; }
+    .plan-compression-item strong { display:block; color:#111E27; margin-bottom:4px; }
     .plan-compression-item small { color:#6b7280; display:block; }
-    .reorder-modal-backdrop { position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:1050; }
-    .reorder-modal { position:fixed; inset:50% auto auto 50%; transform:translate(-50%,-50%); width:min(92vw,520px); background:#fff; border-radius:24px; box-shadow:0 22px 50px rgba(15,23,42,.25); z-index:1051; padding:24px; }
-    .reorder-modal h3 { font-size:26px; font-weight:800; color:#111827; margin-bottom:10px; }
+    .reorder-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15,31,42,.45);
+        z-index: 1050;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+    }
+    .reorder-modal {
+        position: relative;
+        width: min(92vw, 520px);
+        max-width: 520px;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 22px 50px rgba(15,31,42,.25);
+        z-index: 1051;
+        padding: 24px;
+        margin: 0 auto;
+    }
+    .reorder-modal h3 { font-size:26px; font-weight:800; color:#111E27; margin-bottom:10px; }
     .reorder-modal p { color:#4b5563; margin-bottom:16px; line-height:1.6; }
     .reorder-modal-note { margin-top:12px; color:#6b7280; font-size:14px; }
     .reorder-modal-actions { display:flex; justify-content:flex-end; gap:12px; }
     .reorder-modal-actions button { border-radius:14px; padding:10px 16px; font-weight:700; border:1px solid #dbe3f0; background:#fff; color:#374151; }
-    .reorder-modal-actions .primary { background:linear-gradient(135deg,#8b82ff,#6d8cff); border-color:transparent; color:#fff; }
+    .reorder-modal-actions .primary { background:linear-gradient(135deg,#82CBFF,#6DC2FF); border-color:transparent; color:#fff; }
+    .no-plan-panel { margin-top:24px; border:1px solid #e5e7eb; border-radius:24px; background:#fff; padding:24px; box-shadow:0 10px 28px rgba(17,30,39,.04); display:none; }
+    .no-plan-panel.show { display:block; }
+    .no-plan-panel h2 { font-size:28px; font-weight:800; color:#111E27; margin-bottom:8px; }
+    .no-plan-panel p { color:#6b7280; margin-bottom:18px; }
+    .no-plan-upload { border:2px dashed #cec8ff; border-radius:20px; background:#faf9ff; padding:28px; text-align:center; }
+    .no-plan-upload.is-disabled { opacity:.55; pointer-events:none; }
+    .no-plan-upload strong { display:block; color:#111E27; font-size:18px; margin-bottom:8px; }
+    .no-plan-upload small { display:block; color:#6b7280; margin-top:8px; }
+    .no-plan-file-summary { margin-top:14px; padding:12px 14px; border:1px solid #e5e7eb; border-radius:16px; background:#fff; color:#374151; display:none; }
+    .no-plan-file-summary.show { display:block; }
+    .no-plan-actions { display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap; margin-top:18px; }
+    .no-plan-actions .btn { border-radius:999px; font-weight:700; padding:10px 18px; }
+    .no-plan-actions .btn:disabled { opacity:.55; cursor:not-allowed; }
     @@media (max-width: 991px) { .plan-monitor-grid { grid-template-columns:1fr; } }
 </style>
 
@@ -72,8 +124,13 @@
                 </div>
             </div>
 
+            <div class="d-flex flex-wrap gap-2 mt-3" id="subjectTabs">
+                <button type="button" class="btn btn-light border rounded-pill px-4 subject-tab-btn" data-subject-id="2">Arabic</button>
+                <button type="button" class="btn btn-light border rounded-pill px-4 subject-tab-btn" data-subject-id="1">Math</button>
+            </div>
+
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
-                <div class="dropdown">
+                <div class="dropdown" id="weekFilterSection">
                     <button class="btn btn-light border rounded-pill px-4 dropdown-toggle text-secondary"
                             data-bs-toggle="dropdown"
                             id="weekFilterButton">
@@ -82,7 +139,7 @@
                     <ul class="dropdown-menu" id="weekFilterMenu"></ul>
                 </div>
 
-                <div class="d-flex gap-3">
+                <div class="d-flex gap-3" id="planExportActions">
                     <button class="btn btn-light border rounded-4 shadow-sm px-3 d-flex align-items-center gap-2 fw-semibold">
                         <i class="bi bi-file-earmark-spreadsheet fs-5"></i>
                         Export Excel
@@ -95,7 +152,24 @@
                 </div>
             </div>
 
-            <div class="row g-4 mt-3">
+            <div id="noPlanPanel" class="no-plan-panel">
+                <h2>No @("subject") plan yet</h2>
+                <p id="noPlanMessage">Upload the baseline file for this subject, then generate its plan.</p>
+                <div id="noPlanDropArea" class="no-plan-upload">
+                    <strong>Upload baseline Excel</strong>
+                    <div>Drag and drop the completed `.xlsx` baseline file here or</div>
+                    <label for="noPlanFileInput" class="btn btn-light border rounded-pill mt-3">Choose file</label>
+                    <input id="noPlanFileInput" type="file" class="d-none" accept=".xlsx" />
+                    <small>Only `.xlsx` files are accepted.</small>
+                    <div id="noPlanFileSummary" class="no-plan-file-summary"></div>
+                </div>
+                <div class="no-plan-actions">
+                    <a class="btn btn-light border" href="@Url.Action("SetupStudents", "Home")">Manage students</a>
+                    <button type="button" class="btn bridge-accent" id="generateMissingPlanButton">Generate @("subject") plan</button>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-3" id="planSummaryCards">
                 <div class="col-12 col-md-3">
                     <div class="border rounded-4 p-4 h-100">
                         <div class="d-flex align-items-start gap-3">
@@ -149,7 +223,7 @@
             <div class="plan-warning-banner" id="reorderBanner"></div>
             <div class="plan-reason-row" id="reorderReasonRow"></div>
             <div class="mt-2 d-flex justify-content-end">
-                <button type="button" class="btn btn-sm btn-light border rounded-pill d-none" id="reorderDetailsButton">More info</button>
+                <button type="button" class="btn btn-sm btn-light border rounded-pill" id="reorderDetailsButton">More info</button>
             </div>
             <div class="plan-mode-row">
                 <div>
@@ -163,7 +237,7 @@
             </div>
         </div>
 
-        <div class="container py-4">
+        <div class="container py-4" id="planBoardSection">
             <section class="weekly-plan-shell">
                 <div class="weekly-plan-grid" id="weeklyPlanGrid"></div>
 
@@ -237,61 +311,78 @@
     </div>
 </aside>
 
-<div class="reorder-modal-backdrop d-none" id="reorderPromptBackdrop"></div>
-<div class="reorder-modal d-none" id="reorderPromptModal" aria-label="Plan reorder recommendation">
-    <h3>Plan Reorder Recommended</h3>
-    <p id="reorderPromptMessage">The current class pace suggests replanning future sessions.</p>
-    <div class="reorder-modal-actions">
-        <button type="button" id="reorderPromptLaterButton">Later</button>
-        <button type="button" class="primary" id="reorderPromptNowButton">Reorder now</button>
+<div class="reorder-modal-backdrop d-none" id="reorderPromptBackdrop">
+    <div class="reorder-modal d-none" id="reorderPromptModal" aria-label="Plan reorder recommendation">
+        <h3>Plan Reorder Recommended</h3>
+        <p id="reorderPromptMessage">The current class pace suggests replanning future sessions.</p>
+        <div class="reorder-modal-actions">
+            <button type="button" id="reorderPromptLaterButton">Later</button>
+            <button type="button" class="primary" id="reorderPromptNowButton">Reorder now</button>
+        </div>
     </div>
 </div>
 
-<div class="reorder-modal-backdrop d-none" id="autoReorderChoiceBackdrop"></div>
-<div class="reorder-modal d-none" id="autoReorderChoiceModal" aria-label="Automatic reorder setup">
-    <h3>Automatic Reordering</h3>
-    <p>Bridge can monitor class pace and session overflow, then repack future sessions when the current plan falls behind.</p>
-    <div class="reorder-modal-note">Automatic mode only changes future sessions. Postponed items stay archived, cancelled items stay out of the active plan, and history keeps the trace.</div>
-    <div class="reorder-modal-actions">
-        <button type="button" id="autoReorderSkipButton">Skip for now</button>
-        <button type="button" class="primary" id="autoReorderEnableButton">Enable auto reordering</button>
+<div class="reorder-modal-backdrop d-none" id="autoReorderChoiceBackdrop">
+    <div class="reorder-modal d-none" id="autoReorderChoiceModal" aria-label="Automatic reorder setup">
+        <h3>Automatic Reordering</h3>
+        <p>Bridge can monitor class pace and session overflow, then repack future sessions when the current plan falls behind.</p>
+        <div class="reorder-modal-note">Automatic mode only changes future sessions. Postponed items stay archived, cancelled items stay out of the active plan, and history keeps the trace.</div>
+        <div class="reorder-modal-actions">
+            <button type="button" id="autoReorderSkipButton">Skip for now</button>
+            <button type="button" class="primary" id="autoReorderEnableButton">Enable auto reordering</button>
+        </div>
     </div>
 </div>
 
-<div class="reorder-modal-backdrop d-none" id="autoReorderInfoBackdrop"></div>
-<div class="reorder-modal d-none" id="autoReorderInfoModal" aria-label="Automatic reorder details">
-    <h3>Plan Reordered Automatically</h3>
-    <p id="autoReorderInfoMessage">Bridge updated the future sessions to keep the class on track.</p>
-    <div class="reorder-modal-actions">
-        <button type="button" id="autoReorderInfoMoreButton">More info</button>
-        <button type="button" id="autoReorderInfoCloseButton">Close</button>
+<div class="reorder-modal-backdrop d-none" id="autoReorderInfoBackdrop">
+    <div class="reorder-modal d-none" id="autoReorderInfoModal" aria-label="Automatic reorder details">
+        <h3>Plan Reordered Automatically</h3>
+        <p id="autoReorderInfoMessage">Bridge updated the future sessions to keep the class on track.</p>
+        <div class="reorder-modal-actions">
+            <button type="button" id="autoReorderInfoMoreButton">More info</button>
+            <button type="button" id="autoReorderInfoCloseButton">Close</button>
+        </div>
     </div>
 </div>
 
-<div class="reorder-modal-backdrop d-none" id="reorderDetailsBackdrop"></div>
-<div class="reorder-modal d-none" id="reorderDetailsModal" aria-label="Plan reorder details">
-    <h3>Reorder Details</h3>
-    <p id="reorderDetailsMessage">Bridge reviewed the current plan and adjusted future sessions.</p>
-    <div class="plan-details-summary" id="reorderDetailsSummary"></div>
-    <div class="plan-compression-list" id="reorderCompressionList"></div>
-    <div class="reorder-modal-actions">
-        <button type="button" id="reorderDetailsCloseButton">Close</button>
+<div class="reorder-modal-backdrop d-none" id="reorderDetailsBackdrop">
+    <div class="reorder-modal d-none" id="reorderDetailsModal" aria-label="Plan reorder details">
+        <h3>Reorder Details</h3>
+        <p id="reorderDetailsMessage">Bridge reviewed the current plan and adjusted future sessions.</p>
+        <div class="plan-details-summary" id="reorderDetailsSummary"></div>
+        <div class="plan-compression-list" id="reorderCompressionList"></div>
+        <div class="reorder-modal-actions">
+            <button type="button" id="reorderDetailsCloseButton">Close</button>
+        </div>
     </div>
 </div>
 
 <script>
     const backendBaseUrl = "http://localhost:3000";
     const dayOrder = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"];
-    const planStorage = sessionStorage.getItem("bridgeGeneratedPlan");
+    let currentSubjectId = localStorage.getItem("teacherSelectedSubject") || "2";
+    const planStorage = sessionStorage.getItem(`bridgeGeneratedPlan:${currentSubjectId}`) || sessionStorage.getItem("bridgeGeneratedPlan");
     let generatedPlan = planStorage ? JSON.parse(planStorage) : null;
     const token = sessionStorage.getItem("bridgeAccessToken");
     const teacherGrade = sessionStorage.getItem("teacherGrade") || sessionStorage.getItem("bridgeTeacherGrade") || "Grade";
 
+    const subjectTabs = document.getElementById("subjectTabs");
     const planIdButton = document.getElementById("planIdButton");
     const planMetaLabel = document.getElementById("planMetaLabel");
     const planSummaryText = document.getElementById("planSummaryText");
     const weekFilterButton = document.getElementById("weekFilterButton");
     const weekFilterMenu = document.getElementById("weekFilterMenu");
+    const weekFilterSection = document.getElementById("weekFilterSection");
+    const planExportActions = document.getElementById("planExportActions");
+    const planSummaryCards = document.getElementById("planSummaryCards");
+    const planBoardSection = document.getElementById("planBoardSection");
+    const noPlanPanel = document.getElementById("noPlanPanel");
+    const noPlanMessage = document.getElementById("noPlanMessage");
+    const noPlanDropArea = document.getElementById("noPlanDropArea");
+    const noPlanFileInput = document.getElementById("noPlanFileInput");
+    const noPlanFileSummary = document.getElementById("noPlanFileSummary");
+    const generateMissingPlanButton = document.getElementById("generateMissingPlanButton");
+    const noPlanManageStudentsButton = noPlanPanel?.querySelector("a.btn");
     const planProgressValue = document.getElementById("planProgressValue");
     const sessionCountValue = document.getElementById("sessionCountValue");
     const classSpeedValue = document.getElementById("classSpeedValue");
@@ -342,6 +433,7 @@
     const reorderDetailsSummary = document.getElementById("reorderDetailsSummary");
     const reorderCompressionList = document.getElementById("reorderCompressionList");
     const reorderDetailsCloseButton = document.getElementById("reorderDetailsCloseButton");
+    const maxActivityMinutes = 25;
     let selectedActivity = null;
     let selectedAnchor = null;
     let selectedWeekNo = 1;
@@ -351,6 +443,12 @@
     let isAutoReorderEnabled = false;
     let isAutoReordering = false;
     let lastAutoReorderFingerprint = null;
+    let selectedBaselineFile = null;
+    let isCurrentSubjectSetupReady = false;
+
+    function getPlanStorageKey(subjectId = currentSubjectId) {
+        return `bridgeGeneratedPlan:${subjectId}`;
+    }
 
     function subjectLabel(subjectId) {
         if (String(subjectId) === "1") return "Math";
@@ -360,12 +458,103 @@
 
     function skillLabel(skillId) {
         const labels = {
+            skill_counting: "مهارات العد",
+            skill_number_manipulation: "مهارات التلاعب بالأعداد",
+            skill_problem_solving: "مهارات حل المسائل",
             skill_vocal: "الوعي الصوتي",
             skill_sounds_of_letters: "قراءة أصوات الحروف",
             skill_writing: "الكتابة"
         };
 
         return labels[skillId] ?? skillId;
+    }
+
+    function setActiveSubjectTabs() {
+        subjectTabs?.querySelectorAll("[data-subject-id]").forEach((button) => {
+            const isActive = String(button.dataset.subjectId) === String(currentSubjectId);
+            button.classList.toggle("bridge-accent", isActive);
+        });
+    }
+
+    function setNoPlanState(isNoPlan) {
+        noPlanPanel?.classList.toggle("show", isNoPlan);
+        weekFilterSection?.classList.toggle("d-none", isNoPlan);
+        planExportActions?.classList.toggle("d-none", isNoPlan);
+        planSummaryCards?.classList.toggle("d-none", isNoPlan);
+        planBoardSection?.classList.toggle("d-none", isNoPlan);
+        reorderDetailsButton?.classList.toggle("d-none", isNoPlan);
+    }
+
+    function getSubjectSemesterStorageKey(subjectId) {
+        return `teacherSelectedSemester:${subjectId}`;
+    }
+
+    function setNoPlanSetupState(isReady) {
+        isCurrentSubjectSetupReady = Boolean(isReady);
+        noPlanDropArea?.classList.toggle("is-disabled", !isCurrentSubjectSetupReady);
+
+        if (noPlanFileInput) {
+            noPlanFileInput.disabled = !isCurrentSubjectSetupReady;
+        }
+
+        if (generateMissingPlanButton) {
+            generateMissingPlanButton.disabled = !isCurrentSubjectSetupReady;
+            generateMissingPlanButton.textContent = `Generate ${subjectLabel(currentSubjectId)} plan`;
+        }
+
+        if (!isCurrentSubjectSetupReady) {
+            selectedBaselineFile = null;
+            renderNoPlanFile(null);
+            if (noPlanMessage) {
+                noPlanMessage.textContent = `Set up ${subjectLabel(currentSubjectId)} first by choosing the semester and saving weekly slots before uploading the baseline.`;
+            }
+            if (noPlanManageStudentsButton) {
+                noPlanManageStudentsButton.textContent = `Set up ${subjectLabel(currentSubjectId)}`;
+            }
+            return;
+        }
+
+        if (noPlanMessage) {
+            noPlanMessage.textContent = `Upload the baseline file for ${subjectLabel(currentSubjectId)}, then generate its plan here.`;
+        }
+
+        if (noPlanManageStudentsButton) {
+            noPlanManageStudentsButton.textContent = "Manage students";
+        }
+    }
+
+    async function hydrateNoPlanSetupState() {
+        const storedSemester = localStorage.getItem(getSubjectSemesterStorageKey(currentSubjectId))
+            || localStorage.getItem("teacherSelectedSemester")
+            || "";
+
+        if (!token || !storedSemester) {
+            setNoPlanSetupState(false);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/plans/weekly-slots/${encodeURIComponent(currentSubjectId)}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = response.ok ? await response.json().catch(() => null) : null;
+            const hasWeeklySlots = Array.isArray(data?.slots) && data.slots.length > 0;
+            setNoPlanSetupState(hasWeeklySlots);
+        } catch {
+            setNoPlanSetupState(false);
+        }
+    }
+
+    function renderNoPlanFile(file) {
+        if (!noPlanFileSummary) return;
+        if (!file) {
+            noPlanFileSummary.classList.remove("show");
+            noPlanFileSummary.textContent = "";
+            return;
+        }
+
+        noPlanFileSummary.classList.add("show");
+        noPlanFileSummary.innerHTML = `<strong>${file.name}</strong> <span class="text-secondary">(${(file.size / 1024).toFixed(1)} KB)</span>`;
     }
 
     function normalizeStatus(status) {
@@ -502,7 +691,10 @@
 
         target.innerHTML = items.map((item) => `
             <div class="plan-archive-item">
-                <strong>${item.title}</strong>
+                <div class="plan-archive-item-head">
+                    <strong>${item.title}</strong>
+                    <button type="button" class="plan-archive-action js-restore-archived-item" data-plan-item-id="${item.planItemId}" data-session-id="${item.sessionId}">Back to planned</button>
+                </div>
                 <small>${item.day} • Week ${item.sessionWeekNo} • ${item.estimatedTime} minutes</small>
                 <small>${item.notes || "No notes"}</small>
             </div>
@@ -697,8 +889,6 @@
             "No cancelled activities."
         );
         renderReasonPills(summary);
-        reorderDetailsButton.classList.toggle("d-none", !summary?.planNeedsReordering && !summary?.compressionApplied && !summary?.bufferUsed);
-
         if (summary?.planNeedsReordering) {
             reorderBanner.textContent = buildReorderMessage(summary);
             reorderBanner.classList.add("show");
@@ -732,7 +922,6 @@
         renderArchiveList(postponedArchiveList, [], "No postponed activities.");
         renderArchiveList(cancelledArchiveList, [], "No cancelled activities.");
         reorderReasonRow.innerHTML = `<span class="plan-reason-pill track">On track</span>`;
-        reorderDetailsButton.classList.add("d-none");
         reorderBanner.classList.remove("show");
         reorderBanner.textContent = "";
         hideReorderPrompt();
@@ -796,9 +985,22 @@
                         ? "activity-row activity-row-completed"
                         : "activity-row";
 
+                    const quickStatusButton = `
+                        <button
+                            type="button"
+                            class="activity-quick-status js-toggle-complete ${item.status === "Completed" ? "completed" : ""}"
+                            data-day="${day}"
+                            data-index="${index}"
+                            data-status="${item.status}"
+                            aria-label="${item.status === "Completed" ? "Mark activity as planned" : "Mark activity as completed"}">
+                            <i class="bi ${item.status === "Completed" ? "bi-check2" : "bi-circle"}"></i>
+                        </button>
+                    `;
+
                     return `
                     <div class="${rowClass}">
                         <div class="activity-row-main">
+                            ${quickStatusButton}
                             <span class="activity-row-title">${item.name}</span>
                             ${statusBadge}
                         </div>
@@ -872,6 +1074,7 @@
 
     function saveGeneratedPlan() {
         if (generatedPlan) {
+            sessionStorage.setItem(getPlanStorageKey(generatedPlan.subjectId), JSON.stringify(generatedPlan));
             sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(generatedPlan));
         }
     }
@@ -1023,7 +1226,7 @@
     }
 
     function updateDuration(delta) {
-        editedDurationMinutes = Math.max(1, editedDurationMinutes + delta);
+        editedDurationMinutes = Math.max(1, Math.min(maxActivityMinutes, editedDurationMinutes + delta));
         editDuration.textContent = `${editedDurationMinutes} minutes`;
     }
 
@@ -1049,6 +1252,11 @@
         const hasMaterialChange =
             editedDurationMinutes !== previousDuration ||
             selectedStatus !== previousStatus;
+
+        if (editedDurationMinutes > maxActivityMinutes) {
+            alert(`Each activity is limited to ${maxActivityMinutes} minutes.`);
+            return;
+        }
 
         if (hasMaterialChange) {
             lastAutoReorderFingerprint = null;
@@ -1196,6 +1404,21 @@
     }
 
     function attachActivityActions(weekSessions) {
+        document.querySelectorAll(".js-toggle-complete").forEach((button) => {
+            button.addEventListener("click", async () => {
+                const activity = findActivity(weekSessions, button.dataset.day, button.dataset.index);
+                if (!activity?.sourceItem || !activity?.session) {
+                    return;
+                }
+
+                const nextStatus = normalizeStatus(button.dataset.status) === "Completed"
+                    ? "Planned"
+                    : "Completed";
+
+                await updateActivityStatusDirect(activity, nextStatus);
+            });
+        });
+
         document.querySelectorAll(".js-show-details").forEach((button) => {
             button.addEventListener("click", () => {
                 openDetailsPanel(findActivity(weekSessions, button.dataset.day, button.dataset.index), button.closest(".activity-row"));
@@ -1209,13 +1432,55 @@
         });
     }
 
+    async function updateActivityStatusDirect(activity, nextStatus) {
+        if (!generatedPlan?.planId || !token || !activity?.session?.sessionId || !activity?.sourceItem?.planItemId) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/plans/${generatedPlan.planId}/items/status`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    sessionId: activity.session.sessionId,
+                    planItemId: activity.sourceItem.planItemId,
+                    status: nextStatus
+                })
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to update activity status.");
+            }
+
+            if (data?.session) {
+                replaceSessionInGeneratedPlan(data.session);
+            }
+            if (data?.progress) {
+                applyPlanSummary(data.progress);
+            }
+
+            saveGeneratedPlan();
+            renderBoard(
+                generatedPlan.sessions,
+                selectedWeekNo,
+                Math.max(1, Number(generatedPlan.totalWeeks ?? 0)),
+            );
+        } catch (error) {
+            alert(error.message || "Unable to update activity status.");
+        }
+    }
+
     async function loadAtRiskStudents() {
         if (!token) {
             return;
         }
 
         try {
-            const response = await fetch(`${backendBaseUrl}/statistics/needHelp`, {
+            const response = await fetch(`${backendBaseUrl}/statistics/weak-students?subjectId=${encodeURIComponent(currentSubjectId)}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -1233,14 +1498,65 @@
         }
     }
 
+    async function restoreArchivedItem(planItemId, sessionId) {
+        if (!generatedPlan?.planId || !token || !planItemId || !sessionId) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/plans/${generatedPlan.planId}/items/status`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    sessionId,
+                    planItemId,
+                    status: "Planned"
+                })
+            });
+
+            const data = await response.json().catch(() => null);
+            if (!response.ok) {
+                throw new Error(data?.message || "Unable to restore the activity.");
+            }
+
+            if (data?.session) {
+                replaceSessionInGeneratedPlan(data.session);
+            }
+            if (data?.progress) {
+                applyPlanSummary(data.progress);
+            }
+
+            saveGeneratedPlan();
+            renderBoard(
+                generatedPlan.sessions,
+                selectedWeekNo,
+                Math.max(1, Number(generatedPlan.totalWeeks ?? 0)),
+            );
+        } catch (error) {
+            alert(error.message || "Unable to restore the activity.");
+        }
+    }
+
     function initializePlanBoard() {
+        setActiveSubjectTabs();
         if (!generatedPlan || !Array.isArray(generatedPlan.sessions)) {
-            planSummaryText.textContent = "No generated plan was found. Go back to the teacher page and generate one first.";
+            planIdButton.textContent = "No plan";
+            planMetaLabel.textContent = `${teacherGrade} | ${subjectLabel(currentSubjectId)} | No generated plan`;
+            planSummaryText.textContent = `No ${subjectLabel(currentSubjectId).toLowerCase()} plan was found for this subject.`;
+            if (noPlanPanel && noPlanMessage && generateMissingPlanButton) {
+                generateMissingPlanButton.textContent = `Generate ${subjectLabel(currentSubjectId)} plan`;
+            }
+            setNoPlanState(true);
+            void hydrateNoPlanSetupState();
             resetPlanSummaryUi();
             renderBoard([], 1, 1);
             return;
         }
 
+        setNoPlanState(false);
         const totalWeeks = Math.max(1, Number(generatedPlan.totalWeeks ?? 0));
         const initialWeek = 1;
         const storedMode = getStoredPlanMode();
@@ -1260,29 +1576,191 @@
         if (!storedMode) {
             showAutoReorderChoice();
         }
+    }
 
-        weekFilterMenu.addEventListener("click", (event) => {
-            const button = event.target.closest("[data-week]");
-            if (!button) {
-                return;
+    async function loadPlanForSubject(subjectId) {
+        if (!token) {
+            return;
+        }
+
+        currentSubjectId = String(subjectId);
+        localStorage.setItem("teacherSelectedSubject", currentSubjectId);
+        const cachedPlan = sessionStorage.getItem(getPlanStorageKey(currentSubjectId));
+
+        if (cachedPlan) {
+            try {
+                generatedPlan = JSON.parse(cachedPlan);
+            } catch {
+                generatedPlan = null;
             }
+        } else {
+            generatedPlan = null;
+        }
 
-            const selectedWeek = Number(button.dataset.week);
-            renderWeekFilter(totalWeeks, selectedWeek);
-            renderBoard(generatedPlan.sessions, selectedWeek, totalWeeks);
-        });
+        try {
+            const response = await fetch(`${backendBaseUrl}/plans/mine`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const plans = await response.json().catch(() => []);
 
-        weekPager.addEventListener("click", (event) => {
-            const button = event.target.closest("[data-week]");
-            if (!button || button.disabled) return;
+            if (response.ok && Array.isArray(plans)) {
+                const subjectPlan = plans
+                    .filter((entry) => String(entry?.subjectId) === currentSubjectId)
+                    .sort((left, right) => new Date(right?.startDate || 0).getTime() - new Date(left?.startDate || 0).getTime())[0] ?? null;
 
-            const selectedWeek = Number(button.dataset.week);
-            renderWeekFilter(totalWeeks, selectedWeek);
-            renderBoard(generatedPlan.sessions, selectedWeek, totalWeeks);
-        });
+                if (subjectPlan?.planId) {
+                    generatedPlan = subjectPlan;
+                    sessionStorage.setItem(getPlanStorageKey(currentSubjectId), JSON.stringify(subjectPlan));
+                    sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(subjectPlan));
+                } else if (!cachedPlan) {
+                    generatedPlan = null;
+                }
+            }
+        } catch {
+            if (!cachedPlan) {
+                generatedPlan = null;
+            }
+        }
+
+        selectedWeekNo = 1;
+        dismissedReorderFingerprint = null;
+        lastAutoReorderFingerprint = null;
+        initializePlanBoard();
     }
 
     initializePlanBoard();
+
+    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+        noPlanDropArea?.addEventListener(eventName, (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+    });
+
+    ["dragenter", "dragover"].forEach((eventName) => {
+        noPlanDropArea?.addEventListener(eventName, () => {
+            noPlanDropArea.classList.add("bridge-accent");
+        });
+    });
+
+    ["dragleave", "drop"].forEach((eventName) => {
+        noPlanDropArea?.addEventListener(eventName, () => {
+            noPlanDropArea.classList.remove("bridge-accent");
+        });
+    });
+
+    noPlanDropArea?.addEventListener("drop", (event) => {
+        if (!isCurrentSubjectSetupReady) {
+            return;
+        }
+        const files = event.dataTransfer?.files;
+        selectedBaselineFile = files?.[0] ?? null;
+        renderNoPlanFile(selectedBaselineFile);
+    });
+
+    noPlanFileInput?.addEventListener("change", (event) => {
+        if (!isCurrentSubjectSetupReady) {
+            return;
+        }
+        selectedBaselineFile = event.target.files?.[0] ?? null;
+        renderNoPlanFile(selectedBaselineFile);
+    });
+
+    async function generateMissingPlanForSubject() {
+        if (!token) {
+            alert("Sign in again before generating a plan.");
+            return;
+        }
+
+        if (!isCurrentSubjectSetupReady) {
+            alert(`Set up ${subjectLabel(currentSubjectId)} first by choosing the semester and saving weekly slots.`);
+            return;
+        }
+
+        if (!selectedBaselineFile) {
+            alert("Upload the baseline Excel file first.");
+            return;
+        }
+
+        generateMissingPlanButton.disabled = true;
+        generateMissingPlanButton.textContent = "Generating...";
+
+        try {
+            const formData = new FormData();
+            formData.append("file", selectedBaselineFile);
+
+            const normalizationResponse = await fetch(`${backendBaseUrl}/baseline/normalization?subjectId=${encodeURIComponent(currentSubjectId)}`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+                body: formData
+            });
+            const normalizedRows = await normalizationResponse.json().catch(() => null);
+            if (!normalizationResponse.ok || !Array.isArray(normalizedRows)) {
+                throw new Error(normalizedRows?.message || "Unable to normalize baseline rows.");
+            }
+
+            const matchResponse = await fetch(`${backendBaseUrl}/baseline/matchStudents`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(normalizedRows)
+            });
+            const matchedRows = await matchResponse.json().catch(() => null);
+            if (!matchResponse.ok || !Array.isArray(matchedRows)) {
+                throw new Error(matchedRows?.message || "Unable to match baseline rows to students.");
+            }
+
+            const saveResponse = await fetch(`${backendBaseUrl}/baseline/save?subjectId=${encodeURIComponent(currentSubjectId)}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(matchedRows)
+            });
+            const saveData = await saveResponse.json().catch(() => null);
+            if (!saveResponse.ok) {
+                throw new Error(saveData?.message || "Unable to save baseline results.");
+            }
+
+            const semester = Number(localStorage.getItem("teacherSelectedSemester") || "1");
+            const planResponse = await fetch(`${backendBaseUrl}/plans/generate`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    subjectId: currentSubjectId,
+                    semester
+                })
+            });
+            const planData = await planResponse.json().catch(() => null);
+            if (!planResponse.ok || !planData?.planId) {
+                throw new Error(planData?.message || "Unable to generate plan.");
+            }
+
+            generatedPlan = planData;
+            sessionStorage.setItem(getPlanStorageKey(currentSubjectId), JSON.stringify(planData));
+            sessionStorage.setItem("bridgeGeneratedPlan", JSON.stringify(planData));
+            selectedBaselineFile = null;
+            renderNoPlanFile(null);
+            initializePlanBoard();
+        } catch (error) {
+            alert(error.message || "Unable to generate the plan.");
+        } finally {
+            generateMissingPlanButton.disabled = false;
+            generateMissingPlanButton.textContent = `Generate ${subjectLabel(currentSubjectId)} plan`;
+        }
+    }
+
+    generateMissingPlanButton?.addEventListener("click", () => {
+        void generateMissingPlanForSubject();
+    });
 
     detailsEditButton.addEventListener("click", () => openEditPanel());
     durationIncreaseButton.addEventListener("click", () => updateDuration(1));
@@ -1346,5 +1824,41 @@
     activityPanelBackdrop.addEventListener("click", closeActivityPanels);
     document.querySelectorAll(".js-close-panels").forEach((button) => {
         button.addEventListener("click", closeActivityPanels);
+    });
+    weekFilterMenu.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-week]");
+        if (!button || !generatedPlan?.sessions) {
+            return;
+        }
+
+        const selectedWeek = Number(button.dataset.week);
+        renderWeekFilter(Math.max(1, Number(generatedPlan.totalWeeks ?? 0)), selectedWeek);
+        renderBoard(generatedPlan.sessions, selectedWeek, Math.max(1, Number(generatedPlan.totalWeeks ?? 0)));
+    });
+    weekPager.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-week]");
+        if (!button || button.disabled || !generatedPlan?.sessions) return;
+
+        const selectedWeek = Number(button.dataset.week);
+        renderWeekFilter(Math.max(1, Number(generatedPlan.totalWeeks ?? 0)), selectedWeek);
+        renderBoard(generatedPlan.sessions, selectedWeek, Math.max(1, Number(generatedPlan.totalWeeks ?? 0)));
+    });
+    [postponedArchiveList, cancelledArchiveList].forEach((container) => {
+        container?.addEventListener("click", (event) => {
+            const button = event.target.closest(".js-restore-archived-item");
+            if (!button) {
+                return;
+            }
+
+            void restoreArchivedItem(button.dataset.planItemId, button.dataset.sessionId);
+        });
+    });
+    subjectTabs?.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-subject-id]");
+        if (!button) {
+            return;
+        }
+
+        void loadPlanForSubject(button.dataset.subjectId);
     });
 </script>
