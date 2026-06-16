@@ -10,11 +10,10 @@ import { Plan } from 'src/domain/plan';
 import { Session } from 'src/domain/session';
 import { SubjectOffering } from 'src/domain/subjectOffering';
 import { PlanLog, PlanLogActionType } from 'src/domain/planLog';
+import { SqlitePlanLogsRepo } from 'src/database/sqlite-plan-log.repo';
 import { InMemoryCurriculumItemsRepo } from 'src/infrastructure/in-memory/in-memory-curriculum-item.repo';
-import { InMemoryPlansRepo } from 'src/infrastructure/in-memory/in-memory-plan.repo';
-import { InMemoryPlanLogsRepo } from 'src/infrastructure/in-memory/in-memory-planLog.repo';
-import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
 import type { WeekDay, WeeklySlotDTO } from './DTO/save-weekly-slots.dto';
+import { MAX_PLAN_ITEM_ESTIMATED_MINUTES } from './DTO/update-plan-item-time.dto';
 import { PlanInputService } from './plan-input.service';
 import { TeacherTodoItem } from './types/teacher-todo-item';
 import { Priority } from 'src/statistics/statistics.service';
@@ -25,8 +24,10 @@ import {
   PlanItemStatus,
 } from 'src/domain/plan-item';
 import { randomUUID } from 'crypto';
-import { InMemoryPlanItemsRepo } from 'src/infrastructure/in-memory/in-memory-plan-item.repo';
-import { InMemorySessionsRepo } from 'src/infrastructure/in-memory/in-memory-session.repo';
+import { SqlitePlansRepo } from 'src/database/sqlite-plan.repo';
+import { SqlitePlanItemsRepo } from 'src/database/sqlite-plan-item.repo';
+import { SqliteSessionsRepo } from 'src/database/sqlite-session.repo';
+import { SqliteSubjectOfferingsRepo } from 'src/database/sqlite-subject-offering.repo';
 
 const priorityToPoints: Record<Priority, number> = {
   [Priority.HIGH]: 10,
@@ -132,12 +133,12 @@ export class PlansService {
   constructor(
     private readonly statService: StatisticsService,
     private readonly curriculumItemsRepo: InMemoryCurriculumItemsRepo,
-    private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
-    private readonly plansRepo: InMemoryPlansRepo,
-    private readonly planLogsRepo: InMemoryPlanLogsRepo,
+    private readonly subjectOfferingsRepo: SqliteSubjectOfferingsRepo,
+    private readonly plansRepo: SqlitePlansRepo,
+    private readonly planLogsRepo: SqlitePlanLogsRepo,
     private readonly planInputService: PlanInputService,
-    private readonly planItemRepo: InMemoryPlanItemsRepo,
-    private readonly sessionRepo: InMemorySessionsRepo,
+    private readonly planItemRepo: SqlitePlanItemsRepo,
+    private readonly sessionRepo: SqliteSessionsRepo,
   ) {}
 
   async generatePlan(
@@ -147,7 +148,7 @@ export class PlansService {
   ): Promise<Plan> {
     const planId = `plan_${teacherId}_${subjectId}_${semester}_${Date.now()}`;
 
-    const savedWeeklySlots = this.planInputService.getWeeklySlots(
+    const savedWeeklySlots = await this.planInputService.getWeeklySlots(
       teacherId,
       subjectId,
     );
@@ -167,6 +168,12 @@ export class PlansService {
       subject: subjectId,
       semester,
     });
+
+    if (requiredItems.length === 0) {
+      throw new BadRequestException(
+        'No curriculum items found for this teacher, subject, and semester.',
+      );
+    }
 
     const orderedItems = this.sortCurriculumItems(requiredItems);
     const timedItems = await Promise.all(
@@ -227,6 +234,12 @@ export class PlansService {
     estimatedMinutes: number,
     sessionId: string,
   ): Promise<UpdatePlanItemTimeResponse> {
+    if (estimatedMinutes > MAX_PLAN_ITEM_ESTIMATED_MINUTES) {
+      throw new BadRequestException(
+        `Estimated time cannot exceed ${MAX_PLAN_ITEM_ESTIMATED_MINUTES} minutes per activity.`,
+      );
+    }
+
     const planItem = await this.planItemRepo.findById(planItemId);
     if (!planItem) throw new NotFoundException();
     if (planItem.planId !== planId) {
@@ -862,7 +875,7 @@ export class PlansService {
       ],
       [PlanItemStatus.POSTPONED]: [PlanItemStatus.PLANNED],
       [PlanItemStatus.COMPLETED]: [],
-      [PlanItemStatus.CANCELLED]: [],
+      [PlanItemStatus.CANCELLED]: [PlanItemStatus.PLANNED],
     };
 
     return allowedTransitions[currentStatus].includes(newStatus);
@@ -1051,16 +1064,24 @@ export class PlansService {
     const expectedCompletedMinutes =
       this.calculateExpectedCompletedMinutes(plan);
     const actualCompletedMinutes = this.calculateActualCompletedMinutes(plan);
-    const now = new Date().getTime();
     const classSpeedPercentage =
       expectedCompletedMinutes === 0
         ? 100
         : Math.round((actualCompletedMinutes / expectedCompletedMinutes) * 100);
-    const overloadedSessions = plan.sessions.filter(
-      (session) =>
-        session.usedDuration > session.maxDuration &&
-        new Date(session.sessionDate).getTime() > now,
-    ).length;
+    const overloadedSessions = plan.sessions.filter((session) => {
+      const normalCapacity = this.getSessionAvailableMinutes(
+        session,
+        'NORMAL_ONLY',
+      );
+      const hasPendingItems = session.items.some(
+        (item) => item.status === PlanItemStatus.PLANNED,
+      );
+
+      return (
+        session.usedDuration > normalCapacity &&
+        hasPendingItems
+      );
+    }).length;
     const reorderReasons: PlanReorderReason[] = [];
 
     if (classSpeedPercentage < 85) {

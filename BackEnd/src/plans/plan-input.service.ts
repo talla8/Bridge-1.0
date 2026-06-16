@@ -1,27 +1,23 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { SqliteGradesRepo } from 'src/database/sqlite-grade.repo';
+import { SqliteSubjectOfferingsRepo } from 'src/database/sqlite-subject-offering.repo';
+import { SqliteWeeklySlotsRepo } from 'src/database/sqlite-weekly-slots.repo';
 import { SubjectId, UserId } from 'src/domain/ids';
-import { InMemoryGradesRepo } from 'src/infrastructure/in-memory/in-memory-grade.repo';
-import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
 import {
   SaveWeeklySlotsDTO,
   WeekDay,
   WeeklySlotDTO,
 } from './DTO/save-weekly-slots.dto';
-
-export type SavedWeeklySlots = {
-  teacherId: UserId;
-  subjectId: SubjectId;
-  slots: WeeklySlotDTO[];
-};
+import { SavedWeeklySlots } from './types/saved-weekly-slots';
 
 @Injectable()
 export class PlanInputService {
   constructor(
-    private readonly gradesRepo: InMemoryGradesRepo,
-    private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
+    private readonly gradesRepo: SqliteGradesRepo,
+    private readonly subjectOfferingsRepo: SqliteSubjectOfferingsRepo,
+    private readonly weeklySlotsRepo: SqliteWeeklySlotsRepo,
   ) {}
 
-  private readonly weeklySlotsStore: SavedWeeklySlots[] = [];
   private readonly allowedDays: WeekDay[] = [
     'Sunday',
     'Monday',
@@ -30,7 +26,19 @@ export class PlanInputService {
     'Thursday',
   ];
 
-  saveWeeklySlots(
+  private getMinimumWeeklySlots(subjectId: SubjectId): number {
+    if (String(subjectId) === '2') {
+      return 7;
+    }
+
+    if (String(subjectId) === '1') {
+      return 5;
+    }
+
+    return 1;
+  }
+
+  async saveWeeklySlots(
     teacherId: UserId,
     saveWeeklySlotsDto: SaveWeeklySlotsDTO,
   ): Promise<SavedWeeklySlots> {
@@ -40,6 +48,15 @@ export class PlanInputService {
 
     if (!saveWeeklySlotsDto.slots.length) {
       throw new BadRequestException('At least one weekly slot is required');
+    }
+
+    const minimumWeeklySlots = this.getMinimumWeeklySlots(
+      saveWeeklySlotsDto.subjectId,
+    );
+    if (saveWeeklySlotsDto.slots.length < minimumWeeklySlots) {
+      throw new BadRequestException(
+        `Minimum weekly slots for this subject is ${minimumWeeklySlots}.`,
+      );
     }
 
     this.ensureValidSlots(saveWeeklySlotsDto.slots);
@@ -52,25 +69,13 @@ export class PlanInputService {
   ): Promise<SavedWeeklySlots> {
     await this.ensureSubjectOffering(teacherId, saveWeeklySlotsDto.subjectId);
 
-    const existingIndex = this.weeklySlotsStore.findIndex(
-      (entry) =>
-        entry.teacherId === teacherId &&
-        entry.subjectId === saveWeeklySlotsDto.subjectId,
-    );
-
     const savedEntry: SavedWeeklySlots = {
       teacherId,
       subjectId: saveWeeklySlotsDto.subjectId,
       slots: saveWeeklySlotsDto.slots,
     };
 
-    if (existingIndex === -1) {
-      this.weeklySlotsStore.push(savedEntry);
-    } else {
-      this.weeklySlotsStore[existingIndex] = savedEntry;
-    }
-
-    return savedEntry;
+    return this.weeklySlotsRepo.upsert(savedEntry);
   }
 
   private async ensureSubjectOffering(
@@ -111,16 +116,11 @@ export class PlanInputService {
     return `${startYear}-${startYear + 1}`;
   }
 
-  getWeeklySlots(
+  async getWeeklySlots(
     teacherId: UserId,
     subjectId: SubjectId,
-  ): SavedWeeklySlots | null {
-    return (
-      this.weeklySlotsStore.find(
-        (entry) =>
-          entry.teacherId === teacherId && entry.subjectId === subjectId,
-      ) ?? null
-    );
+  ): Promise<SavedWeeklySlots | null> {
+    return this.weeklySlotsRepo.findByTeacherAndSubject(teacherId, subjectId);
   }
 
   private ensureValidSlots(slots: WeeklySlotDTO[]): void {

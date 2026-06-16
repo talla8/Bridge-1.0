@@ -14,7 +14,7 @@ import { PlanInputService } from './plan-input.service';
 import { PlansService } from './plans.service';
 import { GeneratePlanDTO } from './DTO/generate-plan.dto';
 import { SaveWeeklySlotsDTO } from './DTO/save-weekly-slots.dto';
-import type { SavedWeeklySlots } from './plan-input.service';
+import type { SavedWeeklySlots } from './types/saved-weekly-slots';
 import { UpdatePlanItemStatusDTO } from './DTO/update-plan-item-status.dto';
 import { UpdatePlanItemTimeDTO } from './DTO/update-plan-item-time.dto';
 
@@ -40,7 +40,7 @@ export class PlansController {
   getWeeklySlots(
     @Req() req,
     @Param('subjectId') subjectId: SubjectId,
-  ): SavedWeeklySlots | null {
+  ): Promise<SavedWeeklySlots | null> {
     return this.planInputService.getWeeklySlots(req.user.sub, subjectId);
   }
 

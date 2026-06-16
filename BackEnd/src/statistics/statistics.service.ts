@@ -7,10 +7,14 @@ import {
 } from 'src/domain/assignment';
 import { BaselineProcessingServiceService } from 'src/baseline/baseline-processing-service.service';
 import { AssesmentResult } from 'src/domain/assesmentResult';
-import { SkillId, StudentId, UserId } from 'src/domain/ids';
+import { SkillId, StudentId, SubjectId, UserId } from 'src/domain/ids';
+import {
+  DEFAULT_SUBJECT_ID,
+  getSubjectSkillDefinitions,
+} from 'src/domain/subject-skill-config';
 import { Student } from 'src/domain/student';
-import { InMemoryAssignmentsRepo } from 'src/infrastructure/in-memory/in-memory-assignment.repo';
-import { InMemoryQuizzesRepo } from 'src/infrastructure/in-memory/in-memory-quiz.repo';
+import { SqliteAssignmentsRepo } from 'src/database/sqlite-assignment.repo';
+import { SqliteQuizzesRepo } from 'src/database/sqlite-quiz.repo';
 import { InMemorySkillsRepo } from 'src/infrastructure/in-memory/in-memory-skill.repo';
 import { StudentsService } from 'src/students/students.service';
 
@@ -71,12 +75,15 @@ export class StatisticsService {
     private readonly baselineProcessingService: BaselineProcessingServiceService,
     private readonly studentsService: StudentsService,
     private readonly skillsRepo: InMemorySkillsRepo,
-    private readonly assignmentsRepo: InMemoryAssignmentsRepo,
-    private readonly quizzesRepo: InMemoryQuizzesRepo,
+    private readonly assignmentsRepo: SqliteAssignmentsRepo,
+    private readonly quizzesRepo: SqliteQuizzesRepo,
   ) {}
 
-  async classAverage(teacherId?: UserId): Promise<number> {
-    const results = await this.getResultsForTeacher(teacherId);
+  async classAverage(
+    teacherId?: UserId,
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
+  ): Promise<number> {
+    const results = await this.getResultsForTeacher(teacherId, subjectId);
     // console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     // console.log(results);
     if (results.length === 0) {
@@ -89,7 +96,9 @@ export class StatisticsService {
     for (const studentId of studentIds) {
       const studentResults =
         await this.baselineProcessingService.findByStudentId(studentId);
-      studentAverages.push(this.calculateSkillsAvgPerStudent(studentResults));
+      studentAverages.push(
+        this.calculateSkillsAvgPerStudent(studentResults, subjectId),
+      );
     }
 
     const totalAverage = studentAverages.reduce(
@@ -99,28 +108,38 @@ export class StatisticsService {
 
     return totalAverage / studentAverages.length;
   }
-// comment : i need to combine those we dont need 2 methods
-  async countSkillsAvgPerStudent(studentId: string): Promise<number> {
+  async countSkillsAvgPerStudent(
+    studentId: string,
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
+  ): Promise<number> {
     const studentResults =
       await this.baselineProcessingService.findByStudentId(studentId);
     //   console.log(studentId);
     //   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
     // console.log(studentResults);
 
-    return this.calculateSkillsAvgPerStudent(studentResults);
+    return this.calculateSkillsAvgPerStudent(studentResults, subjectId);
   }
 
-  calculateSkillsAvgPerStudent(studentResults?: AssesmentResult[]): number {
-    if (!studentResults || studentResults.length === 0) {
+  calculateSkillsAvgPerStudent(
+    studentResults?: AssesmentResult[],
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
+  ): number {
+    const relevantResults = this.filterResultsBySubject(
+      studentResults ?? [],
+      subjectId,
+    );
+
+    if (relevantResults.length === 0) {
       return 0;
     }
 
-    const sum = studentResults.reduce(
+    const sum = relevantResults.reduce(
       (sum, current) => sum + this.scoreToPercent(current),
       0,
     );
 
-    return sum / studentResults.length;
+    return sum / relevantResults.length;
   }
 
   async needHelpStudents(): Promise<Student[]> {
@@ -165,13 +184,18 @@ export class StatisticsService {
 
   async getWeakStudentsForTeacher(
     teacherId: UserId,
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
   ): Promise<WeakStudentSummary[]> {
     const students = await this.studentsService.getStudents(teacherId);
     const studentIds = new Set(students.map((student) => student.studentId));
     const results = (
       await this.baselineProcessingService.getAllResults()
     ).filter((result) => studentIds.has(result.studentId));
-    const classSkillAverages = this.calculateSkillAveragesFromResults(results);
+    const filteredResults = this.filterResultsBySubject(results, subjectId);
+    const classSkillAverages = this.calculateSkillAveragesFromResults(
+      filteredResults,
+      subjectId,
+    );
     const skillAverageMap = new Map(
       classSkillAverages.map((item) => [item.skillId, item.avg]),
     );
@@ -181,10 +205,10 @@ export class StatisticsService {
     );
 
     return students.flatMap((student) => {
-      const studentResults = results.filter(
+      const studentResults = filteredResults.filter(
         (result) => result.studentId === student.studentId,
       );
-      const initialScores = this.getRequiredSkillIds().flatMap((skillId) => {
+      const initialScores = this.getRequiredSkillIds(subjectId).flatMap((skillId) => {
         const result = studentResults.find((item) => item.skillId === skillId);
         if (!result) return [];
 
@@ -194,7 +218,7 @@ export class StatisticsService {
           score: this.scoreToPercent(result),
         };
       });
-      const weakSkills = this.getRequiredSkillIds().flatMap((skillId) => {
+      const weakSkills = this.getRequiredSkillIds(subjectId).flatMap((skillId) => {
         const result = studentResults.find((item) => item.skillId === skillId);
         if (!result) return [];
 
@@ -211,7 +235,7 @@ export class StatisticsService {
         };
       });
 
-      if (weakSkills.length !== this.getRequiredSkillIds().length) {
+      if (weakSkills.length !== this.getRequiredSkillIds(subjectId).length) {
         return [];
       }
 
@@ -219,23 +243,32 @@ export class StatisticsService {
         studentId: student.studentId,
         fullArabicName: student.fullArabicName,
         fullEnglishName: student.fullEnglishName,
-        overallAverage: this.calculateSkillsAvgPerStudent(studentResults),
+        overallAverage: this.calculateSkillsAvgPerStudent(
+          studentResults,
+          subjectId,
+        ),
         weakSkills,
         initialScores,
       };
     });
   }
 
-  async calculateAvgForEachSkill(teacherId?: UserId): Promise<any> {
-    const results = await this.getResultsForTeacher(teacherId);
-    return this.calculateSkillAveragesFromResults(results);
+  async calculateAvgForEachSkill(
+    teacherId?: UserId,
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
+  ): Promise<any> {
+    const results = await this.getResultsForTeacher(teacherId, subjectId);
+    return this.calculateSkillAveragesFromResults(results, subjectId);
   }
 
   private calculateSkillAveragesFromResults(
     results: AssesmentResult[],
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
   ): { avg: number; skillId: SkillId }[] {
-    return this.getRequiredSkillIds().map((skillId) => {
-      const skillResults = results.filter(
+    const filteredResults = this.filterResultsBySubject(results, subjectId);
+
+    return this.getRequiredSkillIds(subjectId).map((skillId) => {
+      const skillResults = filteredResults.filter(
         (result) => result.skillId === skillId,
       );
       const avg =
@@ -260,20 +293,19 @@ export class StatisticsService {
   }
 
   private getMaxScore(skillId: string): number {
-    switch (skillId) {
-      case 'skill_vocal':
-        return 6;
-      case 'skill_sounds_of_letters':
-        return 8;
-      case 'skill_writing':
-        return 4;
-      default:
-        return 100;
-    }
+    const definition = [
+      ...getSubjectSkillDefinitions('1'),
+      ...getSubjectSkillDefinitions('2'),
+    ].find((item) => item.skillId === skillId);
+    return definition?.maxScore ?? 100;
   }
 
-  private getRequiredSkillIds(): SkillId[] {
-    return ['skill_vocal', 'skill_sounds_of_letters', 'skill_writing'];
+  private getRequiredSkillIds(
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
+  ): SkillId[] {
+    return getSubjectSkillDefinitions(subjectId).map(
+      (definition) => definition.skillId,
+    );
   }
 
   private getSkillName(
@@ -283,8 +315,14 @@ export class StatisticsService {
     return skillNameMap.get(skillId) ?? skillId;
   }
 
-  async sortWeakestSkills(teacherId?: UserId): Promise<SkillPriorityRow[]> {
-    const skillsAndAverages = await this.calculateAvgForEachSkill(teacherId);
+  async sortWeakestSkills(
+    teacherId?: UserId,
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
+  ): Promise<SkillPriorityRow[]> {
+    const skillsAndAverages = await this.calculateAvgForEachSkill(
+      teacherId,
+      subjectId,
+    );
 
     return skillsAndAverages
       .map(
@@ -299,11 +337,12 @@ export class StatisticsService {
 
   async getClassActionRecommendation(
     teacherId: UserId,
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
   ): Promise<ClassActionRecommendation> {
     const [students, weakStudents, skillRows] = await Promise.all([
       this.studentsService.getStudents(teacherId),
-      this.getWeakStudentsForTeacher(teacherId),
-      this.sortWeakestSkills(teacherId),
+      this.getWeakStudentsForTeacher(teacherId, subjectId),
+      this.sortWeakestSkills(teacherId, subjectId),
     ]);
 
     const totalStudents = students.length;
@@ -497,20 +536,28 @@ export class StatisticsService {
 
   private async getResultsForTeacher(
     teacherId?: UserId,
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
   ): Promise<AssesmentResult[]> {
     const results = await this.baselineProcessingService.getAllResults();
+    const filteredResults = this.filterResultsBySubject(results, subjectId);
 
     if (!teacherId) {
-      return results;
+      return filteredResults;
     }
 
     const students = await this.studentsService.getStudents(teacherId);
     const studentIds = new Set(students.map((student) => student.studentId));
-    return results.filter((result) => studentIds.has(result.studentId));
+    return filteredResults.filter((result) => studentIds.has(result.studentId));
   }
 
   private getSkillLabel(skillId: SkillId): string {
     switch (skillId) {
+      case 'skill_counting':
+        return 'Counting Skills';
+      case 'skill_number_manipulation':
+        return 'Number Manipulation';
+      case 'skill_problem_solving':
+        return 'Problem Solving';
       case 'skill_vocal':
         return 'Vocal Awareness';
       case 'skill_sounds_of_letters':
@@ -532,5 +579,13 @@ export class StatisticsService {
     }
 
     return Priority.MID;
+  }
+
+  private filterResultsBySubject(
+    results: AssesmentResult[],
+    subjectId: SubjectId = DEFAULT_SUBJECT_ID,
+  ): AssesmentResult[] {
+    const requiredSkillIds = new Set(this.getRequiredSkillIds(subjectId));
+    return results.filter((result) => requiredSkillIds.has(result.skillId));
   }
 }

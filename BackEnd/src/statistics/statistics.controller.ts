@@ -1,7 +1,7 @@
-import { Controller, Get, Param, Req } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req } from '@nestjs/common';
 import { StatisticsService } from './statistics.service';
 import { AssesmentResult } from 'src/domain/assesmentResult';
-import type { StudentId } from 'src/domain/ids';
+import type { StudentId, SubjectId } from 'src/domain/ids';
 
 @Controller('statistics')
 export class StatisticsController {
@@ -9,12 +9,15 @@ export class StatisticsController {
 
   assesmentResulttest: AssesmentResult[] = [];
   @Get('class')
-  getClassavg(@Req() req) {
-    return this.statisticsService.classAverage(req.user.sub);
+  getClassavg(@Req() req, @Query('subjectId') subjectId?: SubjectId) {
+    return this.statisticsService.classAverage(req.user.sub, subjectId);
   }
   @Get('avgPerSTD/:studentId')
-  getAvgPerSTD(@Param('studentId') studentId: StudentId) {
-    return this.statisticsService.countSkillsAvgPerStudent(studentId);
+  getAvgPerSTD(
+    @Param('studentId') studentId: StudentId,
+    @Query('subjectId') subjectId?: SubjectId,
+  ) {
+    return this.statisticsService.countSkillsAvgPerStudent(studentId, subjectId);
   }
 
   @Get('needHelp')
@@ -23,22 +26,28 @@ export class StatisticsController {
   }
 
   @Get('weak-students')
-  getWeakStudents(@Req() req) {
-    return this.statisticsService.getWeakStudentsForTeacher(req.user.sub);
+  getWeakStudents(@Req() req, @Query('subjectId') subjectId?: SubjectId) {
+    return this.statisticsService.getWeakStudentsForTeacher(
+      req.user.sub,
+      subjectId,
+    );
   }
 
   @Get('avgskill')
-  calculateAvgForEachSkill() {
-    return this.statisticsService.calculateAvgForEachSkill();
+  calculateAvgForEachSkill(@Query('subjectId') subjectId?: SubjectId) {
+    return this.statisticsService.calculateAvgForEachSkill(undefined, subjectId);
   }
 
   @Get('class/skills')
-  getClassSkillAverages(@Req() req) {
-    return this.statisticsService.sortWeakestSkills(req.user.sub);
+  getClassSkillAverages(@Req() req, @Query('subjectId') subjectId?: SubjectId) {
+    return this.statisticsService.sortWeakestSkills(req.user.sub, subjectId);
   }
 
   @Get('class/recommendation')
-  getClassRecommendation(@Req() req) {
-    return this.statisticsService.getClassActionRecommendation(req.user.sub);
+  getClassRecommendation(@Req() req, @Query('subjectId') subjectId?: SubjectId) {
+    return this.statisticsService.getClassActionRecommendation(
+      req.user.sub,
+      subjectId,
+    );
   }
 }

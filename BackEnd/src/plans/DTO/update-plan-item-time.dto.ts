@@ -1,4 +1,6 @@
-import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, Max, Min } from 'class-validator';
+
+export const MAX_PLAN_ITEM_ESTIMATED_MINUTES = 25;
 
 export class UpdatePlanItemTimeDTO {
   @IsString()
@@ -11,5 +13,6 @@ export class UpdatePlanItemTimeDTO {
 
   @IsInt()
   @Min(1)
+  @Max(MAX_PLAN_ITEM_ESTIMATED_MINUTES)
   estimatedMinutes: number;
 }
