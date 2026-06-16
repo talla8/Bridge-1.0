@@ -6,17 +6,31 @@ import { UserRepository } from 'src/repositories/user.repository';
 export class InMemoryUsersRepo implements UserRepository {
   private users: User[] = [];
 
+  private normalizeEmail(email: string): string {
+    return String(email ?? '').trim();
+  }
+
   async create(user: User): Promise<User> {
     this.users.push(user);
     return user;
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.users.find((user: User): boolean => user.email === email) ?? null;
+    const normalizedEmail = this.normalizeEmail(email);
+    return (
+      this.users.find(
+        (user: User): boolean =>
+          this.normalizeEmail(user.email) === normalizedEmail,
+      ) ?? null
+    );
   }
 
   async existsByEmail(email: string): Promise<boolean> {
-    return this.users.some((user: User): boolean => user.email === email);
+    const normalizedEmail = this.normalizeEmail(email);
+    return this.users.some(
+      (user: User): boolean =>
+        this.normalizeEmail(user.email) === normalizedEmail,
+    );
   }
 
   async findAll(filters?: {

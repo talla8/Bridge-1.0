@@ -10,6 +10,7 @@ import { PlansModule } from './plans/plans.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { ConfigModule } from '@nestjs/config';
 import { AssignmentsModule } from './assignments/assignments.module';
+import { DatabaseModule } from './database/database.module';
 import { InMemoryReposModule } from './infrastructure/in-memory/in-memory-repos.module';
 import { StudentUploadService } from './students/student-upload.service';
 import { SupportProgramsModule } from './support-programs/support-programs.module';
@@ -23,6 +24,7 @@ import { InstitutionsModule } from './institutions/institutions.module';
       isGlobal: true,
       envFilePath: ['.env', 'BackEnd/.env'],
     }),
+    DatabaseModule,
     AuthModule,
     UsersModule,
     StudentsModule,

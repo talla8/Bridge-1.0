@@ -6,6 +6,8 @@ import { InMemoryAttendancesRepo } from './in-memory-attendance.repo';
 import { InMemoryCurriculumItemsRepo } from './in-memory-curriculum-item.repo';
 import { InMemoryExerciseResultsRepo } from './in-memory-exercise-result.repo';
 import { InMemoryGradesRepo } from './in-memory-grade.repo';
+import { InMemoryInstitutionNotificationsRepo } from './in-memory-institution-notification.repo';
+import { InMemoryInstitutionTasksRepo } from './in-memory-institution-task.repo';
 import { InMemoryParentsRepo } from './in-memory-parent.repo';
 import { InMemoryPlanItemsRepo } from './in-memory-plan-item.repo';
 import { InMemoryPlansRepo } from './in-memory-plan.repo';
@@ -34,6 +36,8 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
     InMemoryCurriculumItemsRepo,
     InMemoryExerciseResultsRepo,
     InMemoryGradesRepo,
+    InMemoryInstitutionNotificationsRepo,
+    InMemoryInstitutionTasksRepo,
     InMemoryParentsRepo,
     InMemoryPlanItemsRepo,
     InMemoryPlansRepo,
@@ -61,6 +65,8 @@ import { InMemoryVerificationTokensRepo } from './in-memory-verificationToken.re
     InMemoryCurriculumItemsRepo,
     InMemoryExerciseResultsRepo,
     InMemoryGradesRepo,
+    InMemoryInstitutionNotificationsRepo,
+    InMemoryInstitutionTasksRepo,
     InMemoryParentsRepo,
     InMemoryPlanItemsRepo,
     InMemoryPlansRepo,
