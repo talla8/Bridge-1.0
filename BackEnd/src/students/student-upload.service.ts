@@ -4,7 +4,7 @@ import { StudentsService } from './students.service';
 import { CreateStudentDTO } from './DTO/create.dto';
 import { Student } from 'src/domain/student';
 import { UserId } from 'src/domain/ids';
-import { InMemoryGradesRepo } from 'src/infrastructure/in-memory/in-memory-grade.repo';
+import { SqliteGradesRepo } from 'src/database/sqlite-grade.repo';
 
 export type NormalizedStudentInfoRow = {
   fullArabicName: string | null;
@@ -21,7 +21,7 @@ const DATA_START_ROW_INDEX = 7;
 export class StudentUploadService {
   constructor(
     private readonly studentService: StudentsService,
-    private readonly gradesRepo: InMemoryGradesRepo,
+    private readonly gradesRepo: SqliteGradesRepo,
   ) {}
 
   async excelParsing( //comment: i should remove this its not used

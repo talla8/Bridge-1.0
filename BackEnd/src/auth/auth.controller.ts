@@ -73,6 +73,11 @@ export class AuthController {
     return this.authService.verifyEmail(verifyEmailDto);
   }
 
+  @Post('resend-verification')
+  resendVerification(@Request() req) {
+    return this.authService.sendEmailVerification(req.user.sub);
+  }
+
   @Get('profile')
   getProfile(@Request() req) {
     return this.authService.getProfile(req.user.sub);
@@ -88,9 +93,11 @@ export class AuthController {
     return this.authService.changePassword(req.user.sub, dto);
   }
 
-  @Get('sendEmail/:userId')
-  sendEmail(@Param('userId') userId: UserId) {
-    console.log(userId);
-    return this.authService.sendEmailVerification(userId);
-  } //comment: why not getting the userid fromthe request?
+  // @Get('sendEmail/:userId')
+  // sendEmail(@Param('userId') userId: UserId) {
+  //   console.log(userId);
+  //   return this.authService.sendEmailVerification(userId);
+  // } //comment: why not getting the userid fromthe request?
+  // //answer: this method is not even used
+  // //test the whole functionality with out this methos
 }

@@ -1,77 +1,73 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { SqliteAssessmentResultsRepo } from 'src/database/sqlite-assessment-result.repo';
 import { AssesmentResult } from 'src/domain/assesmentResult';
-import { SkillId, UploadId } from 'src/domain/ids';
-import { InMemoryAssesmentResultsRepo } from 'src/infrastructure/in-memory/in-memory-assesmentResult.repo';
+import { SubjectId, UploadId, UserId } from 'src/domain/ids';
+import { getSubjectSkillDefinitions } from 'src/domain/subject-skill-config';
+import { Status } from 'src/domain/upload';
 import { MatchedBaselineRow } from './student-matching-service.service';
+import { UploadService } from './upload.service';
 
 @Injectable()
 export class BaselineProcessingServiceService {
-   uploadId = '1';
-  private readonly scoreFieldToSkillId: Record<
-    'vocal' | 'soundsOfLetters' | 'writing',
-    SkillId
-  > = {
-    vocal: 'skill_vocal',
-    soundsOfLetters: 'skill_sounds_of_letters',
-    writing: 'skill_writing',
-  };
-
   constructor(
-    private readonly assessmentResultsRepo: InMemoryAssesmentResultsRepo,
+    private readonly assessmentResultsRepo: SqliteAssessmentResultsRepo,
+    private readonly uploadService: UploadService,
   ) {}
 
   buildAssessmentResults(
     matchedRows: MatchedBaselineRow[],
-    // uploadId?: UploadId,
+    uploadId: UploadId,
+    subjectId?: SubjectId,
   ): AssesmentResult[] {
+    const skillDefinitions = getSubjectSkillDefinitions(subjectId);
+
     return matchedRows.flatMap((row, rowIndex) => {
-      return [
+      return skillDefinitions.map((definition) =>
         this.createAssessmentResult(
-          this.uploadId,
+          uploadId,
           row.studentId,
-          this.scoreFieldToSkillId.vocal,
-          row.vocal,
+          definition.skillId,
+          row[definition.field],
           rowIndex,
-          'vocal',
+          definition.maxScore,
         ),
-        this.createAssessmentResult(
-          this.uploadId,
-          row.studentId,
-          this.scoreFieldToSkillId.soundsOfLetters,
-          row.soundsOfLetters,
-          rowIndex,
-          'soundsOfLetters',
-        ),
-        this.createAssessmentResult(
-          this.uploadId,
-          row.studentId,
-          this.scoreFieldToSkillId.writing,
-          row.writing,
-          rowIndex,
-          'writing',
-        ),
-      ];
+      );
     });
   }
 
   async saveAssessmentResults(
+    teacherId: UserId,
     matchedRows: MatchedBaselineRow[],
     uploadId?: UploadId,
+    subjectId?: SubjectId,
   ): Promise<AssesmentResult[]> {
-    // const assesmentResults = this.buildAssessmentResults(matchedRows, uploadId);
-    const assesmentResults = this.buildAssessmentResults(matchedRows);
-    console.log("##########################################");
-    console.log(assesmentResults);
-    return this.assessmentResultsRepo.createAssesmentResult(assesmentResults);
+    const resolvedUploadId = await this.resolveUploadId(
+      teacherId,
+      uploadId,
+      subjectId,
+    );
+    const assesmentResults = this.buildAssessmentResults(
+      matchedRows,
+      resolvedUploadId,
+      subjectId,
+    );
+    const savedResults =
+      await this.assessmentResultsRepo.createAssesmentResult(assesmentResults);
+    await this.uploadService.updateStatus(resolvedUploadId, Status.PROCESSED);
+    return savedResults;
   }
 
   private createAssessmentResult(
     uploadId: UploadId,
     studentId: AssesmentResult['studentId'],
-    skillId: SkillId,
+    skillId: AssesmentResult['skillId'],
     score: number | null,
     rowIndex: number,
-    scoreField: string,
+    maxScore: number,
   ): AssesmentResult {
     const safeScore = score ?? 0;
 
@@ -81,12 +77,11 @@ export class BaselineProcessingServiceService {
       studentId,
       skillId,
       totalScore: safeScore,
-      level: this.getLevelFromScore(safeScore, scoreField),
+      level: this.getLevelFromScore(safeScore, maxScore),
     };
   }
 
-  private getLevelFromScore(score: number, scoreField: string): string {
-    const maxScore = this.getMaxScore(scoreField);
+  private getLevelFromScore(score: number, maxScore: number): string {
     const percentage = maxScore === 0 ? 0 : (score / maxScore) * 100;
 
     if (percentage < 50) {
@@ -99,27 +94,52 @@ export class BaselineProcessingServiceService {
 
     return 'Advanced';
   }
-
-  private getMaxScore(scoreField: string): number {
-    switch (scoreField) {
-      case 'vocal':
-        return 6;
-      case 'soundsOfLetters':
-        return 8;
-      case 'writing':
-        return 4;
-      default:
-        return 100;
-    }
-  }
-
   async getAllResults(): Promise<AssesmentResult[]> {
     return this.assessmentResultsRepo.findAll();
   }
 
   async findByStudentId(id: string): Promise<AssesmentResult[]> {
-    console.log("from the baseline proccesing service id =  ");
-    console.log (id);
     return this.assessmentResultsRepo.findByStudentId(id);
+  }
+
+  private async resolveUploadId(
+    teacherId: UserId,
+    uploadId?: UploadId,
+    subjectId?: SubjectId,
+  ): Promise<UploadId> {
+    if (uploadId) {
+      const upload = await this.uploadService.findById(uploadId);
+      if (!upload) {
+        throw new NotFoundException(
+          `Upload ${String(uploadId)} was not found.`,
+        );
+      }
+
+      if (String(upload.teacherId) !== String(teacherId)) {
+        throw new BadRequestException(
+          'Upload does not belong to the current teacher.',
+        );
+      }
+
+      return upload.uploadId;
+    }
+
+    if (!subjectId) {
+      throw new BadRequestException(
+        'subjectId is required when uploadId is not provided.',
+      );
+    }
+
+    const latestUpload = await this.uploadService.findLatestForTeacherSubject(
+      teacherId,
+      subjectId,
+    );
+    if (!latestUpload) {
+      throw new NotFoundException(
+        'No upload was found for this teacher and subject.',
+      );
+    }
+
+    return latestUpload.uploadId;
   }
 }

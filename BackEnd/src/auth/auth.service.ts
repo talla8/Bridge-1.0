@@ -12,19 +12,19 @@ import { BaseSignUpDTO } from './DTO/base-sign-up.dto';
 import { randomUUID } from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { TeacherSignUpDTO } from './DTO/teacher-sign-up.dto';
-import { InMemoryGradesRepo } from 'src/infrastructure/in-memory/in-memory-grade.repo';
+import { SqliteGradesRepo } from 'src/database/sqlite-grade.repo';
 import { RoleId, User } from 'src/domain/user';
 import { ParentSignUpDTO } from './DTO/parent-sign-up.dto';
 import { UserId } from 'src/domain/ids';
 import { VerificationService } from './verification.service';
-import { InMemoryStudentsRepo } from 'src/infrastructure/in-memory/in-memory-student.repo';
 import { ForgotPasswordDTO } from './DTO/forgot-password.dto';
 import { ResetPasswordDTO } from './DTO/reset-password.dto';
 import { VerificationTokenType } from 'src/domain/verificationToken';
 import { VerifyEmailDTO } from './DTO/verify-email.dto';
 import { UpdateProfileDTO } from './DTO/update-profile.dto';
 import { ChangePasswordDTO } from './DTO/change-password.dto';
-import { InMemorySubjectOfferingsRepo } from 'src/infrastructure/in-memory/in-memory-subjectOffering.repo';
+import { SqlitePlansRepo } from 'src/database/sqlite-plan.repo';
+import { SqliteSubjectOfferingsRepo } from 'src/database/sqlite-subject-offering.repo';
 import { InMemorySubjectsRepo } from 'src/infrastructure/in-memory/in-memory-subject.repo';
 import { StudentsService } from 'src/students/students.service';
 import { InMemorySchoolsRepo } from 'src/infrastructure/in-memory/in-memory-school.repo';
@@ -39,17 +39,22 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly gradesRepo: InMemoryGradesRepo,
+    private readonly gradesRepo: SqliteGradesRepo,
     private readonly verificationService: VerificationService,
-    private readonly studentsRepo: InMemoryStudentsRepo,
-    private readonly subjectOfferingsRepo: InMemorySubjectOfferingsRepo,
+    private readonly subjectOfferingsRepo: SqliteSubjectOfferingsRepo,
     private readonly subjectsRepo: InMemorySubjectsRepo,
     private readonly studentsService: StudentsService,
     private readonly schoolsRepo: InMemorySchoolsRepo,
+    private readonly plansRepo: SqlitePlansRepo,
   ) {}
 
+  private normalizeEmail(email: string): string {
+    return String(email ?? '').trim();
+  }
+
   async signIn(signInDto: SignInDTO): Promise<{ access_token: string }> {
-    const user = await this.usersService.findbyEmail(signInDto.email); //we store the user in this variable
+    const normalizedEmail = this.normalizeEmail(signInDto.email);
+    const user = await this.usersService.findbyEmail(normalizedEmail); //we store the user in this variable
 
     if (!user) {
       throw new NotFoundException('User does not exist');
@@ -77,8 +82,9 @@ export class AuthService {
     baseSignUpDto: BaseSignUpDTO, //comment: maybe we can remove the role from the dto and just use the one in the argument
     role: RoleId,
   ): Promise<User> {
+    const normalizedEmail = this.normalizeEmail(baseSignUpDto.email);
     const existingUser = await this.usersService.findbyEmail(
-      baseSignUpDto.email,
+      normalizedEmail,
     );
     if (existingUser) {
       throw new ConflictException('Email already exists');
@@ -89,7 +95,7 @@ export class AuthService {
     const password = baseSignUpDto.password;
     const user = await this.usersService.create({
       ...baseSignUpDto,
-      email: baseSignUpDto.email, // comment: test if we can remove this
+      email: normalizedEmail, // comment: test if we can remove this
       roleId: role,
       passwordHash: await bcrypt.hash(password, saltOrRounds),
       userId,
@@ -246,7 +252,7 @@ export class AuthService {
     //students should be created first
     parentSignUpDto: ParentSignUpDTO,
   ): Promise<{ access_token: any }> {
-    const child = await this.studentsRepo.findByParentLinkCode(
+    const child = await this.studentsService.findByParentLinkCode(
       parentSignUpDto.parentStudentCode,
     );
     if (!child) {
@@ -266,7 +272,7 @@ export class AuthService {
       RoleId.PARENT,
     );
     await this.verificationService.sendEmail(user.userId, user.email);
-    await this.studentsRepo.update(child.studentId, {
+    await this.studentsService.updateStudent(child.studentId, {
       parentId: user.userId,
       parentRelation: parentSignUpDto.parentType,
     });
@@ -289,19 +295,24 @@ export class AuthService {
     }
 
     const grade = await this.gradesRepo.findByTeacherId(userId);
-    const [subjectOfferings, subjects] = await Promise.all([
-      this.subjectOfferingsRepo.findAll(),
+    const [subjects, plans] = await Promise.all([
       this.subjectsRepo.findAll(),
+      this.plansRepo.findAll(),
     ]);
-    const teacherOffering = subjectOfferings.find(
-      (offering) => String(offering.teacherId) === String(userId),
+    const teacherPlans = plans.filter(
+      (plan) => String(plan.teacherId) === String(userId),
     );
-    const subject = teacherOffering
-      ? (subjects.find(
-          (item) =>
-            String(item.subjectId) === String(teacherOffering.subjectId),
-        ) ?? null)
-      : null;
+    const plannedSubjectNames = Array.from(
+      new Set(
+        teacherPlans
+          .map((plan) =>
+            subjects.find(
+              (item) => String(item.subjectId) === String(plan.subjectId),
+            )?.subjectName,
+          )
+          .filter((name): name is string => Boolean(name)),
+      ),
+    );
     const students =
       user.roleId === RoleId.TEACHER
         ? await this.studentsService.getStudents(userId)
@@ -322,7 +333,7 @@ export class AuthService {
       grade: grade?.gradeName ?? null,
       section: grade?.gradeSection ?? null,
       school: grade?.schoolName ?? ownedSchool?.schoolName ?? null,
-      subject: subject?.subjectName ?? null,
+      subject: plannedSubjectNames.length ? plannedSubjectNames.join(', ') : null,
       studentCount: students.length,
       teacherJoinCode: ownedSchool?.teacherJoinCode ?? null,
       teacherSelfRegistrationEnabled:
@@ -386,15 +397,20 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User Not Found');
     }
+    if (user.isVerified) {
+      return { message: 'Your account is already verified.' };
+    }
     const email = user.email;
 
-    return this.verificationService.sendEmail(user.userId, email);
+    const message = await this.verificationService.sendEmail(user.userId, email);
+    return { message };
   }
 
   async forgotPassword(
     forgotPasswordDto: ForgotPasswordDTO,
   ): Promise<{ message: string }> {
-    const user = await this.usersService.findbyEmail(forgotPasswordDto.email);
+    const normalizedEmail = this.normalizeEmail(forgotPasswordDto.email);
+    const user = await this.usersService.findbyEmail(normalizedEmail);
 
     if (!user) {
       throw new NotFoundException('User does not exist');
