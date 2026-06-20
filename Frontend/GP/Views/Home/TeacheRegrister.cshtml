@@ -2,6 +2,66 @@
     ViewData["Title"] = "TeacheRegrister";
 }
 
+<style>
+    .auth-password-wrap {
+        position: relative;
+        display: block;
+        width: 100%;
+    }
+
+    .auth-password-wrap .form-control {
+        padding-right: 3rem;
+        width: 100%;
+    }
+
+    .auth-password-toggle {
+        position: absolute !important;
+        top: 50%;
+        right: 0.85rem;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #6b7280;
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        margin: 0;
+        z-index: 3;
+    }
+
+    .auth-password-toggle svg {
+        width: 1.1rem;
+        height: 1.1rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+    }
+
+    .auth-password-toggle.is-visible svg {
+        opacity: 0.65;
+    }
+
+    .auth-password-rules {
+        margin: 0.6rem 0 0;
+        padding-left: 1rem;
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+
+    .auth-password-rules li + li {
+        margin-top: 0.2rem;
+    }
+
+    .auth-password-rules li.is-valid {
+        color: #166534;
+        font-weight: 700;
+    }
+</style>
+
 <div class="container py-5">
     <div class="row align-items-center">
         <div class="col-lg-6">
@@ -40,11 +100,33 @@
                         <input type="text" id="teacherInstitutionCodeInput" class="form-control p-3" placeholder="Institution Code (Optional)">
                     </div>
                     <div class="mb-3 col-6">
-                        <input type="password" id="teacherPasswordInput" class="form-control p-3" placeholder="Password">
+                        <div class="auth-password-wrap">
+                            <input type="password" id="teacherPasswordInput" class="form-control p-3" placeholder="Password">
+                            <button type="button" class="auth-password-toggle" id="teacherPasswordToggle" aria-label="Show password" title="Show password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <ul class="auth-password-rules">
+                            <li id="teacherRuleLength">At least 8 characters</li>
+                            <li id="teacherRuleUpper">At least 1 uppercase letter</li>
+                            <li id="teacherRuleLower">At least 1 lowercase letter</li>
+                            <li id="teacherRuleNumber">At least 1 number</li>
+                        </ul>
                         <small id="teacherPasswordStrength" class="fw-semibold"></small>
                     </div>
                     <div class="mb-3 col-6">
-                        <input type="password" id="teacherConfirmPasswordInput" class="form-control p-3" placeholder="Confirm Password">
+                        <div class="auth-password-wrap">
+                            <input type="password" id="teacherConfirmPasswordInput" class="form-control p-3" placeholder="Confirm Password">
+                            <button type="button" class="auth-password-toggle" id="teacherConfirmPasswordToggle" aria-label="Show password" title="Show password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
                         <small id="teacherMatchText" class="fw-semibold"></small>
                     </div>
 
@@ -82,6 +164,12 @@
     const teacherConfirmPasswordInput = document.getElementById("teacherConfirmPasswordInput");
     const teacherPasswordStrength = document.getElementById("teacherPasswordStrength");
     const teacherMatchText = document.getElementById("teacherMatchText");
+    const teacherPasswordToggle = document.getElementById("teacherPasswordToggle");
+    const teacherConfirmPasswordToggle = document.getElementById("teacherConfirmPasswordToggle");
+    const teacherRuleLength = document.getElementById("teacherRuleLength");
+    const teacherRuleUpper = document.getElementById("teacherRuleUpper");
+    const teacherRuleLower = document.getElementById("teacherRuleLower");
+    const teacherRuleNumber = document.getElementById("teacherRuleNumber");
 
     function showTeacherError(message) {
         teacherErrorBox.textContent = message;
@@ -92,14 +180,32 @@
         teacherErrorBox.classList.add("d-none");
     }
 
+    function togglePasswordVisibility(input, button) {
+        const shouldShow = input.type === "password";
+        input.type = shouldShow ? "text" : "password";
+        button.classList.toggle("is-visible", shouldShow);
+        button.setAttribute("aria-label", shouldShow ? "Hide password" : "Show password");
+        button.setAttribute("title", shouldShow ? "Hide password" : "Show password");
+    }
+
+    function validateTeacherPassword(value) {
+        return {
+            length: value.length >= 8,
+            upper: /[A-Z]/.test(value),
+            lower: /[a-z]/.test(value),
+            number: /[0-9]/.test(value)
+        };
+    }
+
     function checkTeacherPasswordStrength() {
         const value = teacherPasswordInput.value;
-        let strength = 0;
+        const rules = validateTeacherPassword(value);
+        const strength = Object.values(rules).filter(Boolean).length;
 
-        if (value.length >= 8) strength++;
-        if (/[A-Z]/.test(value)) strength++;
-        if (/[a-z]/.test(value)) strength++;
-        if (/[0-9]/.test(value)) strength++;
+        teacherRuleLength.classList.toggle("is-valid", rules.length);
+        teacherRuleUpper.classList.toggle("is-valid", rules.upper);
+        teacherRuleLower.classList.toggle("is-valid", rules.lower);
+        teacherRuleNumber.classList.toggle("is-valid", rules.number);
 
         if (!value.length) {
             teacherPasswordStrength.textContent = "";
@@ -138,6 +244,8 @@
         checkTeacherPasswordMatch();
     });
     teacherConfirmPasswordInput.addEventListener("input", checkTeacherPasswordMatch);
+    teacherPasswordToggle?.addEventListener("click", () => togglePasswordVisibility(teacherPasswordInput, teacherPasswordToggle));
+    teacherConfirmPasswordToggle?.addEventListener("click", () => togglePasswordVisibility(teacherConfirmPasswordInput, teacherConfirmPasswordToggle));
 
     teacherRegisterForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -166,6 +274,12 @@
 
         if (payload.password !== teacherConfirmPasswordInput.value) {
             showTeacherError("Passwords do not match.");
+            return;
+        }
+
+        const passwordRules = validateTeacherPassword(payload.password);
+        if (!Object.values(passwordRules).every(Boolean)) {
+            showTeacherError("Password must be at least 8 characters and include uppercase, lowercase, and a number.");
             return;
         }
 

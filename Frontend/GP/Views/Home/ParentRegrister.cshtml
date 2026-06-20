@@ -2,6 +2,66 @@
     ViewData["Title"] = "ParentRegrister";
 }
 
+<style>
+    .auth-password-wrap {
+        position: relative;
+        display: block;
+        width: 100%;
+    }
+
+    .auth-password-wrap .form-control {
+        padding-right: 3rem;
+        width: 100%;
+    }
+
+    .auth-password-toggle {
+        position: absolute !important;
+        top: 50%;
+        right: 0.85rem;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #6b7280;
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        margin: 0;
+        z-index: 3;
+    }
+
+    .auth-password-toggle svg {
+        width: 1.1rem;
+        height: 1.1rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+    }
+
+    .auth-password-toggle.is-visible svg {
+        opacity: 0.65;
+    }
+
+    .auth-password-rules {
+        margin: 0.6rem 0 0;
+        padding-left: 1rem;
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+
+    .auth-password-rules li + li {
+        margin-top: 0.2rem;
+    }
+
+    .auth-password-rules li.is-valid {
+        color: #166534;
+        font-weight: 700;
+    }
+</style>
+
 <div class="container py-5">
     <div class="row align-items-center">
         <div class="col-lg-6">
@@ -34,11 +94,33 @@
                         <input type="text" id="parentStudentCodeInput" class="form-control p-3" placeholder="Parent Student Code">
                     </div>
                     <div class="mb-3 col-6">
-                        <input type="password" id="parentPasswordInput" class="form-control p-3" placeholder="Password">
+                        <div class="auth-password-wrap">
+                            <input type="password" id="parentPasswordInput" class="form-control p-3" placeholder="Password">
+                            <button type="button" class="auth-password-toggle" id="parentPasswordToggle" aria-label="Show password" title="Show password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <ul class="auth-password-rules">
+                            <li id="parentRuleLength">At least 8 characters</li>
+                            <li id="parentRuleUpper">At least 1 uppercase letter</li>
+                            <li id="parentRuleLower">At least 1 lowercase letter</li>
+                            <li id="parentRuleNumber">At least 1 number</li>
+                        </ul>
                         <small id="parentPasswordStrength" class="fw-semibold"></small>
                     </div>
                     <div class="mb-3 col-6">
-                        <input type="password" id="parentConfirmPasswordInput" class="form-control p-3" placeholder="Confirm Password">
+                        <div class="auth-password-wrap">
+                            <input type="password" id="parentConfirmPasswordInput" class="form-control p-3" placeholder="Confirm Password">
+                            <button type="button" class="auth-password-toggle" id="parentConfirmPasswordToggle" aria-label="Show password" title="Show password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
                         <small id="parentMatchText" class="fw-semibold"></small>
                     </div>
 
@@ -76,6 +158,12 @@
     const parentConfirmPasswordInput = document.getElementById("parentConfirmPasswordInput");
     const parentPasswordStrength = document.getElementById("parentPasswordStrength");
     const parentMatchText = document.getElementById("parentMatchText");
+    const parentPasswordToggle = document.getElementById("parentPasswordToggle");
+    const parentConfirmPasswordToggle = document.getElementById("parentConfirmPasswordToggle");
+    const parentRuleLength = document.getElementById("parentRuleLength");
+    const parentRuleUpper = document.getElementById("parentRuleUpper");
+    const parentRuleLower = document.getElementById("parentRuleLower");
+    const parentRuleNumber = document.getElementById("parentRuleNumber");
 
     function showParentError(message) {
         parentErrorBox.textContent = message;
@@ -86,14 +174,32 @@
         parentErrorBox.classList.add("d-none");
     }
 
+    function togglePasswordVisibility(input, button) {
+        const shouldShow = input.type === "password";
+        input.type = shouldShow ? "text" : "password";
+        button.classList.toggle("is-visible", shouldShow);
+        button.setAttribute("aria-label", shouldShow ? "Hide password" : "Show password");
+        button.setAttribute("title", shouldShow ? "Hide password" : "Show password");
+    }
+
+    function validateParentPassword(value) {
+        return {
+            length: value.length >= 8,
+            upper: /[A-Z]/.test(value),
+            lower: /[a-z]/.test(value),
+            number: /[0-9]/.test(value)
+        };
+    }
+
     function updateParentPasswordState() {
         const value = parentPasswordInput.value;
-        let strength = 0;
+        const rules = validateParentPassword(value);
+        const strength = Object.values(rules).filter(Boolean).length;
 
-        if (value.length >= 8) strength++;
-        if (/[A-Z]/.test(value)) strength++;
-        if (/[a-z]/.test(value)) strength++;
-        if (/[0-9]/.test(value)) strength++;
+        parentRuleLength.classList.toggle("is-valid", rules.length);
+        parentRuleUpper.classList.toggle("is-valid", rules.upper);
+        parentRuleLower.classList.toggle("is-valid", rules.lower);
+        parentRuleNumber.classList.toggle("is-valid", rules.number);
 
         if (!value.length) {
             parentPasswordStrength.textContent = "";
@@ -124,6 +230,8 @@
 
     parentPasswordInput.addEventListener("input", updateParentPasswordState);
     parentConfirmPasswordInput.addEventListener("input", updateParentPasswordState);
+    parentPasswordToggle?.addEventListener("click", () => togglePasswordVisibility(parentPasswordInput, parentPasswordToggle));
+    parentConfirmPasswordToggle?.addEventListener("click", () => togglePasswordVisibility(parentConfirmPasswordInput, parentConfirmPasswordToggle));
 
     parentRegisterForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -145,6 +253,12 @@
 
         if (payload.password !== parentConfirmPasswordInput.value) {
             showParentError("Passwords do not match.");
+            return;
+        }
+
+        const passwordRules = validateParentPassword(payload.password);
+        if (!Object.values(passwordRules).every(Boolean)) {
+            showParentError("Password must be at least 8 characters and include uppercase, lowercase, and a number.");
             return;
         }
 

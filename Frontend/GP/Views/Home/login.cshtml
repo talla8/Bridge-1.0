@@ -2,6 +2,50 @@
     ViewData["Title"] = "login";
 }
 
+<style>
+    .auth-password-wrap {
+        position: relative;
+        display: block;
+        width: 100%;
+    }
+
+    .auth-password-toggle {
+        position: absolute !important;
+        top: 50%;
+        right: 0.85rem;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #6b7280;
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        margin: 0;
+        z-index: 3;
+    }
+
+    .auth-password-wrap .form-control {
+        padding-right: 3rem;
+        width: 100%;
+    }
+
+    .auth-password-toggle svg {
+        width: 1.1rem;
+        height: 1.1rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+    }
+
+    .auth-password-toggle.is-visible svg {
+        opacity: 0.65;
+    }
+</style>
+
 <div class="container py-5">
     <div class="row align-items-center">
         <div class="col-lg-6">
@@ -20,18 +64,20 @@
                            placeholder="Email Address">
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 auth-password-wrap">
                     <input type="password"
                            id="passwordInput"
                            class="form-control p-3"
                            placeholder="Password">
+                    <button type="button" class="auth-password-toggle" id="loginPasswordToggle" aria-label="Show password" title="Show password">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox">
-                        <label class="form-check-label small">Remember Me</label>
-                    </div>
                     <a asp-action="ForgotPassword" asp-controller="Home" class="small text-secondary">Forgot Password?</a>
                 </div>
 
@@ -67,6 +113,7 @@
     const loginErrorBox = document.getElementById("loginErrorBox");
     const emailInput = document.getElementById("emailInput");
     const passwordInput = document.getElementById("passwordInput");
+    const loginPasswordToggle = document.getElementById("loginPasswordToggle");
 
     function showError(message) {
         loginErrorBox.textContent = message;
@@ -76,6 +123,14 @@
     function hideError() {
         loginErrorBox.classList.add("d-none");
     }
+
+    loginPasswordToggle?.addEventListener("click", () => {
+        const shouldShow = passwordInput.type === "password";
+        passwordInput.type = shouldShow ? "text" : "password";
+        loginPasswordToggle.classList.toggle("is-visible", shouldShow);
+        loginPasswordToggle.setAttribute("aria-label", shouldShow ? "Hide password" : "Show password");
+        loginPasswordToggle.setAttribute("title", shouldShow ? "Hide password" : "Show password");
+    });
 
     function storeUserSession(token, fallbackName) {
         sessionStorage.removeItem("bridgeGeneratedPlan");
@@ -144,15 +199,11 @@
 
             storeUserSession(data.access_token, email);
             const userRole = sessionStorage.getItem("bridgeUserRole");
-            const hasPendingSetup = sessionStorage.getItem("bridgePendingTeacherSetup") === "true";
-            const setupCompleted = sessionStorage.getItem("bridgeTeacherSetupComplete") === "true";
             window.location.href = userRole === "Parent"
                 ? '@Url.Action("ParentDashboard", "Home")'
                 : userRole === "Institution"
                     ? '@Url.Action("InstitutionDashboard", "Home")'
-                    : (hasPendingSetup && !setupCompleted
-                    ? '@Url.Action("SetupStudents", "Home")'
-                    : '@Url.Action("Teacher", "Home")');
+                    : '@Url.Action("Teacher", "Home")';
         } catch (error) {
             showError(error.message || "Unable to connect to the server.");
         } finally {

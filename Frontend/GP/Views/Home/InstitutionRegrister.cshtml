@@ -2,6 +2,66 @@
     ViewData["Title"] = "InstitutionRegrister";
 }
 
+<style>
+    .auth-password-wrap {
+        position: relative;
+        display: block;
+        width: 100%;
+    }
+
+    .auth-password-wrap .form-control {
+        padding-right: 3rem;
+        width: 100%;
+    }
+
+    .auth-password-toggle {
+        position: absolute !important;
+        top: 50%;
+        right: 0.85rem;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #6b7280;
+        padding: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        margin: 0;
+        z-index: 3;
+    }
+
+    .auth-password-toggle svg {
+        width: 1.1rem;
+        height: 1.1rem;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.8;
+    }
+
+    .auth-password-toggle.is-visible svg {
+        opacity: 0.65;
+    }
+
+    .auth-password-rules {
+        margin: 0.6rem 0 0;
+        padding-left: 1rem;
+        color: #6b7280;
+        font-size: 0.85rem;
+    }
+
+    .auth-password-rules li + li {
+        margin-top: 0.2rem;
+    }
+
+    .auth-password-rules li.is-valid {
+        color: #166534;
+        font-weight: 700;
+    }
+</style>
+
 <div class="container py-5">
     <div class="row align-items-center">
         <div class="col-lg-6">
@@ -25,11 +85,33 @@
                         <input type="tel" id="institutionPhoneInput" class="form-control p-3" placeholder="Phone Number">
                     </div>
                     <div class="mb-3 col-6">
-                        <input type="password" id="institutionPasswordInput" class="form-control p-3" placeholder="Password">
+                        <div class="auth-password-wrap">
+                            <input type="password" id="institutionPasswordInput" class="form-control p-3" placeholder="Password">
+                            <button type="button" class="auth-password-toggle" id="institutionPasswordToggle" aria-label="Show password" title="Show password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <ul class="auth-password-rules">
+                            <li id="institutionRuleLength">At least 8 characters</li>
+                            <li id="institutionRuleUpper">At least 1 uppercase letter</li>
+                            <li id="institutionRuleLower">At least 1 lowercase letter</li>
+                            <li id="institutionRuleNumber">At least 1 number</li>
+                        </ul>
                         <small id="institutionPasswordStrength" class="fw-semibold"></small>
                     </div>
                     <div class="mb-3 col-6">
-                        <input type="password" id="institutionConfirmPasswordInput" class="form-control p-3" placeholder="Confirm Password">
+                        <div class="auth-password-wrap">
+                            <input type="password" id="institutionConfirmPasswordInput" class="form-control p-3" placeholder="Confirm Password">
+                            <button type="button" class="auth-password-toggle" id="institutionConfirmPasswordToggle" aria-label="Show password" title="Show password">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
                         <small id="institutionMatchText" class="fw-semibold"></small>
                     </div>
 
@@ -67,6 +149,12 @@
     const institutionConfirmPasswordInput = document.getElementById("institutionConfirmPasswordInput");
     const institutionPasswordStrength = document.getElementById("institutionPasswordStrength");
     const institutionMatchText = document.getElementById("institutionMatchText");
+    const institutionPasswordToggle = document.getElementById("institutionPasswordToggle");
+    const institutionConfirmPasswordToggle = document.getElementById("institutionConfirmPasswordToggle");
+    const institutionRuleLength = document.getElementById("institutionRuleLength");
+    const institutionRuleUpper = document.getElementById("institutionRuleUpper");
+    const institutionRuleLower = document.getElementById("institutionRuleLower");
+    const institutionRuleNumber = document.getElementById("institutionRuleNumber");
 
     function showInstitutionError(message) {
         institutionErrorBox.textContent = message;
@@ -77,14 +165,32 @@
         institutionErrorBox.classList.add("d-none");
     }
 
+    function togglePasswordVisibility(input, button) {
+        const shouldShow = input.type === "password";
+        input.type = shouldShow ? "text" : "password";
+        button.classList.toggle("is-visible", shouldShow);
+        button.setAttribute("aria-label", shouldShow ? "Hide password" : "Show password");
+        button.setAttribute("title", shouldShow ? "Hide password" : "Show password");
+    }
+
+    function validateInstitutionPassword(value) {
+        return {
+            length: value.length >= 8,
+            upper: /[A-Z]/.test(value),
+            lower: /[a-z]/.test(value),
+            number: /[0-9]/.test(value)
+        };
+    }
+
     function checkInstitutionPasswordStrength() {
         const value = institutionPasswordInput.value;
-        let strength = 0;
+        const rules = validateInstitutionPassword(value);
+        const strength = Object.values(rules).filter(Boolean).length;
 
-        if (value.length >= 8) strength++;
-        if (/[A-Z]/.test(value)) strength++;
-        if (/[a-z]/.test(value)) strength++;
-        if (/[0-9]/.test(value)) strength++;
+        institutionRuleLength.classList.toggle("is-valid", rules.length);
+        institutionRuleUpper.classList.toggle("is-valid", rules.upper);
+        institutionRuleLower.classList.toggle("is-valid", rules.lower);
+        institutionRuleNumber.classList.toggle("is-valid", rules.number);
 
         if (!value.length) {
             institutionPasswordStrength.textContent = "";
@@ -123,6 +229,8 @@
         checkInstitutionPasswordMatch();
     });
     institutionConfirmPasswordInput.addEventListener("input", checkInstitutionPasswordMatch);
+    institutionPasswordToggle?.addEventListener("click", () => togglePasswordVisibility(institutionPasswordInput, institutionPasswordToggle));
+    institutionConfirmPasswordToggle?.addEventListener("click", () => togglePasswordVisibility(institutionConfirmPasswordInput, institutionConfirmPasswordToggle));
 
     institutionRegisterForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -143,6 +251,12 @@
 
         if (payload.password !== institutionConfirmPasswordInput.value) {
             showInstitutionError("Passwords do not match.");
+            return;
+        }
+
+        const passwordRules = validateInstitutionPassword(payload.password);
+        if (!Object.values(passwordRules).every(Boolean)) {
+            showInstitutionError("Password must be at least 8 characters and include uppercase, lowercase, and a number.");
             return;
         }
 
