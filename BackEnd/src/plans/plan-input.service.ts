@@ -94,16 +94,12 @@ export class PlanInputService {
     }
 
     const grade = await this.gradesRepo.findByTeacherId(teacherId);
-    if (!grade) {
-      throw new BadRequestException(
-        'Teacher grade information is missing. Complete teacher setup first.',
-      );
-    }
+    const resolvedGradeId = grade?.gradeId ?? 'Third Grade';
 
     await this.subjectOfferingsRepo.create({
       subjectOfferingId: `subject_offering_${teacherId}_${subjectId}`,
       subjectId,
-      gradeId: grade.gradeId,
+      gradeId: resolvedGradeId,
       teacherId,
       schoolId: '1',
       schoolYear: this.getCurrentSchoolYear(),

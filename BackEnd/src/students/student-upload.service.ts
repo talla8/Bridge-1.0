@@ -207,10 +207,8 @@ export class StudentUploadService {
   ): Promise<Student[]> {
     const normalizedRows = await this.normalizeRows(buffer);
     const teacherGrade = await this.gradesRepo.findByTeacherId(teacherId);
-
-    if (!teacherGrade) {
-      throw new NotFoundException('Teacher grade was not found');
-    }
+    const resolvedGradeId = teacherGrade?.gradeId ?? 'Third Grade';
+    const resolvedSchoolName = teacherGrade?.schoolName ?? '';
 
     const studentsToCreate: CreateStudentDTO[] = normalizedRows
       .filter((row) => row.fullArabicName || row.fullEnglishName)
@@ -218,12 +216,12 @@ export class StudentUploadService {
         fullArabicName: row.fullArabicName ?? '',
         fullEnglishName: row.fullEnglishName ?? row.fullArabicName ?? '',
         nationalId: row.nationalID ?? '',
-        grade: teacherGrade.gradeId,
+        grade: resolvedGradeId,
       }));
 
     return this.studentService.createMany(studentsToCreate, {
       teacherId,
-      schoolName: teacherGrade.schoolName ?? '',
+      schoolName: resolvedSchoolName,
     });
   }
 }

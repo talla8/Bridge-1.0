@@ -85,6 +85,17 @@ export type PlanArchiveItem = {
   day: string;
 };
 
+export type UnplacedPlanItemSummary = {
+  planItemId: string;
+  title: string;
+  estimatedTime: number;
+  priority: PlanItemPriority;
+  originalSessionId?: string;
+  originalSessionDate?: Date;
+  originalSessionWeekNo?: number;
+  originalDay?: string;
+};
+
 export type PlanReorderReason = 'PROGRESS_BEHIND' | 'SESSION_OVERFLOW';
 
 export type CompressedPlanItemSummary = {
@@ -109,6 +120,7 @@ export type PlanMonitoringSummary = PlanProgressSummary & {
   bufferMinutesUsed: number;
   compressionApplied: boolean;
   compressedItems: CompressedPlanItemSummary[];
+  unplacedItems: UnplacedPlanItemSummary[];
 };
 
 const DEFAULT_SESSION_DURATION_MINUTES = 40;
@@ -284,7 +296,7 @@ export class PlansService {
     );
     return {
       session,
-      progress: this.calculatePlanMonitoringSummary(plan),
+      progress: await this.calculatePlanMonitoringSummary(plan),
     };
   }
 
@@ -350,7 +362,7 @@ export class PlansService {
     return {
       item: savedItem,
       session,
-      progress: this.calculatePlanMonitoringSummary(plan),
+      progress: await this.calculatePlanMonitoringSummary(plan),
     };
   }
 
@@ -446,6 +458,7 @@ export class PlansService {
       sessions: replannedSessions,
       pace,
       unplacedItems,
+      compressedItems,
     } = this.repackFutureSessions(futureSessions, itemsToReplan, anchorIndex);
 
     const updatedPlan: Plan = {
@@ -462,11 +475,19 @@ export class PlansService {
       fromSessionId,
       pace,
       unplacedItems,
+      futureSessions,
+      compressedItems,
+    );
+
+    const summary = await this.calculatePlanMonitoringSummary(
+      updatedPlan,
+      unplacedItems,
+      futureSessions,
     );
 
     return {
       plan: updatedPlan,
-      summary: this.calculatePlanMonitoringSummary(updatedPlan),
+      summary,
       pace,
       planOverCapacity: unplacedItems.length > 0,
       unplacedItems,
@@ -874,7 +895,7 @@ export class PlansService {
         PlanItemStatus.CANCELLED,
       ],
       [PlanItemStatus.POSTPONED]: [PlanItemStatus.PLANNED],
-      [PlanItemStatus.COMPLETED]: [],
+      [PlanItemStatus.COMPLETED]: [PlanItemStatus.PLANNED],
       [PlanItemStatus.CANCELLED]: [PlanItemStatus.PLANNED],
     };
 
@@ -942,18 +963,24 @@ export class PlansService {
     fromSessionId: string,
     pace: ReplanPaceSummary,
     unplacedItems: PlanItem[],
+    sourceSessions: Session[],
+    compressedItems: CompressedPlanItemSummary[] = [],
   ): Promise<void> {
     const movedItemsCount = Object.values(pace.carriedForwardItemsByDay).reduce(
       (total, count) => total + count,
       0,
     );
+    const compressionNote =
+      compressedItems.length > 0
+        ? ` Compressed ${compressedItems.length} item(s).`
+        : '';
 
     await this.planLogsRepo.create({
       planLogId: `plan_log_${randomUUID()}`,
       planId: plan.planId,
       sessionId: fromSessionId,
       actionType: PlanLogActionType.PLAN_REGENERATED,
-      description: `Replanned ${plan.planName} from session ${fromSessionId}. Moved ${movedItemsCount} item(s).`,
+      description: `Replanned ${plan.planName} from session ${fromSessionId}. Moved ${movedItemsCount} item(s).${compressionNote}`,
       createdAt: new Date(),
       metadata: {
         fromSessionId,
@@ -962,6 +989,9 @@ export class PlansService {
         carriedForwardItemsByDay: pace.carriedForwardItemsByDay,
         planOverCapacity: unplacedItems.length > 0,
         unplacedItemIds: unplacedItems.map((item) => item.planItemId),
+        unplacedItems: this.summarizeUnplacedItems(unplacedItems, sourceSessions),
+        compressionApplied: compressedItems.length > 0,
+        compressedItems,
       },
     });
   }
@@ -1058,7 +1088,11 @@ export class PlansService {
     };
   }
 
-  private calculatePlanMonitoringSummary(plan: Plan): PlanMonitoringSummary {
+  private async calculatePlanMonitoringSummary(
+    plan: Plan,
+    latestUnplacedItems?: PlanItem[],
+    sourceSessionsForUnplaced?: Session[],
+  ): Promise<PlanMonitoringSummary> {
     //comment : we can use this one dorectly
     const progress = this.calculatePlanProgress(plan);
     const expectedCompletedMinutes =
@@ -1069,18 +1103,11 @@ export class PlansService {
         ? 100
         : Math.round((actualCompletedMinutes / expectedCompletedMinutes) * 100);
     const overloadedSessions = plan.sessions.filter((session) => {
-      const normalCapacity = this.getSessionAvailableMinutes(
-        session,
-        'NORMAL_ONLY',
-      );
       const hasPendingItems = session.items.some(
         (item) => item.status === PlanItemStatus.PLANNED,
       );
 
-      return (
-        session.usedDuration > normalCapacity &&
-        hasPendingItems
-      );
+      return session.usedDuration > session.maxDuration && hasPendingItems;
     }).length;
     const reorderReasons: PlanReorderReason[] = [];
 
@@ -1093,6 +1120,13 @@ export class PlansService {
 
     const bufferMinutesUsed = this.calculateBufferMinutesUsed(plan.sessions);
     const compressedItems = this.collectCompressedItems(plan);
+    const unplacedItems =
+      latestUnplacedItems && sourceSessionsForUnplaced
+        ? this.summarizeUnplacedItems(
+            latestUnplacedItems,
+            sourceSessionsForUnplaced,
+          )
+        : await this.getLatestUnplacedItems(plan.planId);
 
     return {
       ...progress,
@@ -1112,7 +1146,74 @@ export class PlansService {
       bufferMinutesUsed,
       compressionApplied: compressedItems.length > 0,
       compressedItems,
+      unplacedItems,
     };
+  }
+
+  private summarizeUnplacedItems(
+    unplacedItems: PlanItem[],
+    sourceSessions: Session[],
+  ): UnplacedPlanItemSummary[] {
+    return unplacedItems.map((item) => {
+      const originalSession =
+        sourceSessions.find(
+          (session) =>
+            String(session.sessionId) ===
+            String(item.originalSessionId ?? item.sessionId),
+        ) ?? null;
+
+      return {
+        planItemId: item.planItemId,
+        title: item.title,
+        estimatedTime: Number(item.estimatedTime ?? 0),
+        priority: item.priority ?? PlanItemPriority.LOW,
+        originalSessionId:
+          originalSession?.sessionId ?? item.originalSessionId ?? item.sessionId,
+        originalSessionDate: originalSession?.sessionDate,
+        originalSessionWeekNo: originalSession?.sessionWeekNo,
+        originalDay: originalSession?.day,
+      };
+    });
+  }
+
+  private async getLatestUnplacedItems(
+    planId: string,
+  ): Promise<UnplacedPlanItemSummary[]> {
+    const logs = await this.planLogsRepo.findByPlanId(planId);
+    const latestReplanLog = logs.find(
+      (log) => log.actionType === PlanLogActionType.PLAN_REGENERATED,
+    );
+    const rawItems = latestReplanLog?.metadata?.unplacedItems;
+
+    if (!Array.isArray(rawItems)) {
+      return [];
+    }
+
+    return rawItems.map((item) => ({
+      planItemId: String(item?.planItemId ?? ''),
+      title: String(item?.title ?? 'Unplaced activity'),
+      estimatedTime: Number(item?.estimatedTime ?? 0),
+      priority:
+        item?.priority === PlanItemPriority.HIGH ||
+        item?.priority === PlanItemPriority.MID ||
+        item?.priority === PlanItemPriority.LOW
+          ? item.priority
+          : PlanItemPriority.LOW,
+      originalSessionId:
+        item?.originalSessionId == null
+          ? undefined
+          : String(item.originalSessionId),
+      originalSessionDate:
+        item?.originalSessionDate == null
+          ? undefined
+          : new Date(item.originalSessionDate),
+      originalSessionWeekNo:
+        item?.originalSessionWeekNo == null
+          ? undefined
+          : Number(item.originalSessionWeekNo),
+      originalDay:
+        item?.originalDay == null ? undefined : String(item.originalDay),
+    }));
   }
 
   private calculateExpectedCompletedMinutes(plan: Plan): number {
