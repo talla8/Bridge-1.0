@@ -97,6 +97,19 @@
     .no-plan-actions { display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap; margin-top:18px; }
     .no-plan-actions .btn { border-radius:999px; font-weight:700; padding:10px 18px; }
     .no-plan-actions .btn:disabled { opacity:.55; cursor:not-allowed; }
+    .day-session-stack { display:grid; gap:14px; }
+    .session-slot-label {
+        display:inline-flex;
+        align-items:center;
+        align-self:flex-start;
+        margin-bottom:10px;
+        padding:6px 12px;
+        border-radius:999px;
+        background:#f5f3ff;
+        color:#5b21b6;
+        font-size:12px;
+        font-weight:800;
+    }
     @@media (max-width: 991px) { .plan-monitor-grid { grid-template-columns:1fr; } }
 </style>
 
@@ -137,18 +150,6 @@
                         Week 1
                     </button>
                     <ul class="dropdown-menu" id="weekFilterMenu"></ul>
-                </div>
-
-                <div class="d-flex gap-3" id="planExportActions">
-                    <button class="btn btn-light border rounded-4 shadow-sm px-3 d-flex align-items-center gap-2 fw-semibold">
-                        <i class="bi bi-file-earmark-spreadsheet fs-5"></i>
-                        Export Excel
-                    </button>
-
-                    <button class="btn rounded-4 shadow-sm px-3 d-flex align-items-center gap-2 fw-semibold bridge-accent">
-                        <i class="bi bi-filetype-pdf fs-5"></i>
-                        Download PDF
-                    </button>
                 </div>
             </div>
 
@@ -246,7 +247,6 @@
                     <div class="plan-actions">
                         <button type="button" class="plan-secondary-btn" id="replanBtn">Reorder</button>
                         <a class="plan-secondary-btn plan-link-btn" asp-controller="Home" asp-action="History">History</a>
-                        <button type="button" class="plan-secondary-btn">View Full Plan <i class="bi bi-arrow-right"></i></button>
                     </div>
                 </div>
             </section>
@@ -259,6 +259,10 @@
                 <article class="plan-monitor-card">
                     <h3>Cancelled Activities</h3>
                     <div id="cancelledArchiveList" class="plan-archive-list"></div>
+                </article>
+                <article class="plan-monitor-card">
+                    <h3>Unplaced Activities</h3>
+                    <div id="unplacedArchiveList" class="plan-archive-list"></div>
                 </article>
             </section>
         </div>
@@ -351,6 +355,7 @@
         <p id="reorderDetailsMessage">Bridge reviewed the current plan and adjusted future sessions.</p>
         <div class="plan-details-summary" id="reorderDetailsSummary"></div>
         <div class="plan-compression-list" id="reorderCompressionList"></div>
+        <div class="plan-compression-list" id="reorderUnplacedList"></div>
         <div class="reorder-modal-actions">
             <button type="button" id="reorderDetailsCloseButton">Close</button>
         </div>
@@ -394,6 +399,7 @@
     const reorderReasonRow = document.getElementById("reorderReasonRow");
     const postponedArchiveList = document.getElementById("postponedArchiveList");
     const cancelledArchiveList = document.getElementById("cancelledArchiveList");
+    const unplacedArchiveList = document.getElementById("unplacedArchiveList");
     const activityPanelBackdrop = document.getElementById("activityPanelBackdrop");
     const activityDetailsPanel = document.getElementById("activityDetailsPanel");
     const activityEditPanel = document.getElementById("activityEditPanel");
@@ -432,6 +438,7 @@
     const reorderDetailsMessage = document.getElementById("reorderDetailsMessage");
     const reorderDetailsSummary = document.getElementById("reorderDetailsSummary");
     const reorderCompressionList = document.getElementById("reorderCompressionList");
+    const reorderUnplacedList = document.getElementById("reorderUnplacedList");
     const reorderDetailsCloseButton = document.getElementById("reorderDetailsCloseButton");
     const maxActivityMinutes = 25;
     let selectedActivity = null;
@@ -701,6 +708,24 @@
         `).join("");
     }
 
+    function renderUnplacedList(target, items, emptyText) {
+        if (!items?.length) {
+            target.innerHTML = `<div class="plan-archive-item"><small>${emptyText}</small></div>`;
+            return;
+        }
+
+        target.innerHTML = items.map((item) => `
+            <div class="plan-archive-item">
+                <div class="plan-archive-item-head">
+                    <strong>${item.title}</strong>
+                    <span class="plan-reason-pill ${String(item.priority || "LOW").toUpperCase() === "HIGH" ? "behind" : String(item.priority || "LOW").toUpperCase() === "MID" ? "overflow" : "buffer"}">${item.priority || "LOW"} priority</span>
+                </div>
+                <small>${Number(item.estimatedTime ?? 0)} minutes</small>
+                <small>${item.originalDay || "Unknown day"}${item.originalSessionWeekNo ? ` • Week ${item.originalSessionWeekNo}` : ""}</small>
+            </div>
+        `).join("");
+    }
+
     function getReorderFingerprint(summary) {
         if (!summary?.planNeedsReordering) return null;
         return `${generatedPlan?.planId || ""}:${summary.classSpeedPercentage}:${summary.reorderReasons?.join(",")}:${summary.overloadedSessions}`;
@@ -820,6 +845,7 @@
         if (!summary) {
             reorderDetailsSummary.innerHTML = "";
             reorderCompressionList.innerHTML = "";
+            reorderUnplacedList.innerHTML = "";
             return;
         }
 
@@ -844,6 +870,18 @@
             `).join("");
         } else {
             reorderCompressionList.innerHTML = `<div class="plan-details-summary-item"><strong>No activities were compressed.</strong></div>`;
+        }
+
+        if (Array.isArray(summary.unplacedItems) && summary.unplacedItems.length > 0) {
+            reorderUnplacedList.innerHTML = summary.unplacedItems.map((item) => `
+                <div class="plan-compression-item">
+                    <strong>${item.title}</strong>
+                    <small>${item.priority} priority</small>
+                    <small>${Number(item.estimatedTime ?? 0)} min • ${item.originalDay || "Unknown day"}${item.originalSessionWeekNo ? ` • Week ${item.originalSessionWeekNo}` : ""}</small>
+                </div>
+            `).join("");
+        } else {
+            reorderUnplacedList.innerHTML = `<div class="plan-details-summary-item"><strong>No activities remain unplaced after reordering.</strong></div>`;
         }
     }
 
@@ -888,6 +926,11 @@
             summary?.cancelledItemsArchive ?? [],
             "No cancelled activities."
         );
+        renderUnplacedList(
+            unplacedArchiveList,
+            summary?.unplacedItems ?? [],
+            "No unplaced activities."
+        );
         renderReasonPills(summary);
         if (summary?.planNeedsReordering) {
             reorderBanner.textContent = buildReorderMessage(summary);
@@ -921,6 +964,7 @@
         atRiskValue.textContent = "0";
         renderArchiveList(postponedArchiveList, [], "No postponed activities.");
         renderArchiveList(cancelledArchiveList, [], "No cancelled activities.");
+        renderUnplacedList(unplacedArchiveList, [], "No unplaced activities.");
         reorderReasonRow.innerHTML = `<span class="plan-reason-pill track">On track</span>`;
         reorderBanner.classList.remove("show");
         reorderBanner.textContent = "";
@@ -962,11 +1006,13 @@
         weeklyPlanGrid.innerHTML = "";
 
         dayOrder.forEach((day) => {
-            const session = weekSessions.find((entry) => entry.day === day);
+            const daySessions = weekSessions
+                .filter((entry) => entry.day === day)
+                .sort((left, right) => Number(left.slotNumber ?? 0) - Number(right.slotNumber ?? 0));
             const column = document.createElement("article");
             column.className = "day-plan-column";
 
-            if (!session) {
+            if (!daySessions.length) {
                 column.innerHTML = `
                     <div class="day-pill">${day}</div>
                     <div class="empty-session-card"></div>
@@ -975,56 +1021,67 @@
                 return;
             }
 
-            const summary = describeSession(session);
-            const activityRows = summary.itemBreakdown.length
-                ? summary.itemBreakdown.map((item, index) => {
-                    const statusBadge = item.status === "Completed"
-                        ? `<span class="activity-status-badge activity-status-badge-completed">Completed</span>`
-                        : "";
-                    const rowClass = item.status === "Completed"
-                        ? "activity-row activity-row-completed"
-                        : "activity-row";
+            const sessionCards = daySessions.map((session, sessionPosition) => {
+                const summary = describeSession(session);
+                const activityRows = summary.itemBreakdown.length
+                    ? summary.itemBreakdown.map((item, index) => {
+                        const statusBadge = item.status === "Completed"
+                            ? `<span class="activity-status-badge activity-status-badge-completed">Completed</span>`
+                            : "";
+                        const rowClass = item.status === "Completed"
+                            ? "activity-row activity-row-completed"
+                            : "activity-row";
 
-                    const quickStatusButton = `
-                        <button
-                            type="button"
-                            class="activity-quick-status js-toggle-complete ${item.status === "Completed" ? "completed" : ""}"
-                            data-day="${day}"
-                            data-index="${index}"
-                            data-status="${item.status}"
-                            aria-label="${item.status === "Completed" ? "Mark activity as planned" : "Mark activity as completed"}">
-                            <i class="bi ${item.status === "Completed" ? "bi-check2" : "bi-circle"}"></i>
-                        </button>
+                        const quickStatusButton = `
+                            <button
+                                type="button"
+                                class="activity-quick-status js-toggle-complete ${item.status === "Completed" ? "completed" : ""}"
+                                data-session-id="${session.sessionId}"
+                                data-index="${index}"
+                                data-status="${item.status}"
+                                aria-label="${item.status === "Completed" ? "Mark activity as planned" : "Mark activity as completed"}">
+                                <i class="bi ${item.status === "Completed" ? "bi-check2" : "bi-circle"}"></i>
+                            </button>
+                        `;
+
+                        return `
+                        <div class="${rowClass}">
+                            <div class="activity-row-main">
+                                ${quickStatusButton}
+                                <span class="activity-row-title">${item.name}</span>
+                                ${statusBadge}
+                            </div>
+                            <div>
+                                <button type="button" class="activity-icon js-edit-activity" data-session-id="${session.sessionId}" data-index="${index}" aria-label="Edit activity"><i class="bi bi-pencil"></i></button>
+                                <button type="button" class="activity-icon js-show-details" data-session-id="${session.sessionId}" data-index="${index}" aria-label="Show details"><i class="bi bi-card-list"></i></button>
+                            </div>
+                            <small><i class="bi bi-clock"></i> ${item.minutes} minutes</small>
+                        </div>
                     `;
+                    }).join("")
+                    : `<div class="activity-row activity-row-plain"><span>No activities assigned</span></div>`;
 
-                    return `
-                    <div class="${rowClass}">
-                        <div class="activity-row-main">
-                            ${quickStatusButton}
-                            <span class="activity-row-title">${item.name}</span>
-                            ${statusBadge}
+                const classNumber = Number(session.slotNumber ?? sessionPosition + 1);
+
+                return `
+                    <div class="session-card">
+                        <div class="session-slot-label">Class ${classNumber}</div>
+                        <h2 class="session-title">${summary.title}</h2>
+                        <p class="session-unit">${summary.lessonLabel}</p>
+                        <p class="session-skills">Skill Focus: <span>${summary.focusSummary}</span></p>
+                        <div class="session-meta">
+                            <span><i class="bi bi-lightbulb"></i> ${summary.itemCount} Activities</span>
+                            <span><i class="bi bi-clock"></i> ${summary.totalMinutes} minutes</span>
                         </div>
-                        <div>
-                            <button type="button" class="activity-icon js-edit-activity" data-day="${day}" data-index="${index}" aria-label="Edit activity"><i class="bi bi-pencil"></i></button>
-                            <button type="button" class="activity-icon js-show-details" data-day="${day}" data-index="${index}" aria-label="Show details"><i class="bi bi-card-list"></i></button>
-                        </div>
-                        <small><i class="bi bi-clock"></i> ${item.minutes} minutes</small>
+                        <div class="activity-list">${activityRows}</div>
                     </div>
                 `;
-                }).join("")
-                : `<div class="activity-row activity-row-plain"><span>No activities assigned</span></div>`;
+            }).join("");
 
             column.innerHTML = `
                 <div class="day-pill">${day}</div>
-                <div class="session-card">
-                    <h2 class="session-title">${summary.title}</h2>
-                    <p class="session-unit">${summary.lessonLabel}</p>
-                    <p class="session-skills">Skill Focus: <span>${summary.focusSummary}</span></p>
-                    <div class="session-meta">
-                        <span><i class="bi bi-lightbulb"></i> ${summary.itemCount} Activities</span>
-                        <span><i class="bi bi-clock"></i> ${summary.totalMinutes} minutes</span>
-                    </div>
-                    <div class="activity-list">${activityRows}</div>
+                <div class="day-session-stack">
+                    ${sessionCards}
                 </div>
             `;
 
@@ -1034,8 +1091,8 @@
         attachActivityActions(weekSessions);
     }
 
-    function findActivity(weekSessions, day, index) {
-        const session = weekSessions.find((entry) => entry.day === day);
+    function findActivity(weekSessions, sessionId, index) {
+        const session = weekSessions.find((entry) => entry.sessionId === sessionId);
         if (!session) return null;
         const summary = describeSession(session);
         return {
@@ -1406,7 +1463,7 @@
     function attachActivityActions(weekSessions) {
         document.querySelectorAll(".js-toggle-complete").forEach((button) => {
             button.addEventListener("click", async () => {
-                const activity = findActivity(weekSessions, button.dataset.day, button.dataset.index);
+                const activity = findActivity(weekSessions, button.dataset.sessionId, button.dataset.index);
                 if (!activity?.sourceItem || !activity?.session) {
                     return;
                 }
@@ -1421,13 +1478,13 @@
 
         document.querySelectorAll(".js-show-details").forEach((button) => {
             button.addEventListener("click", () => {
-                openDetailsPanel(findActivity(weekSessions, button.dataset.day, button.dataset.index), button.closest(".activity-row"));
+                openDetailsPanel(findActivity(weekSessions, button.dataset.sessionId, button.dataset.index), button.closest(".activity-row"));
             });
         });
 
         document.querySelectorAll(".js-edit-activity").forEach((button) => {
             button.addEventListener("click", () => {
-                openEditPanel(findActivity(weekSessions, button.dataset.day, button.dataset.index), button.closest(".activity-row"));
+                openEditPanel(findActivity(weekSessions, button.dataset.sessionId, button.dataset.index), button.closest(".activity-row"));
             });
         });
     }

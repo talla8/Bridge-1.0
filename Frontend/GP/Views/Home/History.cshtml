@@ -288,11 +288,17 @@
       }
 
       if(item.actionType === "PLAN_REGENERATED"){
+        const compressedItems = Array.isArray(m.compressedItems) ? m.compressedItems : [];
+        const compressedSummary = compressedItems.length
+          ? compressedItems.map((entry) => `${entry.title} (${entry.oldEstimatedTime} -> ${entry.newEstimatedTime} min)`).join("<br>")
+          : "No";
         return `
           <div class="history-meta-box"><span>From session</span>${m.fromSessionId ?? item.sessionId ?? "-"}</div>
           <div class="history-meta-box"><span>Moved items</span>${m.movedItemsCount ?? 0}</div>
           <div class="history-meta-box"><span>Behind pace</span>${m.behindPace ? "Yes" : "No"}</div>
           <div class="history-meta-box"><span>Over capacity</span>${m.planOverCapacity ? "Yes" : "No"}</div>
+          <div class="history-meta-box"><span>Compression</span>${m.compressionApplied ? "Applied" : "No"}</div>
+          <div class="history-meta-box"><span>Compressed items</span>${compressedSummary}</div>
         `;
       }
 

@@ -239,6 +239,36 @@
     const goToSlotsBtn = document.getElementById("goToSlotsBtn");
     let selectedStudentFile = null;
 
+    async function loadExistingStudents() {
+        const token = sessionStorage.getItem("bridgeAccessToken");
+        if (!token) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${backendBaseUrl}/students/myStudents`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const students = await response.json().catch(() => []);
+            if (!Array.isArray(students) || students.length === 0) {
+                return;
+            }
+
+            studentUploadStatus.textContent = `${students.length} students are already uploaded for this teacher.`;
+            goToSlotsBtn.disabled = false;
+            localStorage.setItem("teacherStudentsTemplateUploaded", "true");
+        } catch {
+            // Keep the page usable even if the lookup fails.
+        }
+    }
+
     function renderSelectedFile(file) {
         if (!file) {
             studentFileSummary.classList.add("d-none");
@@ -329,4 +359,6 @@
     goToSlotsBtn.addEventListener("click", () => {
         window.location.href = '@Url.Action("SetupWeeklySlots", "Home")';
     });
+
+    loadExistingStudents();
 </script>

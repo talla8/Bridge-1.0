@@ -27,6 +27,9 @@
         border-radius: 1.2rem;
         background: #fff;
         box-shadow: 0 12px 28px rgba(23,55,77, 0.08);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .class-analysis-card-label {
@@ -70,9 +73,10 @@
 
     .class-analysis-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.45fr) minmax(21rem, 1fr);
+        grid-template-columns: minmax(0, 1.6fr) minmax(18rem, 0.9fr);
         gap: 1.75rem;
         margin-top: 2rem;
+        align-items: stretch;
     }
 
     .class-analysis-table-card,
@@ -82,6 +86,12 @@
         border-radius: 1.4rem;
         background: #fff;
         box-shadow: 0 12px 28px rgba(23,55,77, 0.08);
+    }
+
+    .class-analysis-insight-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .class-analysis-table-head,
@@ -160,22 +170,22 @@
     .class-analysis-insight-title {
         margin: 0;
         color: #09090f;
-        font-size: 3rem;
+        font-size: clamp(2rem, 3vw, 2.5rem);
         font-weight: 800;
         line-height: 1;
     }
 
     .class-analysis-insight-copy {
-        margin: 0.9rem 0 0;
+        margin: 0.7rem 0 0;
         color: #4e5563;
-        font-size: 1rem;
-        line-height: 1.55;
+        font-size: 0.98rem;
+        line-height: 1.65;
     }
 
     .class-analysis-insight-bar {
         width: 100%;
         height: 0.75rem;
-        margin-top: 2rem;
+        margin-top: 1.5rem;
         border-radius: 999px;
         background: #f1edf7;
         overflow: hidden;
@@ -282,6 +292,14 @@
     }
 
     @@media (max-width: 767.98px) {
+        .class-analysis-page {
+            padding-top: 1rem;
+        }
+
+        .class-analysis-action-title {
+            font-size: 1.35rem;
+        }
+
         .class-analysis-table-head,
         .class-analysis-table-row {
             grid-template-columns: 1fr;
@@ -303,7 +321,7 @@
             </div>
 
             <div class="row g-4 mt-3">
-                <div class="col-12 col-md-6 col-xl-3">
+                <div class="col-12 col-md-6 col-xl-4">
                     <div class="class-analysis-card">
                         <div class="class-analysis-card-label">Class Average</div>
                         <div class="class-analysis-card-value" id="classAverageValue">0%</div>
@@ -311,7 +329,7 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-6 col-xl-3">
+                <div class="col-12 col-md-6 col-xl-4">
                     <div class="class-analysis-card">
                         <div class="class-analysis-card-label">Students Needing Support</div>
                         <div class="class-analysis-card-value" id="needSupportValue">0</div>
@@ -319,7 +337,7 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-6 col-xl-3">
+                <div class="col-12 col-md-6 col-xl-4">
                     <div class="class-analysis-card">
                         <div class="class-analysis-card-label">Top 3 Skills:</div>
                         <div class="class-analysis-top-skills" id="topSkillsList"></div>

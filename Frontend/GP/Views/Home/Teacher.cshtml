@@ -3,6 +3,10 @@
 }
 
 <style>
+    :root {
+        --bridge-navbar-height: 5rem;
+    }
+
     .teacher-setup-card {
         border: 1px solid #e5e7eb;
         border-radius: 24px;
@@ -22,42 +26,64 @@
     .teacher-setup-modal-backdrop {
         position: fixed;
         inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        overflow-y: auto;
         background: rgba(15,31,42, .45);
         z-index: 1050;
     }
 
     .teacher-setup-modal {
         position: fixed;
-        inset: 50% auto auto 50%;
+        top: calc(var(--bridge-navbar-height) + ((100vh - var(--bridge-navbar-height)) / 2));
+        left: 50%;
         transform: translate(-50%, -50%);
-        width: min(92vw, 760px);
-        max-height: calc(100vh - 72px);
-        overflow: auto;
+        width: min(100%, 860px);
+        max-height: min(calc(100vh - var(--bridge-navbar-height) - 32px), 760px);
+        margin: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
         background: #fff;
-        border-radius: 24px;
+        border-radius: 20px;
         box-shadow: 0 22px 50px rgba(15,31,42,.25);
         z-index: 1051;
-        padding: 24px;
+        padding: 18px;
     }
 
     .teacher-setup-modal h3 {
-        font-size: 28px;
+        font-size: 24px;
         font-weight: 800;
         color: #111E27;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
+    }
+
+    .teacher-setup-modal-header {
+        position: sticky;
+        top: -18px;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin: -18px -18px 14px;
+        padding: 18px 18px 12px;
+        background: #fff;
+        border-bottom: 1px solid #eef2f7;
     }
 
     .teacher-setup-modal p {
         color: #6b7280;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
     }
 
     .teacher-setup-section {
-        padding: 18px;
-        border: 1px solid #e5e7eb;
-        border-radius: 20px;
+        padding: 14px;
+        border: 1px solid #e8ecf4;
+        border-radius: 16px;
         background: #fff;
-        margin-top: 16px;
+        margin-top: 12px;
         overflow: hidden;
     }
 
@@ -76,12 +102,13 @@
 
     .teacher-setup-flow-note {
         margin: 0;
-        padding: 14px 16px;
-        border: 1px solid #e5e7eb;
-        border-radius: 16px;
+        padding: 12px 14px;
+        border: 1px solid #e8ecf4;
+        border-radius: 14px;
         background: #f8fafc;
         color: #4b5563;
-        line-height: 1.7;
+        line-height: 1.55;
+        font-size: 14px;
     }
 
     .teacher-setup-flow-note strong {
@@ -93,26 +120,27 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 12px;
-        margin-bottom: 14px;
+        margin-bottom: 10px;
     }
 
     .teacher-setup-step-title {
         margin: 0;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 800;
         color: #111E27;
     }
 
     .teacher-setup-step-copy {
-        margin: 6px 0 0;
+        margin: 4px 0 0;
         color: #6b7280;
-        line-height: 1.6;
+        line-height: 1.5;
+        font-size: 14px;
     }
 
     .teacher-setup-step-badge {
         flex-shrink: 0;
-        min-width: 38px;
-        height: 38px;
+        min-width: 34px;
+        height: 34px;
         border-radius: 999px;
         display: inline-flex;
         align-items: center;
@@ -148,14 +176,14 @@
     .teacher-slots-grid {
         display: grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 16px;
+        gap: 10px;
+        margin-top: 14px;
     }
 
     .teacher-slot-card {
-        padding: 14px;
-        border: 1px solid #e5e7eb;
-        border-radius: 18px;
+        padding: 12px;
+        border: 1px solid #e8ecf4;
+        border-radius: 16px;
         background: #faf9ff;
     }
 
@@ -202,8 +230,8 @@
         justify-content: space-between;
         align-items: center;
         gap: 12px;
-        margin-top: 16px;
-        padding: 14px 16px;
+        margin-top: 14px;
+        padding: 12px 14px;
         border-radius: 16px;
         background: #f8fafc;
     }
@@ -218,9 +246,9 @@
 
     .teacher-setup-dropzone {
         border: 2px dashed #cec8ff;
-        border-radius: 20px;
+        border-radius: 16px;
         background: #faf9ff;
-        padding: 32px;
+        padding: 18px 16px;
         text-align: center;
     }
 
@@ -271,11 +299,23 @@
         justify-content: flex-end;
         gap: 12px;
         flex-wrap: wrap;
-        margin-top: 20px;
+        margin-top: 14px;
+        position: relative;
+        z-index: 2;
+    }
+
+    #generatePlanButton {
+        position: relative;
+        z-index: 3;
+        min-width: 11rem;
+        min-height: 3rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .teacher-setup-status {
-        margin-top: 14px;
+        margin-top: 12px;
         padding: 12px 14px;
         border: 1px solid #e5e7eb;
         border-radius: 16px;
@@ -291,17 +331,17 @@
     .teacher-setup-progress {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-        margin: 18px 0;
+        gap: 10px;
+        margin: 14px 0;
     }
 
     .teacher-setup-progress-step {
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 14px 16px;
-        border: 1px solid #e5e7eb;
-        border-radius: 18px;
+        padding: 10px 12px;
+        border: 1px solid #e8ecf4;
+        border-radius: 14px;
         background: #fff;
         color: #6b7280;
     }
@@ -338,15 +378,15 @@
 
     .teacher-setup-progress-text strong {
         display: block;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 800;
         color: inherit;
     }
 
     .teacher-setup-progress-text span {
         display: block;
-        font-size: 12px;
-        line-height: 1.5;
+        font-size: 11px;
+        line-height: 1.4;
         color: inherit;
         opacity: .9;
     }
@@ -364,7 +404,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        margin-top: 18px;
+        margin-top: 14px;
     }
 
     .teacher-setup-footer-copy {
@@ -393,13 +433,27 @@
         }
 
         .teacher-setup-modal {
-            width: min(96vw, 760px);
-            max-height: calc(100vh - 32px);
+            width: min(100%, 760px);
+            max-height: calc(100vh - 24px);
+            top: calc(var(--bridge-navbar-height) + 12px);
+            left: 50%;
+            transform: translateX(-50%);
             padding: 18px;
         }
 
+        .teacher-setup-modal-backdrop {
+            align-items: flex-start;
+            padding: 16px 12px;
+        }
+
+        .teacher-setup-modal-header {
+            top: -18px;
+            margin: -18px -18px 16px;
+            padding: 18px 18px 14px;
+        }
+
         .teacher-setup-dropzone {
-            padding: 24px 18px;
+            padding: 16px 14px;
         }
     }
 </style>
@@ -575,7 +629,7 @@
 
 <div id="teacherSetupModalBackdrop" class="teacher-setup-modal-backdrop d-none"></div>
 <div id="teacherSetupModal" class="teacher-setup-modal d-none" aria-label="Set up subject plan">
-    <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+    <div class="teacher-setup-modal-header">
         <div>
             <h3 id="teacherSetupModalTitle">Set up Arabic</h3>
             <p id="teacherSetupModalCopy">Complete the setup in order: students first, then weekly slots, then baseline upload and plan generation.</p>
@@ -831,11 +885,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (teacherDashboardGrade) {
-        teacherDashboardGrade.innerHTML = `<i class="bi bi-book me-1"></i> ${grade || "Grade -"}`;
+        teacherDashboardGrade.innerHTML = `<i class="bi bi-book me-1"></i> ${"Third Grade"}`;
       }
 
       if (teacherDashboardSection) {
-        teacherDashboardSection.innerHTML = `<i class="bi bi-diagram-3 me-1"></i> ${section ? `Section ${section}` : "Section -"}`;
+        teacherDashboardSection.innerHTML = `<i class="bi bi-diagram-3 me-1"></i> ${"Section A"}`;
       }
 
       if (teacherDashboardStudentCount) {
@@ -2017,9 +2071,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-</div>
-</div>
-
 <div class="container py-5">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -2091,4 +2142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <button class="btn btn-outline-secondary btn-sm px-4" id="teacherDashboardTasksNext" disabled>Next</button>
   </div>
 
+</div>
+
+</div>
 </div>
