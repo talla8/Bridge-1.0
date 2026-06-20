@@ -3675,5 +3675,3215 @@
     ],
     "EstimatedTime": "TBD",
     "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "246",
+    "UnitNo": 1,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "247",
+    "UnitNo": 1,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "248",
+    "UnitNo": 1,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "أكتشف الخطأ",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "249",
+    "UnitNo": 1,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "250",
+    "UnitNo": 1,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "251",
+    "UnitNo": 1,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "252",
+    "UnitNo": 1,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "253",
+    "UnitNo": 1,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "254",
+    "UnitNo": 1,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "مسألة مفتوحة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "255",
+    "UnitNo": 1,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "256",
+    "UnitNo": 1,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أكتشف الخطأ",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "257",
+    "UnitNo": 1,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "258",
+    "UnitNo": 1,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "259",
+    "UnitNo": 1,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "260",
+    "UnitNo": 1,
+    "LessonNo": 6,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "261",
+    "UnitNo": 2,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "262",
+    "UnitNo": 2,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "263",
+    "UnitNo": 2,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "264",
+    "UnitNo": 2,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "265",
+    "UnitNo": 2,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "266",
+    "UnitNo": 2,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "مسألة مفتوحة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "267",
+    "UnitNo": 2,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "268",
+    "UnitNo": 2,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "269",
+    "UnitNo": 2,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "270",
+    "UnitNo": 2,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "271",
+    "UnitNo": 2,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "272",
+    "UnitNo": 2,
+    "LessonNo": 4,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "أكتشف الخطأ",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "273",
+    "UnitNo": 2,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "274",
+    "UnitNo": 2,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "275",
+    "UnitNo": 2,
+    "LessonNo": 5,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "مسألة مفتوحة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "276",
+    "UnitNo": 2,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "277",
+    "UnitNo": 2,
+    "LessonNo": 6,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "278",
+    "UnitNo": 2,
+    "LessonNo": 6,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "279",
+    "UnitNo": 2,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "مراجعة عامة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "280",
+    "UnitNo": 2,
+    "LessonNo": 8,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "اختبار الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "281",
+    "UnitNo": 3,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "282",
+    "UnitNo": 3,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "283",
+    "UnitNo": 3,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "284",
+    "UnitNo": 3,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "285",
+    "UnitNo": 3,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "286",
+    "UnitNo": 3,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "مسألة مفتوحة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "287",
+    "UnitNo": 3,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "288",
+    "UnitNo": 3,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "289",
+    "UnitNo": 3,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "290",
+    "UnitNo": 3,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "291",
+    "UnitNo": 3,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "292",
+    "UnitNo": 3,
+    "LessonNo": 4,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "أكتشف الخطأ",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "293",
+    "UnitNo": 3,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "294",
+    "UnitNo": 3,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "295",
+    "UnitNo": 3,
+    "LessonNo": 5,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "مسألة مفتوحة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "296",
+    "UnitNo": 3,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "297",
+    "UnitNo": 3,
+    "LessonNo": 6,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "298",
+    "UnitNo": 3,
+    "LessonNo": 6,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "299",
+    "UnitNo": 3,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "مراجعة عامة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "300",
+    "UnitNo": 3,
+    "LessonNo": 8,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "اختبار الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "301",
+    "UnitNo": 4,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "302",
+    "UnitNo": 4,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "303",
+    "UnitNo": 4,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "304",
+    "UnitNo": 4,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "305",
+    "UnitNo": 4,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "306",
+    "UnitNo": 4,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "307",
+    "UnitNo": 4,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "308",
+    "UnitNo": 4,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "309",
+    "UnitNo": 4,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "310",
+    "UnitNo": 4,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "311",
+    "UnitNo": 4,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "312",
+    "UnitNo": 4,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "313",
+    "UnitNo": 4,
+    "LessonNo": 6,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "314",
+    "UnitNo": 4,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "315",
+    "UnitNo": 4,
+    "LessonNo": 7,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "316",
+    "UnitNo": 4,
+    "LessonNo": 8,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "317",
+    "UnitNo": 4,
+    "LessonNo": 8,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "318",
+    "UnitNo": 4,
+    "LessonNo": 9,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "319",
+    "UnitNo": 4,
+    "LessonNo": 9,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "320",
+    "UnitNo": 4,
+    "LessonNo": 10,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "مراجعة عامة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "321",
+    "UnitNo": 4,
+    "LessonNo": 11,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "اختبار الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "322",
+    "UnitNo": 5,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "323",
+    "UnitNo": 5,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "324",
+    "UnitNo": 5,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "325",
+    "UnitNo": 5,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "326",
+    "UnitNo": 5,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "327",
+    "UnitNo": 5,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "328",
+    "UnitNo": 5,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "329",
+    "UnitNo": 5,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "330",
+    "UnitNo": 5,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "331",
+    "UnitNo": 5,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "332",
+    "UnitNo": 5,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "333",
+    "UnitNo": 5,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "334",
+    "UnitNo": 5,
+    "LessonNo": 6,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "335",
+    "UnitNo": 5,
+    "LessonNo": 6,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "أكتشف الخطأ",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "336",
+    "UnitNo": 5,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "مراجعة عامة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "337",
+    "UnitNo": 5,
+    "LessonNo": 8,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "اختبار الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "338",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "339",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "340",
+    "UnitNo": 6,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "الحس العددي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "341",
+    "UnitNo": 6,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "342",
+    "UnitNo": 6,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "343",
+    "UnitNo": 6,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "أكتشف الخطأ",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "344",
+    "UnitNo": 6,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "345",
+    "UnitNo": 6,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "346",
+    "UnitNo": 6,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "347",
+    "UnitNo": 6,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "348",
+    "UnitNo": 6,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "349",
+    "UnitNo": 6,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "350",
+    "UnitNo": 6,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "351",
+    "UnitNo": 6,
+    "LessonNo": 6,
+    "OrderInLesson": 2,
+    "Semester": 1,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "352",
+    "UnitNo": 6,
+    "LessonNo": 6,
+    "OrderInLesson": 3,
+    "Semester": 1,
+    "Name": "مسألة مفتوحة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "353",
+    "UnitNo": 6,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "مراجعة عامة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "354",
+    "UnitNo": 6,
+    "LessonNo": 8,
+    "OrderInLesson": 1,
+    "Semester": 1,
+    "Name": "اختبار الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "355",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "356",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "357",
+    "UnitNo": 7,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "358",
+    "UnitNo": 7,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "359",
+    "UnitNo": 7,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "360",
+    "UnitNo": 7,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "361",
+    "UnitNo": 7,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "362",
+    "UnitNo": 7,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "363",
+    "UnitNo": 7,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "364",
+    "UnitNo": 7,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "365",
+    "UnitNo": 7,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "366",
+    "UnitNo": 7,
+    "LessonNo": 4,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "367",
+    "UnitNo": 7,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "368",
+    "UnitNo": 7,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "369",
+    "UnitNo": 7,
+    "LessonNo": 5,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "370",
+    "UnitNo": 7,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "371",
+    "UnitNo": 7,
+    "LessonNo": 6,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "372",
+    "UnitNo": 7,
+    "LessonNo": 6,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "373",
+    "UnitNo": 7,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "لنلعب معًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "374",
+    "UnitNo": 7,
+    "LessonNo": 8,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "اختبار نهاية الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "375",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "376",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "377",
+    "UnitNo": 8,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "378",
+    "UnitNo": 8,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "379",
+    "UnitNo": 8,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_counting"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "380",
+    "UnitNo": 8,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "381",
+    "UnitNo": 8,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "382",
+    "UnitNo": 8,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "383",
+    "UnitNo": 8,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "384",
+    "UnitNo": 8,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "385",
+    "UnitNo": 8,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "386",
+    "UnitNo": 8,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "387",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "388",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "389",
+    "UnitNo": 8,
+    "LessonNo": 6,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 3
+  },
+  {
+    "CurriculumItemId": "390",
+    "UnitNo": 8,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "391",
+    "UnitNo": 8,
+    "LessonNo": 7,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "392",
+    "UnitNo": 8,
+    "LessonNo": 7,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "393",
+    "UnitNo": 8,
+    "LessonNo": 8,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "لنلعب معًا: كم الباقي؟",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "394",
+    "UnitNo": 8,
+    "LessonNo": 9,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "اختبار نهاية الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "395",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "396",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "397",
+    "UnitNo": 9,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "398",
+    "UnitNo": 9,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "399",
+    "UnitNo": 9,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "400",
+    "UnitNo": 9,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "401",
+    "UnitNo": 9,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "402",
+    "UnitNo": 9,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "403",
+    "UnitNo": 9,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "404",
+    "UnitNo": 9,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "405",
+    "UnitNo": 9,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "406",
+    "UnitNo": 9,
+    "LessonNo": 4,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "407",
+    "UnitNo": 9,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "408",
+    "UnitNo": 9,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "409",
+    "UnitNo": 9,
+    "LessonNo": 5,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "410",
+    "UnitNo": 9,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "لنلعب معًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "411",
+    "UnitNo": 9,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "اختبار نهاية الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "412",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "413",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "414",
+    "UnitNo": 10,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "415",
+    "UnitNo": 10,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "416",
+    "UnitNo": 10,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "417",
+    "UnitNo": 10,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "418",
+    "UnitNo": 10,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "419",
+    "UnitNo": 10,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "420",
+    "UnitNo": 10,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "421",
+    "UnitNo": 10,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "422",
+    "UnitNo": 10,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "423",
+    "UnitNo": 10,
+    "LessonNo": 4,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "424",
+    "UnitNo": 10,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "مشروع الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "425",
+    "UnitNo": 10,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "لنلعب معًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "426",
+    "UnitNo": 10,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "اختبار نهاية الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "427",
+    "UnitNo": 11,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "428",
+    "UnitNo": 11,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "429",
+    "UnitNo": 11,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "430",
+    "UnitNo": 11,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "431",
+    "UnitNo": 11,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "432",
+    "UnitNo": 11,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "433",
+    "UnitNo": 11,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "434",
+    "UnitNo": 11,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "435",
+    "UnitNo": 11,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "436",
+    "UnitNo": 11,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "437",
+    "UnitNo": 11,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "438",
+    "UnitNo": 11,
+    "LessonNo": 4,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "439",
+    "UnitNo": 11,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "تصميم نماذج للكسور باستخدام أشكال هندسية",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "440",
+    "UnitNo": 11,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "لنلعب معًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "441",
+    "UnitNo": 11,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "اختبار نهاية الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "442",
+    "UnitNo": 12,
+    "LessonNo": 1,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "443",
+    "UnitNo": 12,
+    "LessonNo": 1,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "444",
+    "UnitNo": 12,
+    "LessonNo": 1,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "445",
+    "UnitNo": 12,
+    "LessonNo": 2,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "446",
+    "UnitNo": 12,
+    "LessonNo": 2,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "447",
+    "UnitNo": 12,
+    "LessonNo": 2,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "448",
+    "UnitNo": 12,
+    "LessonNo": 3,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 1
+  },
+  {
+    "CurriculumItemId": "449",
+    "UnitNo": 12,
+    "LessonNo": 3,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "450",
+    "UnitNo": 12,
+    "LessonNo": 3,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "451",
+    "UnitNo": 12,
+    "LessonNo": 4,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "452",
+    "UnitNo": 12,
+    "LessonNo": 4,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "453",
+    "UnitNo": 12,
+    "LessonNo": 4,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "454",
+    "UnitNo": 12,
+    "LessonNo": 5,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "أستكشف",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_number_manipulation"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "455",
+    "UnitNo": 12,
+    "LessonNo": 5,
+    "OrderInLesson": 2,
+    "Semester": 2,
+    "Name": "أتحقق من فهمي",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "456",
+    "UnitNo": 12,
+    "LessonNo": 5,
+    "OrderInLesson": 3,
+    "Semester": 2,
+    "Name": "أحل المسألة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "457",
+    "UnitNo": 12,
+    "LessonNo": 6,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "تنفيذ استبيان وتمثيل نتائجه",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "458",
+    "UnitNo": 12,
+    "LessonNo": 7,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "لنلعب معًا",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
+  },
+  {
+    "CurriculumItemId": "459",
+    "UnitNo": 12,
+    "LessonNo": 8,
+    "OrderInLesson": 1,
+    "Semester": 2,
+    "Name": "اختبار نهاية الوحدة",
+    "GradeId": "Third Grade",
+    "SubjectId": 1,
+    "SkillsSupported": [
+      "skill_problem_solving"
+    ],
+    "EstimatedTime": "TBD",
+    "Difficulity": 2
   }
 ]

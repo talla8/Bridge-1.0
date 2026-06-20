@@ -33,6 +33,8 @@ export interface SeedRepositories {
   skillCurriculumItems?: SeedRepositoryEntry;
   supportPrograms?: SeedRepositoryEntry;
   planLogs?: SeedRepositoryEntry;
+  institutionNotifications?: SeedRepositoryEntry;
+  institutionTasks?: SeedRepositoryEntry;
 }
 
 export async function seedFromMockData(

@@ -1,4 +1,15 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { SqliteAssessmentResultsRepo } from 'src/database/sqlite-assessment-result.repo';
+import { SqliteGradesRepo } from 'src/database/sqlite-grade.repo';
+import { SqliteInstitutionNotificationsRepo } from 'src/database/sqlite-institution-notification.repo';
+import { SqliteInstitutionTasksRepo } from 'src/database/sqlite-institution-task.repo';
+import { SqlitePlanItemsRepo } from 'src/database/sqlite-plan-item.repo';
+import { SqlitePlanLogsRepo } from 'src/database/sqlite-plan-log.repo';
+import { SqlitePlansRepo } from 'src/database/sqlite-plan.repo';
+import { SqliteSessionsRepo } from 'src/database/sqlite-session.repo';
+import { SqliteStudentsRepo } from 'src/database/sqlite-student.repo';
+import { SqliteSubjectOfferingsRepo } from 'src/database/sqlite-subject-offering.repo';
+import { SqliteUsersRepo } from 'src/database/sqlite-user.repo';
 import { InMemoryAdminsRepo } from 'src/infrastructure/in-memory/in-memory-admin.repo';
 import { InMemoryAssesmentResultsRepo } from 'src/infrastructure/in-memory/in-memory-assesmentResult.repo';
 import { InMemoryAttendancesRepo } from 'src/infrastructure/in-memory/in-memory-attendance.repo';
@@ -30,6 +41,17 @@ export class MockSeedBootstrapService implements OnModuleInit {
     private readonly teachersRepo: InMemoryTeachersRepo,
     private readonly schoolsRepo: InMemorySchoolsRepo,
     private readonly gradesRepo: InMemoryGradesRepo,
+    private readonly sqliteGradesRepo: SqliteGradesRepo,
+    private readonly sqliteAssessmentResultsRepo: SqliteAssessmentResultsRepo,
+    private readonly institutionNotificationsRepo: SqliteInstitutionNotificationsRepo,
+    private readonly institutionTasksRepo: SqliteInstitutionTasksRepo,
+    private readonly sqlitePlansRepo: SqlitePlansRepo,
+    private readonly sqlitePlanItemsRepo: SqlitePlanItemsRepo,
+    private readonly sqlitePlanLogsRepo: SqlitePlanLogsRepo,
+    private readonly sqliteSessionsRepo: SqliteSessionsRepo,
+    private readonly sqliteStudentsRepo: SqliteStudentsRepo,
+    private readonly sqliteSubjectOfferingsRepo: SqliteSubjectOfferingsRepo,
+    private readonly sqliteUsersRepo: SqliteUsersRepo,
     private readonly subjectsRepo: InMemorySubjectsRepo,
     private readonly studentsRepo: InMemoryStudentsRepo,
     private readonly uploadsRepo: InMemoryUploadsRepo,
@@ -145,9 +167,111 @@ export class MockSeedBootstrapService implements OnModuleInit {
       assessmentResults: this.assessmentResultsRepo,
       skillCurriculumItems: this.skillCurriculumItemsRepo,
       supportPrograms: this.supportProgramsRepo,
+      institutionNotifications: {
+        repository: this.institutionNotificationsRepo,
+        transformRows: async (rows) =>
+          rows.map((row) => ({
+            ...row,
+            createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+          })),
+      },
+      institutionTasks: {
+        repository: this.institutionTasksRepo,
+        transformRows: async (rows) =>
+          rows.map((row) => ({
+            ...row,
+            createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+            dueDate: row.dueDate ? new Date(String(row.dueDate)) : undefined,
+            submittedAt: row.submittedAt
+              ? new Date(String(row.submittedAt))
+              : undefined,
+          })),
+      },
+    });
+
+    await seedFromMockData({
+      grades: this.sqliteGradesRepo,
+      assessmentResults: this.sqliteAssessmentResultsRepo,
+      subjectOfferings: this.sqliteSubjectOfferingsRepo,
+      plans: {
+        repository: this.sqlitePlansRepo,
+        transformRows: async (rows) =>
+          rows.map((row) => ({
+            ...row,
+            startDate: row.startDate ? new Date(String(row.startDate)) : new Date(),
+            sessions: Array.isArray(row.sessions)
+              ? row.sessions.map((session) => ({
+                  ...session,
+                  sessionDate: session.sessionDate
+                    ? new Date(String(session.sessionDate))
+                    : new Date(),
+                }))
+              : [],
+          })),
+      },
+      planLogs: {
+        repository: this.sqlitePlanLogsRepo,
+        transformRows: async (rows) =>
+          rows.map((row) => ({
+            ...row,
+            createdAt: row.createdAt ? new Date(String(row.createdAt)) : new Date(),
+          })),
+      },
+      students: {
+        repository: this.sqliteStudentsRepo,
+        transformRows: async (rows) => {
+          const grades = await this.sqliteGradesRepo.findAll();
+          return rows.map((row) => {
+            if (row.teacherId) {
+              return row;
+            }
+
+            const matchingGrade = grades.find((grade) => {
+              const sameGrade =
+                String(grade.gradeId) === String(row.gradeId) ||
+                String(grade.gradeName) === String(row.gradeId);
+              const sameSchool =
+                !row.schoolName ||
+                !grade.schoolName ||
+                String(grade.schoolName) === String(row.schoolName);
+
+              return sameGrade && sameSchool;
+            });
+
+            return {
+              ...row,
+              teacherId: matchingGrade?.teacherId,
+            };
+          });
+        },
+      },
+      users: {
+        repository: this.sqliteUsersRepo,
+        transformRows: async (rows) =>
+          Promise.all(
+            rows.map(async (row) => {
+              const { password, ...seededUser } = row;
+              const seededPassword = String(password ?? row.passwordHash ?? '');
+
+              if (!seededPassword) {
+                throw new Error(
+                  `Seeded user "${String(row.email ?? row.userId ?? 'unknown')}" is missing a password.`,
+                );
+              }
+
+              return {
+                ...seededUser,
+                passwordHash: isBcryptHash(seededPassword)
+                  ? seededPassword
+                  : await hashPassword(seededPassword),
+              };
+            }),
+          ),
+      },
     });
 
     await this.hydrateSeededPlans();
+    await this.hydrateSeededSqlitePlans();
   }
 
   private async hydrateSeededPlans(): Promise<void> {
@@ -164,6 +288,30 @@ export class MockSeedBootstrapService implements OnModuleInit {
           const existingItem = await this.planItemsRepo.findById(item.planItemId);
           if (!existingItem) {
             await this.planItemsRepo.create(item);
+          }
+        }
+      }
+    }
+  }
+
+  private async hydrateSeededSqlitePlans(): Promise<void> {
+    const plans = await this.sqlitePlansRepo.findAll();
+
+    for (const plan of plans) {
+      for (const session of plan.sessions ?? []) {
+        const existingSession = await this.sqliteSessionsRepo.findById(
+          session.sessionId,
+        );
+        if (!existingSession) {
+          await this.sqliteSessionsRepo.create(session);
+        }
+
+        for (const item of session.items ?? []) {
+          const existingItem = await this.sqlitePlanItemsRepo.findById(
+            item.planItemId,
+          );
+          if (!existingItem) {
+            await this.sqlitePlanItemsRepo.create(item);
           }
         }
       }

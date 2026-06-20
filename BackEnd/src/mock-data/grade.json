@@ -12,5 +12,12 @@
     "GradeSection": "B",
     "SchoolId": 1,
     "TeacherId": 2
+  },
+  {
+    "GradeId": "Third Grade",
+    "GradeName": "Third Grade",
+    "GradeSection": "C",
+    "SchoolId": 1,
+    "TeacherId": 8
   }
 ]

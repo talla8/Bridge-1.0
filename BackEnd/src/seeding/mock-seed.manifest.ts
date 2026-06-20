@@ -17,6 +17,8 @@ export const mockSeedManifest = {
   skillCurriculumItems: 'skill_exercises.json',
   supportPrograms: 'support-program-items.json',
   planLogs: 'plan_log.json',
+  institutionNotifications: 'institution_notifications.json',
+  institutionTasks: 'institution_tasks.json',
 } as const;
 
 export type MockSeedEntity = keyof typeof mockSeedManifest;

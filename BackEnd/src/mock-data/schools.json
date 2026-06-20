@@ -9,5 +9,19 @@
   {
     "SchoolId": 2,
     "SchoolName": "Al Noor Academy"
+  },
+  {
+    "SchoolId": "demo_school_101",
+    "SchoolName": "أكاديمية الريادة",
+    "AdminUserId": "demo_institution_1",
+    "TeacherJoinCode": "RIYADA-2026",
+    "TeacherSelfRegistrationEnabled": true
+  },
+  {
+    "SchoolId": "demo_school_102",
+    "SchoolName": "مدرسة الغد المشرق",
+    "AdminUserId": "demo_institution_2",
+    "TeacherJoinCode": "GHAD-2026",
+    "TeacherSelfRegistrationEnabled": true
   }
 ]

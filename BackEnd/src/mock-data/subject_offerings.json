@@ -22,5 +22,21 @@
     "TeacherId": 6,
     "SchoolId": 1,
     "SchoolYear": "2025-2026"
+  },
+  {
+    "SubjectOfferingId": 4,
+    "SubjectId": 2,
+    "GradeId": "Third Grade",
+    "TeacherId": 8,
+    "SchoolId": 1,
+    "SchoolYear": "2025-2026"
+  },
+  {
+    "SubjectOfferingId": 5,
+    "SubjectId": 1,
+    "GradeId": "Third Grade",
+    "TeacherId": 8,
+    "SchoolId": 1,
+    "SchoolYear": "2025-2026"
   }
 ]

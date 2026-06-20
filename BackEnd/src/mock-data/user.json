@@ -51,6 +51,17 @@
     "FullName": "Layla Compression",
     "Email": "teacher.compression@bridge.local",
     "Password": "Teacher123!",
+    "SchoolId": 1,
+    "RoleId": "Teacher",
+    "IsActive": true,
+    "IsVerified": true
+  },
+  {
+    "UserId": 8,
+    "FullName": "Maya Institution",
+    "Email": "teacher.institution2@bridge.local",
+    "Password": "Teacher123!",
+    "SchoolId": 1,
     "RoleId": "Teacher",
     "IsActive": true,
     "IsVerified": true

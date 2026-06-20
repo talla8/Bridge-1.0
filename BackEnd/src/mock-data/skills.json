@@ -1,5 +1,29 @@
 [
   {
+    "SkillId": "skill_counting",
+    "SubjectId": 1,
+    "GradeId": "Third Grade",
+    "Code": "MATH-COUNT-01",
+    "Title": "Counting Skills",
+    "MaxScore": 5
+  },
+  {
+    "SkillId": "skill_number_manipulation",
+    "SubjectId": 1,
+    "GradeId": "Third Grade",
+    "Code": "MATH-NUM-01",
+    "Title": "Number Manipulation",
+    "MaxScore": 12
+  },
+  {
+    "SkillId": "skill_problem_solving",
+    "SubjectId": 1,
+    "GradeId": "Third Grade",
+    "Code": "MATH-PROBLEM-01",
+    "Title": "Problem Solving",
+    "MaxScore": 7
+  },
+  {
     "SkillId": "skill_vocal",
     "SubjectId": 2,
     "GradeId": "Third Grade",
