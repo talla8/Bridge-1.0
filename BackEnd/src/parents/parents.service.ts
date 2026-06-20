@@ -133,6 +133,7 @@ export type ParentAssignedQuizListItem = {
   isSubmitted: boolean;
   submissionStatus: SubmissionStatus | null;
   score: number | null;
+  quizResultId: string | null;
 };
 
 export type ParentQuizResultListItem = {
@@ -517,6 +518,7 @@ export class ParentsService {
               isSubmitted: Boolean(latestResult),
               submissionStatus: latestResult?.status ?? null,
               score: latestResult?.score ?? null,
+              quizResultId: latestResult?.quizResultId ?? null,
             };
           }),
         );
@@ -688,8 +690,7 @@ export class ParentsService {
 
   private async getAssignedQuizzes(studentId: StudentId) {
     const assignments = await this.assignmentsRepo.findByStudentId(studentId);
-
-    return assignments
+    const quizAssignments = assignments
       .filter(
         (assignment) =>
           assignment.type === AssignmentType.QUIZ &&
@@ -699,18 +700,36 @@ export class ParentsService {
         (left, right) =>
           new Date(left.createdAt).getTime() -
           new Date(right.createdAt).getTime(),
-      )
-      .map((assignment) => ({
-        assignmentId: assignment.assignmentId,
-        title: assignment.title,
-        dueLabel: assignment.dueDate
-          ? new Intl.DateTimeFormat('en-US', {
-              month: 'short',
-              day: 'numeric',
-          }).format(new Date(assignment.dueDate))
-          : null,
-        status: assignment.status,
-      }));
+      );
+
+    return Promise.all(
+      quizAssignments.map(async (assignment) => {
+        const results = await this.quizResultsRepo.findByStudentAndQuiz(
+          studentId,
+          assignment.sourceId,
+        );
+        const latestResult = results.sort(
+          (left, right) =>
+            new Date(right.submittedAt).getTime() -
+            new Date(left.submittedAt).getTime(),
+        )[0];
+
+        return {
+          assignmentId: assignment.assignmentId,
+          title: assignment.title,
+          dueLabel: assignment.dueDate
+            ? new Intl.DateTimeFormat('en-US', {
+                month: 'short',
+                day: 'numeric',
+              }).format(new Date(assignment.dueDate))
+            : null,
+          status: assignment.status,
+          isSubmitted: Boolean(latestResult),
+          submissionStatus: latestResult?.status ?? null,
+          quizResultId: latestResult?.quizResultId ?? null,
+        };
+      }),
+    );
   }
 
   private getSubjectLabel(subjectId: string): string {
