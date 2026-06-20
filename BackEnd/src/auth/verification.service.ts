@@ -17,7 +17,7 @@ import { InMemoryVerificationTokensRepo } from 'src/infrastructure/in-memory/in-
 export class VerificationService {
   private readonly resendCooldownMs = 60 * 1000;
   private readonly tokenLifetimeMs = 10 * 60 * 1000;
-  private readonly mailTimeoutMs = 8000;
+  private readonly mailTimeoutMs = 20000;
 
   constructor(
     private readonly tokenRepo: InMemoryVerificationTokensRepo,
