@@ -430,8 +430,10 @@
                     <div class="parent-quiz-badge" style="margin-top:8px; display:inline-flex;">${quiz.dueLabel || "Assigned"}</div>
                 </div>
                 <a class="parent-quiz-action"
-                   href="@Url.Action("TakeQuiz", "Home")?studentId=${encodeURIComponent(parentStudentSelect.value)}&assignmentId=${encodeURIComponent(quiz.assignmentId)}">
-                    Take quiz
+                   href="${quiz.isSubmitted && quiz.quizResultId
+                        ? `@Url.Action("ParentQuizResultDetail", "Home")?quizResultId=${encodeURIComponent(quiz.quizResultId)}`
+                        : `@Url.Action("TakeQuiz", "Home")?studentId=${encodeURIComponent(parentStudentSelect.value)}&assignmentId=${encodeURIComponent(quiz.assignmentId)}`}">
+                    ${quiz.isSubmitted ? "View answers" : "Take quiz"}
                 </a>
             </div>
         `).join("");

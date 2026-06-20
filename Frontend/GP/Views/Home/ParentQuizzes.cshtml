@@ -244,7 +244,7 @@
                     <div><span class="parent-list-badge">${item.isSubmitted ? (item.submissionStatus || "Submitted") : "Assigned"}</span></div>
                     <div>
                         ${item.isSubmitted
-                            ? `<a class="parent-list-btn" href="@Url.Action("ParentQuizResults", "Home")">View result</a>`
+                            ? `<a class="parent-list-btn" href="@Url.Action("ParentQuizResultDetail", "Home")?quizResultId=${encodeURIComponent(item.quizResultId)}">View answers</a>`
                             : `<a class="parent-list-btn" href="@Url.Action("TakeQuiz", "Home")?studentId=${encodeURIComponent(item.studentId)}&assignmentId=${encodeURIComponent(item.assignmentId)}">Take quiz</a>`}
                     </div>
                 </div>
