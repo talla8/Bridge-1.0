@@ -9,6 +9,27 @@ A web application that helps early-grade teachers analyze student performance, g
 - Progress tracking and dashboards
 - Quiz and homework management
 
+## Screenshots
+
+### Teacher Register
+
+![Register screen](screenshots/teacher-register.png)
+
+### Teacher Dashboard
+
+![Teacher dashboard](screenshots/teacher-dashboard.png)
+
+### Baseline Upload
+
+![Baseline upload](screenshots/baseline-upload.png)
+
+### Generated Plan
+
+![Generated plan](screenshots/generated-plan.png)
+
+### Parent Dashboard
+
+![Parent dashboard](screenshots/parent-dashboard.png)
 ## Tech Stack
 
 * **Backend:** NestJS, Node.js, TypeScript
