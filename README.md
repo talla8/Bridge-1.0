@@ -29,7 +29,7 @@ A web application that helps early-grade teachers analyze student performance, g
 
 ### Parent Dashboard
 
-![Parent dashboard](screenshots/parent-dashboard.png)
+![Parent dashboard](screenshots/parents-dashboard.png)
 ## Tech Stack
 
 * **Backend:** NestJS, Node.js, TypeScript
@@ -61,6 +61,13 @@ MAIL_FROM=Bridge <your_email@example.com>
 ```
 
 Email configuration is required for registration or account verification features that send emails. Do not commit real email credentials or secrets to GitHub.
+
+## My Contribution
+
+This project was developed as a team graduation project. My main contribution focused on the backend side of the system, including building and organizing NestJS modules, implementing authentication-related logic, defining database entities and relationships using TypeORM, handling baseline assessment data, supporting plan generation logic, and connecting backend APIs with the application flows.
+
+I also was responsible of system analysis, database design, documentation, UI preparation, and refining the educational planning workflow based on the needs of teachers, parents, and institutions.
+
 
 ## How to Run Locally
 
